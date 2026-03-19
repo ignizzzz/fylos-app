@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const l = require\\(''lucide-react''\\); const names = [''Dog'',''Cat'',''Rabbit'',''Bird'',''Squirrel'',''Baby'',''HandHeart'',''Moon'',''Activity'',''Zap'',''Crown'',''ShieldCheck'',''Stethoscope'',''ClipboardList'']; names.forEach\\(n => console.log\\(n, !!l[n]\\)\\)\")",
+      "Bash(npx esbuild:*)",
+      "Bash(echo $?)"
+    ]
+  }
+}
