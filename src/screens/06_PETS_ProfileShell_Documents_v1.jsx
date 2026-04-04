@@ -1692,31 +1692,15 @@ const AboutTab = ({
 
 const CATEGORY_OPTIONS = ['Medical Records', 'Insurance', 'Adoption/Purchase', 'Training Certificates', 'Legal Documents', 'Other'];
 
-const DocumentCard = ({ doc, onClick }) => {
-  const isPdf = doc.type === 'PDF';
-  const Icon = isPdf ? FileText : ImageIcon;
-  return (
-    <div onClick={onClick} className="flex items-center gap-4 p-4 bg-[#FFFFFF] border border-black/[0.04] rounded-[16px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] cursor-pointer active:scale-[0.98] hover:bg-[#FAFAFB] transition-all">
-       <div className="w-12 h-12 rounded-[12px] bg-[#F7F7F8] flex items-center justify-center shrink-0 text-[#FF6B35]">
-          <Icon size={24} strokeWidth={1.5} />
-       </div>
-       <div className="flex-1 min-w-0">
-          <h4 className="text-[15px] font-semibold text-[#111111] line-clamp-2 leading-[1.3]">{doc.title}</h4>
-          <p className="text-[13px] text-[#6E6E73] truncate mt-0.5">{doc.source || 'Manual Upload'}</p>
-          <div className="flex items-center gap-1.5 mt-1 text-[12px] text-[#8E8E93] font-medium">
-            <span>{doc.date}</span>
-            <div className="w-1 h-1 rounded-full bg-black/10" />
-            <span>{doc.type}</span>
-            <div className="w-1 h-1 rounded-full bg-black/10" />
-            <span>{doc.size}</span>
-          </div>
-       </div>
-       <div className="shrink-0 text-[#CFCFD4]">
-         {isPdf ? <span className="text-[10px] font-bold uppercase tracking-wider bg-[#F7F7F8] px-2 py-1 rounded-md text-[#8E8E93]">PDF</span> : <Camera size={18} />}
-       </div>
+const DocumentCard = ({ doc, onClick }) => (
+  <div onClick={onClick} className="flex items-center gap-3 py-2.5 cursor-pointer active:opacity-60 transition-opacity">
+    <div className="flex-1 min-w-0">
+      <h4 className="text-[13px] font-semibold text-[#111] truncate">{doc.title}</h4>
+      <span className="text-[10px] text-[#A09A94]">{doc.date} · {doc.size}</span>
     </div>
-  )
-};
+    <ChevronRight size={13} className="text-[#D4CCC4] shrink-0" />
+  </div>
+);
 
 const DocumentsTab = ({ documents = [], onAddDocument, onScanReceipt, onViewDocument }) => {
   const [expandedCategories, setExpandedCategories] = useState({});
@@ -1731,51 +1715,50 @@ const DocumentsTab = ({ documents = [], onAddDocument, onScanReceipt, onViewDocu
   }, {});
 
   return (
-    <div className="pb-8">
-      {/* Sticky action row pinned right underneath the PetProfile tabs */}
-      <div className="sticky top-[54px] z-10 bg-[#FFFFFF]/95 backdrop-blur-xl px-5 py-4 border-b border-black/[0.04] flex gap-3 shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
-         <Button variant="primary" icon={Plus} onClick={onAddDocument} className="flex-1" size="small">Add Document</Button>
-         <Button variant="secondary" icon={Scan} onClick={onScanReceipt} className="flex-1" size="small">Scan Receipt</Button>
+    <div className="px-5 py-5">
+      {/* Quick actions */}
+      <div className="flex items-center gap-2 mb-5">
+        <button onClick={onAddDocument} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+          <Plus size={14} className="text-[#E85D2A]" />
+          <span className="text-[13px] font-semibold text-[#6E6058]">Add Document</span>
+        </button>
+        <button onClick={onScanReceipt} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+          <Scan size={14} className="text-[#A09A94]" />
+          <span className="text-[13px] font-semibold text-[#6E6058]">Scan Receipt</span>
+        </button>
       </div>
-      
-      <div className="px-5 pt-6 space-y-8">
+
+      {/* Total + Categories */}
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-[15px] font-semibold text-[#111]">All Documents</h3>
+        <span className="text-[11px] font-medium text-[#C4BBB3]">{documents.length} files</span>
+      </div>
+      <div className="space-y-1">
         {CATEGORY_OPTIONS.map(cat => {
           const docs = grouped[cat];
           if (!docs || docs.length === 0) return null;
-          
           const isExpanded = expandedCategories[cat];
-          const hasMore = docs.length > 3;
-
           return (
-            <div key={cat} className="space-y-3">
-              <div className="flex justify-between items-center px-1">
-                <h3 className="text-[16px] font-semibold text-[#111111]">{cat}</h3>
-                <span className="bg-[#F7F7F8] border border-black/[0.04] text-[#6E6E73] text-[12px] font-bold px-2.5 py-0.5 rounded-full">{docs.length}</span>
-              </div>
-              <div className="space-y-2">
-                 {docs.slice(0, 3).map(doc => <DocumentCard key={doc.id} doc={doc} onClick={() => onViewDocument(doc)} />)}
-                 {isExpanded && (
-                   <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                     {docs.slice(3).map(doc => <DocumentCard key={doc.id} doc={doc} onClick={() => onViewDocument(doc)} />)}
-                   </div>
-                 )}
-              </div>
-              {hasMore && (
-                <div className="flex justify-end pt-1">
-                  <button 
-                    onClick={() => toggleCategory(cat)}
-                    className="flex items-center gap-1 text-[13px] font-semibold text-[#FF6B35] hover:text-[#E85D2A] transition-colors py-1.5 px-3 rounded-lg hover:bg-[#FF6B35]/10 active:scale-95"
-                  >
-                    {isExpanded ? 'Show less' : `View all (${docs.length})`}
-                    {isExpanded ? <ChevronUp size={16} strokeWidth={2.5} /> : <ChevronDown size={16} strokeWidth={2.5} />}
-                  </button>
+            <div key={cat}>
+              <button onClick={() => toggleCategory(cat)} className="flex items-center gap-2 w-full py-3 active:opacity-70 transition-opacity">
+                <ChevronRight size={14} className={`text-[#C4BBB3] transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
+                <h3 className="text-[14px] font-semibold text-[#111] flex-1 text-left">{cat}</h3>
+                <span className="text-[11px] font-medium text-[#C4BBB3]">{docs.length}</span>
+              </button>
+              {isExpanded && (
+                <div className="pl-6 pb-2">
+                  {docs.map(doc => <DocumentCard key={doc.id} doc={doc} onClick={() => onViewDocument(doc)} />)}
                 </div>
               )}
             </div>
-          )
+          );
         })}
         {documents.length === 0 && (
-           <EmptyState icon={Folder} title="Vault is Empty" description="Store your pet's important documents securely." />
+          <div className="text-center py-12">
+            <Folder size={32} className="text-[#D4CCC4] mx-auto mb-3" />
+            <p className="text-[14px] font-semibold text-[#111]">Vault is empty</p>
+            <p className="text-[12px] text-[#A09A94] mt-1">Add your pet's documents</p>
+          </div>
         )}
       </div>
     </div>
