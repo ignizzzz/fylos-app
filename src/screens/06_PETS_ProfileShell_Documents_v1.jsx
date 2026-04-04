@@ -2877,83 +2877,38 @@ const getPermissionBadgeVariant = (perm) => {
 
 const ShareTab = ({ pet, shares, openSheet, onNavigateToFamily }) => {
   return (
-    <div className="pb-8">
-      <div className="sticky top-[56px] z-10 bg-[#FFFFFF]/90 backdrop-blur-xl border-b border-black/[0.04] py-3 px-5 shadow-[0_4px_24px_rgba(0,0,0,0.04)] flex gap-3 mb-6">
-        <button 
-          onClick={() => openSheet('qr')}
-          className="flex-1 h-[44px] flex items-center justify-center gap-2 bg-transparent border border-black/[0.08] rounded-[12px] text-[14px] font-semibold text-[#111111] hover:bg-black/5 active:scale-[0.98] transition-all"
-        >
-          <QrCode size={18} strokeWidth={2} />
-          Share via QR
-        </button>
-        <button 
-          onClick={() => openSheet('link')}
-          className="flex-1 h-[44px] flex items-center justify-center gap-2 bg-transparent border border-black/[0.08] rounded-[12px] text-[14px] font-semibold text-[#111111] hover:bg-black/5 active:scale-[0.98] transition-all"
-        >
-          <LinkIcon size={18} strokeWidth={2} />
-          Share via Link
-        </button>
-      </div>
+    <div className="px-5 py-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
+      {/* Share button — prominent */}
+      <button onClick={() => openSheet('link')}
+        className="w-full rounded-[14px] px-4 py-4 flex items-center gap-3 active:scale-[0.97] transition-transform mb-2" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+        <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+          <Share2 size={17} className="text-[#E85D2A]" />
+        </div>
+        <div className="flex-1 text-left">
+          <div className="text-[14px] font-semibold text-[#111]">Share {pet.name}'s profile</div>
+          <div className="text-[11px] text-[#A09A94] mt-0.5">Via link or QR code</div>
+        </div>
+        <ChevronRight size={15} className="text-[#D4CCC4]" />
+      </button>
 
-      <div className="px-5 space-y-8">
-        <section>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-[18px] font-bold text-[#111111]">Who has access</h3>
-            <button onClick={() => openSheet('add')} className="w-8 h-8 flex items-center justify-center bg-[#F7F7F8] text-[#111111] rounded-full hover:bg-black/5 active:scale-[0.95] transition-all">
-              <Plus size={18} strokeWidth={2.5} />
-            </button>
-          </div>
-          
-          <div className="space-y-3">
-            {shares.map(share => (
-              <div key={share.id} className="flex items-center gap-3 p-3 bg-[#FFFFFF] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] rounded-[16px]">
-                <Avatar src={share.avatar} initials={share.name.charAt(0)} size={44} onClick={() => openSheet('details', share)} />
-                <div className="flex-1 min-w-0" onClick={() => openSheet('details', share)}>
-                  <div className="font-semibold text-[15px] text-[#111111] truncate">{share.name}</div>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[13px] text-[#6E6E73]">{share.role}</span>
-                    <span className="w-1 h-1 rounded-full bg-black/10" />
-                    <Badge variant={getPermissionBadgeVariant(share.permission)} className="!text-[9px]">{share.permission}</Badge>
-                  </div>
-                  <div className="text-[#8E8E93] text-[12px] mt-1">Added {share.added}</div>
-                </div>
-                <button onClick={() => openSheet('miniMenu', share)} className="p-2 text-[#8E8E93] hover:text-[#111111] hover:bg-[#F7F7F8] rounded-full active:scale-95 transition-all">
-                  <MoreHorizontal size={20} />
-                </button>
+      {/* Who has access */}
+      <div className="flex-1 mt-4">
+        <h3 className="text-[13px] font-semibold text-[#111] mb-3">Shared with</h3>
+        <div>
+          {shares.map((share, i) => (
+            <div key={share.id} className={`flex items-center gap-3 py-2.5 ${i < shares.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+              <Avatar src={share.avatar} initials={share.name.charAt(0)} size={32} />
+              <div className="flex-1 min-w-0">
+                <span className="text-[13px] font-semibold text-[#111] truncate block">{share.name}</span>
+                <span className="text-[11px] text-[#A09A94]">{share.role}</span>
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-[18px] font-bold text-[#111111] mb-4">Family sharing</h3>
-          <Card className="!p-0 overflow-hidden border border-black/[0.04]">
-            <div className="p-4 bg-[#F7F7F8] border-b border-black/[0.04] flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <Users size={18} className="text-[#6E6E73]" />
-                <span className="text-[14px] font-semibold text-[#111111]">2 members</span>
-              </div>
+              <button onClick={() => openSheet('details', share)} className="text-[11px] font-medium text-[#E85D2A] active:opacity-70 shrink-0">Edit</button>
             </div>
-            <div className="p-2 space-y-1">
-              <div className="flex items-center gap-3 p-2">
-                <Avatar src={INITIAL_SHARES[0].avatar} size={32} />
-                <div className="flex-1 text-[14px]"><span className="font-semibold text-[#111111]">Marcus</span> <span className="text-[#6E6E73]">· Co-owner</span></div>
-              </div>
-              <div className="flex items-center gap-3 p-2">
-                <Avatar src={INITIAL_SHARES[1].avatar} size={32} />
-                <div className="flex-1 text-[14px]"><span className="font-semibold text-[#111111]">Sarah</span> <span className="text-[#6E6E73]">· Family</span></div>
-              </div>
-            </div>
-            <button onClick={onNavigateToFamily} className="w-full p-4 text-[14px] font-semibold text-[#FF6B35] flex items-center justify-center gap-1.5 hover:bg-[#FF6B35]/5 transition-colors border-t border-black/[0.04]">
-              Manage Family <ChevronRight size={16} />
-            </button>
-          </Card>
-        </section>
-
-        <div className="pt-2 text-center">
-          <p className="text-[13px] text-[#8E8E93] flex items-center justify-center gap-1.5"><Shield size={14}/> Review access & revoke anytime.</p>
+          ))}
         </div>
       </div>
+
+      <p className="text-[11px] text-[#C4BBB3] text-center pt-4">You can revoke access anytime</p>
     </div>
   );
 };
