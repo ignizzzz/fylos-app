@@ -2053,29 +2053,45 @@ const VaccinationCard = ({ item, onOpenSheet }) => {
 };
 
 const VaccinationsSection = ({ data, onOpenSheet }) => (
-  <section className="space-y-4 px-2 pb-6">
-    <div className="flex justify-between items-center px-1"><p className="text-[14px] text-[#6E6E73]">Track your pet's vaccination schedule.</p><button onClick={() => onOpenSheet('ADD_VACCINE')} className="text-[#FF6B35] p-1 active:opacity-70"><Plus size={20} /></button></div>
-    <div className="space-y-3">{data.map(vac => <VaccinationCard key={vac.id} item={vac} onOpenSheet={onOpenSheet} />)}</div>
+  <section className="pb-4">
+    <div>
+      {data.map((vac, i) => {
+        const days = calculateExpiryDays(vac.nextDate);
+        const status = days < 0 ? 'Overdue' : days <= 30 ? 'Expiring' : 'Valid';
+        const statusColor = status === 'Overdue' ? '#E85D2A' : status === 'Expiring' ? '#B07A3A' : '#3F8D63';
+        return (
+          <div key={vac.id} className={`flex items-center justify-between py-3 cursor-pointer active:opacity-60 ${i < data.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => onOpenSheet('VACCINE_DETAILS', vac)}>
+            <div className="flex-1 min-w-0">
+              <span className="text-[14px] font-semibold text-[#111] block">{vac.name}</span>
+              <span className="text-[11px] text-[#A09A94]">Due {vac.nextDate}</span>
+            </div>
+            <span className="text-[10px] font-bold uppercase" style={{ color: statusColor }}>{status}</span>
+          </div>
+        );
+      })}
+    </div>
+    <button onClick={() => onOpenSheet('ADD_VACCINE')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+      <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add vaccine</span>
+    </button>
   </section>
 );
 
 const VetVisitsSection = ({ data, onOpenSheet }) => (
-  <section className="space-y-4 px-2 pb-6">
-    <div className="flex justify-between items-center px-1"><p className="text-[14px] text-[#6E6E73]">History of veterinary consultations.</p><button onClick={() => onOpenSheet('ADD_VET')} className="text-[#FF6B35] p-1 active:opacity-70"><Plus size={20} /></button></div>
-    <div className="relative pl-4 border-l-[1.5px] border-[#E5E5E5] space-y-5 ml-2 mt-2">
-      {data.map((visit, idx) => (
-        <div key={visit.id} className="relative">
-          <div className={`absolute -left-[21.5px] top-1.5 w-[11px] h-[11px] rounded-full border-2 ${idx === 0 ? 'bg-[#FF6B35] border-[#FF6B35]' : 'bg-[#FFFFFF] border-[#CFCFD4]'}`} />
-          <Card className="!p-4 bg-[#FFFFFF] border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-            <span className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider">{visit.date}</span>
-            <h4 className="text-[16px] font-bold text-[#111111] mb-1">{visit.reason}</h4>
-            <p className="text-[14px] text-[#6E6E73] mb-2">{visit.vet} • {visit.clinic}</p>
-            <p className="text-[14px] text-[#111111] line-clamp-2 mb-3 leading-relaxed">{visit.notes}</p>
-            <button onClick={() => onOpenSheet('VET_DETAILS', visit)} className="text-[14px] font-semibold text-[#FF6B35] flex items-center gap-1 active:opacity-70">View details <ChevronRight size={14} /></button>
-          </Card>
+  <section className="pb-4">
+    <div>
+      {data.map((visit, i) => (
+        <div key={visit.id} className={`py-3 cursor-pointer active:opacity-60 ${i < data.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => onOpenSheet('VET_DETAILS', visit)}>
+          <div className="flex items-center justify-between">
+            <span className="text-[14px] font-semibold text-[#111]">{visit.reason}</span>
+            <span className="text-[11px] text-[#C4BBB3]">{visit.date}</span>
+          </div>
+          <span className="text-[11px] text-[#A09A94]">{visit.vet} · {visit.clinic}</span>
         </div>
       ))}
     </div>
+    <button onClick={() => onOpenSheet('ADD_VET')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+      <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add visit</span>
+    </button>
   </section>
 );
 
@@ -2108,40 +2124,85 @@ const MedicationCard = ({ item, onMarkTaken, onOpenSheet }) => {
 const MedicationsSection = ({ data, onMarkTaken, onOpenSheet }) => {
   const activeMeds = data.filter(m => m.isActive), pastMeds = data.filter(m => !m.isActive);
   return (
-    <section className="space-y-6 px-2 pb-6">
-      <div className="flex justify-between items-center px-1"><p className="text-[14px] text-[#6E6E73]">Manage active and past prescriptions.</p><button onClick={() => onOpenSheet('ADD_MED')} className="text-[#FF6B35] p-1 active:opacity-70"><Plus size={20} /></button></div>
-      {activeMeds.length > 0 && <div className="space-y-3"><h4 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider ml-1">Active</h4>{activeMeds.map(m => <MedicationCard key={m.id} item={m} onMarkTaken={onMarkTaken} onOpenSheet={onOpenSheet} />)}</div>}
-      {pastMeds.length > 0 && <div className="space-y-3 pt-2"><h4 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider ml-1">Past</h4>{pastMeds.map(m => <MedicationCard key={m.id} item={m} onMarkTaken={onMarkTaken} onOpenSheet={onOpenSheet} />)}</div>}
+    <section className="pb-4">
+      {activeMeds.length > 0 && <div className="mb-4">
+        <div className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-2">Active</div>
+        {activeMeds.map((m, i) => (
+          <div key={m.id} className={`flex items-center justify-between py-3 cursor-pointer active:opacity-60 ${i < activeMeds.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => onOpenSheet('MED_DETAILS', m)}>
+            <div className="flex-1 min-w-0">
+              <span className="text-[14px] font-semibold text-[#111] block">{m.name}</span>
+              <span className="text-[11px] text-[#A09A94]">{m.purpose} · {m.dosage}</span>
+            </div>
+            {m.isActive && !m.takenToday && <button onClick={(e) => { e.stopPropagation(); onMarkTaken(m.id); }} className="text-[11px] font-semibold text-[#E85D2A] px-2.5 py-1 rounded-full active:scale-[0.95]" style={{ background: '#FFF5F0' }}>Take</button>}
+            {m.takenToday && <Check size={14} className="text-[#3F8D63]" />}
+          </div>
+        ))}
+      </div>}
+      {pastMeds.length > 0 && <div>
+        <div className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-2">Past</div>
+        {pastMeds.map((m, i) => (
+          <div key={m.id} className={`flex items-center justify-between py-3 opacity-50 ${i < pastMeds.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+            <div className="flex-1 min-w-0">
+              <span className="text-[13px] font-semibold text-[#111] block">{m.name}</span>
+              <span className="text-[11px] text-[#A09A94]">{m.startDate} – {m.endDate}</span>
+            </div>
+          </div>
+        ))}
+      </div>}
+      <button onClick={() => onOpenSheet('ADD_MED')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+        <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add medication</span>
+      </button>
     </section>
   );
 };
 
 const AllergiesSection = ({ data, onOpenSheet }) => (
-  <section className="space-y-4 px-2 pb-6">
-    <div className="flex justify-between items-center px-1"><p className="text-[14px] text-[#6E6E73]">Logged allergies and severe reactions.</p><button onClick={() => onOpenSheet('ADD_ALLERGY')} className="text-[#FF6B35] p-1 active:opacity-70"><Plus size={20} /></button></div>
-    <div className="space-y-3">
-      {data.map(a => { let bv = 'default'; if(a.severity==='mild') bv='success'; if(a.severity==='moderate') bv='warning'; if(a.severity==='severe') bv='error'; return (
-        <Card key={a.id} clickable onClick={() => onOpenSheet('ALLERGY_DETAILS', a)} className="!p-4 bg-white shadow-sm border border-black/[0.04]"><div className="flex justify-between items-center mb-2"><h4 className="text-[16px] font-bold text-[#111111]">{a.allergen}</h4><Badge variant={bv}>{a.severity}</Badge></div><p className="text-[14px] text-[#6E6E73]">{a.reaction}</p></Card>
-      ); })}
+  <section className="pb-4">
+    <div>
+      {data.map((a, i) => {
+        const sevColor = a.severity === 'severe' ? '#E85D2A' : a.severity === 'moderate' ? '#B07A3A' : '#3F8D63';
+        return (
+          <div key={a.id} className={`flex items-center justify-between py-3 cursor-pointer active:opacity-60 ${i < data.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => onOpenSheet('ALLERGY_DETAILS', a)}>
+            <div className="flex-1 min-w-0">
+              <span className="text-[14px] font-semibold text-[#111] block">{a.allergen}</span>
+              <span className="text-[11px] text-[#A09A94]">{a.reaction}</span>
+            </div>
+            <span className="text-[10px] font-bold uppercase" style={{ color: sevColor }}>{a.severity}</span>
+          </div>
+        );
+      })}
     </div>
+    <button onClick={() => onOpenSheet('ADD_ALLERGY')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+      <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add allergy</span>
+    </button>
   </section>
 );
 
 const WeightTrackerSection = ({ data, idealRange, currentWeight, weightUnit, onOpenSheet }) => {
-  const maxW = Math.max(...data.map(d => d.weight)) + 1, minW = Math.min(...data.map(d => d.weight)) - 1, range = maxW - minW;
-  const points = data.map((d, i) => `${(i / (data.length - 1)) * 100},${40 - ((d.weight - minW) / range) * 40}`).join(' ');
   const currentWNum = parseFloat(currentWeight), rangeParts = idealRange.split('-').map(p => parseFloat(p.trim()));
   const isHealthy = currentWNum >= rangeParts[0] && currentWNum <= rangeParts[1];
   return (
-    <section className="space-y-4 px-2 pb-6">
-      <div className="flex justify-between items-center px-1"><p className="text-[14px] text-[#6E6E73]">Monitor growth and ideal weight.</p><button onClick={() => onOpenSheet('ADD_WEIGHT')} className="text-[#FF6B35] p-1 active:opacity-70"><Plus size={20} /></button></div>
-      <div className="bg-white border border-black/[0.04] rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02)] mb-4">
-        <div className="flex justify-between items-start mb-6"><div><span className="text-[32px] font-bold tracking-tight text-[#111111]">{currentWeight} <span className="text-[20px] text-[#8E8E93]">{weightUnit}</span></span><p className="text-[13px] text-[#6E6E73]">Ideal: {idealRange} {weightUnit}</p></div><Badge variant={isHealthy ? 'success' : 'warning'}>{isHealthy ? 'Healthy' : 'Monitor'}</Badge></div>
-        <div className="w-full h-[80px] mt-2 relative"><svg viewBox="-5 -5 110 50" className="w-full h-full overflow-visible" preserveAspectRatio="none"><polyline points={points} fill="none" stroke="#FF6B35" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />{data.map((d, i) => { const x = (i / (data.length - 1)) * 100, y = 40 - ((d.weight - minW) / range) * 40; return <circle key={i} cx={x} cy={y} r="4" fill="#FFFFFF" stroke="#FF6B35" strokeWidth="2.5" />; })}</svg></div>
+    <section className="pb-4">
+      {/* Current */}
+      <div className="flex items-baseline gap-2 mb-1">
+        <span className="text-[24px] font-bold text-[#111]">{currentWeight}</span>
+        <span className="text-[13px] text-[#A09A94]">{weightUnit}</span>
+        <span className={`text-[10px] font-bold uppercase ml-1 ${isHealthy ? 'text-[#3F8D63]' : 'text-[#B07A3A]'}`}>{isHealthy ? 'Healthy' : 'Monitor'}</span>
       </div>
-      <div className="bg-[#FFFFFF] border border-black/[0.04] rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-        {data.slice().reverse().map((entry, i) => (<div key={entry.id}><div className="flex items-center justify-between p-4"><span className="text-[15px] font-semibold text-[#111111]">{entry.weight} {weightUnit}</span><div className="flex items-center gap-3"><span className="text-[14px] text-[#6E6E73]">{entry.date}</span><button onClick={() => onOpenSheet('WEIGHT_DETAILS', entry)} className="text-[#CFCFD4] hover:text-[#111111] active:scale-95 transition-all"><Pencil size={16} /></button></div></div>{i < data.length - 1 && <div className="w-full h-[1px] bg-black/[0.04] ml-4" />}</div>))}
+      <span className="text-[11px] text-[#C4BBB3] block mb-4">Ideal: {idealRange} {weightUnit}</span>
+
+      {/* History */}
+      <div>
+        {data.slice().reverse().map((entry, i) => (
+          <div key={entry.id} className={`flex items-center justify-between py-2.5 ${i < data.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+            <span className="text-[14px] font-semibold text-[#111]">{entry.weight} {weightUnit}</span>
+            <span className="text-[11px] text-[#A09A94]">{entry.date}</span>
+          </div>
+        ))}
       </div>
+      <button onClick={() => onOpenSheet('ADD_WEIGHT')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+        <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Log weight</span>
+      </button>
     </section>
   );
 };
