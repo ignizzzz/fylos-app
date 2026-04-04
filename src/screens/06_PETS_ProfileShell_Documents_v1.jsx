@@ -3238,12 +3238,62 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
       <CardModal isOpen={healthSheet.type === 'MEDICATIONS_SECTION'} onClose={closeHealthSheet} title="Medications"><div className="pt-2"><MedicationsSection data={meds} onMarkTaken={handleMarkTaken} onOpenSheet={openHealthSheet} /></div></CardModal>
       <CardModal isOpen={healthSheet.type === 'ALLERGIES_SECTION'} onClose={closeHealthSheet} title="Allergies"><div className="pt-2"><AllergiesSection data={MOCK_HEALTH_DATA.allergies} onOpenSheet={openHealthSheet} /></div></CardModal>
       <CardModal isOpen={healthSheet.type === 'WEIGHT_SECTION'} onClose={closeHealthSheet} title="Weight Tracker"><div className="pt-2"><WeightTrackerSection data={MOCK_HEALTH_DATA.weightHistory} idealRange={MOCK_HEALTH_DATA.idealWeightRange} currentWeight={pet.weight} weightUnit={pet.weightUnit} onOpenSheet={openHealthSheet} /></div></CardModal>
-      <CardModal isOpen={healthSheet.type === 'VACCINE_DETAILS'} onClose={closeHealthSheet} title="Vaccination Details">{healthSheet.data && <div className="space-y-5 pt-2"><InfoRow label="Vaccine" value={healthSheet.data.name} /><Divider spacing="small" className="!my-0" /><InfoRow label="Given Date" value={healthSheet.data.lastDate} /><Divider spacing="small" className="!my-0" /><InfoRow label="Next Due" value={healthSheet.data.nextDate} /><div className="pt-4 flex gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button><Button variant="primary" onClick={() => { showToast('Edit coming soon'); closeHealthSheet(); }}>Edit</Button></div></div>}</CardModal>
-      <CardModal isOpen={healthSheet.type === 'VET_DETAILS'} onClose={closeHealthSheet} title="Vet Visit Details">{healthSheet.data && <div className="space-y-5 pt-2"><h4 className="text-[18px] font-bold text-[#111111] mb-1">{healthSheet.data.reason}</h4><p className="text-[15px] text-[#6E6E73] mb-4">{healthSheet.data.date} • {healthSheet.data.vet}</p><div className="bg-[#F7F7F8] p-4 rounded-xl space-y-3"><div><span className="text-[13px] font-semibold text-[#8E8E93] uppercase block mb-1">Notes</span><span className="text-[15px] text-[#111111]">{healthSheet.data.notes}</span></div><Divider spacing="small" className="!bg-black/5 !my-3" /><div><span className="text-[13px] font-semibold text-[#8E8E93] uppercase block mb-1">Cost</span><span className="text-[15px] text-[#111111]">{healthSheet.data.cost}</span></div></div><div className="pt-4 flex flex-col gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button></div></div>}</CardModal>
-      <CardModal isOpen={healthSheet.type === 'MED_DETAILS'} onClose={closeHealthSheet} title="Medication Details">{healthSheet.data && <div className="space-y-5 pt-2"><InfoRow label="Medication" value={healthSheet.data.name} /><Divider spacing="small" className="!my-0" /><InfoRow label="Purpose" value={healthSheet.data.purpose} /><Divider spacing="small" className="!my-0" /><InfoRow label="Dosage" value={healthSheet.data.dosage} /><Divider spacing="small" className="!my-0" /><InfoRow label="Frequency" value={healthSheet.data.frequency} /><div className="pt-4 flex gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button></div></div>}</CardModal>
-      <CardModal isOpen={healthSheet.type === 'ALLERGY_DETAILS'} onClose={closeHealthSheet} title="Allergy Details">{healthSheet.data && <div className="space-y-5 pt-2"><TextInput label="Allergen" value={healthSheet.data.allergen} readOnly /><Select label="Severity" value={healthSheet.data.severity} options={[{value:'mild',label:'Mild'},{value:'moderate',label:'Moderate'},{value:'severe',label:'Severe'}]} onChange={()=>{}} /><TextInput label="Reaction" value={healthSheet.data.reaction} readOnly /><div className="pt-4 flex gap-3"><Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Save</Button></div></div>}</CardModal>
-      <CardModal isOpen={healthSheet.type === 'WEIGHT_DETAILS'} onClose={closeHealthSheet} title="Edit Weight">{healthSheet.data && <div className="space-y-5 pt-2"><TextInput label="Date" type="date" value={healthSheet.data.date} readOnly /><TextInput label={`Weight (${pet.weightUnit})`} type="number" value={healthSheet.data.weight} readOnly /><div className="pt-4 flex gap-3"><Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Save</Button></div></div>}</CardModal>
-      <CardModal isOpen={['ADD_VACCINE','ADD_VET','ADD_MED','ADD_ALLERGY','ADD_WEIGHT'].includes(healthSheet.type)} onClose={closeHealthSheet} title="Add Entry"><div className="space-y-6 pt-4 pb-2 text-center"><div className="w-16 h-16 rounded-full bg-[#F7F7F8] flex items-center justify-center mx-auto mb-2"><AlertCircle size={24} className="text-[#8E8E93]" /></div><h3 className="text-[18px] font-semibold text-[#111111]">Feature Coming Soon</h3><p className="text-[15px] text-[#6E6E73] px-4">Adding new health records will be fully functional in the next step.</p><Button variant="primary" onClick={closeHealthSheet}>Got it</Button></div></CardModal>
+      <CardModal isOpen={healthSheet.type === 'VACCINE_DETAILS'} onClose={closeHealthSheet} title="Vaccination">
+        {healthSheet.data && <div className="space-y-0 pt-1">
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Vaccine</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.name}</span></div>
+          <div className="h-[1px] bg-[#EDE8E2]" />
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Given</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.lastDate}</span></div>
+          <div className="h-[1px] bg-[#EDE8E2]" />
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Next Due</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.nextDate}</span></div>
+          <div className="flex gap-2 pt-4"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button><Button variant="primary" onClick={() => { showToast('Edit coming soon'); closeHealthSheet(); }}>Edit</Button></div>
+        </div>}
+      </CardModal>
+      <CardModal isOpen={healthSheet.type === 'VET_DETAILS'} onClose={closeHealthSheet} title="Vet Visit">
+        {healthSheet.data && <div className="pt-1">
+          <h4 className="text-[15px] font-bold text-[#111]">{healthSheet.data.reason}</h4>
+          <p className="text-[12px] text-[#A09A94] mt-1 mb-3">{healthSheet.data.date} · {healthSheet.data.vet}</p>
+          <div className="rounded-[12px] p-3 space-y-2" style={{ background: '#F3EFEB' }}>
+            <div><span className="text-[10px] font-bold text-[#A09A94] uppercase tracking-wide block mb-0.5">Notes</span><span className="text-[13px] text-[#111]">{healthSheet.data.notes}</span></div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div><span className="text-[10px] font-bold text-[#A09A94] uppercase tracking-wide block mb-0.5">Cost</span><span className="text-[13px] text-[#111]">{healthSheet.data.cost}</span></div>
+          </div>
+          <Button variant="secondary" onClick={closeHealthSheet} className="mt-4">Close</Button>
+        </div>}
+      </CardModal>
+      <CardModal isOpen={healthSheet.type === 'MED_DETAILS'} onClose={closeHealthSheet} title="Medication">
+        {healthSheet.data && <div className="space-y-0 pt-1">
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Name</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.name}</span></div>
+          <div className="h-[1px] bg-[#EDE8E2]" />
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Purpose</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.purpose}</span></div>
+          <div className="h-[1px] bg-[#EDE8E2]" />
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Dosage</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.dosage}</span></div>
+          <div className="h-[1px] bg-[#EDE8E2]" />
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Frequency</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.frequency}</span></div>
+          <Button variant="secondary" onClick={closeHealthSheet} className="mt-3">Close</Button>
+        </div>}
+      </CardModal>
+      <CardModal isOpen={healthSheet.type === 'ALLERGY_DETAILS'} onClose={closeHealthSheet} title="Allergy">
+        {healthSheet.data && <div className="space-y-4 pt-1">
+          <TextInput label="Allergen" value={healthSheet.data.allergen} readOnly />
+          <TextInput label="Reaction" value={healthSheet.data.reaction} readOnly />
+          <Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Done</Button>
+        </div>}
+      </CardModal>
+      <CardModal isOpen={healthSheet.type === 'WEIGHT_DETAILS'} onClose={closeHealthSheet} title="Weight Entry">
+        {healthSheet.data && <div className="space-y-4 pt-1">
+          <TextInput label="Date" type="date" value={healthSheet.data.date} readOnly />
+          <TextInput label={`Weight (${pet.weightUnit})`} type="number" value={healthSheet.data.weight} readOnly />
+          <Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Done</Button>
+        </div>}
+      </CardModal>
+      <CardModal isOpen={['ADD_VACCINE','ADD_VET','ADD_MED','ADD_ALLERGY','ADD_WEIGHT'].includes(healthSheet.type)} onClose={closeHealthSheet} title="Add Entry">
+        <div className="text-center py-4">
+          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: '#F3EFEB' }}><AlertCircle size={22} className="text-[#A09A94]" /></div>
+          <h3 className="text-[15px] font-semibold text-[#111]">Coming Soon</h3>
+          <p className="text-[13px] text-[#A09A94] mt-1 px-2">This feature will be available in the next update.</p>
+          <Button variant="primary" onClick={closeHealthSheet} className="mt-4">Got it</Button>
+        </div>
+      </CardModal>
 
       <AddDocumentSheet 
         isOpen={addDocSheetOpen} 
