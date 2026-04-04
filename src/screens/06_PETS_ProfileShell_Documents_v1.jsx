@@ -1526,25 +1526,28 @@ const InfoRow = ({ label, value, onEdit, isCopy }) => (
 );
 
 const EnergySlider = ({ value, onChange }) => {
-  const getLabel = (v) => {
-    if (v <= 25) return 'Low';
-    if (v <= 50) return 'Medium';
-    if (v <= 75) return 'High';
-    return 'Very High';
-  };
-  
+  const getLabel = (v) => v <= 25 ? 'Low' : v <= 50 ? 'Medium' : v <= 75 ? 'High' : 'Very High';
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-baseline">
-        <h3 className="text-[16px] font-semibold text-[#111111]">Energy Level</h3>
-        <span className={`text-[13px] font-semibold ${value > 50 ? 'text-[#FF6B35]' : 'text-[#6E6E73]'}`}>{getLabel(value)}</span>
+    <div className="rounded-[16px] p-4" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-[14px] font-semibold text-[#111]">Energy Level</h3>
+        <span className="text-[12px] font-semibold text-[#E85D2A]">{getLabel(value)}</span>
       </div>
-      <input 
-        type="range" min="0" max="100" value={value} 
-        onChange={(e) => onChange(parseInt(e.target.value))}
-        className="energy-slider"
-        style={{ background: `linear-gradient(to right, #FF6B35 ${value}%, rgba(0,0,0,0.08) ${value}%)` }}
-      />
+      {/* Segmented bar */}
+      <div className="flex gap-1 h-[6px]">
+        {[0, 1, 2, 3].map(i => {
+          const filled = value > i * 25;
+          return (
+            <button
+              key={i}
+              onClick={() => onChange((i + 1) * 25 - 12)}
+              className="flex-1 rounded-full transition-all active:scale-y-150"
+              style={{ background: filled ? '#E85D2A' : '#EDE8E2', opacity: filled ? (0.4 + i * 0.2) : 1 }}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };
@@ -1643,40 +1646,41 @@ const AboutTab = ({
 
       {/* 4. Milestones */}
       <section className="pt-4">
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center mb-4">
           <h3 className="text-[15px] font-semibold text-[#111]">Milestones</h3>
           <button onClick={onOpenMilestone} className="text-[12px] font-semibold text-[#E85D2A] flex items-center gap-1 active:opacity-70">
             <Plus size={13} /> Add
           </button>
         </div>
-        {/* Horizontal memory cards */}
-        <div className="flex gap-3 overflow-x-auto -mx-5 px-5 pb-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        {/* Stacked memory cards with slight rotation */}
+        <div className="flex gap-3 overflow-x-auto -mx-5 px-5 pb-4 pt-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
           {pet.milestones.map((m, idx) => {
-            const colors = [
-              { bg: '#FFF5F0', border: '#FFE0D0', accent: '#E85D2A' },
-              { bg: '#F0F7ED', border: '#D7EBDD', accent: '#3F8D63' },
-              { bg: '#F0F3FF', border: '#D8E1F5', accent: '#5A6FA8' },
-              { bg: '#FFF8F0', border: '#F0E4D0', accent: '#B07A3A' },
-            ];
-            const c = colors[idx % colors.length];
+            const rotations = [-3, 2.5, -2, 3];
+            const rot = rotations[idx % rotations.length];
             return (
-              <div key={m.id} className="shrink-0 w-[160px] rounded-[18px] p-4 relative group" style={{ background: c.bg, border: `1px solid ${c.border}` }}>
-                <button onClick={() => onDeleteMilestone(m.id)} className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: c.border }}>
-                  <X size={11} style={{ color: c.accent }} />
-                </button>
-                <div className="text-[24px] mb-3">
-                  {renderLegacyIcon(m.icon, 24, '')}
+              <div key={m.id} className="shrink-0 w-[150px]" style={{
+                animation: `homeReveal 0.5s ${0.1 + idx * 0.1}s cubic-bezier(0.22,1,0.36,1) both`,
+              }}>
+                {/* Polaroid-style card with rotation */}
+                <div className="rounded-[14px] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden active:scale-[0.96] transition-transform cursor-pointer group" style={{ border: '1px solid #EDE8E2', transform: `rotate(${rot}deg)` }}>
+                  {/* Icon area — warm gradient */}
+                  <div className="h-[80px] flex items-center justify-center relative" style={{ background: 'linear-gradient(135deg, #F7F5F2 0%, #F3EFEB 100%)' }}>
+                    <span className="text-[32px]">{renderLegacyIcon(m.icon, 32, '')}</span>
+                  </div>
+                  {/* Info */}
+                  <div className="px-3 py-2.5">
+                    <h4 className="text-[13px] font-bold text-[#111] leading-tight truncate">{m.title}</h4>
+                    {m.note && <p className="text-[11px] text-[#A09A94] mt-0.5 truncate">{m.note}</p>}
+                    <div className="text-[9px] font-semibold text-[#C4BBB3] mt-2 uppercase tracking-wider">{m.date}</div>
+                  </div>
                 </div>
-                <h4 className="text-[14px] font-bold text-[#111] leading-tight">{m.title}</h4>
-                {m.note && <p className="text-[12px] mt-1.5 leading-snug" style={{ color: c.accent, opacity: 0.7 }}>{m.note}</p>}
-                <div className="text-[10px] font-semibold mt-3 uppercase tracking-wide" style={{ color: c.accent, opacity: 0.5 }}>{m.date}</div>
               </div>
             );
           })}
           {/* Add card */}
-          <div onClick={onOpenMilestone} className="shrink-0 w-[120px] rounded-[18px] p-4 flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1.5px dashed #DDD8D2' }}>
-            <Plus size={20} className="text-[#C4B5A6]" />
-            <span className="text-[11px] font-semibold text-[#C4B5A6] text-center">Add memory</span>
+          <div onClick={onOpenMilestone} className="shrink-0 w-[100px] flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-[0.95] transition-transform rounded-[14px] py-6" style={{ border: '1.5px dashed #DDD8D2' }}>
+            <Plus size={18} className="text-[#C4B5A6]" />
+            <span className="text-[10px] font-semibold text-[#C4B5A6]">Add</span>
           </div>
         </div>
       </section>
@@ -2171,9 +2175,9 @@ const VetVisitsSummaryCard = ({ onOpenSheet }) => {
   const needsFollowUp = latestVisit.followUp && latestVisit.followUp !== 'None' && latestVisit.followUp !== 'Next year';
   const fmtDate = (s) => new Date(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   return (
-    <button onClick={() => onOpenSheet('VET_VISITS_SECTION')} className="w-full mb-8 bg-[#FFFFFF] p-4 rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-black/[0.04] flex flex-col text-left active:scale-[0.96] transition-transform duration-200">
-      <div className="flex justify-between items-center w-full mb-3"><span className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider">Vet Visits</span>{needsFollowUp ? <Badge variant="warning">Follow-up</Badge> : <Badge variant="default">Recent</Badge>}</div>
-      <div className="flex justify-between items-end w-full"><div className="flex-1 pr-3 min-w-0"><p className="text-[18px] font-bold text-[#111111] leading-tight mb-1 truncate">{latestVisit.reason}</p><p className="text-[14px] text-[#6E6E73] truncate">{latestVisit.vet} • {latestVisit.clinic}</p></div><div className="flex items-center gap-0.5 shrink-0 mb-0.5"><span className="text-[14px] font-medium text-[#8E8E93]">{fmtDate(latestVisit.date)}</span><ChevronRight size={18} color="#CFCFD4" strokeWidth={2.5} /></div></div>
+    <button onClick={() => onOpenSheet('VET_VISITS_SECTION')} className="w-full mb-6 p-4 rounded-[18px] flex flex-col text-left active:scale-[0.98] transition-transform" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+      <div className="flex justify-between items-center w-full mb-2"><span className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em]">Vet Visits</span>{needsFollowUp ? <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#FFF8F0] text-[#B07A3A] border border-[#F0E4D0]">Follow-up</span> : <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#F0F7ED] text-[#3F8D63] border border-[#D7EBDD]">Recent</span>}</div>
+      <div className="flex justify-between items-end w-full"><div className="flex-1 pr-3 min-w-0"><p className="text-[16px] font-bold text-[#111] leading-tight mb-0.5 truncate">{latestVisit.reason}</p><p className="text-[12px] text-[#A09A94] truncate">{latestVisit.vet} · {latestVisit.clinic}</p></div><div className="flex items-center gap-1 shrink-0"><span className="text-[12px] font-medium text-[#C4BBB3]">{fmtDate(latestVisit.date)}</span><ChevronRight size={14} className="text-[#D4CCC4]" /></div></div>
     </button>
   );
 };
@@ -2232,9 +2236,9 @@ const WeightTrackerSection = ({ data, idealRange, currentWeight, weightUnit, onO
 };
 
 const HealthTile = ({ title, icon: Icon, iconColor, badge, primaryValue, secondaryValue, onClick, sparkline }) => (
-  <button onClick={onClick} className="bg-[#FFFFFF] p-4 rounded-[20px] shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-black/[0.04] flex flex-col gap-3 text-left active:scale-[0.96] transition-transform duration-200 h-full w-full">
-    <div className="flex justify-between items-start w-full"><div className="w-9 h-9 rounded-full bg-[#F7F7F8] flex items-center justify-center shrink-0"><Icon size={18} color={iconColor} strokeWidth={2.5} /></div>{badge && <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md leading-tight shrink-0 ml-2 ${badge.type === 'error' ? 'bg-[#FFE5E5] text-[#FF3B30]' : badge.type === 'warning' ? 'bg-[#FFF4E5] text-[#FF9500]' : 'bg-[#E5F9ED] text-[#00C060]'}`}>{badge.label}</span>}</div>
-    <div className="mt-1 flex-1 flex flex-col justify-end w-full min-w-0"><h4 className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider mb-1 truncate">{title}</h4><p className="text-[18px] font-bold text-[#111111] leading-tight mb-0.5 truncate">{primaryValue}</p>{sparkline ? <div className="w-full h-[20px] mt-1 relative"><svg viewBox="0 0 100 20" className="w-full h-full overflow-visible" preserveAspectRatio="none"><polyline points={sparkline} fill="none" stroke={iconColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div> : <p className="text-[13px] text-[#6E6E73] truncate">{secondaryValue}</p>}</div>
+  <button onClick={onClick} className="p-4 rounded-[18px] flex flex-col gap-3 text-left active:scale-[0.96] transition-transform duration-200 h-full w-full" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+    <div className="flex justify-between items-start w-full"><div className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: '#F3EFEB' }}><Icon size={16} color={iconColor} strokeWidth={2} /></div>{badge && <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full leading-tight shrink-0 ${badge.type === 'error' ? 'bg-[#FFF5F0] text-[#E85D2A] border border-[#FFE0D0]' : badge.type === 'warning' ? 'bg-[#FFF8F0] text-[#B07A3A] border border-[#F0E4D0]' : 'bg-[#F0F7ED] text-[#3F8D63] border border-[#D7EBDD]'}`}>{badge.label}</span>}</div>
+    <div className="mt-1 flex-1 flex flex-col justify-end w-full min-w-0"><h4 className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-1 truncate">{title}</h4><p className="text-[17px] font-bold text-[#111] leading-tight mb-0.5 truncate">{primaryValue}</p>{sparkline ? <div className="w-full h-[20px] mt-1 relative"><svg viewBox="0 0 100 20" className="w-full h-full overflow-visible" preserveAspectRatio="none"><polyline points={sparkline} fill="none" stroke="#E85D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></div> : <p className="text-[12px] text-[#A09A94] truncate">{secondaryValue}</p>}</div>
   </button>
 );
 
@@ -2265,10 +2269,10 @@ const HealthSummaryTiles = ({ pet, meds, onOpenSheet }) => {
 const FeedItem = ({ data, isLast, onOpenSheet }) => {
   const openDetails = () => { if (data.type === 'vaccine') onOpenSheet('VACCINE_DETAILS', data.item); if (data.type === 'vet') onOpenSheet('VET_DETAILS', data.item); if (data.type === 'med') onOpenSheet('MED_DETAILS', data.item); if (data.type === 'weight') onOpenSheet('WEIGHT_DETAILS', data.item); };
   return (
-    <div onClick={openDetails} className="relative flex gap-4 cursor-pointer group px-2 py-1">
-      {!isLast && <div className="absolute left-[27px] top-[40px] bottom-[-10px] w-[2px] bg-[#F0F0F2] z-0" />}
-      <div className="relative z-10 w-10 h-10 rounded-full bg-[#FFFFFF] border border-[#E5E5E5] shadow-sm flex items-center justify-center shrink-0 group-active:scale-95 transition-transform"><data.Icon size={18} color={data.color} /></div>
-      <div className="flex-1 flex justify-between items-start pb-6 group-active:opacity-70 transition-opacity"><div><h4 className="text-[16px] font-bold text-[#111111] leading-tight mb-1">{data.title}</h4><p className="text-[14px] text-[#6E6E73] line-clamp-1">{data.subtitle}</p></div><span className="text-[13px] font-medium text-[#8E8E93] ml-2 shrink-0">{data.displayDate}</span></div>
+    <div onClick={openDetails} className="relative flex gap-3 cursor-pointer group px-1 py-1">
+      {!isLast && <div className="absolute left-[21px] top-[36px] bottom-[-10px] w-[1px] bg-[#EDE8E2] z-0" />}
+      <div className="relative z-10 w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 group-active:scale-95 transition-transform" style={{ background: '#F3EFEB' }}><data.Icon size={15} className="text-[#A09A94]" /></div>
+      <div className="flex-1 flex justify-between items-start pb-5 group-active:opacity-70 transition-opacity"><div><h4 className="text-[14px] font-semibold text-[#111] leading-tight mb-0.5">{data.title}</h4><p className="text-[12px] text-[#A09A94]">{data.subtitle}</p></div><span className="text-[11px] font-medium text-[#C4BBB3] ml-2 shrink-0">{data.displayDate}</span></div>
     </div>
   );
 };
@@ -2285,9 +2289,9 @@ const RecentMedicalFeed = ({ pet, meds, onOpenSheet }) => {
   const visibleItems = feed.slice(0, visibleCount); const isAllShown = visibleCount >= feed.length;
   return (
     <section>
-      <div className="flex justify-between items-center mb-5 px-1"><h3 className="text-[18px] font-bold text-[#111111]">Recent Medical <span className="text-[14px] font-medium text-[#8E8E93] ml-1">· {Math.min(visibleCount, feed.length)}/{feed.length}</span></h3></div>
+      <div className="flex justify-between items-center mb-4 px-1"><h3 className="text-[15px] font-semibold text-[#111]">Recent Medical</h3><span className="text-[11px] font-medium text-[#A09A94]">{Math.min(visibleCount, feed.length)}/{feed.length}</span></div>
       <div className="space-y-0 pl-1">{visibleItems.map((item, i) => <FeedItem key={`${item.type}_${i}`} data={item} isLast={i === visibleItems.length - 1} onOpenSheet={onOpenSheet} />)}</div>
-      {feed.length > PAGE_SIZE && <div className="mt-4 mb-2 flex justify-center"><button onClick={() => isAllShown ? setVisibleCount(PAGE_SIZE) : setVisibleCount(v => Math.min(v + PAGE_SIZE, feed.length))} className="flex items-center gap-1.5 px-5 py-2.5 bg-[#FFFFFF] border border-black/[0.06] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-full text-[13px] font-semibold text-[#111111] active:scale-95 transition-all duration-200">{isAllShown ? <>Show less <ChevronDown size={16} className="rotate-180" /></> : <>Show more <ChevronDown size={16} /></>}</button></div>}
+      {feed.length > PAGE_SIZE && <div className="mt-3 mb-2 flex justify-center"><button onClick={() => isAllShown ? setVisibleCount(PAGE_SIZE) : setVisibleCount(v => Math.min(v + PAGE_SIZE, feed.length))} className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-semibold text-[#6E6058] active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>{isAllShown ? <>Show less <ChevronDown size={14} className="rotate-180" /></> : <>Show more <ChevronDown size={14} /></>}</button></div>}
     </section>
   );
 };
@@ -10686,6 +10690,16 @@ export default function App() {
           100% { transform: scale(1); }
         }
         .animate-spring-bump { animation: springBump 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        /* Milestone float animations */
+        @keyframes milestoneFloatA {
+          0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+          50% { transform: translateY(-3px) rotate(-0.5deg); }
+        }
+        @keyframes milestoneFloatB {
+          0%, 100% { transform: translateY(0) rotate(1deg); }
+          50% { transform: translateY(-4px) rotate(1.5deg); }
+        }
 
         /* Home staggered entrance */
         @keyframes homeReveal {
