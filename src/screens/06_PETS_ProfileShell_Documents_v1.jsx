@@ -2576,140 +2576,73 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
 
   return (
     <div className="relative min-h-full flex flex-col">
-      <div className="sticky top-[53px] z-10 bg-[#FFFFFF]/90 backdrop-blur-xl border-b border-black/[0.04] px-5 py-3 flex gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-        <button 
-          onClick={() => handleCall({stopPropagation:()=>{}}, pet.vets.find(v=>v.type==='Emergency')?.phone || '112', 'Emergency Vet')}
-          className="flex-1 flex items-center justify-center gap-1.5 h-[36px] bg-[#F7F7F8] hover:bg-[#F0F0F2] active:bg-[#E5E5E5] text-[#111111] text-[13px] font-semibold rounded-full transition-colors"
-        >
-          <Phone size={14}/> Call Vet
-        </button>
-        <button 
-          onClick={() => setShareSheet(true)}
-          className="flex-1 flex items-center justify-center gap-1.5 h-[36px] bg-[#FF6B35]/10 hover:bg-[#FF6B35]/15 active:bg-[#FF6B35]/20 text-[#FF6B35] text-[13px] font-semibold rounded-full transition-colors"
-        >
-          <Share2 size={14}/> Share
-        </button>
-        <button 
-          onClick={() => setMoreSheet(true)}
-          className="w-[36px] h-[36px] flex items-center justify-center bg-[#F7F7F8] hover:bg-[#F0F0F2] active:bg-[#E5E5E5] text-[#111111] rounded-full shrink-0 transition-colors"
-        >
-          <MoreHorizontal size={16}/>
-        </button>
-      </div>
+      <div className="px-5 py-4 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
 
-      <div className="px-5 py-4 space-y-8 flex-1 pb-[24px]">
-        <div className="bg-[#FF6B35]/10 border border-[#FF6B35]/20 rounded-[16px] p-4 flex gap-3 items-start">
-          <div className="w-8 h-8 rounded-full bg-[#FF6B35]/20 flex items-center justify-center shrink-0">
-            <ShieldAlert size={18} className="text-[#FF6B35]" />
-          </div>
+        {/* ═══ TOP: One big call button — Emergency Vet ═══ */}
+        {(() => { const eVet = pet.vets.find(v => v.type === 'Emergency') || pet.vets[0]; return eVet ? (
+          <button onClick={(e) => handleCall(e, eVet.phone, eVet.clinic)}
+            className="w-full rounded-[14px] px-4 py-3.5 text-left active:scale-[0.97] transition-transform mb-4" style={{ background: '#FFF5F0', border: '1px solid #FFE0D0', animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: '#FFE0D0' }}>
+                <Phone size={17} className="text-[#E85D2A]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-bold text-[#C4602A]">{eVet.clinic}</div>
+                <div className="text-[11px] text-[#E85D2A]/50">{eVet.name ? `${eVet.name} · ` : ''}Emergency Vet</div>
+              </div>
+            </div>
+          </button>
+        ) : null; })()}
+
+        {/* ═══ MIDDLE: Allergies + Meds compact ═══ */}
+        <div className="flex-1 space-y-4" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
+
+          {/* Allergies — compact rows */}
           <div>
-            <h3 className="text-[15px] font-semibold text-[#FF6B35]">In case of emergency</h3>
-            <p className="text-[13px] text-[#FF6B35]/80 mt-1 leading-relaxed">
-              Call a vet fast, share critical info, and access your pet's ID securely.
-            </p>
+            <h3 className="text-[13px] font-semibold text-[#111] mb-2">Allergies</h3>
+            {pet.medical.allergies.length > 0 ? (
+              <div className="space-y-1">
+                {pet.medical.allergies.map(a => (
+                  <div key={a.id} className="flex items-center justify-between py-1.5">
+                    <span className="text-[13px] font-semibold text-[#111]">{a.name}</span>
+                    <span className={`text-[10px] font-bold uppercase tracking-wide ${
+                      a.severity === 'Severe' ? 'text-[#E85D2A]' :
+                      a.severity === 'Moderate' ? 'text-[#B07A3A]' : 'text-[#A09A94]'
+                    }`}>{a.severity}</span>
+                  </div>
+                ))}
+              </div>
+            ) : <span className="text-[12px] text-[#A09A94]">None recorded</span>}
           </div>
+
+          {/* Active meds — grouped in one card */}
+          <div className="rounded-[14px] p-3.5" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+            <div className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-2">Active Medications</div>
+            {pet.medical.medications.filter(m => m.status !== 'Inactive').length > 0 ? (
+              pet.medical.medications.filter(m => m.status !== 'Inactive').map((m, i, arr) => (
+                <div key={m.id} className={`flex items-center justify-between py-2 ${i < arr.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+                  <span className="text-[14px] font-semibold text-[#111]">{m.name}</span>
+                  <span className="text-[11px] text-[#A09A94]">{m.dosage}</span>
+                </div>
+              ))
+            ) : <span className="text-[12px] text-[#A09A94]">None active</span>}
+          </div>
+
         </div>
 
-        <section>
-          <SectionHeader title="Emergency Contacts" actionIcon={Plus} onAction={() => setContactSheet({})} />
-          <ExpandableList 
-            items={pet.emergencyContacts}
-            limit={2}
-            renderItem={(contact) => (
-              <div 
-                key={contact.id}
-                onClick={() => setContactSheet(contact)}
-                className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#F7F7F8] active:bg-[#F0F0F2] transition-colors"
-              >
-                <div>
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-[15px] font-semibold text-[#111111]">{contact.name}</span>
-                    {contact.isPrimary ? <Badge variant="primary">Primary</Badge> : <Badge variant="default">Secondary</Badge>}
-                  </div>
-                  <span className="text-[13px] text-[#6E6E73] block">{contact.relationship}</span>
-                </div>
-                <button 
-                  onClick={(e) => handleCall(e, contact.phone, contact.name)}
-                  className="w-10 h-10 rounded-full bg-[#E5F9ED] text-[#00C060] flex items-center justify-center active:scale-95 transition-transform"
-                >
-                  <Phone size={18} fill="currentColor" />
-                </button>
-              </div>
-            )}
-          />
-        </section>
-
-        <section>
-          <SectionHeader title="Vets" actionIcon={Plus} onAction={() => setVetSheet({})} />
-          <ExpandableList 
-            items={pet.vets}
-            limit={2}
-            renderItem={(vet) => (
-              <div 
-                key={vet.id}
-                onClick={() => setVetSheet(vet)}
-                className="flex items-center justify-between p-4 cursor-pointer hover:bg-[#F7F7F8] active:bg-[#F0F0F2] transition-colors"
-              >
-                <div>
-                  <span className="text-[15px] font-semibold text-[#111111] block mb-0.5">{vet.clinic}</span>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={vet.type === 'Emergency' ? 'error' : 'default'}>{vet.type}</Badge>
-                    {vet.name && <span className="text-[13px] text-[#6E6E73]">{vet.name}</span>}
-                  </div>
-                </div>
-                <button 
-                  onClick={(e) => handleCall(e, vet.phone, vet.clinic)}
-                  className="w-10 h-10 rounded-full bg-[#E5F9ED] text-[#00C060] flex items-center justify-center active:scale-95 transition-transform shrink-0 ml-3"
-                >
-                  <Phone size={18} fill="currentColor" />
-                </button>
-              </div>
-            )}
-          />
-        </section>
-
-        <section>
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-[16px] font-semibold text-[#111111]">Critical Medical Info</h3>
-          </div>
-          <div className="bg-[#FFFFFF] border border-black/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[16px] p-4 space-y-5">
-            <MedicalSubsection title="Allergies" icon={AlertOctagon} items={pet.medical.allergies} type="allergies" showAll={true} />
-            <div className="h-[1px] bg-black/[0.06] w-full" />
-            <MedicalSubsection title="Active Meds" icon={Syringe} items={pet.medical.medications} type="meds" />
-            
-            <div 
-              onClick={() => { showToast('Navigating to Health'); navigateToTab('Health'); }}
-              className="mt-2 pt-3 border-t border-black/[0.06] flex items-center justify-center text-[13px] font-semibold text-[#FF6B35] cursor-pointer hover:opacity-80 active:scale-95 transition-all"
-            >
-              Tap to view full Health record
+        {/* ═══ BOTTOM: Microchip + Share ═══ */}
+        <div className="pt-4 mt-auto space-y-3" style={{ animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}>
+          <div className="flex items-center gap-3 py-2.5 rounded-[14px] px-4" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] text-[#A09A94] block">Microchip</span>
+              <span className="text-[13px] font-semibold text-[#111] font-mono tracking-wide">{pet.microchip}</span>
             </div>
+            <button onClick={() => handleCopy(pet.microchip, 'Microchip')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#F3EFEB' }}><Copy size={13} className="text-[#A09A94]" /></button>
           </div>
-        </section>
-
-        <section>
-          <h3 className="text-[16px] font-semibold text-[#111111] mb-3">Identification</h3>
-          <div className="bg-[#FFFFFF] border border-black/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[16px] px-4">
-            <div className="flex items-center justify-between py-4">
-              <div>
-                <span className="text-[13px] font-medium text-[#6E6E73] block mb-0.5">Microchip ID</span>
-                <span className="text-[15px] font-semibold text-[#111111] font-mono tracking-wide">{pet.microchip}</span>
-              </div>
-              <button onClick={() => handleCopy(pet.microchip, 'Microchip')} className="p-2 text-[#CFCFD4] hover:text-[#111111] active:bg-[#F7F7F8] rounded-full transition-all">
-                <Copy size={18} />
-              </button>
-            </div>
-            <div className="w-full h-[1px] bg-[#EDE8E2]" />
-            <div className="flex items-center justify-between py-4">
-              <div>
-                <span className="text-[13px] font-medium text-[#6E6E73] block mb-0.5">Home Address</span>
-                <span className="text-[15px] font-semibold text-[#111111]">{pet.address}</span>
-              </div>
-              <button onClick={() => handleCopy(pet.address, 'Address')} className="p-2 text-[#CFCFD4] hover:text-[#111111] active:bg-[#F7F7F8] rounded-full transition-all">
-                <Copy size={18} />
-              </button>
-            </div>
-          </div>
-        </section>
+          <button onClick={() => setShareSheet(true)} className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+            <Share2 size={13} className="text-[#A09A94]" /> <span className="text-[12px] font-semibold text-[#6E6058]">Share emergency info</span>
+          </button>
+        </div>
       </div>
 
       {/* Edit/Add Contact */}
