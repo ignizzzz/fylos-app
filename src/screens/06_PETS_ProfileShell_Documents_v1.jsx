@@ -2280,29 +2280,179 @@ const FeedItem = ({ data, isLast, onOpenSheet }) => {
 const RecentMedicalFeed = ({ pet, meds, onOpenSheet }) => {
   const fd = (d) => new Date(d).toLocaleDateString('en-GB', {day:'numeric',month:'short'});
   const feed = [
-    ...MOCK_HEALTH_DATA.vaccinations.map(v => ({ type:'vaccine', date:new Date(v.lastDate), displayDate:fd(v.lastDate), title:v.name, subtitle:'Vaccination given', item:v, Icon:Syringe, color:'#00C060' })),
-    ...MOCK_HEALTH_DATA.vetVisits.map(v => ({ type:'vet', date:new Date(v.date), displayDate:fd(v.date), title:v.reason, subtitle:v.vet, item:v, Icon:Stethoscope, color:'#111111' })),
-    ...meds.map(m => ({ type:'med', date:new Date(m.startDate), displayDate:fd(m.startDate), title:m.name, subtitle:m.isActive?'Started medication':'Medication cycle', item:m, Icon:Pill, color:'#007AFF' })),
-    ...MOCK_HEALTH_DATA.weightHistory.map(w => ({ type:'weight', date:new Date(w.date), displayDate:fd(w.date), title:`${w.weight} ${pet.weightUnit}`, subtitle:'Weight logged', item:w, Icon:Scale, color:'#FF6B35' }))
-  ].sort((a, b) => b.date - a.date);
-  const PAGE_SIZE = 5; const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const visibleItems = feed.slice(0, visibleCount); const isAllShown = visibleCount >= feed.length;
+    ...MOCK_HEALTH_DATA.vaccinations.map(v => ({ type:'vaccine', date:new Date(v.lastDate), displayDate:fd(v.lastDate), title:v.name, subtitle:'Vaccination', item:v, Icon:Syringe })),
+    ...MOCK_HEALTH_DATA.vetVisits.map(v => ({ type:'vet', date:new Date(v.date), displayDate:fd(v.date), title:v.reason, subtitle:v.vet, item:v, Icon:Stethoscope })),
+    ...meds.map(m => ({ type:'med', date:new Date(m.startDate), displayDate:fd(m.startDate), title:m.name, subtitle:m.isActive ? 'Active' : 'Ended', item:m, Icon:Pill })),
+    ...MOCK_HEALTH_DATA.weightHistory.map(w => ({ type:'weight', date:new Date(w.date), displayDate:fd(w.date), title:`${w.weight} ${pet.weightUnit}`, subtitle:'Weight', item:w, Icon:Scale }))
+  ].sort((a, b) => b.date - a.date).slice(0, 8);
+
   return (
     <section>
-      <div className="flex justify-between items-center mb-4 px-1"><h3 className="text-[15px] font-semibold text-[#111]">Recent Medical</h3><span className="text-[11px] font-medium text-[#A09A94]">{Math.min(visibleCount, feed.length)}/{feed.length}</span></div>
-      <div className="space-y-0 pl-1">{visibleItems.map((item, i) => <FeedItem key={`${item.type}_${i}`} data={item} isLast={i === visibleItems.length - 1} onOpenSheet={onOpenSheet} />)}</div>
-      {feed.length > PAGE_SIZE && <div className="mt-3 mb-2 flex justify-center"><button onClick={() => isAllShown ? setVisibleCount(PAGE_SIZE) : setVisibleCount(v => Math.min(v + PAGE_SIZE, feed.length))} className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-semibold text-[#6E6058] active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>{isAllShown ? <>Show less <ChevronDown size={14} className="rotate-180" /></> : <>Show more <ChevronDown size={14} /></>}</button></div>}
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-[15px] font-semibold text-[#111]">Recent</h3>
+        <div className="flex items-center gap-3">
+          <button onClick={() => onOpenSheet('ADD_RECORD')} className="w-6 h-6 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+            <Plus size={13} className="text-[#A09A94]" />
+          </button>
+        </div>
+      </div>
+      {/* Clean list — no cards, just content */}
+      <div>
+        {feed.slice(0, 5).map((item, i) => {
+          const dots = { vaccine: '#3F8D63', vet: '#5A6FA8', med: '#E85D2A', weight: '#B07A3A' };
+          return (
+            <div key={`${item.type}_${i}`}
+              className="flex items-center gap-3 py-3 cursor-pointer active:opacity-60 transition-opacity"
+              onClick={() => { if (item.type === 'vaccine') onOpenSheet('VACCINE_DETAILS', item.item); if (item.type === 'vet') onOpenSheet('VET_DETAILS', item.item); if (item.type === 'med') onOpenSheet('MED_DETAILS', item.item); if (item.type === 'weight') onOpenSheet('WEIGHT_DETAILS', item.item); }}>
+              <div className="w-[3px] h-[28px] rounded-full shrink-0" style={{ background: dots[item.type] || '#C4BBB3' }} />
+              <div className="flex-1 min-w-0">
+                <span className="text-[14px] font-semibold text-[#111] block truncate">{item.title}</span>
+                <span className="text-[11px] text-[#A09A94]">{item.subtitle}</span>
+              </div>
+              <span className="text-[11px] text-[#C4BBB3] shrink-0">{item.displayDate}</span>
+            </div>
+          );
+        })}
+      </div>
+      {/* Color legend + See all */}
+      <div className="flex items-center pt-3">
+        <div className="flex items-center gap-3 flex-1">
+          {[
+            { color: '#B07A3A', label: 'Weight' },
+            { color: '#E85D2A', label: 'Meds' },
+            { color: '#5A6FA8', label: 'Vet' },
+            { color: '#3F8D63', label: 'Vaccine' },
+          ].map(l => (
+            <div key={l.label} className="flex items-center gap-1.5">
+              <div className="w-[5px] h-[5px] rounded-full" style={{ background: l.color }} />
+              <span className="text-[10px] text-[#A09A94]">{l.label}</span>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => onOpenSheet('RECENT_MEDICAL')} className="text-[11px] font-semibold text-[#E85D2A] active:opacity-70 shrink-0">See all</button>
+      </div>
     </section>
   );
 };
 
-const HealthTab = ({ pet, meds, onMarkTaken, onOpenSheet }) => (
-  <div className="px-5 py-6">
-    <HealthSummaryTiles pet={pet} meds={meds} onOpenSheet={onOpenSheet} />
-    <VetVisitsSummaryCard onOpenSheet={onOpenSheet} />
-    <RecentMedicalFeed pet={pet} meds={meds} onOpenSheet={onOpenSheet} />
-  </div>
-);
+const HealthTab = ({ pet, meds, onMarkTaken, onOpenSheet }) => {
+  // Weight data
+  const history = MOCK_HEALTH_DATA.weightHistory;
+  const cw = history[history.length - 1].weight;
+  const maxW = Math.max(...history.map(d => d.weight)) + 1, minW = Math.min(...history.map(d => d.weight)) - 1, range = maxW - minW;
+  const sp = history.map((d, i) => `${(i / (history.length - 1)) * 100},${24 - ((d.weight - minW) / range) * 24}`).join(' ');
+
+  // Vaccine status
+  const sortedVacs = [...MOCK_HEALTH_DATA.vaccinations].sort((a,b) => new Date(a.nextDate) - new Date(b.nextDate));
+  const nextVac = sortedVacs[0];
+  const daysToVac = Math.ceil((new Date(nextVac.nextDate) - new Date()) / 86400000);
+  const vacStatus = daysToVac < 0 ? 'Overdue' : daysToVac <= 30 ? 'Soon' : 'OK';
+
+  // Meds status
+  const activeMeds = meds.filter(m => m.isActive);
+  const medsDue = activeMeds.some(m => !m.takenToday);
+
+  return (
+    <div className="px-5 py-5 space-y-5">
+
+      {/* Weight — Crypto-style chart */}
+      <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer relative" onClick={() => onOpenSheet('WEIGHT_SECTION')} style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
+        <button onClick={(e) => { e.stopPropagation(); onOpenSheet('ADD_WEIGHT'); }} className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+          <Plus size={13} className="text-[#A09A94]" />
+        </button>
+        <div className="flex items-baseline gap-3 mb-1">
+          <span className="text-[32px] font-bold text-[#111] tracking-[-1px] leading-none">{cw}</span>
+          <span className="text-[14px] font-medium text-[#A09A94]">{pet.weightUnit}</span>
+          {(() => {
+            const prev = history.length > 1 ? history[history.length - 2].weight : cw;
+            const diff = (cw - prev).toFixed(1);
+            const isUp = parseFloat(diff) > 0;
+            return diff !== '0.0' ? (
+              <span className={`text-[12px] font-bold px-1.5 py-0.5 rounded-md ${isUp ? 'text-[#E85D2A] bg-[#FFF5F0]' : 'text-[#3F8D63] bg-[#F0F7ED]'}`}>
+                {isUp ? '+' : ''}{diff}
+              </span>
+            ) : null;
+          })()}
+        </div>
+        <div className="text-[11px] text-[#C4BBB3] mb-4">Last 6 months</div>
+
+        {/* SVG chart — smooth bezier like crypto apps */}
+        <div className="h-[80px] w-full relative">
+          <svg viewBox="0 0 200 60" className="w-full h-full" preserveAspectRatio="none">
+            {/* Gradient fill under curve */}
+            <defs>
+              <linearGradient id="cryptoGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#E85D2A" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="#E85D2A" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {(() => {
+              const pts = history.map((d, i) => ({
+                x: (i / (history.length - 1)) * 200,
+                y: 55 - ((d.weight - minW) / range) * 50,
+              }));
+              // Bezier smooth path
+              let path = `M ${pts[0].x} ${pts[0].y}`;
+              for (let i = 0; i < pts.length - 1; i++) {
+                const cp1x = pts[i].x + (pts[i + 1].x - pts[i].x) * 0.4;
+                const cp2x = pts[i + 1].x - (pts[i + 1].x - pts[i].x) * 0.4;
+                path += ` C ${cp1x} ${pts[i].y} ${cp2x} ${pts[i + 1].y} ${pts[i + 1].x} ${pts[i + 1].y}`;
+              }
+              const areaPath = path + ` L 200 60 L 0 60 Z`;
+              const lastPt = pts[pts.length - 1];
+              return (
+                <>
+                  <path d={areaPath} fill="url(#cryptoGrad)" />
+                  <path d={path} fill="none" stroke="#E85D2A" strokeWidth="2.5" strokeLinecap="round" />
+                  {/* Glow dot on latest */}
+                  <circle cx={lastPt.x} cy={lastPt.y} r="6" fill="#E85D2A" opacity="0.15" />
+                  <circle cx={lastPt.x} cy={lastPt.y} r="3.5" fill="#fff" stroke="#E85D2A" strokeWidth="2" />
+                </>
+              );
+            })()}
+          </svg>
+        </div>
+
+        {/* Date labels */}
+        <div className="flex justify-between mt-1 px-1">
+          {history.filter((_, i) => i === 0 || i === Math.floor(history.length / 2) || i === history.length - 1).map((d, i) => (
+            <span key={i} className="text-[9px] text-[#C4BBB3]">
+              {new Date(d.date).toLocaleDateString('en', { month: 'short', year: '2-digit' })}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Status pills row */}
+      <div className="grid grid-cols-3 gap-2" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
+        <button onClick={() => onOpenSheet('VACCINATIONS_SECTION')} className="rounded-[14px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: vacStatus === 'Overdue' ? '#FFF5F0' : '#F7F5F2', border: `1px solid ${vacStatus === 'Overdue' ? '#FFE0D0' : '#EDE8E2'}` }}>
+          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: vacStatus === 'Overdue' ? '#FFE0D0' : '#F3EFEB' }}><Plus size={10} className={vacStatus === 'Overdue' ? 'text-[#E85D2A]' : 'text-[#A09A94]'} /></div>
+          <Syringe size={14} className={vacStatus === 'Overdue' ? 'text-[#E85D2A]' : 'text-[#A09A94]'} />
+          <div className="text-[12px] font-bold text-[#111] mt-2">{vacStatus === 'Overdue' ? 'Overdue' : nextVac.name}</div>
+          <div className="text-[10px] text-[#A09A94] mt-0.5">Vaccines</div>
+        </button>
+        <button onClick={() => onOpenSheet('MEDICATIONS_SECTION')} className="rounded-[14px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: medsDue ? '#FFF8F0' : '#F7F5F2', border: `1px solid ${medsDue ? '#F0E4D0' : '#EDE8E2'}` }}>
+          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: medsDue ? '#F0E4D0' : '#F3EFEB' }}><Plus size={10} className={medsDue ? 'text-[#B07A3A]' : 'text-[#A09A94]'} /></div>
+          <Pill size={14} className={medsDue ? 'text-[#B07A3A]' : 'text-[#A09A94]'} />
+          <div className="text-[12px] font-bold text-[#111] mt-2">{activeMeds.length} active</div>
+          <div className="text-[10px] text-[#A09A94] mt-0.5">Meds</div>
+        </button>
+        <button onClick={() => onOpenSheet('ALLERGIES_SECTION')} className="rounded-[14px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}><Plus size={10} className="text-[#A09A94]" /></div>
+          <AlertTriangle size={14} className="text-[#A09A94]" />
+          <div className="text-[12px] font-bold text-[#111] mt-2">{MOCK_HEALTH_DATA.allergies.length} logged</div>
+          <div className="text-[10px] text-[#A09A94] mt-0.5">Allergies</div>
+        </button>
+      </div>
+
+      {/* Vet visit — compact */}
+      <VetVisitsSummaryCard onOpenSheet={onOpenSheet} />
+
+      {/* Recent medical — keep vertical but styled */}
+      <RecentMedicalFeed pet={pet} meds={meds} onOpenSheet={onOpenSheet} />
+    </div>
+  );
+};
 
 // --- EMERGENCY TAB COMPONENTS ---
 
