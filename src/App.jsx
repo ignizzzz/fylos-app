@@ -45,6 +45,7 @@ import UserProfileScreen from './screens/65_USER_PROFILE_v1'
 import PetProfileDetailScreen from './screens/66_PET_PROFILE_DETAIL_v1'
 import EmergencySOSScreen from './screens/67_EMERGENCY_SOS_v1'
 import ProviderReviewsScreen from './screens/68_PROVIDER_REVIEWS_v1'
+import CreateAccountScreen from './screens/69_CREATE_ACCOUNT_v1'
 
 // Legacy screens
 import HomeScreen from './screens/Explore-home-v1'
@@ -103,6 +104,7 @@ function App() {
       <Route path="/pet-profile" element={<PetProfileDetailScreen />} />
       <Route path="/emergency" element={<EmergencySOSScreen />} />
       <Route path="/provider-reviews" element={<ProviderReviewsScreen />} />
+      <Route path="/create-account" element={<CreateAccountScreen />} />
 
       {/* Legacy screens */}
       <Route path="/home" element={<HomeScreen />} />

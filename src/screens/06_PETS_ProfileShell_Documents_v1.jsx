@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { AddPetMascot } from './37_ADD_PET_v1';
 import { 
   Home, 
   PawPrint, 
@@ -1319,24 +1320,17 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
     <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[var(--color-background)] to-transparent">
       {variant === 'default' && (
         <div className="flex justify-between items-center w-full pointer-events-auto">
-          <h1 className="font-bold tracking-tight text-[var(--color-primary-text)] drop-shadow-sm ml-1 flex items-center">
+          <h1 className="font-bold tracking-tight text-[var(--color-primary-text)] ml-1 flex items-center">
             <FylosLogo text={title || 'FYLOS'} fontSize="22px" textColor="var(--color-primary-text)" />
           </h1>
           {showActions && (
-            <div className="flex items-center bg-[var(--color-surface)] shadow-[var(--shadow-level-1)] rounded-[var(--radius-full)] p-1 h-[52px]">
-              <button onClick={onSearch || (() => handleAction('Search'))} className="w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[var(--color-surface-hover)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-                <Search size={18} color="var(--color-primary-text)" strokeWidth={1.5} />
+            <div className="flex items-center gap-2">
+              <button onClick={onInbox || (() => handleAction('Inbox'))} className="relative w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all" style={{ background: '#F3EFEB' }}>
+                <Bell size={17} className="text-[#6E6058]" strokeWidth={1.8} />
+                {unreadCount > 0 && <span className="absolute top-[6px] right-[7px] w-[7px] h-[7px] bg-[#E85D2A] rounded-full border-[1.5px] border-[var(--color-background)]" />}
               </button>
-              <div className="w-[1px] h-[20px] bg-[var(--color-border)]" />
-              <button onClick={onInbox || (() => handleAction('Inbox'))} className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[var(--color-surface-hover)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-                <Bell size={18} color="var(--color-primary-text)" strokeWidth={1.5} />
-                {unreadCount > 0 && <span className="absolute top-[12px] right-[12px] w-[8px] h-[8px] bg-[var(--color-accent)] rounded-full border-[1.5px] border-white" />}
-              </button>
-              <div className="w-[1px] h-[20px] bg-[var(--color-border)]" />
-              <button onClick={onProfile || (() => handleAction('Profile'))} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-                <div className="w-[32px] h-[32px] rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center text-[13px] font-semibold text-[var(--color-primary-text)]">
-                  {(user?.name || 'T').charAt(0).toUpperCase()}
-                </div>
+              <button onClick={onProfile || (() => handleAction('Profile'))} className="w-[38px] h-[38px] rounded-full active:scale-[0.95] transition-all overflow-hidden border-2 border-[#EDE8E2]">
+                <img src={user?.avatar || 'https://i.pravatar.cc/150?u=alex_fylos'} alt={user?.name || 'Profile'} className="w-full h-full object-cover" />
               </button>
             </div>
           )}
@@ -1452,24 +1446,35 @@ const Toast = ({ message }) => {
 // --- PETS MODULE COMPONENTS (STEP 4) ---
 
 const PetProfileHeader = ({ pet, showToast }) => (
-  <div className="flex flex-col items-center pt-2 pb-6 px-5 border-b border-black/[0.04]">
-    <div className="relative group">
-      <Avatar size={128} src={pet.photo} onClick={() => showToast('Change photo — coming soon')} />
-      <div className="absolute bottom-0 right-0 w-10 h-10 bg-white border border-black/10 rounded-full flex items-center justify-center shadow-sm pointer-events-none">
-        <Camera size={20} className="text-[#111111]" />
+  <div className="px-5 pt-2 pb-5" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
+    {/* Hero row — photo + info + mascot */}
+    <div className="flex gap-4 items-center mb-4">
+      <div className="relative shrink-0" onClick={() => showToast('Change photo — coming soon')}>
+        <img src={pet.photo} alt={pet.name} className="w-[80px] h-[80px] rounded-[20px] object-cover shadow-sm" />
+        <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-white border border-[#EDE8E2] rounded-full flex items-center justify-center shadow-sm">
+          <Camera size={13} className="text-[#A09A94]" />
+        </div>
+      </div>
+      <div className="flex-1 min-w-0">
+        <h2 className="text-[24px] font-bold text-[#111] tracking-[-0.3px]">{pet.name}</h2>
+        <p className="text-[14px] text-[#A09A94] mt-0.5">{pet.breed} · {pet.age} yrs</p>
       </div>
     </div>
-    <Text variant="title" className="mt-5">{pet.name}</Text>
-    <Text variant="caption" className="mt-1.5">{pet.breed} · {pet.age} yrs</Text>
-    
-    <div className="flex gap-4 mt-5 text-[#6E6E73] text-[13px] font-medium bg-[#F7F7F8] px-4 py-2.5 rounded-[16px]">
-      <span className="flex items-center gap-1.5"><MapPin size={14}/> {pet.location}</span>
-      <div className="w-[1px] h-4 bg-black/10" />
-      <span className="flex items-center gap-1.5">{pet.sex}</span>
-      <div className="w-[1px] h-4 bg-black/10" />
-      <span className="flex items-center gap-1.5">
-        <span className="font-semibold text-[#111111]">{pet.weight}</span> {pet.weightUnit}
-      </span>
+
+    {/* Stats pills */}
+    <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-[#6E6058]" style={{ background: '#F3EFEB' }}>
+        <MapPin size={11} className="text-[#A09A94]" />
+        {pet.location}
+      </div>
+      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-[#6E6058]" style={{ background: '#F3EFEB' }}>
+        <Scale size={11} className="text-[#A09A94]" />
+        {pet.weight} {pet.weightUnit}
+      </div>
+      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-[#6E6058]" style={{ background: '#F3EFEB' }}>
+        <Heart size={11} className="text-[#A09A94]" />
+        {pet.sex}
+      </div>
     </div>
   </div>
 );
@@ -1487,8 +1492,8 @@ const PetProfileTabs = ({ activeTab, onTabChange }) => {
   }, [activeTab]);
 
   return (
-    <div className="sticky top-0 z-20 bg-[#FFFFFF]/95 backdrop-blur-md border-b border-black/[0.08] overflow-x-auto custom-scrollbar">
-      <div className="flex px-5 min-w-max relative">
+    <div className="sticky top-0 z-20 bg-[var(--color-background)] overflow-x-auto px-5 py-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+      <div className="flex gap-1.5 min-w-max">
         {tabs.map((tab, idx) => {
           const isActive = activeTab === tab;
           return (
@@ -1496,17 +1501,12 @@ const PetProfileTabs = ({ activeTab, onTabChange }) => {
               key={tab}
               ref={el => tabsRef.current[idx] = el}
               onClick={() => onTabChange(tab)}
-              className={`py-4 px-4 text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-[#FF6B35]' : 'text-[#8E8E93] hover:text-[#111111]'}`}
+              className={`py-2 px-4 rounded-full text-[13px] font-semibold transition-all duration-200 active:scale-[0.96] ${isActive ? 'bg-[#111] text-white' : 'text-[#A09A94]'}`}
             >
               {tab}
             </button>
           );
         })}
-        {/* Sliding Underline - Sharp Apple style */}
-        <div 
-          className="absolute bottom-0 h-[2px] bg-[#FF6B35] transition-all duration-300 ease-out"
-          style={{ left: tabStyle.left, width: tabStyle.width }}
-        />
       </div>
     </div>
   );
@@ -1514,12 +1514,12 @@ const PetProfileTabs = ({ activeTab, onTabChange }) => {
 
 // Sub-components for About Tab
 const InfoRow = ({ label, value, onEdit, isCopy }) => (
-  <div className="flex items-center justify-between min-h-[52px] py-2">
-    <span className="text-[13px] font-medium text-[#6E6E73]">{label}</span>
+  <div className="flex items-center justify-between min-h-[48px] py-2">
+    <span className="text-[13px] font-medium text-[#A09A94]">{label}</span>
     <div className="flex items-center gap-2">
-      <span className="text-[15px] font-semibold text-[#111111] text-right max-w-[180px] truncate">{value}</span>
-      <button onClick={onEdit} className="p-1.5 rounded-full text-[#111111] opacity-60 hover:opacity-100 active:opacity-100 hover:bg-[#F7F7F8] active:scale-95 transition-all">
-        {isCopy ? <Copy size={16} /> : <Pencil size={16} />}
+      <span className="text-[14px] font-semibold text-[#111] text-right max-w-[180px] truncate">{value}</span>
+      <button onClick={onEdit} className="p-1.5 rounded-full text-[#A09A94] active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>
+        {isCopy ? <Copy size={14} /> : <Pencil size={14} />}
       </button>
     </div>
   </div>
@@ -1560,24 +1560,24 @@ const AboutTab = ({
   };
 
   return (
-    <div className="px-5 py-6 space-y-6">
-      
+    <div className="px-5 py-5 space-y-6">
+
       {/* 1. Basic Info */}
       <section>
-        <h3 className="text-[16px] font-semibold text-[#111111] mb-3">Basic Info</h3>
-        <div className="bg-[#FFFFFF] border border-black/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[16px] px-4">
+        <h3 className="text-[15px] font-semibold text-[#111] mb-3">Basic Info</h3>
+        <div className="rounded-[16px] px-4" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
           <InfoRow label="Full Name" value={pet.name} onEdit={() => onOpenEdit('name', 'Name', pet.name)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Breed" value={pet.breed} onEdit={() => onOpenEdit('breed', 'Breed', pet.breed)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Date of Birth" value={pet.dob} onEdit={() => onOpenEdit('dob', 'Date of Birth', pet.dob, 'date')} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Sex" value={pet.sex} onEdit={() => onOpenEdit('sex', 'Sex', pet.sex)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Weight" value={`${pet.weight} ${pet.weightUnit}`} onEdit={() => onOpenEdit('weight', 'Weight', pet.weight, 'number')} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Color/Markings" value={pet.color} onEdit={() => onOpenEdit('color', 'Color', pet.color)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Microchip" value={pet.microchip} onEdit={() => handleCopy(pet.microchip)} isCopy />
         </div>
       </section>
@@ -1587,18 +1587,18 @@ const AboutTab = ({
         <EnergySlider value={pet.energyLevel} onChange={(v) => onUpdate({ ...pet, energyLevel: v })} />
         
         <div>
-          <h3 className="text-[16px] font-semibold text-[#111111] mb-3">Temperament</h3>
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Temperament</h3>
           <div className="flex flex-wrap gap-2">
             {TEMPERAMENT_OPTIONS.map(chip => {
               const isActive = pet.temperament.includes(chip);
               return (
                 <button
                   key={chip} onClick={() => onToggleChip(chip)}
-                  className={`px-3.5 py-1.5 rounded-full text-[14px] font-medium transition-all duration-120 active:scale-[0.98] ${
-                    isActive 
-                      ? 'bg-[#FF6B35]/12 border border-[#FF6B35]/30 text-[#FF6B35]' 
-                      : 'bg-[#F7F7F8] border border-black/[0.08] text-[#6E6E73] hover:bg-black/5'
-                  }`}
+                  className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all active:scale-[0.97] ${
+                    isActive
+                      ? 'bg-[#FFF5F0] border border-[#FFE0D0] text-[#E85D2A]'
+                      : 'border border-[#EDE8E2] text-[#A09A94]'
+                  }`} style={!isActive ? { background: '#F3EFEB' } : {}}
                 >
                   {chip}
                 </button>
@@ -1608,18 +1608,18 @@ const AboutTab = ({
         </div>
 
         <div>
-          <h3 className="text-[16px] font-semibold text-[#111111] mb-3">Anxiety Triggers</h3>
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Anxiety Triggers</h3>
           <div className="flex flex-wrap gap-2">
             {pet.anxietyTriggers.map(trigger => (
-              <div key={trigger} className="flex items-center gap-1 pl-3 pr-2 py-1.5 bg-[#FF3B30]/10 text-[#FF3B30] rounded-full text-[14px] font-medium">
+              <div key={trigger} className="flex items-center gap-1 pl-3 pr-2 py-1.5 bg-[#FFF5F0] border border-[#FFE0D0] text-[#E85D2A] rounded-full text-[13px] font-semibold">
                 {trigger}
-                <button onClick={() => onRemoveTrigger(trigger)} className="p-0.5 rounded-full opacity-85 hover:opacity-100 transition-opacity">
-                  <X size={14} />
+                <button onClick={() => onRemoveTrigger(trigger)} className="p-0.5 rounded-full opacity-70 active:opacity-100">
+                  <X size={13} />
                 </button>
               </div>
             ))}
-            <button onClick={onOpenTrigger} className="flex items-center gap-1 px-3 py-1.5 bg-[#F7F7F8] text-[#111111] border border-black/[0.08] rounded-full text-[14px] font-medium hover:bg-black/5 active:scale-[0.98] transition-all">
-              <Plus size={16} /> Add trigger
+            <button onClick={onOpenTrigger} className="flex items-center gap-1 px-3 py-1.5 border border-[#EDE8E2] text-[#A09A94] rounded-full text-[13px] font-semibold active:scale-[0.97]" style={{ background: '#F3EFEB' }}>
+              <Plus size={14} /> Add trigger
             </button>
           </div>
         </div>
@@ -1627,45 +1627,58 @@ const AboutTab = ({
 
       {/* 3. Preferences */}
       <section>
-        <h3 className="text-[16px] font-semibold text-[#111111] mb-3">Preferences</h3>
-        <div className="bg-[#FFFFFF] border border-black/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[16px] px-4">
+        <h3 className="text-[15px] font-semibold text-[#111] mb-3">Preferences</h3>
+        <div className="rounded-[16px] px-4" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
           <InfoRow label="Favorite Treats" value={pet.preferences.treats} onEdit={() => onOpenEdit('treats', 'Treats', pet.preferences.treats, 'text', true)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Favorite Toys" value={pet.preferences.toys} onEdit={() => onOpenEdit('toys', 'Toys', pet.preferences.toys, 'text', true)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Food Brand" value={pet.preferences.foodBrand} onEdit={() => onOpenEdit('foodBrand', 'Food Brand', pet.preferences.foodBrand, 'text', true)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Sleeping Spot" value={pet.preferences.sleepingSpot} onEdit={() => onOpenEdit('sleepingSpot', 'Sleeping Spot', pet.preferences.sleepingSpot, 'text', true)} />
-          <div className="w-full h-[1px] bg-black/[0.06]" />
+          <div className="w-full h-[1px] bg-[#EDE8E2]" />
           <InfoRow label="Walking" value={pet.preferences.walking} onEdit={() => onOpenEdit('walking', 'Walking Config', pet.preferences.walking, 'text', true)} />
         </div>
       </section>
 
       {/* 4. Milestones */}
       <section className="pt-4">
-        <h3 className="text-[16px] font-semibold text-[#111111] mb-4">Milestones</h3>
-        <div className="relative pl-6 border-l-[2px] border-[#F0F0F2] space-y-6 pb-2">
-          {pet.milestones.map(m => (
-            <div key={m.id} className="relative group">
-              <div className="absolute -left-[41px] top-0 w-8 h-8 bg-white border-2 border-[#F0F0F2] rounded-full flex items-center justify-center text-[14px] shadow-sm z-10">
-                {renderLegacyIcon(m.icon, 14, 'text-[#6E6E73]')}
-              </div>
-              <div className="flex justify-between items-start pt-1">
-                <div>
-                  <span className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider">{m.date}</span>
-                  <h4 className="text-[16px] font-semibold text-[#111111] mt-1">{m.title}</h4>
-                  {m.note && <p className="text-[14px] text-[#6E6E73] mt-1.5 leading-relaxed">{m.note}</p>}
-                </div>
-                <button onClick={() => onDeleteMilestone(m.id)} className="p-2 text-[#CFCFD4] hover:text-[#FF3B30] hover:bg-[#FFF0F0] rounded-full transition-colors active:scale-95">
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-[15px] font-semibold text-[#111]">Milestones</h3>
+          <button onClick={onOpenMilestone} className="text-[12px] font-semibold text-[#E85D2A] flex items-center gap-1 active:opacity-70">
+            <Plus size={13} /> Add
+          </button>
         </div>
-        <Button variant="secondary" icon={Plus} onClick={onOpenMilestone} className="mt-4">
-          Add milestone
-        </Button>
+        {/* Horizontal memory cards */}
+        <div className="flex gap-3 overflow-x-auto -mx-5 px-5 pb-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+          {pet.milestones.map((m, idx) => {
+            const colors = [
+              { bg: '#FFF5F0', border: '#FFE0D0', accent: '#E85D2A' },
+              { bg: '#F0F7ED', border: '#D7EBDD', accent: '#3F8D63' },
+              { bg: '#F0F3FF', border: '#D8E1F5', accent: '#5A6FA8' },
+              { bg: '#FFF8F0', border: '#F0E4D0', accent: '#B07A3A' },
+            ];
+            const c = colors[idx % colors.length];
+            return (
+              <div key={m.id} className="shrink-0 w-[160px] rounded-[18px] p-4 relative group" style={{ background: c.bg, border: `1px solid ${c.border}` }}>
+                <button onClick={() => onDeleteMilestone(m.id)} className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: c.border }}>
+                  <X size={11} style={{ color: c.accent }} />
+                </button>
+                <div className="text-[24px] mb-3">
+                  {renderLegacyIcon(m.icon, 24, '')}
+                </div>
+                <h4 className="text-[14px] font-bold text-[#111] leading-tight">{m.title}</h4>
+                {m.note && <p className="text-[12px] mt-1.5 leading-snug" style={{ color: c.accent, opacity: 0.7 }}>{m.note}</p>}
+                <div className="text-[10px] font-semibold mt-3 uppercase tracking-wide" style={{ color: c.accent, opacity: 0.5 }}>{m.date}</div>
+              </div>
+            );
+          })}
+          {/* Add card */}
+          <div onClick={onOpenMilestone} className="shrink-0 w-[120px] rounded-[18px] p-4 flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1.5px dashed #DDD8D2' }}>
+            <Plus size={20} className="text-[#C4B5A6]" />
+            <span className="text-[11px] font-semibold text-[#C4B5A6] text-center">Add memory</span>
+          </div>
+        </div>
       </section>
     </div>
   );
@@ -2548,7 +2561,7 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
                 <Copy size={18} />
               </button>
             </div>
-            <div className="w-full h-[1px] bg-black/[0.06]" />
+            <div className="w-full h-[1px] bg-[#EDE8E2]" />
             <div className="flex items-center justify-between py-4">
               <div>
                 <span className="text-[13px] font-medium text-[#6E6E73] block mb-0.5">Home Address</span>
@@ -2932,58 +2945,106 @@ const FamilySharingScreen = ({ onBack, showToast }) => (
 
 const PetListScreen = ({ pets, onSelectPet }) => (
   <ScreenContainer>
-    <div className="px-5 pt-4 pb-8 space-y-4">
+    <div className="px-5 pt-2 pb-8">
       {pets.length === 0 ? (
-        <EmptyState 
+        <EmptyState
           icon={PawPrint} title="No Pets Yet" description="Add your first pet to start tracking their health, milestones, and more."
           actionLabel="Add Pet" onAction={() => alert('Add Pet — coming in Step 10')}
         />
       ) : (
-        pets.map(pet => (
-          <Card key={pet.id} clickable onClick={() => onSelectPet(pet.id)} className="!p-3.5 !rounded-[24px]">
-            <div className="relative overflow-hidden rounded-[22px] h-[170px] mb-4">
-              <img src={pet.photo} alt={pet.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-              <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/35 backdrop-blur-[2px] border border-white/20 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-white">
-                <MapPin size={11} />
-                {(pet.location || 'Zurich, CH').toUpperCase()}
+        <div className="space-y-3">
+          {pets.map((pet, idx) => (
+            <div key={pet.id} className="rounded-[20px] p-3.5 active:scale-[0.98] transition-transform cursor-pointer" onClick={() => onSelectPet(pet.id)}
+              style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: `homeReveal 0.4s ${0.05 + idx * 0.1}s cubic-bezier(0.22,1,0.36,1) both` }}>
+              <div className="flex gap-4">
+                {/* Compact photo */}
+                <img src={pet.photo} alt={pet.name} className="w-[90px] h-[90px] rounded-[16px] object-cover shrink-0" />
+                {/* Info */}
+                <div className="flex-1 min-w-0 py-0.5">
+                  <h3 className="text-[18px] font-bold text-[#111] tracking-[-0.2px]">{pet.name}</h3>
+                  <p className="text-[13px] text-[#A09A94] mt-0.5">{pet.breed} · {pet.age} yrs</p>
+                  <div className="flex items-center gap-3 mt-2.5">
+                    <div className="flex items-center gap-1 text-[11px] text-[#6E6058] font-medium">
+                      <Scale size={11} className="text-[#C4BBB3]" />
+                      {pet.weight} {pet.weightUnit}
+                    </div>
+                    <div className="flex items-center gap-1 text-[11px] text-[#6E6058] font-medium">
+                      <MapPin size={11} className="text-[#C4BBB3]" />
+                      {pet.location || 'Zurich'}
+                    </div>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-[#D4CCC4] shrink-0 self-center" />
+              </div>
+            </div>
+          ))}
+
+          {/* Add pet button */}
+          <button
+            onClick={() => { window.location.href = '/add-pet'; }}
+            className="w-full rounded-[16px] py-3.5 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+            style={{ background: '#F3EFEB', border: '1.5px dashed #DDD8D2', animation: `homeReveal 0.4s ${0.05 + pets.length * 0.1}s cubic-bezier(0.22,1,0.36,1) both` }}
+          >
+            <Plus size={15} className="text-[#A09A94]" />
+            <span className="text-[13px] font-semibold text-[#A09A94]">Add another pet</span>
+          </button>
+
+          {/* ═══ FAMILY OVERVIEW ═══ */}
+          <div className="pt-2" style={{ animation: `homeReveal 0.4s ${0.15 + pets.length * 0.1}s cubic-bezier(0.22,1,0.36,1) both` }}>
+            {/* Stats row */}
+            <div className="flex items-center gap-2 mb-5">
+              <div className="flex-1 rounded-[14px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
+                <div className="text-[16px] font-bold text-[#111]">{pets.length}</div>
+                <div className="text-[10px] font-medium text-[#A09A94] mt-0.5">Pets</div>
+              </div>
+              <div className="flex-1 rounded-[14px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
+                <div className="text-[16px] font-bold text-[#E85D2A]">45</div>
+                <div className="text-[10px] font-medium text-[#A09A94] mt-0.5">Day streak</div>
+              </div>
+              <div className="flex-1 rounded-[14px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
+                <div className="text-[16px] font-bold text-[#111]">12</div>
+                <div className="text-[10px] font-medium text-[#A09A94] mt-0.5">Walks/mo</div>
               </div>
             </div>
 
-            <div className="flex items-baseline w-full mb-2 min-w-0 text-[14px] leading-none">
-              <div className="flex items-baseline gap-2 min-w-0 flex-1">
-                <span className="text-[17px] font-semibold text-[#111111] whitespace-nowrap">{pet.name}</span>
-                <span className="min-w-0 truncate text-[14px] font-normal text-[#8A8A90]">{pet.breed}</span>
-              </div>
-              <div className="flex items-baseline gap-2.5 ml-3 shrink-0">
-                <span className="w-[1.5px] h-[14px] bg-[#BFC0C7] opacity-60" />
-                <span className="whitespace-nowrap text-[14px] font-normal text-[#8A8A90]">{pet.age} yrs</span>
+            {/* Recent moments */}
+            <div className="mb-5">
+              <h4 className="text-[15px] font-semibold text-[#111] mb-3">Recent Moments</h4>
+              <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                {[
+                  { img: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200&h=200&fit=crop', label: 'Park day' },
+                  { img: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200&h=200&fit=crop', label: 'Morning walk' },
+                  { img: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=200&h=200&fit=crop', label: 'Nap time' },
+                ].map((m, i) => (
+                  <div key={i} className="shrink-0">
+                    <img src={m.img} alt={m.label} className="w-[100px] h-[100px] rounded-[14px] object-cover" />
+                    <p className="text-[10px] text-[#A09A94] font-medium mt-1.5 text-center">{m.label}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
-              {['ABOUT', 'HEALTH', 'DOCS', 'ALERT', 'SHARE'].map((label) => (
-                <button
-                  key={label}
-                  onClick={(e) => e.stopPropagation()}
-                  className="h-[38px] rounded-full bg-[#F4F4F6] text-[11px] font-semibold tracking-[0.08em] text-[#1B1B1F] hover:bg-[#ECECEF] transition-colors"
-                >
-                  {label}
-                </button>
-              ))}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSelectPet(pet.id);
-                }}
-                className="h-[38px] rounded-full bg-[#F0F0F3] text-[#8E8E93] flex items-center justify-center hover:bg-[#E9E9ED] transition-colors"
-                aria-label={`Open ${pet.name}`}
-              >
-                <ChevronRight size={16} />
-              </button>
+            {/* Care reminders */}
+            <div>
+              <h4 className="text-[15px] font-semibold text-[#111] mb-3">Coming Up</h4>
+              <div className="space-y-2">
+                {[
+                  { pet: 'Leo', task: 'DHPP vaccine overdue', urgent: true, icon: AlertTriangle },
+                  { pet: 'Leo', task: 'Grooming in 2 weeks', urgent: false, icon: Scissors },
+                  { pet: 'Tao', task: 'Annual checkup next month', urgent: false, icon: Stethoscope },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 px-3.5 py-2.5 rounded-[14px]" style={{ background: item.urgent ? '#FFF5F0' : '#F3EFEB', border: item.urgent ? '1px solid #FFE0D0' : '1px solid #EDE8E2' }}>
+                    <item.icon size={14} className={item.urgent ? 'text-[#E85D2A]' : 'text-[#A09A94]'} />
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[13px] font-semibold text-[#111]">{item.task}</span>
+                    </div>
+                    <span className="text-[11px] font-medium text-[#A09A94]">{item.pet}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </Card>
-        ))
+          </div>
+        </div>
       )}
     </div>
   </ScreenContainer>
@@ -3625,14 +3686,7 @@ const HealthAlertBanner = React.memo(({ alert, onDismiss, onAction }) => {
       role="alert"
       aria-label={`${alert.priority} priority: ${displayTitle}`}
     >
-      <button
-        onClick={onDismiss}
-        className="absolute top-1 right-1 w-11 h-11 rounded-full flex items-center justify-center text-[#B6B6BA] active:opacity-70"
-        aria-label="Dismiss health alert"
-      >
-        <X size={16} />
-      </button>
-      <div className="pr-4 w-full flex flex-row items-center justify-between">
+      <div className="w-full flex flex-row items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <AlertTriangle size={18} className="shrink-0 text-[var(--color-accent)]" />
           <div className="flex flex-col min-w-0">
@@ -3717,12 +3771,19 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const selectedPet = MOCK_DASHBOARD_PETS.find(p => p.id === displayPetId) || MOCK_DASHBOARD_PETS[0];
   const healthAlerts = useHealthAlerts(displayPetId, true);
   const visibleHealthAlert = healthAlerts.find((alert) => !dismissedHealthAlerts.has(alert.id));
-  const handlePetSelect = (id) => { if (id === selectedPetId) return; setSelectedPetId(id); setIsFading(true); setTimeout(() => { setDisplayPetId(id); setIsFading(false); }, 200); };
+  const handlePetSelect = (id) => { if (id === selectedPetId) return; setSelectedPetId(id); setIsFading(true); setTimeout(() => { setDisplayPetId(id); requestAnimationFrame(() => requestAnimationFrame(() => setIsFading(false))); }, 300); };
   const handleCompleteReminder = (id) => {
     setCompletedReminders((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      const wasCompleted = next.has(id);
+      if (wasCompleted) next.delete(id);
+      else {
+        next.add(id);
+        // Mascot reacts to task completion
+        setMascotTapped(true);
+        setMascotMessage('Nice one!');
+        setTimeout(() => { setMascotTapped(false); setMascotMessage(null); }, 1500);
+      }
       return next;
     });
   };
@@ -3894,164 +3955,286 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
     return Calendar;
   };
 
+  // Determine the "focus card" — the most important thing right now
+  const nextReminder = filteredReminders.find(r => !completedReminders.has(r.id) && r.action === 'complete');
+  const nextBooking = filteredBookings[0];
+  const allTasksDone = filteredReminders.length > 0 && filteredReminders.every(r => completedReminders.has(r.id) || r.action !== 'complete');
+
+  // Smart mascot — reactive to context
+  const hour = new Date().getHours();
+  const [mascotTapped, setMascotTapped] = useState(false);
+  const [mascotMessage, setMascotMessage] = useState(null);
+
+  const getMascotState = () => {
+    if (mascotTapped) return { step: 3, msg: null }; // celebrating on tap
+    if (allTasksDone) return { step: 3, msg: 'All done! Great job!' };
+    if (visibleHealthAlert) return { step: 2, msg: 'Don\'t forget the vaccine!' }; // worried/thoughtful
+    if (hour >= 22 || hour < 6) return { step: 2, msg: 'Time to rest...' };
+    if (hour >= 18) return { step: 1, msg: 'How was your day?' };
+    if (nextBooking) return { step: 1, msg: 'Walk coming up!' };
+    return { step: 0, msg: null };
+  };
+  const mascotState = getMascotState();
+  const mascotStep = mascotState.step;
+  const timeLabel = hour >= 22 || hour < 6 ? 'Rest well' : hour >= 18 ? 'Wind down with' : hour >= 12 ? 'What\'s the plan for' : 'Good start with';
+
+  const handleMascotTap = () => {
+    setMascotTapped(true);
+    setMascotMessage(mascotState.msg || 'Woof!');
+    setTimeout(() => { setMascotTapped(false); setMascotMessage(null); }, 2000);
+  };
+
   return (
     <ScreenContainer>
-      <div className="px-5 pb-8 space-y-6">
-        <div className="pt-2"><h2 className="text-[24px] font-semibold text-[#111111] mb-[6px]">{calmGreeting}, {MOCK_USER.name}.</h2><p className="text-[15px] font-normal text-[#777777]">What's the plan?</p></div>
-        {MOCK_DASHBOARD_PETS.length > 1 && (
-          <div className="w-full bg-[#F5F5F5] rounded-[20px] h-[56px] p-1 flex items-center justify-between shadow-[0_6px_16px_rgba(0,0,0,0.04)] -mt-2">
-            {MOCK_DASHBOARD_PETS.map((pet) => { const isSelected = selectedPetId === pet.id; return (
-              <button
-                key={pet.id}
-                onClick={() => handlePetSelect(pet.id)}
-                className={`h-full flex-1 flex items-center justify-center gap-2 rounded-[16px] transition-all duration-200 active:scale-[0.98] ${isSelected ? 'bg-white shadow-[0_4px_12px_rgba(0,0,0,0.06)] px-3' : 'bg-transparent pl-3 pr-2'}`}
-              >
-                <img src={pet.avatar} alt={pet.name} className={`${isSelected ? 'w-[30px] h-[30px] opacity-100' : 'w-7 h-7 opacity-90'} rounded-full object-cover transition-all duration-200`} />
-                <span className={`text-[14px] font-semibold ${isSelected ? 'text-[#111111] tracking-[0.2px]' : 'text-[#888888]'}`}>{pet.name}</span>
-              </button>
-            ); })}
+      <div className="px-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
+
+        {/* ═══ TOP: Greeting + Pet ═══ */}
+        <div className="pt-2 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
+          <div className="flex items-center gap-3 mb-5">
+            <img src={selectedPet.avatar} alt={selectedPet.name} className="w-[52px] h-[52px] rounded-[16px] object-cover shadow-sm" />
+            <div className="flex-1 min-w-0">
+              <h2 className="text-[22px] font-bold text-[#111] tracking-[-0.3px] leading-tight">{calmGreeting}, {MOCK_USER.name}.</h2>
+              <p className="text-[13px] text-[#A09A94] mt-0.5">{selectedPet.name} · 18°C, great for walks</p>
+            </div>
+            <div className="shrink-0 relative" onClick={handleMascotTap} style={{ cursor: 'pointer' }}>
+              {/* Speech bubble */}
+              {mascotMessage && (
+                <div className="absolute -bottom-7 right-0 z-10 whitespace-nowrap" style={{ animation: 'homeReveal 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
+                  <div className="px-2.5 py-1 rounded-[10px] text-[10px] font-semibold text-[#6E6058]" style={{ background: '#F3EFEB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                    {mascotMessage}
+                  </div>
+                </div>
+              )}
+              <div style={{
+                transform: `scale(0.5) ${mascotTapped ? 'translateY(-4px)' : ''}`,
+                transformOrigin: 'center right',
+                animation: 'homeMascotWave 3s ease-in-out infinite',
+                transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              }}>
+                <AddPetMascot step={mascotStep} petType={selectedPet.type?.toLowerCase() || 'dog'} petName={selectedPet.name} focusedField={null} scrollProgress={0} />
+              </div>
+            </div>
           </div>
-        )}
-        <div className={`space-y-6 transition-opacity duration-200 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
-          {visibleHealthAlert && (
-            <HealthAlertBanner
-              alert={visibleHealthAlert}
-              onDismiss={() => handleDismissHealthAlert(visibleHealthAlert.id)}
-              onAction={handleHealthAlertAction}
-            />
-          )}
-          <section>
-            <div className="flex justify-between items-center mb-4"><h3 className="text-[17px] font-semibold text-[#111111]">Upcoming</h3><button onClick={() => onNavigate('services/bookings')} className="flex items-center text-[14px] font-medium text-[#6E6E73] active:opacity-70">View all <ChevronRight size={16} className="ml-0.5" /></button></div>
-            {filteredBookings.length > 0 ? (
-              <div className="space-y-3">{filteredBookings.slice(0, 2).map((b) => (
-                (() => {
-                  const statusMeta = getHomeBookingStatusMeta(b.status);
-                  const BookingIcon = getHomeBookingIcon(b.service);
-                  return (
-                <Card key={b.id} clickable className="!px-5 !py-3 active:scale-[0.98] relative overflow-visible">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#F3F3F5] border border-black/[0.05] flex items-center justify-center shrink-0 mt-3">
-                      <BookingIcon size={14} className="text-[#6E6E73]" strokeWidth={2.2} />
-                    </div>
-                    <div className="flex-1 min-w-0 pt-0.5">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <h4 className="font-semibold text-[#111111] text-[14px] leading-tight truncate">{b.walkerName}</h4>
-                        <span className="text-[14px] text-[#8E8E93] leading-none">·</span>
-                        <span className="text-[14px] font-semibold text-[#111111] leading-none">{b.walkerRating}</span>
-                        <Star size={11} className="fill-[#FF6B35] text-[#FF6B35] shrink-0" />
-                      </div>
-                      <p className="text-[13px] text-[#6E6E73] mt-0.5 leading-tight truncate">{b.service} · {selectedPet.name}</p>
-                    </div>
-                    <span className={`h-[18px] px-2.5 rounded-full text-[9px] font-semibold tracking-[0.03em] border inline-flex items-center leading-none self-start mt-1 ${statusMeta.className}`}>
-                      {statusMeta.label}
-                    </span>
-                  </div>
-                  <div className="mt-2 pl-[44px] flex items-center justify-between gap-2 text-[12px] text-[#8E8E93] leading-tight">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <Calendar size={12} className="text-[#A1A1A6] shrink-0" />
-                      <span className="truncate">{formatDateTime(b.date)}</span>
-                    </div>
-                    <ChevronRight size={13} className="text-[#B0B0B5] shrink-0" />
-                  </div>
-                </Card>
-                  );
-                })()
-              ))}</div>
-            ) : <Card className="!p-0 overflow-hidden"><EmptyState icon={Calendar} title="No upcoming bookings" description="Book your first walk to get started." /></Card>}
-          </section>
-          <section className="grid grid-cols-3 gap-2">
-            <Card clickable onClick={() => onNavigate('services')} className="!px-2.5 !py-2 flex flex-col items-center justify-center gap-1.5 text-center h-[86px] !rounded-[18px] bg-[#FCFCFA] border border-black/[0.02]"><div className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[#FF6B35]"><PawPrint size={19} strokeWidth={2} /></div><span className="text-[12px] font-medium text-[#58585F]">Book Walk</span></Card>
-            <Card clickable onClick={() => { window.location.href = '/photo-gallery'; }} className="!px-2.5 !py-2 flex flex-col items-center justify-center gap-1.5 text-center h-[86px] !rounded-[18px] bg-[#FCFCFA] border border-black/[0.02]"><div className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[#8E8E93]"><Camera size={19} strokeWidth={2} /></div><span className="text-[12px] font-medium text-[#58585F]">Add Photo</span></Card>
-            <Card clickable onClick={() => setMedSheetOpen(true)} className="!px-2.5 !py-2 flex flex-col items-center justify-center gap-1.5 text-center h-[86px] !rounded-[18px] bg-[#FCFCFA] border border-black/[0.02]"><div className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[#8E8E93]"><Pill size={19} strokeWidth={2} /></div><span className="text-[12px] font-medium text-[#58585F]">Log Med</span></Card>
-          </section>
-          {filteredReminders.length > 0 && (
-            <section><div className="flex justify-between items-center mb-4"><h3 className="text-[17px] font-semibold text-[#111111]">Today</h3><button onClick={openQuickLogModal} className="w-7 h-7 rounded-full border border-black/[0.05] bg-white text-[#8E8E93] flex items-center justify-center active:opacity-70" aria-label="Add activity"><Plus size={14} /></button></div>
-              <div className="space-y-0">{filteredReminders.map((r, index) => {
-                const Icon = getTimelineIcon(r.type);
-                const isDone = completedReminders.has(r.id);
-                const isExpandable = r.action === 'expand';
-                const isExpanded = expandedHomeRows.has(r.id);
-                const showIncompleteDot = r.action === 'complete' && !isDone;
-                return (
-                <div
-                  key={r.id}
-                  onClick={() => isExpandable && handleToggleHomeExpand(r.id)}
-                  className={`py-2.5 ${index < filteredReminders.length - 1 ? 'border-b border-black/[0.08]' : ''} ${isExpandable ? 'cursor-pointer' : ''}`}
+
+          {/* Pet switcher — only if multiple pets */}
+          {MOCK_DASHBOARD_PETS.length > 1 && (
+            <div className="flex gap-2 mb-1">
+              {MOCK_DASHBOARD_PETS.map((pet) => { const isSelected = selectedPetId === pet.id; return (
+                <button
+                  key={pet.id}
+                  onClick={() => handlePetSelect(pet.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 active:scale-[0.97] ${isSelected ? 'bg-[#111] text-white' : 'bg-[#F3EFEB] text-[#A09A94]'}`}
                 >
-                  <div className={`flex items-center gap-3 ${isDone ? 'opacity-70' : ''}`}>
-                    <div className="w-[64px] shrink-0 text-[12px] font-semibold text-[#76767D] tracking-[0.2px] leading-none whitespace-nowrap">{r.time}</div>
-                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                      <div className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0 bg-[#F5F5F7]">
-                        <Icon size={15} className="text-[#6E6E73]" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-[14px] truncate leading-none flex items-center gap-1.5 font-semibold text-[#111111]">
-                          {r.title}
-                          {(r.isNew || showIncompleteDot) && <span className="w-[5px] h-[5px] rounded-full bg-[#FF6A3D] shrink-0" />}
+                  <img src={pet.avatar} alt={pet.name} className="w-5 h-5 rounded-full object-cover" />
+                  <span className="text-[12px] font-semibold">{pet.name}</span>
+                </button>
+              ); })}
+            </div>
+          )}
+        </div>
+
+        {/* ═══ THE FOCUS CARD ═══ */}
+        <div className={`flex-1 flex flex-col gap-4 transition-all duration-[350ms] ${isFading ? 'opacity-0 scale-[0.98] translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
+
+          {/* Priority alert if exists */}
+          {visibleHealthAlert && (
+            <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#FFF5F0', border: '1px solid #FFE0D0', animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }} onClick={handleHealthAlertAction}>
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#FFE0D0] flex items-center justify-center shrink-0">
+                  <AlertTriangle size={18} className="text-[#E85D2A]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[16px] font-bold text-[#111]">Vaccine overdue</h3>
+                  <p className="text-[13px] text-[#A09A94] mt-1">DHPP · 2 days late</p>
+                </div>
+                <span className="text-[13px] font-semibold text-[#E85D2A] flex items-center gap-1 shrink-0 mt-1">Review <ArrowRight size={13} /></span>
+              </div>
+            </div>
+          )}
+
+          {/* Next up card — the ONE thing to focus on */}
+          {nextBooking && (
+            <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div className="text-[10px] font-bold text-[#B5AFA8] uppercase tracking-[0.08em] mb-3">Next up</div>
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-[#EDE8E2] shrink-0">
+                  <PawPrint size={18} className="text-[#8E8580]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[16px] font-bold text-[#111] leading-tight">{nextBooking.service}</h3>
+                  <p className="text-[13px] text-[#A09A94] mt-0.5">{nextBooking.walkerName} · {formatDateTime(nextBooking.date)}</p>
+                </div>
+                <div className={`h-[22px] px-2.5 rounded-full text-[10px] font-semibold border inline-flex items-center ${getHomeBookingStatusMeta(nextBooking.status).className}`}>
+                  {nextBooking.status}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Today's tasks — compact */}
+          {nextReminder && (
+            <div className="rounded-[20px] p-5" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div className="text-[10px] font-bold text-[#B5AFA8] uppercase tracking-[0.08em] mb-3">Today · {filteredReminders.filter(r => !completedReminders.has(r.id)).length} remaining</div>
+              <div className="space-y-2">
+                {filteredReminders.slice(0, 3).map((r) => {
+                  const Icon = getTimelineIcon(r.type);
+                  const isDone = completedReminders.has(r.id);
+                  const canSwipe = r.action === 'complete' && !isDone;
+                  return (
+                    <div key={r.id} className="relative overflow-hidden rounded-[12px]">
+                      {/* Swipe reveal background */}
+                      {canSwipe && (
+                        <div className="absolute inset-0 bg-[#E85D2A] flex items-center pl-4 rounded-[12px]">
+                          <Check size={16} className="text-white" strokeWidth={2.5} />
+                          <span className="text-white text-[12px] font-semibold ml-1.5">Done</span>
                         </div>
-                        {r.subtitle ? <div className="text-[13px] text-[#6E6E73] truncate mt-1">{r.subtitle}</div> : null}
-                      </div>
-                    </div>
-                    <div className="shrink-0 flex items-center justify-center min-w-[40px]">
-                      {r.action === 'complete' ? (
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleCompleteReminder(r.id); }}
-                          className={`w-[22px] h-[22px] rounded-full border inline-flex items-center justify-center transition-all duration-[200ms] ${isDone ? 'bg-[#FF6A3D] border-[#FF6A3D] scale-105' : 'bg-transparent border-black/[0.16] hover:border-[#FF6A3D]/40'}`}
-                          aria-label={`Mark ${r.title} as done`}
-                        >
-                          {isDone && <Check size={13} className="text-white" strokeWidth={2.8} />}
-                        </button>
-                      ) : r.action === 'expand' ? (
-                        <ChevronRight size={14} className={`text-[#B6B6BC] transition-transform duration-[250ms] ${isExpanded ? 'rotate-90 text-[#FF6A3D]' : ''}`} />
-                      ) : (
-                        <span className="w-4 h-4" />
                       )}
-                    </div>
-                  </div>
-                  {isExpandable && (
-                    <div
-                      className="overflow-hidden transition-all duration-[250ms]"
-                      style={{
-                        maxHeight: isExpanded ? (r.photoUrl ? '220px' : '160px') : '0px',
-                        opacity: isExpanded ? 1 : 0,
-                        transform: `translateY(${isExpanded ? '0px' : '-4px'})`,
-                        transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
-                      }}
-                    >
-                      <div className="pl-[99px] pr-2 pt-2.5">
-                        {r.photoUrl ? (
-                          <div className="rounded-[12px] overflow-hidden bg-[#F7F7F8] border border-black/[0.04]">
-                            <img src={r.photoUrl} alt={r.title} className="w-full h-[140px] object-cover" />
-                          </div>
-                        ) : (
-                          <div className="rounded-[10px] bg-[#F7F7F8] border border-black/[0.04] px-3 py-2.5">
-                            <p className="text-[12px] text-[#5D5D64] leading-[1.4]">{r.details}</p>
-                            {Array.isArray(r.detailsMeta) && r.detailsMeta.length > 0 && (
-                              <div className="mt-2 space-y-0.5">
-                                {r.detailsMeta.map((metaLine) => (
-                                  <p key={metaLine} className="text-[11px] text-[#8E8E93] leading-[1.35]">{metaLine}</p>
-                                ))}
-                              </div>
-                            )}
-                            {r.expandActionLabel && (
-                              <button className="mt-2 text-[11px] font-semibold text-[#FF6A3D] active:opacity-70">{r.expandActionLabel}</button>
-                            )}
-                          </div>
+                      <div
+                        className={`relative flex items-center gap-3 py-2.5 px-1 bg-[#F7F5F2] transition-all duration-200 ${isDone ? 'opacity-40' : ''}`}
+                        style={{ touchAction: canSwipe ? 'pan-y' : 'auto' }}
+                        onTouchStart={canSwipe ? (e) => {
+                          const startX = e.touches[0].clientX;
+                          const el = e.currentTarget;
+                          el._startX = startX;
+                          el._moved = false;
+                        } : undefined}
+                        onTouchMove={canSwipe ? (e) => {
+                          const el = e.currentTarget;
+                          const dx = e.touches[0].clientX - (el._startX || 0);
+                          if (dx > 0 && dx < 120) {
+                            el.style.transform = `translateX(${dx}px)`;
+                            el.style.transition = 'none';
+                            el._moved = true;
+                          }
+                        } : undefined}
+                        onTouchEnd={canSwipe ? (e) => {
+                          const el = e.currentTarget;
+                          const dx = parseInt(el.style.transform?.replace(/[^0-9-]/g, '') || '0');
+                          if (dx > 70) {
+                            el.style.transition = 'transform 0.3s cubic-bezier(0.22,1,0.36,1)';
+                            el.style.transform = 'translateX(100%)';
+                            setTimeout(() => handleCompleteReminder(r.id), 250);
+                          } else {
+                            el.style.transition = 'transform 0.3s cubic-bezier(0.22,1,0.36,1)';
+                            el.style.transform = 'translateX(0)';
+                          }
+                        } : undefined}
+                      >
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isDone ? 'bg-[#EDEAE6]' : 'bg-[#EDE8E2]'}`}>
+                          <Icon size={14} className={isDone ? 'text-[#C4BBB3]' : 'text-[#8E8580]'} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className={`text-[14px] font-semibold ${isDone ? 'text-[#A09A94] line-through' : 'text-[#111]'}`}>{r.title}</span>
+                          <span className="text-[12px] text-[#A09A94] ml-2">{r.time}</span>
+                        </div>
+                        {r.action === 'complete' && (
+                          <button
+                            onClick={() => handleCompleteReminder(r.id)}
+                            className={`w-[24px] h-[24px] rounded-full border-2 inline-flex items-center justify-center transition-all duration-200 ${isDone ? 'bg-[#E85D2A] border-[#E85D2A] scale-110' : 'border-[#D4CCC4] active:scale-90'}`}
+                          >
+                            {isDone && <Check size={13} className="text-white" strokeWidth={3} />}
+                          </button>
                         )}
                       </div>
                     </div>
-                  )}
-                </div>
-              ); })}</div>
-            </section>
+                  );
+                })}
+              </div>
+              {filteredReminders.length > 3 && (
+                <button onClick={openQuickLogModal} className="mt-3 text-[12px] font-semibold text-[#E85D2A] active:opacity-70">See all tasks <ArrowRight size={11} className="inline ml-0.5" /></button>
+              )}
+            </div>
           )}
+
+          {/* Streak + Quick actions inline */}
+          <div className="flex items-center gap-3 pt-1" style={{ animation: 'homeReveal 0.4s 0.25s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <div className="flex items-center gap-1.5 px-3 py-2 rounded-full" style={{ background: '#FFF5F0' }}>
+              <Activity size={13} className="text-[#E85D2A]" />
+              <span className="text-[11px] font-bold text-[#E85D2A]">45-day streak</span>
+            </div>
+            <div className="flex-1" />
+            <button onClick={() => onNavigate('services')} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.92] transition-transform" style={{ background: '#F3EFEB' }}>
+              <PawPrint size={16} className="text-[#E85D2A]" />
+            </button>
+            <button onClick={() => { window.location.href = '/photo-gallery'; }} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.92] transition-transform" style={{ background: '#F3EFEB' }}>
+              <Camera size={16} className="text-[#A09A94]" />
+            </button>
+            <button onClick={() => setMedSheetOpen(true)} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.92] transition-transform" style={{ background: '#F3EFEB' }}>
+              <Pill size={16} className="text-[#A09A94]" />
+            </button>
+          </div>
+
+          {/* ═══ DISCOVERY: Scroll reveals more ═══ */}
+          <div className="h-[1px] bg-[#EDE8E2] my-1" />
+
+          {/* Services row */}
+          <div style={{ animation: 'homeReveal 0.4s 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-[15px] font-semibold text-[#111]">Services</h3>
+              <button onClick={() => onNavigate('services')} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">Browse all</button>
+            </div>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { label: 'Walking', icon: PawPrint, color: '#E85D2A' },
+                { label: 'Sitting', icon: Home, color: '#A09A94' },
+                { label: 'Grooming', icon: Scissors, color: '#A09A94' },
+                { label: 'Vet', icon: Stethoscope, color: '#A09A94' },
+              ].map((svc, i) => (
+                <button key={i} onClick={() => onNavigate('services')} className="flex flex-col items-center gap-1.5 py-2.5 rounded-[14px] active:scale-[0.96] transition-transform" style={{ background: '#F3EFEB' }}>
+                  <svc.icon size={18} className={`text-[${svc.color}]`} style={{ color: svc.color }} />
+                  <span className="text-[11px] font-semibold text-[#6E6058]">{svc.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Suggested */}
           {filteredSuggestions.length > 0 && (
-            <section className="mt-6"><h3 className="text-[17px] font-semibold text-[#111111] mb-4">Suggested</h3>
-              <div className="space-y-4">{filteredSuggestions.slice(0, 2).map(s => (
-                <Card key={s.id} className="!p-4 flex items-center gap-4"><div className="w-[48px] h-[48px] rounded-full bg-[#F7F7F8] flex items-center justify-center shrink-0">{renderLegacyIcon(s.icon, 20, 'text-[#6E6E73]')}</div><div className="flex flex-col flex-1 min-w-0"><span className="text-[15px] font-semibold text-[#111111] truncate">{s.title}</span><span className="text-[13px] text-[#6E6E73] truncate">{s.context}</span></div><button onClick={() => onNavigate('services')} className="text-[14px] font-medium text-[#FF6B35]/85 flex items-center gap-1 active:opacity-70">Book <ArrowRight size={14} /></button></Card>
-              ))}</div>
-            </section>
+            <div style={{ animation: 'homeReveal 0.4s 0.35s cubic-bezier(0.22,1,0.36,1) both' }}>
+              {filteredSuggestions.slice(0, 1).map(s => (
+                <div key={s.id} className="rounded-[16px] p-4 flex items-center gap-3 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F3EFEB' }}>
+                  <div className="w-10 h-10 rounded-[12px] bg-[#EDE8E2] flex items-center justify-center shrink-0">{renderLegacyIcon(s.icon, 18, 'text-[#8E8580]')}</div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[14px] font-semibold text-[#111] truncate block">{s.title}</span>
+                    <span className="text-[12px] text-[#A09A94] truncate block">{s.context}</span>
+                  </div>
+                  <button onClick={() => onNavigate('services')} className="text-[12px] font-semibold text-[#E85D2A] flex items-center gap-1 shrink-0">Book <ArrowRight size={12} /></button>
+                </div>
+              ))}
+            </div>
           )}
+
+          {/* Nearby Friends — compact */}
+          <div style={{ animation: 'homeReveal 0.4s 0.4s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-[15px] font-semibold text-[#111]">Nearby</h3>
+              <button className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">See all</button>
+            </div>
+            <div className="flex gap-3 overflow-x-auto -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+              {[
+                { name: 'Milo', distance: '200m', avatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=100&h=100&fit=crop' },
+                { name: 'Luna', distance: '350m', avatar: 'https://images.unsplash.com/photo-1601979031925-424e53b6caaa?w=100&h=100&fit=crop' },
+                { name: 'Max', distance: '500m', avatar: 'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?w=100&h=100&fit=crop' },
+              ].map((f, i) => (
+                <div key={i} className="flex flex-col items-center gap-1 min-w-[60px]">
+                  <div className="relative">
+                    <img src={f.avatar} alt={f.name} className="w-[44px] h-[44px] rounded-full object-cover border-2 border-white shadow-sm" />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#34C759] border-[1.5px] border-white" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-[#111]">{f.name}</span>
+                  <span className="text-[10px] text-[#A09A94]">{f.distance}</span>
+                </div>
+              ))}
+              <div className="flex flex-col items-center justify-center gap-1 min-w-[60px]">
+                <div className="w-[44px] h-[44px] rounded-full border-[1.5px] border-dashed border-[#DDD8D2] flex items-center justify-center">
+                  <Plus size={15} className="text-[#C4B5A6]" />
+                </div>
+                <span className="text-[10px] font-medium text-[#C4B5A6]">More</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="h-6" />
         </div>
       </div>
       {quickLogModalOpen && (
@@ -10238,7 +10421,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [displayTab, setDisplayTab] = useState('home');
   const [isFading, setIsFading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => !window.__fylosPetPending);
   
   // App-level state for Pets Module
   const [petsData, setPetsData] = useState(INITIAL_MOCK_PETS);
@@ -10258,11 +10441,46 @@ export default function App() {
   const [appNotifications, setAppNotifications] = useState(APP_NOTIFICATIONS);
   const [joinedWaitlists, setJoinedWaitlists] = useState(new Set());
   const [isTabBarVisible, setIsTabBarVisible] = useState(true);
+  const [celebration, setCelebration] = useState(null);
   const lastMainScrollYRef = useRef(0);
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800);
   }, []);
+  // Detect new pet from Add Pet flow — branded loading → celebration overlay
+  const startCelebration = useCallback((petData) => {
+    const { name, petType, photo } = petData;
+    setCelebration({ name, petType, photo, phase: 'loading' });
+    setTimeout(() => setCelebration(prev => prev ? { ...prev, phase: 'celebrate' } : null), 1600);
+    setTimeout(() => setCelebration(prev => prev ? { ...prev, phase: 'fadeout' } : null), 5200);
+    setTimeout(() => {
+      setCelebration(null);
+      setToastMessage(`${name} added! Tap to complete their profile`);
+      setTimeout(() => setToastMessage(null), 5000);
+    }, 5800);
+  }, []);
+
+  // On mount: check if we came from add-pet
+  useEffect(() => {
+    if (window.__fylosPetPending) {
+      const data = window.__fylosPetPending;
+      delete window.__fylosPetPending;
+      startCelebration(data);
+    }
+  }, [startCelebration]);
+
+  // Also listen for event (fallback)
+  useEffect(() => {
+    const handleNewPet = (e) => {
+      const name = e.detail?.name || 'Pet';
+      const petType = e.detail?.petType || 'dog';
+      const photo = e.detail?.photo || null;
+      setIsLoading(false);
+      startCelebration({ name, petType, photo });
+    };
+    window.addEventListener('fylos-pet-added', handleNewPet);
+    return () => window.removeEventListener('fylos-pet-added', handleNewPet);
+  }, [startCelebration]);
   useEffect(() => {
     const handleMainScroll = (event) => {
       const currentY = event?.detail?.scrollTop ?? 0;
@@ -10469,6 +10687,88 @@ export default function App() {
         }
         .animate-spring-bump { animation: springBump 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 
+        /* Home staggered entrance */
+        @keyframes homeReveal {
+          from { opacity: 0; transform: translateY(14px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home mascot gentle wave */
+        @keyframes homeMascotWave {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          25% { transform: translateY(-2px) rotate(2deg); }
+          75% { transform: translateY(1px) rotate(-1deg); }
+        }
+
+        /* Pet Added Celebration — Mascot keyframes */
+        @keyframes ap-mascotEntry {
+          0% { opacity: 0; transform: scale(0.6) translateY(10px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes ap-glowPulse {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+          50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+        }
+        @keyframes ap-sparkle {
+          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        @keyframes ap-confetti {
+          0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+          50% { transform: translateY(-5px) rotate(180deg); opacity: 0.8; }
+        }
+        /* Pet Added Celebration Overlay Animations */
+        @keyframes celebOverlayIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes celebOverlayOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+        @keyframes celebLetterReveal {
+          from { opacity: 0; transform: translateY(12px) scale(0.7); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes celebDotPop {
+          from { opacity: 0; transform: scale(0); }
+          60% { opacity: 1; transform: scale(1.6); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes celebPawStep {
+          from { opacity: 0; transform: translateY(20px) scale(0.6) rotate(-15deg); }
+          60% { opacity: 0.08; }
+          to { opacity: 0.06; transform: translateY(0) scale(1) rotate(0deg); }
+        }
+        @keyframes celebSpin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes celebArcGrow {
+          from { stroke-dasharray: 0 100; }
+          to { stroke-dasharray: 75 25; }
+        }
+        @keyframes celebBounceIn {
+          from { opacity: 0; transform: scale(0.3) translateY(20px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes celebFadeUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes celebConfettiFall {
+          0% { opacity: 0; transform: translateY(-20px) rotate(0deg); }
+          15% { opacity: 1; }
+          100% { opacity: 0; transform: translateY(700px) rotate(720deg); }
+        }
+        @keyframes celebDotPulse {
+          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        @keyframes celebRingBurst {
+          from { transform: scale(0); opacity: 0.4; }
+          to { transform: scale(2.5); opacity: 0; }
+        }
+
         /* Step 4 Energy Slider Custom CSS */
         .energy-slider {
           -webkit-appearance: none;
@@ -10657,6 +10957,205 @@ export default function App() {
                 })
               }
             />
+
+            {/* Pet Added — Branded Loading → Celebration Overlay */}
+            {celebration && (
+              <div style={{
+                position: 'absolute', inset: 0, zIndex: 400,
+                background: celebration.phase === 'loading'
+                  ? 'var(--color-background, #FBF9F7)'
+                  : 'rgba(251,249,247,0.45)',
+                backdropFilter: celebration.phase === 'loading' ? 'none' : 'blur(10px)',
+                WebkitBackdropFilter: celebration.phase === 'loading' ? 'none' : 'blur(10px)',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                transition: 'background 0.6s ease, backdrop-filter 0.6s ease',
+                animation: celebration.phase === 'fadeout'
+                  ? 'celebOverlayOut 0.6s ease-in both'
+                  : 'celebOverlayIn 0.3s ease-out both',
+              }}>
+
+                {/* ═══ PHASE 1: Branded Loading ═══ */}
+                {celebration.phase === 'loading' && (
+                  <div style={{
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center',
+                    animation: 'celebOverlayIn 0.2s ease-out both',
+                  }}>
+                    {/* Animated paw prints walking up */}
+                    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+                      {[0, 1, 2, 3, 4].map(i => (
+                        <div key={i} style={{
+                          position: 'absolute',
+                          left: `${30 + (i % 2 === 0 ? -8 : 8)}%`,
+                          bottom: `${-10 + i * 18}%`,
+                          opacity: 0,
+                          animation: `celebPawStep 0.4s ${i * 0.2}s ease-out both`,
+                        }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" opacity="0.08">
+                            <ellipse cx="12" cy="16" rx="5" ry="4.5" fill="#E85D2A" />
+                            <circle cx="7" cy="10" r="2.2" fill="#E85D2A" />
+                            <circle cx="17" cy="10" r="2.2" fill="#E85D2A" />
+                            <circle cx="10" cy="7" r="2" fill="#E85D2A" />
+                            <circle cx="14" cy="7" r="2" fill="#E85D2A" />
+                          </svg>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* FYLOS logo — letter-by-letter reveal */}
+                    <div style={{
+                      display: 'flex', alignItems: 'center',
+                      gap: 2,
+                      fontFamily: '"Nunito", sans-serif',
+                    }}>
+                      {'FYLOS'.split('').map((letter, i) => (
+                        <span key={i} style={{
+                          fontSize: 38, fontWeight: 800,
+                          color: 'var(--color-primary-text, #111)',
+                          display: 'inline-block',
+                          opacity: 0,
+                          animation: `celebLetterReveal 0.35s ${i * 0.08}s cubic-bezier(0.34, 1.56, 0.64, 1) both`,
+                        }}>{letter}</span>
+                      ))}
+                      <div style={{
+                        width: 9, height: 9,
+                        borderRadius: 9999,
+                        backgroundColor: '#FF6B35',
+                        marginLeft: 3,
+                        opacity: 0,
+                        animation: 'celebDotPop 0.5s 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both',
+                      }} />
+                    </div>
+
+                    {/* Warm tagline */}
+                    <p style={{
+                      fontSize: 14,
+                      color: 'var(--color-tertiary-text, #8E8E93)',
+                      fontFamily: '"Nunito", sans-serif',
+                      fontWeight: 600,
+                      marginTop: 10,
+                      opacity: 0,
+                      animation: 'celebFadeUp 0.4s 0.6s ease-out both',
+                    }}>Saving {celebration.name}'s profile...</p>
+
+                    {/* Animated progress arc */}
+                    <div style={{ marginTop: 28, opacity: 0, animation: 'celebFadeUp 0.3s 0.7s ease-out both' }}>
+                      <svg width="40" height="40" viewBox="0 0 40 40" style={{ animation: 'celebSpin 1.2s linear infinite' }}>
+                        <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(232,93,42,0.12)" strokeWidth="3" />
+                        <circle cx="20" cy="20" r="16" fill="none" stroke="#E85D2A" strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeDasharray="75 25"
+                          style={{ animation: 'celebArcGrow 1s 0.8s ease-out both' }}
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+
+                {/* ═══ PHASE 2: Celebration ═══ */}
+                {(celebration.phase === 'celebrate' || celebration.phase === 'fadeout') && (
+                  <>
+                    {/* Confetti burst */}
+                    {Array.from({ length: 32 }).map((_, i) => {
+                      const colors = ['#E85D2A', '#FF7240', '#FFD700', '#34C759', '#FF6B8A', '#7C5CFC', '#5AC8FA'];
+                      const color = colors[i % colors.length];
+                      const left = 5 + Math.random() * 90;
+                      const delay = Math.random() * 0.6;
+                      const duration = 2.2 + Math.random() * 1.5;
+                      const size = 4 + Math.random() * 7;
+                      const rotation = Math.random() * 360;
+                      return (
+                        <div key={i} style={{
+                          position: 'absolute',
+                          left: `${left}%`,
+                          top: '-5%',
+                          width: size,
+                          height: size * (Math.random() > 0.5 ? 1 : 2.8),
+                          background: color,
+                          borderRadius: Math.random() > 0.5 ? 9999 : 2,
+                          transform: `rotate(${rotation}deg)`,
+                          animation: `celebConfettiFall ${duration}s ${delay}s cubic-bezier(0.25, 0.46, 0.45, 0.94) both`,
+                          opacity: 0,
+                        }} />
+                      );
+                    })}
+
+                    {/* Radial burst ring */}
+                    <div style={{
+                      position: 'absolute',
+                      width: 200, height: 200,
+                      borderRadius: 9999,
+                      border: '2px solid rgba(232,93,42,0.15)',
+                      animation: 'celebRingBurst 0.8s ease-out both',
+                    }} />
+
+                    {/* Mascot */}
+                    <div style={{
+                      animation: 'celebBounceIn 0.6s 0.1s cubic-bezier(0.22,1,0.36,1) both',
+                      transform: 'scale(1.3)',
+                    }}>
+                      <AddPetMascot step={3} petType={celebration.petType} petName={celebration.name} focusedField={null} scrollProgress={0} />
+                    </div>
+
+                    {/* Avatar */}
+                    <div style={{
+                      width: 76, height: 76, borderRadius: 9999, overflow: 'hidden',
+                      border: '3px solid #E85D2A',
+                      boxShadow: '0 8px 32px rgba(232,93,42,0.25), 0 0 0 6px rgba(232,93,42,0.08)',
+                      marginTop: 16,
+                      animation: 'celebBounceIn 0.5s 0.25s cubic-bezier(0.22,1,0.36,1) both',
+                    }}>
+                      {celebration.photo ? (
+                        <img src={celebration.photo} alt={celebration.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <div style={{
+                          width: '100%', height: '100%',
+                          background: 'linear-gradient(135deg, #FF7240, #E85D2A)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}>
+                          <span style={{ fontSize: 30, fontWeight: 800, color: '#FFF', fontFamily: '"Nunito", sans-serif' }}>
+                            {(celebration.name || '?').charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Text */}
+                    <h2 style={{
+                      fontSize: 28, fontWeight: 900, color: '#111',
+                      fontFamily: '"Nunito", sans-serif',
+                      marginTop: 20, textAlign: 'center',
+                      animation: 'celebFadeUp 0.5s 0.4s cubic-bezier(0.22,1,0.36,1) both',
+                    }}>{celebration.name} is in!</h2>
+                    <p style={{
+                      fontSize: 15, color: '#8E8E93',
+                      fontFamily: '"Nunito", sans-serif',
+                      fontWeight: 500,
+                      marginTop: 6, textAlign: 'center',
+                      animation: 'celebFadeUp 0.5s 0.5s cubic-bezier(0.22,1,0.36,1) both',
+                    }}>Welcome to the family</p>
+
+                    {/* Paw trail dots */}
+                    <div style={{
+                      display: 'flex', gap: 8, marginTop: 32,
+                      animation: 'celebFadeUp 0.5s 0.65s cubic-bezier(0.22,1,0.36,1) both',
+                    }}>
+                      {[0, 1, 2].map(i => (
+                        <svg key={i} width="10" height="10" viewBox="0 0 24 24" fill="none"
+                          style={{ animation: `celebDotPulse 1.2s ${i * 0.2}s ease-in-out infinite` }}>
+                          <ellipse cx="12" cy="16" rx="4.5" ry="4" fill="#E85D2A" />
+                          <circle cx="7.5" cy="10.5" r="2" fill="#E85D2A" />
+                          <circle cx="16.5" cy="10.5" r="2" fill="#E85D2A" />
+                          <circle cx="10" cy="7.5" r="1.8" fill="#E85D2A" />
+                          <circle cx="14" cy="7.5" r="1.8" fill="#E85D2A" />
+                        </svg>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
 
             <AnimationsOverlay isOpen={animationsOpen} onClose={() => setAnimationsOpen(false)} />
           </>
