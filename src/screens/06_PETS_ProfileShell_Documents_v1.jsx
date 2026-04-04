@@ -1003,16 +1003,16 @@ const Avatar = ({ src, initials, size = 48, badge, badgeColor = THEME.colors.dan
 const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = true, icon: Icon, isLoading, disabled, className = '', ...props }) => {
   const baseStyles = "relative flex items-center justify-center font-medium transition-all duration-[var(--motion-fast)] ease-[var(--ease-default)] active:scale-[0.97] overflow-hidden gap-2 outline-none";
   const variants = {
-    primary: "bg-gradient-to-b from-[#FF7240] to-[var(--color-accent)] text-white shadow-[var(--shadow-level-1)] hover:opacity-95",
-    secondary: "bg-[var(--color-surface)] text-[var(--color-primary-text)] shadow-[var(--shadow-level-1)] hover:bg-[var(--color-surface-hover)]",
-    destructive: "bg-[var(--color-danger-bg)] text-[var(--color-danger)] hover:bg-[#FFE5E5]",
-    destructiveOutline: "bg-[var(--color-surface)] text-[var(--color-danger)] border-[1px] border-[var(--color-danger)]/30 hover:bg-[#FFF5F5]",
-    ghost: "bg-transparent text-[var(--color-secondary-text)] hover:bg-[var(--color-surface-hover)]"
+    primary: "bg-[#E85D2A] text-white hover:opacity-95",
+    secondary: "bg-[#F3EFEB] text-[#6E6058] border border-[#EDE8E2]",
+    destructive: "bg-[#FFF5F0] text-[#E85D2A] border border-[#FFE0D0]",
+    destructiveOutline: "bg-transparent text-[#E85D2A] border border-[#FFE0D0]",
+    ghost: "bg-transparent text-[#A09A94]"
   };
   const sizes = {
-    small: "px-3 py-2 text-[14px] rounded-[12px]",
-    medium: "px-4 py-[14px] text-[16px] rounded-[16px]",
-    large: "px-6 py-4 text-[18px] rounded-[20px]"
+    small: "px-3 py-2 text-[13px] rounded-[10px]",
+    medium: "px-4 py-3 text-[14px] rounded-[12px]",
+    large: "px-6 py-3.5 text-[15px] rounded-[14px]"
   };
   const isDisabled = disabled || isLoading;
   const disabledStyles = isDisabled ? "bg-[var(--color-surface-hover)] text-[var(--color-tertiary-text)] shadow-none cursor-not-allowed active:scale-100" : "";
@@ -1056,12 +1056,13 @@ const Card = ({ variant = 'default', clickable, children, className = '', ...pro
 
 const TextInput = ({ label, error, helperText, disabled, className = '', ...props }) => (
   <div className={`flex flex-col gap-1.5 w-full ${className} ${disabled ? 'opacity-50' : ''}`}>
-    {label && <label className="text-[13px] font-medium text-[var(--color-secondary-text)] ml-1">{label}</label>}
-    <input 
+    {label && <label className="text-[12px] font-semibold text-[#A09A94] ml-0.5">{label}</label>}
+    <input
       disabled={disabled}
-      className={`w-full h-[52px] px-4 bg-[var(--color-background)] border text-[16px] text-[var(--color-primary-text)] rounded-[var(--radius-md)] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[var(--color-accent)]/10 ${
-        error ? 'border-[var(--color-danger)] focus:border-[var(--color-danger)]' : 'border-[var(--color-border)] focus:border-[var(--color-accent)]'
-      } placeholder:text-[var(--color-tertiary-text)]`}
+      className={`w-full h-[46px] px-4 text-[15px] font-medium text-[#111] rounded-[12px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E85D2A]/15 ${
+        error ? 'border-[#E85D2A] focus:border-[#E85D2A]' : 'border-[#EDE8E2] focus:border-[#E85D2A]'
+      } placeholder:text-[#C4BBB3]`}
+      style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
       {...props}
     />
     {error ? (
@@ -1113,128 +1114,55 @@ const Select = ({ label, options = [], value, onChange, disabled, className = ''
   </div>
 );
 
-const BottomSheet = ({ isOpen, onClose, title, footer, snap = 'default', lockExpanded = false, fixedHeight = null, bodyScrollable = true, children }) => {
+/* Card Modal — centered, for edit/save actions */
+const CardModal = ({ isOpen, onClose, title, footer, children }) => {
   const [render, setRender] = useState(isOpen);
   const [visible, setVisible] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const touchStartY = useRef(0);
-  const [translateY, setTranslateY] = useState(0);
-
   useEffect(() => {
-    if (isOpen) {
-      setRender(true);
-      setIsExpanded(false);
-      setTranslateY(0);
-      const t = setTimeout(() => setVisible(true), 50);
-      return () => clearTimeout(t);
-    } else {
-      setVisible(false);
-      const t = setTimeout(() => {
-        setRender(false);
-        setIsExpanded(false);
-        setTranslateY(0);
-      }, 400);
-      return () => clearTimeout(t);
-    }
+    if (isOpen) { setRender(true); const t = setTimeout(() => setVisible(true), 30); return () => clearTimeout(t); }
+    else { setVisible(false); const t = setTimeout(() => setRender(false), 300); return () => clearTimeout(t); }
   }, [isOpen]);
-
-  const handlePointerDown = (e) => {
-    touchStartY.current = e.clientY || (e.touches && e.touches[0].clientY);
-    setTranslateY(0);
-  };
-
-  const handlePointerMove = (e) => {
-    if (touchStartY.current === 0) return;
-    const currentY = e.clientY || (e.touches && e.touches[0].clientY);
-    const delta = currentY - touchStartY.current;
-    if (delta < 0) {
-      if (!lockExpanded && snap !== 'compact' && !isExpanded) {
-        setTranslateY(delta);
-        if (delta < -40) {
-          setIsExpanded(true);
-          setTranslateY(0);
-          touchStartY.current = currentY;
-        }
-      } else {
-        setTranslateY(delta * 0.15);
-      }
-    } else {
-      if (isExpanded) {
-        setTranslateY(delta);
-        if (delta > 60) {
-          setIsExpanded(false);
-          setTranslateY(0);
-          touchStartY.current = currentY;
-        }
-      } else {
-        setTranslateY(delta);
-      }
-    }
-  };
-
-  const handlePointerUp = () => {
-    if (touchStartY.current === 0) return;
-    touchStartY.current = 0;
-    if (!isExpanded && translateY > 50) {
-      onClose();
-    } else if (isExpanded && translateY > 80) {
-      setIsExpanded(false);
-      setTranslateY(0);
-    } else {
-      setTranslateY(0);
-    }
-  };
-
-  const handleScroll = (e) => {
-    if (!lockExpanded && snap !== 'compact' && !isExpanded && e.target.scrollTop > 5) {
-      setIsExpanded(true);
-    }
-  };
-
   if (!render) return null;
+  return (
+    <div className="absolute inset-0 z-[100] flex items-center justify-center px-6 pointer-events-auto">
+      <div className={`absolute inset-0 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        style={{ background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }} onClick={onClose} />
+      <div className={`relative w-full max-w-[320px] max-h-[80vh] rounded-[20px] flex flex-col transition-all duration-300 ${visible ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.95]'}`}
+        style={{ background: '#FBF9F7', boxShadow: '0 16px 48px rgba(0,0,0,0.12)', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
+        <div className="px-5 pt-5 pb-0 shrink-0">
+          <div className="flex items-center justify-between">
+            {title && <h3 className="text-[16px] font-bold text-[#111]">{title}</h3>}
+            <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9]" style={{ background: '#F3EFEB' }}><X size={14} className="text-[#A09A94]" /></button>
+          </div>
+        </div>
+        <div className="px-5 py-4 overflow-y-auto min-h-0 flex-1" style={{ scrollbarWidth: 'none' }}>{children}</div>
+        {footer && <div className="px-5 pb-5 pt-0 shrink-0">{footer}</div>}
+      </div>
+    </div>
+  );
+};
 
-  const isDragging = translateY !== 0;
-
+/* Bottom Sheet — slides up from bottom, for info/browse sections */
+const BottomSheet = ({ isOpen, onClose, title, footer, snap, lockExpanded, fixedHeight, bodyScrollable = true, children }) => {
+  const [render, setRender] = useState(isOpen);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    if (isOpen) { setRender(true); const t = setTimeout(() => setVisible(true), 30); return () => clearTimeout(t); }
+    else { setVisible(false); const t = setTimeout(() => setRender(false), 300); return () => clearTimeout(t); }
+  }, [isOpen]);
+  if (!render) return null;
   return (
     <div className="absolute inset-0 z-[100] overflow-hidden pointer-events-auto flex flex-col justify-end">
-      <div 
-        className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-[var(--motion-normal)] ${visible ? 'opacity-100' : 'opacity-0'}`}
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      <div 
-        className="relative w-full bg-[var(--color-surface)] rounded-t-[var(--radius-lg)] flex flex-col shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
-        style={{ 
-          height: fixedHeight || (snap === 'compact' ? 'auto' : (isExpanded ? '92%' : '75%')),
-          maxHeight: fixedHeight || (snap === 'compact' ? '45%' : '92%'),
-          transform: `translateY(${!visible ? '100%' : `${translateY}px`})`,
-          transition: isDragging ? 'none' : 'transform var(--motion-slow) var(--ease-spring), height var(--motion-slow) var(--ease-spring)',
-          paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)'
-        }}
-      >
-        <div 
-          className="w-full flex flex-col items-center pt-5 pb-3 cursor-grab active:cursor-grabbing touch-none shrink-0 bg-[var(--color-surface)] rounded-t-[var(--radius-lg)] z-10"
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-        >
-          <div className="w-12 h-1.5 bg-[var(--color-border)] rounded-full mb-4 pointer-events-none" />
-          {title && <h3 className="text-[20px] font-bold text-[var(--color-primary-text)] px-6 w-full text-center pointer-events-none">{title}</h3>}
+      <div className={`absolute inset-0 transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0'}`}
+        style={{ background: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }} onClick={onClose} />
+      <div className={`relative w-full rounded-t-[20px] flex flex-col transition-all duration-300 ${visible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}
+        style={{ background: '#FBF9F7', boxShadow: '0 -8px 40px rgba(0,0,0,0.1)', maxHeight: fixedHeight || '85%', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)', paddingBottom: 'env(safe-area-inset-bottom, 24px)' }}>
+        <div className="px-5 pt-4 pb-2 shrink-0 flex items-center justify-between">
+          {title && <h3 className="text-[16px] font-bold text-[#111]">{title}</h3>}
+          <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9]" style={{ background: '#F3EFEB' }}><X size={14} className="text-[#A09A94]" /></button>
         </div>
-
-        <div 
-          className={`px-6 pb-6 pt-5 ${bodyScrollable ? 'overflow-y-auto custom-scrollbar' : 'overflow-y-hidden'} min-h-0 flex-1 w-full bg-grain relative`}
-          onScroll={handleScroll}
-        >
-          {children}
-        </div>
-
-        {footer && (
-          <div className="px-6 pb-8 pt-4 bg-[var(--color-surface)]/95 backdrop-blur-md border-t border-[var(--color-border)] shrink-0 z-10">
-            {footer}
-          </div>
-        )}
+        <div className={`px-5 pb-6 ${bodyScrollable ? 'overflow-y-auto' : 'overflow-hidden'} min-h-0 flex-1`} style={{ scrollbarWidth: 'none' }}>{children}</div>
+        {footer && <div className="px-5 pb-6 pt-2 shrink-0 border-t border-[#EDE8E2]">{footer}</div>}
       </div>
     </div>
   );
@@ -1492,7 +1420,7 @@ const PetProfileTabs = ({ activeTab, onTabChange }) => {
   }, [activeTab]);
 
   return (
-    <div className="sticky top-0 z-20 bg-[var(--color-background)] overflow-x-auto px-5 py-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+    <div className="overflow-x-auto px-5 py-2.5" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
       <div className="flex gap-1.5 min-w-max">
         {tabs.map((tab, idx) => {
           const isActive = activeTab === tab;
@@ -1501,7 +1429,7 @@ const PetProfileTabs = ({ activeTab, onTabChange }) => {
               key={tab}
               ref={el => tabsRef.current[idx] = el}
               onClick={() => onTabChange(tab)}
-              className={`py-2 px-4 rounded-full text-[13px] font-semibold transition-all duration-200 active:scale-[0.96] ${isActive ? 'bg-[#111] text-white' : 'text-[#A09A94]'}`}
+              className={`py-2 px-4 rounded-full text-[13px] font-semibold transition-all duration-200 active:scale-[0.96] ${isActive ? 'bg-[#111] text-white shadow-sm' : 'text-[#A09A94]'}`}
             >
               {tab}
             </button>
@@ -1828,7 +1756,7 @@ const AddDocumentSheet = ({ isOpen, onClose, onSave, showToast }) => {
   };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Add Document">
+    <CardModal isOpen={isOpen} onClose={onClose} title="Add Document">
       <div className="space-y-5 pt-2">
         <TextInput label="Document Name" placeholder="e.g., Blood Test Results" value={title} onChange={e=>setTitle(e.target.value)} disabled={uploading} />
         <Select label="Category" options={CATEGORY_OPTIONS.map(c => ({label: c, value: c}))} value={category} onChange={e=>setCategory(e.target.value)} disabled={uploading} />
@@ -1882,7 +1810,7 @@ const AddDocumentSheet = ({ isOpen, onClose, onSave, showToast }) => {
           </Button>
         </div>
       </div>
-    </BottomSheet>
+    </CardModal>
   );
 };
 
@@ -1957,7 +1885,7 @@ const ScanReceiptFlow = ({ flowState, setFlowState, onSave, showToast }) => {
 
    if (flowState === 'results') {
       return (
-        <BottomSheet isOpen={true} onClose={() => setFlowState('idle')} title="Scanned Receipt">
+        <CardModal isOpen={true} onClose={() => setFlowState('idle')} title="Scanned Receipt">
           <div className="space-y-5 pt-2">
             {isOcrSuccess ? (
               <div className="flex justify-between items-center bg-[#E5F9ED] px-3 py-1.5 rounded-lg mb-2">
@@ -2024,7 +1952,7 @@ const ScanReceiptFlow = ({ flowState, setFlowState, onSave, showToast }) => {
               }}>Save Receipt</Button>
             </div>
           </div>
-        </BottomSheet>
+        </CardModal>
       );
    }
 
@@ -2073,7 +2001,7 @@ const DocumentViewer = ({ doc, onClose, onDelete, showToast }) => {
           </button>
        </div>
 
-       <BottomSheet isOpen={menuOpen} onClose={() => setMenuOpen(false)} title="Document Options">
+       <CardModal isOpen={menuOpen} onClose={() => setMenuOpen(false)} title="Document Options">
           <div className="space-y-1 pb-4">
              <button onClick={() => { setMenuOpen(false); showToast('Edit flow coming soon'); }} className="w-full flex items-center gap-4 px-4 py-4 hover:bg-[#F7F7F8] active:bg-[#F0F0F2] rounded-xl transition-colors">
                 <Pencil size={20} className="text-[#111111]" />
@@ -2095,7 +2023,7 @@ const DocumentViewer = ({ doc, onClose, onDelete, showToast }) => {
                 <span className="text-[16px] font-semibold text-[#FF3B30]">Delete Document</span>
              </button>
           </div>
-       </BottomSheet>
+       </CardModal>
     </div>
   )
 };
@@ -2646,7 +2574,7 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
       </div>
 
       {/* Edit/Add Contact */}
-      <BottomSheet 
+      <CardModal 
         isOpen={!!contactSheet} 
         onClose={() => setContactSheet(null)} 
         title={contactSheet?.id ? 'Edit Contact' : 'Add Contact'}
@@ -2676,10 +2604,10 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
             </div>
           </div>
         )}
-      </BottomSheet>
+      </CardModal>
 
       {/* Edit/Add Vet */}
-      <BottomSheet 
+      <CardModal 
         isOpen={!!vetSheet} 
         onClose={() => setVetSheet(null)} 
         title={vetSheet?.id ? 'Edit Vet' : 'Add Vet'}
@@ -2698,10 +2626,10 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
             <TextInput label="Phone Number" type="tel" value={vetSheet.phone || ''} onChange={e => setVetSheet({...vetSheet, phone: e.target.value})} />
           </div>
         )}
-      </BottomSheet>
+      </CardModal>
 
       {/* Share Sheet */}
-      <BottomSheet 
+      <CardModal 
         isOpen={shareSheet} 
         onClose={() => setShareSheet(false)} 
         title="Share Emergency Info"
@@ -2738,10 +2666,10 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
           
           <span className="text-[12px] text-[#8E8E93] text-center block">Link expires automatically in 24 hours.</span>
         </div>
-      </BottomSheet>
+      </CardModal>
 
       {/* More Actions Sheet */}
-      <BottomSheet isOpen={moreSheet} onClose={() => setMoreSheet(false)} title="Quick Actions">
+      <CardModal isOpen={moreSheet} onClose={() => setMoreSheet(false)} title="Quick Actions">
         <div className="space-y-2 pt-2">
           <button onClick={() => { setMoreSheet(false); handleCall({stopPropagation:()=>{}}, pet.vets.find(v=>v.type==='Primary')?.phone || '', 'Primary Vet'); }} className="w-full flex items-center gap-3 p-4 bg-[#F7F7F8] hover:bg-[#F0F0F2] active:scale-[0.98] rounded-xl transition-all text-left">
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0"><Stethoscope size={18} className="text-[#FF6B35]"/></div>
@@ -2760,7 +2688,7 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
             <span className="text-[16px] font-medium text-[#111111]">Copy Home Address</span>
           </button>
         </div>
-      </BottomSheet>
+      </CardModal>
     </div>
   );
 };
@@ -3261,7 +3189,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
       </ScreenContainer>
 
       {/* Sheets rendered OUTSIDE the scrollable container hierarchy */}
-      <BottomSheet isOpen={!!editSheet} onClose={() => setEditSheet(null)} title={`Edit ${editSheet?.label}`}>
+      <CardModal isOpen={!!editSheet} onClose={() => setEditSheet(null)} title={`Edit ${editSheet?.label}`}>
         <div className="space-y-6 pt-2">
           <TextInput 
             type={editSheet?.type || 'text'}
@@ -3274,14 +3202,14 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             <Button variant="primary" onClick={saveEdit}>Save</Button>
           </div>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={triggerSheet} onClose={() => setTriggerSheet(false)} title="Add Anxiety Trigger">
-        <div className="space-y-6 pt-2">
+      <CardModal isOpen={triggerSheet} onClose={() => setTriggerSheet(false)} title="Add Anxiety Trigger">
+        <div className="space-y-4 pt-1">
           <SearchInput value={newTrigger} onChange={e => setNewTrigger(e.target.value)} onClear={() => setNewTrigger('')} placeholder="Search or type custom..." />
-          <div className="space-y-3 max-h-[200px] overflow-y-auto custom-scrollbar">
+          <div className="space-y-2 max-h-[180px] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
             {COMMON_ANXIETY_TRIGGERS.filter(t => t.toLowerCase().includes(newTrigger.toLowerCase()) && !pet.anxietyTriggers.includes(t)).map(t => (
-              <button key={t} onClick={() => addTrigger(t)} className="w-full text-left px-4 py-3 bg-[#F7F7F8] rounded-[14px] text-[15px] font-medium text-[#111111] active:bg-[#E5E5E5]">
+              <button key={t} onClick={() => addTrigger(t)} className="w-full text-left px-3.5 py-2.5 rounded-[12px] text-[14px] font-medium text-[#111] active:scale-[0.98] transition-transform" style={{ background: '#F3EFEB' }}>
                 {t}
               </button>
             ))}
@@ -3290,32 +3218,32 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             <Button variant="secondary" onClick={() => addTrigger(newTrigger)}>Add "{newTrigger}"</Button>
           )}
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={milestoneSheet} onClose={() => setMilestoneSheet(false)} title="Add Milestone">
-        <div className="space-y-5 pt-2">
+      <CardModal isOpen={milestoneSheet} onClose={() => setMilestoneSheet(false)} title="Add Milestone">
+        <div className="space-y-4 pt-1">
           <TextInput label="Title" placeholder="e.g., First trip to the vet" value={msTitle} onChange={e => setMsTitle(e.target.value)} />
           <TextInput label="Date" type="date" value={msDate} onChange={e => setMsDate(e.target.value)} />
           <TextInput label="Note (Optional)" placeholder="Add some details..." value={msNote} onChange={e => setMsNote(e.target.value)} />
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-2">
             <Button variant="secondary" onClick={() => setMilestoneSheet(false)}>Cancel</Button>
             <Button variant="primary" onClick={saveMilestone} disabled={!msTitle || !msDate}>Save</Button>
           </div>
         </div>
-      </BottomSheet>
+      </CardModal>
 
       {/* HEALTH SHEETS */}
-      <BottomSheet isOpen={healthSheet.type === 'VACCINATIONS_SECTION'} onClose={closeHealthSheet} title="Vaccinations"><div className="pt-2"><VaccinationsSection data={MOCK_HEALTH_DATA.vaccinations} onOpenSheet={openHealthSheet} /></div></BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'VET_VISITS_SECTION'} onClose={closeHealthSheet} title="Vet Visits"><div className="pt-2"><VetVisitsSection data={MOCK_HEALTH_DATA.vetVisits} onOpenSheet={openHealthSheet} /></div></BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'MEDICATIONS_SECTION'} onClose={closeHealthSheet} title="Medications"><div className="pt-2"><MedicationsSection data={meds} onMarkTaken={handleMarkTaken} onOpenSheet={openHealthSheet} /></div></BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'ALLERGIES_SECTION'} onClose={closeHealthSheet} title="Allergies"><div className="pt-2"><AllergiesSection data={MOCK_HEALTH_DATA.allergies} onOpenSheet={openHealthSheet} /></div></BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'WEIGHT_SECTION'} onClose={closeHealthSheet} title="Weight Tracker"><div className="pt-2"><WeightTrackerSection data={MOCK_HEALTH_DATA.weightHistory} idealRange={MOCK_HEALTH_DATA.idealWeightRange} currentWeight={pet.weight} weightUnit={pet.weightUnit} onOpenSheet={openHealthSheet} /></div></BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'VACCINE_DETAILS'} onClose={closeHealthSheet} title="Vaccination Details">{healthSheet.data && <div className="space-y-5 pt-2"><InfoRow label="Vaccine" value={healthSheet.data.name} /><Divider spacing="small" className="!my-0" /><InfoRow label="Given Date" value={healthSheet.data.lastDate} /><Divider spacing="small" className="!my-0" /><InfoRow label="Next Due" value={healthSheet.data.nextDate} /><div className="pt-4 flex gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button><Button variant="primary" onClick={() => { showToast('Edit coming soon'); closeHealthSheet(); }}>Edit</Button></div></div>}</BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'VET_DETAILS'} onClose={closeHealthSheet} title="Vet Visit Details">{healthSheet.data && <div className="space-y-5 pt-2"><h4 className="text-[18px] font-bold text-[#111111] mb-1">{healthSheet.data.reason}</h4><p className="text-[15px] text-[#6E6E73] mb-4">{healthSheet.data.date} • {healthSheet.data.vet}</p><div className="bg-[#F7F7F8] p-4 rounded-xl space-y-3"><div><span className="text-[13px] font-semibold text-[#8E8E93] uppercase block mb-1">Notes</span><span className="text-[15px] text-[#111111]">{healthSheet.data.notes}</span></div><Divider spacing="small" className="!bg-black/5 !my-3" /><div><span className="text-[13px] font-semibold text-[#8E8E93] uppercase block mb-1">Cost</span><span className="text-[15px] text-[#111111]">{healthSheet.data.cost}</span></div></div><div className="pt-4 flex flex-col gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button></div></div>}</BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'MED_DETAILS'} onClose={closeHealthSheet} title="Medication Details">{healthSheet.data && <div className="space-y-5 pt-2"><InfoRow label="Medication" value={healthSheet.data.name} /><Divider spacing="small" className="!my-0" /><InfoRow label="Purpose" value={healthSheet.data.purpose} /><Divider spacing="small" className="!my-0" /><InfoRow label="Dosage" value={healthSheet.data.dosage} /><Divider spacing="small" className="!my-0" /><InfoRow label="Frequency" value={healthSheet.data.frequency} /><div className="pt-4 flex gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button></div></div>}</BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'ALLERGY_DETAILS'} onClose={closeHealthSheet} title="Allergy Details">{healthSheet.data && <div className="space-y-5 pt-2"><TextInput label="Allergen" value={healthSheet.data.allergen} readOnly /><Select label="Severity" value={healthSheet.data.severity} options={[{value:'mild',label:'Mild'},{value:'moderate',label:'Moderate'},{value:'severe',label:'Severe'}]} onChange={()=>{}} /><TextInput label="Reaction" value={healthSheet.data.reaction} readOnly /><div className="pt-4 flex gap-3"><Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Save</Button></div></div>}</BottomSheet>
-      <BottomSheet isOpen={healthSheet.type === 'WEIGHT_DETAILS'} onClose={closeHealthSheet} title="Edit Weight">{healthSheet.data && <div className="space-y-5 pt-2"><TextInput label="Date" type="date" value={healthSheet.data.date} readOnly /><TextInput label={`Weight (${pet.weightUnit})`} type="number" value={healthSheet.data.weight} readOnly /><div className="pt-4 flex gap-3"><Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Save</Button></div></div>}</BottomSheet>
-      <BottomSheet isOpen={['ADD_VACCINE','ADD_VET','ADD_MED','ADD_ALLERGY','ADD_WEIGHT'].includes(healthSheet.type)} onClose={closeHealthSheet} title="Add Entry"><div className="space-y-6 pt-4 pb-2 text-center"><div className="w-16 h-16 rounded-full bg-[#F7F7F8] flex items-center justify-center mx-auto mb-2"><AlertCircle size={24} className="text-[#8E8E93]" /></div><h3 className="text-[18px] font-semibold text-[#111111]">Feature Coming Soon</h3><p className="text-[15px] text-[#6E6E73] px-4">Adding new health records will be fully functional in the next step.</p><Button variant="primary" onClick={closeHealthSheet}>Got it</Button></div></BottomSheet>
+      <CardModal isOpen={healthSheet.type === 'VACCINATIONS_SECTION'} onClose={closeHealthSheet} title="Vaccinations"><div className="pt-2"><VaccinationsSection data={MOCK_HEALTH_DATA.vaccinations} onOpenSheet={openHealthSheet} /></div></CardModal>
+      <CardModal isOpen={healthSheet.type === 'VET_VISITS_SECTION'} onClose={closeHealthSheet} title="Vet Visits"><div className="pt-2"><VetVisitsSection data={MOCK_HEALTH_DATA.vetVisits} onOpenSheet={openHealthSheet} /></div></CardModal>
+      <CardModal isOpen={healthSheet.type === 'MEDICATIONS_SECTION'} onClose={closeHealthSheet} title="Medications"><div className="pt-2"><MedicationsSection data={meds} onMarkTaken={handleMarkTaken} onOpenSheet={openHealthSheet} /></div></CardModal>
+      <CardModal isOpen={healthSheet.type === 'ALLERGIES_SECTION'} onClose={closeHealthSheet} title="Allergies"><div className="pt-2"><AllergiesSection data={MOCK_HEALTH_DATA.allergies} onOpenSheet={openHealthSheet} /></div></CardModal>
+      <CardModal isOpen={healthSheet.type === 'WEIGHT_SECTION'} onClose={closeHealthSheet} title="Weight Tracker"><div className="pt-2"><WeightTrackerSection data={MOCK_HEALTH_DATA.weightHistory} idealRange={MOCK_HEALTH_DATA.idealWeightRange} currentWeight={pet.weight} weightUnit={pet.weightUnit} onOpenSheet={openHealthSheet} /></div></CardModal>
+      <CardModal isOpen={healthSheet.type === 'VACCINE_DETAILS'} onClose={closeHealthSheet} title="Vaccination Details">{healthSheet.data && <div className="space-y-5 pt-2"><InfoRow label="Vaccine" value={healthSheet.data.name} /><Divider spacing="small" className="!my-0" /><InfoRow label="Given Date" value={healthSheet.data.lastDate} /><Divider spacing="small" className="!my-0" /><InfoRow label="Next Due" value={healthSheet.data.nextDate} /><div className="pt-4 flex gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button><Button variant="primary" onClick={() => { showToast('Edit coming soon'); closeHealthSheet(); }}>Edit</Button></div></div>}</CardModal>
+      <CardModal isOpen={healthSheet.type === 'VET_DETAILS'} onClose={closeHealthSheet} title="Vet Visit Details">{healthSheet.data && <div className="space-y-5 pt-2"><h4 className="text-[18px] font-bold text-[#111111] mb-1">{healthSheet.data.reason}</h4><p className="text-[15px] text-[#6E6E73] mb-4">{healthSheet.data.date} • {healthSheet.data.vet}</p><div className="bg-[#F7F7F8] p-4 rounded-xl space-y-3"><div><span className="text-[13px] font-semibold text-[#8E8E93] uppercase block mb-1">Notes</span><span className="text-[15px] text-[#111111]">{healthSheet.data.notes}</span></div><Divider spacing="small" className="!bg-black/5 !my-3" /><div><span className="text-[13px] font-semibold text-[#8E8E93] uppercase block mb-1">Cost</span><span className="text-[15px] text-[#111111]">{healthSheet.data.cost}</span></div></div><div className="pt-4 flex flex-col gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button></div></div>}</CardModal>
+      <CardModal isOpen={healthSheet.type === 'MED_DETAILS'} onClose={closeHealthSheet} title="Medication Details">{healthSheet.data && <div className="space-y-5 pt-2"><InfoRow label="Medication" value={healthSheet.data.name} /><Divider spacing="small" className="!my-0" /><InfoRow label="Purpose" value={healthSheet.data.purpose} /><Divider spacing="small" className="!my-0" /><InfoRow label="Dosage" value={healthSheet.data.dosage} /><Divider spacing="small" className="!my-0" /><InfoRow label="Frequency" value={healthSheet.data.frequency} /><div className="pt-4 flex gap-3"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button></div></div>}</CardModal>
+      <CardModal isOpen={healthSheet.type === 'ALLERGY_DETAILS'} onClose={closeHealthSheet} title="Allergy Details">{healthSheet.data && <div className="space-y-5 pt-2"><TextInput label="Allergen" value={healthSheet.data.allergen} readOnly /><Select label="Severity" value={healthSheet.data.severity} options={[{value:'mild',label:'Mild'},{value:'moderate',label:'Moderate'},{value:'severe',label:'Severe'}]} onChange={()=>{}} /><TextInput label="Reaction" value={healthSheet.data.reaction} readOnly /><div className="pt-4 flex gap-3"><Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Save</Button></div></div>}</CardModal>
+      <CardModal isOpen={healthSheet.type === 'WEIGHT_DETAILS'} onClose={closeHealthSheet} title="Edit Weight">{healthSheet.data && <div className="space-y-5 pt-2"><TextInput label="Date" type="date" value={healthSheet.data.date} readOnly /><TextInput label={`Weight (${pet.weightUnit})`} type="number" value={healthSheet.data.weight} readOnly /><div className="pt-4 flex gap-3"><Button variant="primary" onClick={() => { showToast('Saved'); closeHealthSheet(); }}>Save</Button></div></div>}</CardModal>
+      <CardModal isOpen={['ADD_VACCINE','ADD_VET','ADD_MED','ADD_ALLERGY','ADD_WEIGHT'].includes(healthSheet.type)} onClose={closeHealthSheet} title="Add Entry"><div className="space-y-6 pt-4 pb-2 text-center"><div className="w-16 h-16 rounded-full bg-[#F7F7F8] flex items-center justify-center mx-auto mb-2"><AlertCircle size={24} className="text-[#8E8E93]" /></div><h3 className="text-[18px] font-semibold text-[#111111]">Feature Coming Soon</h3><p className="text-[15px] text-[#6E6E73] px-4">Adding new health records will be fully functional in the next step.</p><Button variant="primary" onClick={closeHealthSheet}>Got it</Button></div></CardModal>
 
       <AddDocumentSheet 
         isOpen={addDocSheetOpen} 
@@ -3354,7 +3282,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
       )}
 
       {/* SHARE TAB SHEETS */}
-      <BottomSheet 
+      <CardModal 
         isOpen={shareActiveSheet === 'add'} onClose={closeShareSheet} 
         title={`Share ${pet.name}'s Profile`}
         snap="compact"
@@ -3383,9 +3311,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             </div>
           </button>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet 
+      <CardModal 
         isOpen={shareActiveSheet === 'qr'} onClose={closeShareSheet} 
         title="Share via QR"
         footer={!qrGenerated ? (
@@ -3420,9 +3348,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             </div>
           )}
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet 
+      <CardModal 
         isOpen={shareActiveSheet === 'link'} onClose={closeShareSheet} 
         title="Share via Link"
         footer={
@@ -3451,9 +3379,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             </button>
           </div>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet 
+      <CardModal 
         isOpen={shareActiveSheet === 'details' && !!selectedShare} onClose={closeShareSheet} 
         title="Access Details"
         footer={
@@ -3517,9 +3445,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             </div>
           </div>
         )}
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={shareActiveSheet === 'miniMenu' && !!selectedShare} onClose={closeShareSheet} snap="compact">
+      <CardModal isOpen={shareActiveSheet === 'miniMenu' && !!selectedShare} onClose={closeShareSheet} snap="compact">
         <div className="space-y-3 pb-2 px-1">
           <div className="bg-[#F7F7F8] rounded-[16px] overflow-hidden flex flex-col">
             <button onClick={() => openShareSheet('details', selectedShare)} className="w-full p-4 text-[16px] font-semibold text-[#111111] border-b border-black/[0.04] hover:bg-black/5 active:bg-black/10 transition-colors">
@@ -3539,9 +3467,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             </button>
           </div>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet 
+      <CardModal 
         isOpen={shareActiveSheet === 'change' && !!selectedShare} onClose={closeShareSheet} 
         title="Change permissions"
         footer={
@@ -3565,9 +3493,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
           </div>
           <Select label="Expires in" options={EXPIRY_OPTIONS} value={shareConfig.expiry} onChange={e => setShareConfig({ ...shareConfig, expiry: e.target.value })} />
         </div>
-      </BottomSheet>
+      </CardModal>
       
-      <BottomSheet 
+      <CardModal 
         isOpen={shareActiveSheet === 'revoke' && !!selectedShare} onClose={closeShareSheet} 
         snap="compact"
       >
@@ -3584,7 +3512,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             <Button variant="secondary" onClick={() => openShareSheet('details', selectedShare)}>Cancel</Button>
           </div>
         </div>
-      </BottomSheet>
+      </CardModal>
     </div>
   );
 };
@@ -4322,7 +4250,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           </div>
         </div>
       )}
-      <BottomSheet isOpen={medSheetOpen} onClose={() => setMedSheetOpen(false)} title="Quick med log"><div className="space-y-6 pt-2"><TextInput label="Medication Name" placeholder="e.g. Heartworm chew" value={medName} onChange={(e) => setMedName(e.target.value)} /><div className="flex gap-3 pt-2"><Button variant="secondary" onClick={() => setMedSheetOpen(false)}>Cancel</Button><Button variant="primary" onClick={() => { alert("Saved (mock)"); setMedSheetOpen(false); setMedName(''); }} disabled={!medName.trim()}>Save</Button></div></div></BottomSheet>
+      <CardModal isOpen={medSheetOpen} onClose={() => setMedSheetOpen(false)} title="Quick med log"><div className="space-y-6 pt-2"><TextInput label="Medication Name" placeholder="e.g. Heartworm chew" value={medName} onChange={(e) => setMedName(e.target.value)} /><div className="flex gap-3 pt-2"><Button variant="secondary" onClick={() => setMedSheetOpen(false)}>Cancel</Button><Button variant="primary" onClick={() => { alert("Saved (mock)"); setMedSheetOpen(false); setMedName(''); }} disabled={!medName.trim()}>Save</Button></div></div></CardModal>
       <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; } .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}} />
     </ScreenContainer>
   );
@@ -4848,7 +4776,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         </div>
       </div>
 
-      <BottomSheet isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} title="">
+      <CardModal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} title="">
         <div className="flex flex-col h-full relative">
           <div className="flex justify-between items-center text-center mb-6">
             <span className="text-[18px] font-bold text-[#111111]">Select Date</span>
@@ -4880,7 +4808,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
             </Button>
           </div>
         </div>
-      </BottomSheet>
+      </CardModal>
 
       {showCloseDialog && (
         <div className="absolute inset-0 z-[120] bg-black/30 flex items-center justify-center p-5 animate-in fade-in duration-200">
@@ -5105,7 +5033,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         </div>
       </div>
 
-      <BottomSheet isOpen={activeSheet === 'add_card'} onClose={() => setActiveSheet(null)} title="Add card">
+      <CardModal isOpen={activeSheet === 'add_card'} onClose={() => setActiveSheet(null)} title="Add card">
         <div className="flex flex-col gap-4 pb-6">
           <div>
             <label className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider mb-2 block">Card Information</label>
@@ -5148,9 +5076,9 @@ const PaymentScreen = ({ onBack, onComplete }) => {
             <span className="text-[11px] text-[#A1A1A6] font-medium tracking-wide">Secured by Stripe</span>
           </div>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={activeSheet === 'terms'} onClose={() => setActiveSheet(null)} title="Legal">
+      <CardModal isOpen={activeSheet === 'terms'} onClose={() => setActiveSheet(null)} title="Legal">
         <div className="flex flex-col gap-4 pb-20">
           <h4 className="font-bold text-[16px]">Terms of Service</h4>
           <p className="text-[14px] text-[#6E6E73] leading-relaxed">
@@ -5166,9 +5094,9 @@ const PaymentScreen = ({ onBack, onComplete }) => {
             I Agree
           </button>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={activeSheet === 'card_menu'} onClose={() => setActiveSheet(null)} title="Card Options" snap="compact">
+      <CardModal isOpen={activeSheet === 'card_menu'} onClose={() => setActiveSheet(null)} title="Card Options" snap="compact">
         <div className="flex flex-col gap-2 pb-6">
           <button onClick={() => { setActiveSheet(null); setSelectedCardId(menuCardId); }} className="w-full flex items-center gap-4 px-4 py-4 rounded-[16px] hover:bg-[#FAFAFA] active:scale-[0.98] transition-all">
             <CheckCircle2 size={20} className="text-[#111111]" /><span className="text-[16px] font-semibold text-[#111111]">Set as default</span>
@@ -5177,16 +5105,16 @@ const PaymentScreen = ({ onBack, onComplete }) => {
             <AlertTriangle size={20} className="text-[#FF3B30]" /><span className="text-[16px] font-semibold text-[#FF3B30]">Remove card</span>
           </button>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={activeSheet === 'service_fee'} onClose={() => setActiveSheet(null)} title="Service fee" snap="compact">
+      <CardModal isOpen={activeSheet === 'service_fee'} onClose={() => setActiveSheet(null)} title="Service fee" snap="compact">
         <div className="flex flex-col gap-6 pb-6">
           <p className="text-[15px] text-[#6E6E73] leading-relaxed">This fee covers secure payments, customer support, and platform protection.</p>
           <button onClick={() => setActiveSheet(null)} className="w-full py-4 rounded-[20px] text-[16px] font-semibold bg-[#FAFAFA] text-[#111111] hover:bg-[#F0F0F2] active:scale-[0.98] transition-all">
             Got it
           </button>
         </div>
-      </BottomSheet>
+      </CardModal>
     </div>
   );
 };
@@ -5438,7 +5366,7 @@ const ChatScreen = ({ onBack, status }) => {
         )}
       </div>
 
-      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
+      <CardModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
         <div className="flex flex-col gap-1 mt-2">
           <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><User size={20} className="text-[#8E8E93]" /> View profile</button>
           <button onClick={() => { setIsMenuOpen(false); onBack(); }} className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><Info size={20} className="text-[#8E8E93]" /> View booking</button>
@@ -5447,15 +5375,15 @@ const ChatScreen = ({ onBack, status }) => {
           <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><Bell size={20} className="text-[#8E8E93]" /> Mute notifications</button>
           <button className="w-full text-left px-4 py-3.5 text-[16px] font-bold text-[#FF3B30] active:bg-[#FFF5F5] rounded-[12px] flex items-center gap-3"><AlertTriangle size={20} className="text-[#FF3B30]" /> Report user</button>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={isAttachMenuOpen} onClose={() => setIsAttachMenuOpen(false)}>
+      <CardModal isOpen={isAttachMenuOpen} onClose={() => setIsAttachMenuOpen(false)}>
         <div className="flex flex-col gap-1 mt-2">
           <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><Camera size={20} className="text-[#8E8E93]" /> Take photo</button>
           <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><ImageIcon size={20} className="text-[#8E8E93]" /> Choose from library</button>
           <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><MapPin size={20} className="text-[#8E8E93]" /> Share location</button>
         </div>
-      </BottomSheet>
+      </CardModal>
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes typing { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }
@@ -5901,7 +5829,7 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
         )}
       </div>
 
-      <BottomSheet isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} title="Booking Options">
+      <CardModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} title="Booking Options">
         <div className="flex flex-col gap-2">
           <div className="bg-[#F7F7F8] p-3 rounded-[12px] mb-4">
             <span className="text-[11px] font-bold text-[#8E8E93] uppercase tracking-wider mb-2 block">Debug Status</span>
@@ -5916,14 +5844,14 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
           <div className="w-full h-[1px] bg-[#EAEAEA] my-2" />
           <button className="w-full text-left px-4 py-4 text-[16px] font-bold text-[#FF3B30] active:bg-[#FFF5F5] rounded-[12px] flex items-center gap-3"><AlertTriangle size={20} className="text-[#FF3B30]" /> Report Issue</button>
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet isOpen={isInstructionsOpen} onClose={() => setIsInstructionsOpen(false)} title="Special Instructions">
+      <CardModal isOpen={isInstructionsOpen} onClose={() => setIsInstructionsOpen(false)} title="Special Instructions">
         <p className="text-[15px] text-[#111111] leading-relaxed pb-8">
           Please make sure she doesn't eat anything from the ground. Keys are under the doormat. She can be a bit shy with big dogs, so please keep her on a short leash when passing by them. Give her a treat after the walk (they are on the kitchen counter).
         </p>
         <Button variant="primary" onClick={() => setIsInstructionsOpen(false)}>Done</Button>
-      </BottomSheet>
+      </CardModal>
 
       {bdToast && (
         <div className="absolute top-[100px] left-1/2 transform -translate-x-1/2 bg-[#111111] text-white px-4 py-2 rounded-full text-[13px] font-medium shadow-lg z-[150] animate-in slide-in-from-top fade-in">
@@ -6154,24 +6082,24 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
            </div>
        </div>
 
-       <BottomSheet isOpen={menuSheet} onClose={() => setMenuSheet(false)} title="Options">
+       <CardModal isOpen={menuSheet} onClose={() => setMenuSheet(false)} title="Options">
           <div className="space-y-1 pb-4 pt-2">
              <OptionRow icon={Share} label="Share Profile" onClick={() => setMenuSheet(false)} />
              <OptionRow icon={Star} label="Save for later" onClick={() => setMenuSheet(false)} />
              <OptionRow icon={AlertTriangle} label="Report Issue" danger onClick={() => setMenuSheet(false)} />
           </div>
-       </BottomSheet>
+       </CardModal>
 
-       <BottomSheet isOpen={calendarSheet} onClose={() => setCalendarSheet(false)} title="Full Availability">
+       <CardModal isOpen={calendarSheet} onClose={() => setCalendarSheet(false)} title="Full Availability">
           <div className="py-4 space-y-6">
              <div className="bg-[#F7F7F8] w-full rounded-[20px] h-[300px] flex items-center justify-center border border-black/[0.04]">
                 <span className="text-[#8E8E93] text-[14px] font-medium">Full month calendar grid</span>
              </div>
              <Button variant="primary" onClick={() => setCalendarSheet(false)}>Close</Button>
           </div>
-       </BottomSheet>
+       </CardModal>
 
-       <BottomSheet isOpen={!!certSheet} onClose={() => setCertSheet(null)} title="Certification">
+       <CardModal isOpen={!!certSheet} onClose={() => setCertSheet(null)} title="Certification">
           {certSheet && (
              <div className="py-4 space-y-6">
                 <div className="flex items-center gap-4">
@@ -6204,7 +6132,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                 <Button variant="primary" onClick={() => setCertSheet(null)}>Done</Button>
              </div>
           )}
-       </BottomSheet>
+       </CardModal>
 
        {galleryViewer !== null && (
          <div className="absolute inset-0 z-[100] bg-black flex flex-col animate-in fade-in duration-200">
@@ -6508,7 +6436,7 @@ const WalkingScreen = ({ onBack, petsData }) => {
         </button>
       </div>
 
-      <BottomSheet isOpen={isPetSheetOpen} onClose={() => setIsPetSheetOpen(false)} title="Select Pet">
+      <CardModal isOpen={isPetSheetOpen} onClose={() => setIsPetSheetOpen(false)} title="Select Pet">
         <div className="space-y-3 pt-2">
           {petsData.map(pet => (
             <div 
@@ -6525,9 +6453,9 @@ const WalkingScreen = ({ onBack, petsData }) => {
             </div>
           ))}
         </div>
-      </BottomSheet>
+      </CardModal>
 
-      <BottomSheet 
+      <CardModal 
         isOpen={isFilterSheetOpen} 
         onClose={() => setIsFilterSheetOpen(false)} 
         title="Filters"
@@ -6627,7 +6555,7 @@ const WalkingScreen = ({ onBack, petsData }) => {
             </div>
           </section>
         </div>
-      </BottomSheet>
+      </CardModal>
     </>
   );
 };
@@ -6983,7 +6911,7 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
         <div className="px-5 pb-8 flex flex-col h-full" style={{ paddingTop: `${bookingsTopPadding}px` }}>
           {renderBookings()}
         </div>
-        <BottomSheet isOpen={cancelSheetOpen} onClose={() => setCancelSheetOpen(false)} title="Cancel request?">
+        <CardModal isOpen={cancelSheetOpen} onClose={() => setCancelSheetOpen(false)} title="Cancel request?">
           <div className="space-y-6 pt-2">
             <Text variant="body" className="text-[#6E6E73]">The walker will be notified. No charge will be made. Your hold will be released.</Text>
             <div className="flex flex-col gap-3 pt-2">
@@ -6991,8 +6919,8 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
               <Button variant="secondary" size="large" onClick={() => setCancelSheetOpen(false)}>Keep Request</Button>
             </div>
           </div>
-        </BottomSheet>
-        <BottomSheet isOpen={calendarOpen} onClose={() => setCalendarOpen(false)} title="Booking Calendar" lockExpanded fixedHeight="66%" bodyScrollable={false}>
+        </CardModal>
+        <CardModal isOpen={calendarOpen} onClose={() => setCalendarOpen(false)} title="Booking Calendar" lockExpanded fixedHeight="66%" bodyScrollable={false}>
           <div className="h-full flex flex-col pt-1">
             <div className="flex items-center justify-between">
               <button
@@ -7059,7 +6987,7 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
               )}
             </div>
           </div>
-        </BottomSheet>
+        </CardModal>
       </ScreenContainer>
       {onBack && (
         <div
@@ -7387,7 +7315,7 @@ const ACTIVITY_NOTIFICATIONS = [
 ];
 
 const ActivityBottomSheet = ({ isOpen, onClose, title, children }) => (
-  <BottomSheet isOpen={isOpen} onClose={onClose} title={title}>{children}</BottomSheet>
+  <CardModal isOpen={isOpen} onClose={onClose} title={title}>{children}</CardModal>
 );
 
 const ActivityModeControl = ({ modes, activeMode, onChange }) => {
@@ -9071,7 +8999,7 @@ const DataManagementCard = () => (
 );
 
 const EmergencyShareSheet = ({ isOpen, onClose, data, onCopy }) => (
-  <BottomSheet isOpen={isOpen} onClose={onClose} title="Share Emergency Info">
+  <CardModal isOpen={isOpen} onClose={onClose} title="Share Emergency Info">
     <div className="space-y-6 pt-2">
       <div className="flex flex-col items-center justify-center p-6 bg-white rounded-[24px] border border-black/[0.04] shadow-sm">
         <div className="w-[160px] h-[160px] bg-white rounded-2xl border border-black/[0.04] p-2 mb-5 flex items-center justify-center relative">
@@ -9096,11 +9024,11 @@ const EmergencyShareSheet = ({ isOpen, onClose, data, onCopy }) => (
       </div>
       <Button variant="primary" icon={Share2}>Share Link...</Button>
     </div>
-  </BottomSheet>
+  </CardModal>
 );
 
 const VaultOptionsSheet = ({ isOpen, onClose }) => (
-  <BottomSheet isOpen={isOpen} onClose={onClose} title="Vault Options">
+  <CardModal isOpen={isOpen} onClose={onClose} title="Vault Options">
     <div className="space-y-2 pt-2 pb-4">
       {[{ label: 'Export all data', icon: DownloadCloud }, { label: 'Print emergency bundle', icon: FileText }, { label: 'Share vault access', icon: Share2 }].map((item, i) => (
         <button key={i} className="w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm">
@@ -9116,13 +9044,13 @@ const VaultOptionsSheet = ({ isOpen, onClose }) => (
         </button>
       ))}
     </div>
-  </BottomSheet>
+  </CardModal>
 );
 
 const ContactDetailsSheet = ({ isOpen, onClose, contact, onCall, onEmail }) => {
   if (!contact) return null;
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Contact Details">
+    <CardModal isOpen={isOpen} onClose={onClose} title="Contact Details">
       <div className="pt-2 pb-6">
         <div className="flex items-start gap-4 mb-8">
           <div className="w-12 h-12 rounded-full bg-[#F6F6F6] flex items-center justify-center shrink-0"><User size={20} className="text-[#6E6E73]" /></div>
@@ -9151,14 +9079,14 @@ const ContactDetailsSheet = ({ isOpen, onClose, contact, onCall, onEmail }) => {
           )}
         </div>
       </div>
-    </BottomSheet>
+    </CardModal>
   );
 };
 
 const VetDetailsSheet = ({ isOpen, onClose, vet, onCall, onDirections, onWebsite }) => {
   if (!vet) return null;
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Veterinary Details">
+    <CardModal isOpen={isOpen} onClose={onClose} title="Veterinary Details">
       <div className="pt-2 pb-6 space-y-6">
         <div>
           <div className="text-[20px] font-semibold text-[#111111] mb-1">{vet.name}</div>
@@ -9172,14 +9100,14 @@ const VetDetailsSheet = ({ isOpen, onClose, vet, onCall, onDirections, onWebsite
         <p className="text-[14px] text-[#111111]">{vet.address.full}</p>
         <p className="text-[13px] text-[#7A7A7A] whitespace-pre-line">{vet.hoursFormatted}</p>
       </div>
-    </BottomSheet>
+    </CardModal>
   );
 };
 
 const ProtocolDetailsSheet = ({ isOpen, onClose, protocol, onCallEmergencyVet }) => {
   if (!protocol) return null;
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title={protocol.title}>
+    <CardModal isOpen={isOpen} onClose={onClose} title={protocol.title}>
       <div className="pt-2 pb-6">
         <div className="space-y-4 mb-6">
           {protocol.fullSteps.map((step) => (
@@ -9194,7 +9122,7 @@ const ProtocolDetailsSheet = ({ isOpen, onClose, protocol, onCallEmergencyVet })
           ))}
         </div>
       </div>
-    </BottomSheet>
+    </CardModal>
   );
 };
 
@@ -9307,7 +9235,7 @@ const EmergencyContactsScreen = ({ onBack }) => {
 const PlaceDetailsSheet = ({ isOpen, onClose, place, onDirections, onLogVisit }) => {
   if (!place) return null;
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="">
+    <CardModal isOpen={isOpen} onClose={onClose} title="">
       <div className="-mt-4">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-12 h-12 rounded-full bg-[#F7F7F5] flex items-center justify-center shrink-0 border border-[#EAEAEA]/60">{renderLegacyIcon(place.icon, 20, 'text-[#6E6E73]')}</div>
@@ -9354,7 +9282,7 @@ const PlaceDetailsSheet = ({ isOpen, onClose, place, onDirections, onLogVisit })
           </div>
         </div>
       </div>
-    </BottomSheet>
+    </CardModal>
   );
 };
 
@@ -9597,7 +9525,7 @@ const VaultDocumentsScreen = () => {
         )}
       </div>
 
-      <BottomSheet isOpen={sheetConfig.isOpen} onClose={closeSheet} title={sheetConfig.title}>
+      <CardModal isOpen={sheetConfig.isOpen} onClose={closeSheet} title={sheetConfig.title}>
         <div className="space-y-2 pt-2 pb-4">
           {(sheetConfig.options || []).map((opt, i) => (
             <button key={i} onClick={() => { opt.onClick?.(); closeSheet(); }} className={`w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm ${opt.style === 'cancel' ? 'justify-center' : ''}`}>
@@ -9606,7 +9534,7 @@ const VaultDocumentsScreen = () => {
             </button>
           ))}
         </div>
-      </BottomSheet>
+      </CardModal>
 
       {toastMsg && (
         <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 bg-[#111111]/90 backdrop-blur-md text-white px-5 py-3.5 rounded-full flex items-center gap-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-[120] animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -9747,7 +9675,7 @@ const VaultHealthRecordsScreen = ({ onBack }) => {
         </Card>
       </div>
 
-      <BottomSheet isOpen={menuOpen} onClose={() => setMenuOpen(false)} title="Health Options">
+      <CardModal isOpen={menuOpen} onClose={() => setMenuOpen(false)} title="Health Options">
         <div className="space-y-2 pt-2 pb-4">
           {[{ label: 'Export health records', icon: DownloadCloud }, { label: 'Print summary', icon: Printer }, { label: 'Email to vet', icon: Mail }, { label: 'View history', icon: History }, { label: 'Weight analytics', icon: LineChart }, { label: 'Edit health data', icon: Edit3 }, { label: 'Add new record', icon: Plus }].map((item, i) => (
             <button key={i} onClick={() => { setMenuOpen(false); showToast(item.label); }} className="w-full flex items-center gap-3 p-4 bg-white border border-[#ECECEC] hover:bg-black/[0.02] rounded-[12px] transition-colors active:scale-[0.98] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
@@ -9756,7 +9684,7 @@ const VaultHealthRecordsScreen = ({ onBack }) => {
             </button>
           ))}
         </div>
-      </BottomSheet>
+      </CardModal>
 
       {toastMsg && (
         <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 bg-[#111111]/90 backdrop-blur-md text-white px-5 py-3 rounded-full flex items-center gap-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.15)] z-[120] animate-in fade-in slide-in-from-bottom-4 duration-300">
