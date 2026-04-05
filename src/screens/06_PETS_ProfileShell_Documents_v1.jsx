@@ -10337,6 +10337,7 @@ export default function App() {
   const [screenParams, setScreenParams] = useState({});
   const [bookingStatus, setBookingStatus] = useState('confirmed');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [petMenuOpen, setPetMenuOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
@@ -10549,7 +10550,7 @@ export default function App() {
       }
       if (petsRoute === 'profile') {
         const pet = petsData.find(p => p.id === selectedPetId) || petsData[0];
-        return { title: pet ? pet.name : 'Profile', variant: 'detail', onBack: handlePetBack, rightIcon: MoreHorizontal };
+        return { title: pet ? pet.name : 'Profile', variant: 'detail', onBack: handlePetBack, rightIcon: MoreHorizontal, onRightAction: () => setPetMenuOpen(true) };
       }
       return { title: 'Pets', variant: 'default', showActions: true };
     }
@@ -11071,6 +11072,28 @@ export default function App() {
             )}
 
             <AnimationsOverlay isOpen={animationsOpen} onClose={() => setAnimationsOpen(false)} />
+
+            {/* Pet Profile Menu */}
+            <CardModal isOpen={petMenuOpen} onClose={() => setPetMenuOpen(false)} title="Options">
+              <div className="pt-1 space-y-0">
+                <button onClick={() => { setPetMenuOpen(false); window.location.href = '/edit-pet'; }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+                  <Pencil size={15} className="text-[#A09A94]" />
+                  <span className="text-[14px] font-semibold text-[#111]">Edit Profile</span>
+                </button>
+                <button onClick={() => { setPetMenuOpen(false); setToastMessage('Change photo — coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+                  <Camera size={15} className="text-[#A09A94]" />
+                  <span className="text-[14px] font-semibold text-[#111]">Change Photo</span>
+                </button>
+                <button onClick={() => { setPetMenuOpen(false); setToastMessage('Share — coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+                  <Share2 size={15} className="text-[#A09A94]" />
+                  <span className="text-[14px] font-semibold text-[#111]">Share Profile</span>
+                </button>
+                <button onClick={() => { setPetMenuOpen(false); setToastMessage('Delete — coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
+                  <Trash2 size={15} className="text-[#E85D2A]" />
+                  <span className="text-[14px] font-semibold text-[#E85D2A]">Delete Pet</span>
+                </button>
+              </div>
+            </CardModal>
           </>
         )}
       </div>
