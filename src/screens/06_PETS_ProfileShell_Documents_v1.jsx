@@ -5682,269 +5682,154 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
   );
 
   return (
-    <div className="absolute inset-0 bg-[var(--color-background)] z-50 overflow-hidden">
-       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-10 px-5 pointer-events-none bg-gradient-to-b from-[#FBF9F7]/95 via-[#FBF9F7]/80 to-transparent flex justify-between items-start">
-          <button onClick={onBack} className="pointer-events-auto w-[44px] h-[44px] flex items-center justify-center bg-[#F3EFEB] border border-[#EDE8E2] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]">
-             <ChevronLeft size={22} color="#111111" />
+    <div className="absolute inset-0 bg-[var(--color-background)] z-50 overflow-hidden flex flex-col">
+       {/* Header */}
+       <header className="shrink-0 pt-14 pb-3 px-5 flex justify-between items-center">
+          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+             <ChevronLeft size={18} color="#111" />
           </button>
-          <div className="pointer-events-auto flex items-center bg-[#F3EFEB] border border-[#EDE8E2] rounded-[9999px] p-1 h-[44px]">
-             <button className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[#F3EFEB] active:scale-[0.98] transition-all">
-                <Share size={18} color="#111111"/>
-             </button>
-             <div className="w-[1px] h-[16px] bg-[#EDE8E2] mx-1" />
-             <button onClick={() => setMenuSheet(true)} className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[#F3EFEB] active:scale-[0.98] transition-all">
-                <MoreHorizontal size={18} color="#111111"/>
-             </button>
-          </div>
+          <span className="text-[15px] font-semibold text-[#111]">{provider.name}</span>
+          <button onClick={() => setMenuSheet(true)} className="w-9 h-9 flex items-center justify-center rounded-full active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+             <MoreHorizontal size={16} color="#111" />
+          </button>
        </header>
 
-       <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[110px] pb-[140px]">
-            <div className="flex flex-col items-center px-5 pt-2 text-center">
-               <div className="mb-4">
-                 <Avatar src={provider.photo} size={104} />
-               </div>
-               <h1 className="text-[24px] font-bold text-[#111111] mb-1.5">{provider.name}</h1>
-               <div className="flex items-center gap-1.5 mb-5">
-                  <Star size={16} fill={'#E85D2A'} color={'#E85D2A'} />
-                  <span className="text-[16px] font-bold text-[#111111]">{provider.rating}</span>
-                  <span className="text-[13px] text-[#A09A94]">({provider.reviewCount} reviews)</span>
-               </div>
-               <div className="flex flex-wrap justify-center gap-2 mb-8">
-                  {provider.badges.slice(0, 3).map(b => (
-                     <Badge key={b} variant="default" className="!px-3 !py-1 font-semibold text-[10px] uppercase tracking-wider bg-[#F3EFEB] text-[#A09A94] border-none shadow-none">
-                        {b}
-                     </Badge>
-                  ))}
-               </div>
-            </div>
-
-            <div className="px-5 mb-10">
-               <div className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px] p-4 flex justify-between items-center divide-x divide-[#EDE8E2]">
-                  <div className="flex-1 flex flex-col items-center gap-1">
-                     <span className="text-[16px] font-bold text-[#111111]">CHF 75</span>
-                     <span className="text-[12px] text-[#A09A94]">per 90min</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center gap-1">
-                     <span className="text-[16px] font-bold text-[#111111]">{provider.responseTime}</span>
-                     <span className="text-[12px] text-[#A09A94]">response</span>
-                  </div>
-                  <div className="flex-1 flex flex-col items-center gap-1">
-                     <span className="text-[16px] font-bold text-[#111111]">{provider.distance}km</span>
-                     <span className="text-[12px] text-[#A09A94]">distance</span>
+       {/* Scrollable content */}
+       <div className="flex-1 overflow-y-auto px-5 pb-[100px]" style={{ scrollbarWidth: 'none' }}>
+            {/* Profile hero */}
+            <div className="flex items-center gap-4 mb-5">
+               <img src={provider.photo} alt={provider.name} className="w-[64px] h-[64px] rounded-[18px] object-cover" />
+               <div className="flex-1 min-w-0">
+                  <h2 className="text-[20px] font-bold text-[#111] tracking-[-0.3px]">{provider.name}</h2>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Star size={12} className="fill-[#E85D2A] text-[#E85D2A]" />
+                    <span className="text-[14px] font-semibold text-[#111]">{provider.rating}</span>
+                    <span className="text-[12px] text-[#A09A94]">({provider.reviewCount} reviews)</span>
                   </div>
                </div>
             </div>
 
-            <section className="px-5 mb-10 space-y-4">
-               <h3 className="text-[15px] font-semibold text-[#111] ml-1">About</h3>
-               <p className="text-[16px] text-[#111111] leading-relaxed opacity-95">{provider.bio}</p>
-               <div className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px] p-5 space-y-3 mt-4">
-                  <div className="flex items-center gap-3">
-                     <IconWrapper icon={Info} size={18} color="#A09A94" />
-                     <span className="text-[14px] text-[#A09A94] w-[80px]">Languages</span>
-                     <span className="text-[14px] text-[#111111] font-semibold">{provider.languages.join(', ')}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                     <IconWrapper icon={Clock} size={18} color="#A09A94" />
-                     <span className="text-[14px] text-[#A09A94] w-[80px]">Experience</span>
-                     <span className="text-[14px] text-[#111111] font-semibold">{provider.yearsExperience} years</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                     <IconWrapper icon={Activity} size={18} color="#A09A94" />
-                     <span className="text-[14px] text-[#A09A94] w-[80px]">Total Walks</span>
-                     <span className="text-[14px] text-[#111111] font-semibold">{provider.totalWalks}</span>
-                  </div>
-               </div>
-            </section>
+            {/* Quick stats */}
+            <div className="flex items-center gap-1.5 mb-6">
+              {provider.badges.slice(0, 3).map(b => (
+                <span key={b} className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-[#6E6058]" style={{ background: '#F3EFEB' }}>{b}</span>
+              ))}
+            </div>
 
-            <section className="px-5 mb-10 space-y-4">
-               <h3 className="text-[15px] font-semibold text-[#111] ml-1">Services & Pricing</h3>
-               <div className="space-y-3">
-                  {provider.services.map(svc => (
-                     <div key={svc.id} onClick={() => onNavigate('booking', { preselectedServiceId: svc.id })} className="relative overflow-hidden p-4 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] cursor-pointer active:scale-[0.98] transition-all">
-                        {svc.popular && (
-                           <div className="absolute top-0 right-0 bg-[#E85D2A] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-bl-[12px]">
-                              Most Popular
-                           </div>
-                        )}
-                        <div className="flex justify-between items-center gap-4">
-                           <div className="flex-1 min-w-0 flex items-start gap-3">
-                              <div className="pt-0.5">{renderLegacyIcon(svc.icon, 22, 'text-[#A09A94]')}</div>
-                              <div className="flex flex-col gap-0.5 pt-0.5">
-                                 <span className="text-[15px] font-semibold text-[#111111]">{svc.label}</span>
-                                 <span className="text-[13px] text-[#A09A94] leading-snug pr-4">{svc.description}</span>
-                              </div>
-                           </div>
-                           <div className="flex items-center gap-2 shrink-0 pt-1">
-                              <span className="text-[15px] font-bold text-[#111111]">{svc.currency} {svc.price}</span>
-                              <ChevronRight size={18} color="#CFCFD4" />
-                           </div>
-                        </div>
-                     </div>
-                  ))}
-               </div>
-            </section>
+            {/* Stats row */}
+            <div className="flex items-center gap-4 mb-6 text-[12px]">
+              <div><span className="font-bold text-[#111] text-[14px]">CHF {provider.services[0]?.price}</span><span className="text-[#A09A94] ml-1">from</span></div>
+              <span className="text-[#EDE8E2]">|</span>
+              <div><span className="font-bold text-[#111]">{provider.responseTime}</span><span className="text-[#A09A94] ml-1">response</span></div>
+              <span className="text-[#EDE8E2]">|</span>
+              <div><span className="font-bold text-[#111]">{provider.distance}km</span></div>
+            </div>
 
-            <section className="px-5 mb-10 space-y-4">
-               <div className="flex justify-between items-center">
-                  <h3 className="text-[15px] font-semibold text-[#111] ml-1">Reviews ({provider.reviewCount})</h3>
-                  <button onClick={() => onNavigate('reviews')} className="text-[#E85D2A] text-[14px] font-semibold flex items-center gap-1 active:opacity-70">
-                    View all <ChevronRight size={16}/>
-                  </button>
-               </div>
-               <div className="space-y-3">
-                  {provider.reviews.map(r => (
-                     <div key={r.id} className="p-4 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px]">
-                        <div className="flex justify-between items-start mb-2">
-                           <div className="flex gap-0.5">
-                              {[...Array(5)].map((_, i) => <Star key={i} size={14} fill={i < Math.floor(r.rating) ? "#E85D2A" : "transparent"} color={i < Math.floor(r.rating) ? "#E85D2A" : "#E5E5E5"} />)}
-                           </div>
-                           <span className="text-[13px] font-semibold text-[#A09A94]">{r.rating.toFixed(1)}</span>
-                        </div>
-                        <div className="text-[14px] text-[#111111] font-semibold mb-1">{r.author} <span className="text-[13px] text-[#A09A94] font-normal mx-1">·</span> <span className="text-[13px] text-[#A09A94] font-normal">{r.date}</span></div>
-                        <p className="text-[14px] text-[#A09A94] line-clamp-2 leading-relaxed">{r.text}</p>
-                     </div>
-                  ))}
-               </div>
-            </section>
+            {/* About */}
+            <div className="mb-6">
+              <h3 className="text-[15px] font-semibold text-[#111] mb-2">About</h3>
+              <p className="text-[13px] text-[#A09A94] leading-relaxed">{provider.bio}</p>
+            </div>
 
-            <section className="px-5 mb-10 space-y-4">
-               <h3 className="text-[15px] font-semibold text-[#111] ml-1">Availability</h3>
-               <div className="p-5 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px]">
-                  <div className="flex justify-between items-center mb-5">
-                     <span className="text-[14px] font-bold text-[#111111]">February 2026</span>
-                     <div className="flex gap-3">
-                        <ChevronLeft size={16} color="#CFCFD4" className="cursor-not-allowed"/>
-                        <ChevronRight size={16} color="#111111" />
-                     </div>
+            {/* Services */}
+            <div className="mb-6">
+              <h3 className="text-[15px] font-semibold text-[#111] mb-3">Services</h3>
+              <div>
+                {provider.services.map((svc, i) => (
+                  <div key={svc.id} className={`flex items-center justify-between py-3 ${i < provider.services.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+                    <div>
+                      <span className="text-[14px] font-semibold text-[#111]">{svc.label}</span>
+                      <span className="text-[11px] text-[#A09A94] block mt-0.5">{svc.description}</span>
+                    </div>
+                    <span className="text-[14px] font-bold text-[#111]">CHF {svc.price}</span>
                   </div>
-                  <div className="flex justify-between text-center mb-3">
-                     {['M','T','W','T','F','S','S'].map((d, i) => <span key={i} className="text-[11px] font-semibold text-[#A09A94] w-8">{d}</span>)}
-                  </div>
-                  <div className="flex justify-between text-center">
-                     {[22, 23, 24, 25, 26, 27, 28].map(day => {
-                        const dateStr = `2026-02-${day}`;
-                        const isAvailable = provider.availability[dateStr]?.available;
-                        return (
-                           <div key={day} className="flex flex-col items-center gap-1.5 w-8">
-                              <span className="text-[15px] font-medium text-[#111111]">{day}</span>
-                              <div className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-[#E85D2A]' : 'bg-[#E5E5E5]'}`} />
-                           </div>
-                        );
-                     })}
-                  </div>
-                  <Divider spacing="medium" className="my-5" />
-                  <div className="flex justify-between items-center">
-                     <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A]"/><span className="text-[12px] font-semibold text-[#A09A94]">Available</span></div>
-                        <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]"/><span className="text-[12px] font-semibold text-[#A09A94]">Booked</span></div>
-                     </div>
-                     <button onClick={() => setCalendarSheet(true)} className="text-[#E85D2A] text-[13px] font-semibold active:opacity-70">Check full schedule →</button>
-                  </div>
-               </div>
-            </section>
+                ))}
+              </div>
+            </div>
 
-            <section className="space-y-4 mb-10">
-               <h3 className="text-[15px] font-semibold text-[#111] ml-6">Photos</h3>
-               <div className="flex gap-3 overflow-x-auto custom-scrollbar px-5 pb-2">
-                  {provider.gallery.map((img, i) => (
-                     <button key={i} onClick={() => setGalleryViewer(i)} className="shrink-0 active:scale-[0.98] transition-transform">
-                        <img src={img} className="w-[140px] h-[140px] rounded-[16px] object-cover border border-[#EDE8E2]" alt={`Gallery ${i+1}`}/>
-                     </button>
-                  ))}
-               </div>
-            </section>
+            {/* Reviews */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-[15px] font-semibold text-[#111]">Reviews ({provider.reviewCount})</h3>
+                <button onClick={() => onNavigate && onNavigate('reviews')} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">See all</button>
+              </div>
+              <div>
+                {provider.reviews.slice(0, 2).map((rev, i) => (
+                  <div key={rev.id} className={`py-3 ${i < 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <img src={rev.authorPhoto} alt={rev.author} className="w-6 h-6 rounded-full object-cover" />
+                      <span className="text-[13px] font-semibold text-[#111]">{rev.author}</span>
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({length: rev.rating}).map((_, j) => <Star key={j} size={9} className="fill-[#E85D2A] text-[#E85D2A]" />)}
+                      </div>
+                      <span className="text-[10px] text-[#C4BBB3] ml-auto">{rev.date}</span>
+                    </div>
+                    <p className="text-[12px] text-[#A09A94] leading-relaxed">{rev.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-            <section className="px-5 space-y-4">
-               <h3 className="text-[15px] font-semibold text-[#111] ml-1">Verified Information</h3>
-               <div className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px] p-2">
-                  {provider.certifications.map((cert, i) => (
-                     <div key={i} onClick={() => setCertSheet(cert)} className="flex items-center gap-3 px-3 py-3 active:bg-[#EDE8E2] cursor-pointer rounded-[14px] transition-colors">
-                        <CheckCircle2 size={20} className="text-[#A09A94] shrink-0" />
-                        <span className="text-[15px] font-medium text-[#111111] flex-1">{cert.label}</span>
-                        <span className="text-[12px] text-[#A09A94] shrink-0 font-medium">{cert.verifiedDate ? new Date(cert.verifiedDate).toLocaleDateString('en-US', {month:'short', year:'numeric'}) : ''}</span>
-                     </div>
-                  ))}
-               </div>
-            </section>
+            {/* Photos */}
+            <div className="mb-6">
+              <h3 className="text-[15px] font-semibold text-[#111] mb-3">Photos</h3>
+              <div className="flex gap-2 overflow-x-auto -mx-5 px-5" style={{ scrollbarWidth: 'none' }}>
+                {provider.gallery.map((img, i) => (
+                  <img key={i} src={img} alt="" onClick={() => setGalleryViewer(i)} className="w-[80px] h-[80px] rounded-[12px] object-cover shrink-0 cursor-pointer active:scale-[0.96] transition-transform" />
+                ))}
+              </div>
+            </div>
+
+            {/* Certifications */}
+            <div className="mb-6">
+              <h3 className="text-[15px] font-semibold text-[#111] mb-3">Verified</h3>
+              <div>
+                {provider.certifications.map((cert, i) => (
+                  <div key={i} className={`flex items-center justify-between py-2.5 ${i < provider.certifications.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+                    <span className="text-[13px] font-semibold text-[#111]">{cert.label}</span>
+                    <span className="text-[11px] text-[#A09A94]">{cert.verifiedDate ? new Date(cert.verifiedDate).toLocaleDateString('en', {month:'short', year:'numeric'}) : ''}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
        </div>
 
-       <div className="absolute bottom-8 left-5 right-5 z-40 pointer-events-none">
-           <div className="pointer-events-auto bg-[#FBF9F7]/95 backdrop-blur-xl border border-[#EDE8E2] rounded-[24px] p-2 pl-6 flex justify-between items-center">
-               <div className="flex flex-col justify-center">
-                  <span className="text-[12px] text-[#A09A94] font-medium leading-tight mb-0.5">Book from</span>
-                  <span className="text-[16px] font-bold text-[#111111] leading-tight">CHF 45</span>
-               </div>
-               <button 
-                 className="!w-auto !py-3.5 !px-6 !rounded-[18px] bg-[#E85D2A] text-white font-semibold active:scale-95 transition-all"
-                 onClick={() => onNavigate('booking', { providerId: provider.id, source: 'provider_profile' })}
-               >
-                 Book {provider.name}
-               </button>
-           </div>
+       {/* Bottom CTA */}
+       <div className="shrink-0 px-5 py-4 border-t border-[#EDE8E2] flex items-center justify-between" style={{ background: '#FBF9F7' }}>
+         <div>
+           <span className="text-[11px] text-[#A09A94]">From</span>
+           <span className="text-[18px] font-bold text-[#111] ml-1">CHF {provider.services[0]?.price}</span>
+         </div>
+         <button onClick={() => onNavigate && onNavigate('booking')} className="px-6 py-3 rounded-[12px] text-[14px] font-semibold text-white active:scale-[0.97] transition-transform" style={{ background: '#E85D2A' }}>
+           Book {provider.name}
+         </button>
        </div>
 
+       {/* Menu sheet */}
        <CardModal isOpen={menuSheet} onClose={() => setMenuSheet(false)} title="Options">
-          <div className="space-y-1 pb-4 pt-2">
-             <OptionRow icon={Share} label="Share Profile" onClick={() => setMenuSheet(false)} />
-             <OptionRow icon={Star} label="Save for later" onClick={() => setMenuSheet(false)} />
-             <OptionRow icon={AlertTriangle} label="Report Issue" danger onClick={() => setMenuSheet(false)} />
-          </div>
+         <div className="pt-1 space-y-0">
+           <button onClick={() => { setMenuSheet(false); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+             <Share2 size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Share</span>
+           </button>
+           <button onClick={() => { setMenuSheet(false); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+             <AlertTriangle size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Report</span>
+           </button>
+           <button onClick={() => { setMenuSheet(false); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
+             <ShieldAlert size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Block</span>
+           </button>
+         </div>
        </CardModal>
 
-       <CardModal isOpen={calendarSheet} onClose={() => setCalendarSheet(false)} title="Full Availability">
-          <div className="py-4 space-y-6">
-             <div className="bg-[#F3EFEB] w-full rounded-[20px] h-[300px] flex items-center justify-center border border-[#EDE8E2]">
-                <span className="text-[#A09A94] text-[14px] font-medium">Full month calendar grid</span>
-             </div>
-             <Button variant="primary" onClick={() => setCalendarSheet(false)}>Close</Button>
-          </div>
-       </CardModal>
-
-       <CardModal isOpen={!!certSheet} onClose={() => setCertSheet(null)} title="Certification">
-          {certSheet && (
-             <div className="py-4 space-y-6">
-                <div className="flex items-center gap-4">
-                   <div className="w-14 h-14 bg-[#F3EFEB] rounded-[16px] flex items-center justify-center shrink-0">
-                      <CheckCircle2 size={26} className="text-[#A09A94]" />
-                   </div>
-                   <div>
-                      <h3 className="text-[18px] font-bold text-[#111111]">{certSheet.label}</h3>
-                      <p className="text-[14px] text-[#A09A94] font-semibold flex items-center gap-1 mt-0.5"><CheckCircle2 size={14}/> Verified via FYLOS</p>
-                   </div>
-                </div>
-                <div className="space-y-4 bg-[#F3EFEB] p-5 rounded-[20px] border border-[#EDE8E2]">
-                   <div className="flex justify-between items-center">
-                      <span className="text-[14px] text-[#A09A94]">Date Verified</span>
-                      <span className="text-[14px] font-semibold text-[#111111]">{new Date(certSheet.verifiedDate).toLocaleDateString('en-US', {month:'long', year:'numeric'})}</span>
-                   </div>
-                   {certSheet.expiryDate && (
-                      <div className="flex justify-between items-center">
-                         <span className="text-[14px] text-[#A09A94]">Valid Until</span>
-                         <span className="text-[14px] font-semibold text-[#111111]">{new Date(certSheet.expiryDate).toLocaleDateString('en-US', {month:'long', year:'numeric'})}</span>
-                      </div>
-                   )}
-                   {certSheet.provider && (
-                      <div className="flex justify-between items-center">
-                         <span className="text-[14px] text-[#A09A94]">Issuer</span>
-                         <span className="text-[14px] font-semibold text-[#111111] truncate max-w-[180px] text-right">{certSheet.provider}</span>
-                      </div>
-                   )}
-                </div>
-                <Button variant="primary" onClick={() => setCertSheet(null)}>Done</Button>
-             </div>
-          )}
-       </CardModal>
-
+       {/* Gallery viewer */}
        {galleryViewer !== null && (
-         <div className="absolute inset-0 z-[100] bg-black flex flex-col animate-in fade-in duration-200">
+         <div className="absolute inset-0 z-[100] bg-black flex flex-col">
             <div className="flex items-center justify-between p-5 pt-14 text-white">
                <button onClick={() => setGalleryViewer(null)} className="p-2 -ml-2 active:opacity-70"><X size={24} color="white"/></button>
                <span className="text-[15px] font-semibold">{galleryViewer + 1} / {provider.gallery.length}</span>
                <div className="w-10"></div>
             </div>
             <div className="flex-1 flex items-center justify-center overflow-hidden pb-10">
-               <img src={provider.gallery[galleryViewer]} className="w-full h-auto max-h-full object-contain" alt="Fullscreen View" />
+               <img src={provider.gallery[galleryViewer]} className="w-full h-auto max-h-full object-contain" alt="" />
             </div>
          </div>
        )}
