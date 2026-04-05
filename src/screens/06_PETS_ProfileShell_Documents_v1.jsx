@@ -11073,27 +11073,31 @@ export default function App() {
 
             <AnimationsOverlay isOpen={animationsOpen} onClose={() => setAnimationsOpen(false)} />
 
-            {/* Pet Profile Menu */}
-            <CardModal isOpen={petMenuOpen} onClose={() => setPetMenuOpen(false)} title="Options">
-              <div className="pt-1 space-y-0">
-                <button onClick={() => { setPetMenuOpen(false); window.location.href = '/edit-pet'; }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
-                  <Pencil size={15} className="text-[#A09A94]" />
-                  <span className="text-[14px] font-semibold text-[#111]">Edit Profile</span>
-                </button>
-                <button onClick={() => { setPetMenuOpen(false); setToastMessage('Change photo — coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
-                  <Camera size={15} className="text-[#A09A94]" />
-                  <span className="text-[14px] font-semibold text-[#111]">Change Photo</span>
-                </button>
-                <button onClick={() => { setPetMenuOpen(false); setToastMessage('Share — coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
-                  <Share2 size={15} className="text-[#A09A94]" />
-                  <span className="text-[14px] font-semibold text-[#111]">Share Profile</span>
-                </button>
-                <button onClick={() => { setPetMenuOpen(false); setToastMessage('Delete — coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
-                  <Trash2 size={15} className="text-[#E85D2A]" />
-                  <span className="text-[14px] font-semibold text-[#E85D2A]">Delete Pet</span>
-                </button>
-              </div>
-            </CardModal>
+            {/* Pet Profile Dropdown Menu */}
+            {petMenuOpen && (
+              <>
+                <div className="absolute inset-0 z-[90]" onClick={() => setPetMenuOpen(false)} />
+                <div className="absolute top-[105px] right-6 z-[95] w-[180px] rounded-[14px] py-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)]" style={{ background: '#FBF9F7', border: '1px solid #EDE8E2', animation: 'homeReveal 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
+                  <button onClick={() => { setPetMenuOpen(false); window.location.href = '/edit-pet'; }} className="w-full flex items-center gap-2.5 px-4 py-2.5 active:opacity-60 text-left">
+                    <Pencil size={14} className="text-[#A09A94]" />
+                    <span className="text-[13px] font-semibold text-[#111]">Edit Profile</span>
+                  </button>
+                  <button onClick={() => { setPetMenuOpen(false); setToastMessage('Coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-2.5 px-4 py-2.5 active:opacity-60 text-left">
+                    <Camera size={14} className="text-[#A09A94]" />
+                    <span className="text-[13px] font-semibold text-[#111]">Change Photo</span>
+                  </button>
+                  <button onClick={() => { setPetMenuOpen(false); setToastMessage('Coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-2.5 px-4 py-2.5 active:opacity-60 text-left">
+                    <Share2 size={14} className="text-[#A09A94]" />
+                    <span className="text-[13px] font-semibold text-[#111]">Share</span>
+                  </button>
+                  <div className="mx-3 h-[1px] bg-[#EDE8E2] my-1" />
+                  <button onClick={() => { setPetMenuOpen(false); setToastMessage('Coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-2.5 px-4 py-2.5 active:opacity-60 text-left">
+                    <Trash2 size={14} className="text-[#E85D2A]" />
+                    <span className="text-[13px] font-semibold text-[#E85D2A]">Delete Pet</span>
+                  </button>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
