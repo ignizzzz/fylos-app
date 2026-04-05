@@ -301,16 +301,14 @@ const RELATIONSHIP_OPTIONS = [{label: 'Owner', value: 'Owner'}, {label: 'Partner
 const VET_TYPE_OPTIONS = [{label: 'Primary Vet', value: 'Primary'}, {label: 'Emergency 24/7', value: 'Emergency'}, {label: 'Specialist', value: 'Specialist'}];
 
 const INITIAL_SHARES = [
-  { id: 's1', name: 'Marcus Müller', role: 'Co-owner', permission: 'Full Access', added: 'Feb 1, 2026', avatar: 'https://i.pravatar.cc/150?u=marcus' },
-  { id: 's2', name: 'Sarah Johnson', role: 'Dog Sitter', permission: 'View Only', added: 'Jan 15, 2026', avatar: 'https://i.pravatar.cc/150?u=sarah' },
-  { id: 's3', name: 'Dr. Sarah Schmidt', role: 'Vet', permission: 'Medical Only', added: 'Dec 10, 2025', avatar: 'https://i.pravatar.cc/150?u=dr_schmidt' }
+  { id: 's1', name: 'Marcus Müller', role: 'Co-owner', permission: 'Edit', added: 'Feb 1, 2026', avatar: 'https://i.pravatar.cc/150?u=marcus' },
+  { id: 's2', name: 'Sarah Johnson', role: 'Dog Sitter', permission: 'View', added: 'Jan 15, 2026', avatar: 'https://i.pravatar.cc/150?u=sarah' },
+  { id: 's3', name: 'Dr. Sarah Schmidt', role: 'Vet', permission: 'View', added: 'Dec 10, 2025', avatar: 'https://i.pravatar.cc/150?u=dr_schmidt' }
 ];
 
 const PERMISSION_LEVELS = [
-  { id: 'view', label: 'View Only', description: 'Can read profile, cannot edit' },
-  { id: 'edit', label: 'Can Edit', description: 'Can update details and add milestones' },
-  { id: 'full', label: 'Full Access (Co-owner)', description: 'Can manage sharing and all details' },
-  { id: 'medical', label: 'Medical Records Only', description: 'Restricted view for vets & clinics' }
+  { id: 'view', label: 'View', description: 'Can see profile info' },
+  { id: 'edit', label: 'Edit', description: 'Can view and make changes' },
 ];
 const EXPIRY_OPTIONS = [
   { value: '1h', label: '1 hour' },
