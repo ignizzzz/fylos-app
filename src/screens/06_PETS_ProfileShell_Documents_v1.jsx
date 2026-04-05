@@ -2673,64 +2673,43 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
         )}
       </CardModal>
 
-      {/* Share Sheet */}
-      <CardModal 
-        isOpen={shareSheet} 
-        onClose={() => setShareSheet(false)} 
-        title="Share Emergency Info"
-        footer={
-          <div className="space-y-3">
-            <Button variant="primary" icon={Share2} onClick={() => { setShareSheet(false); showToast('Opening share options...'); }}>Share Link</Button>
-            <Button variant="secondary" icon={ExternalLink} onClick={() => onOpenPublicView()}>Preview Public Page</Button>
+      {/* Share Sheet — minimal */}
+      <CardModal isOpen={shareSheet} onClose={() => setShareSheet(false)} title="Share Emergency">
+        <div className="pt-1">
+          <div className="w-[120px] h-[120px] mx-auto rounded-[14px] flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}>
+            <QrCode size={80} color="#111" strokeWidth={1.5} />
           </div>
-        }
-      >
-        <div className="flex flex-col items-center pt-2">
-          <div className="w-[160px] h-[160px] bg-white border-2 border-black/[0.04] rounded-[24px] shadow-sm flex items-center justify-center mb-6">
-             <QrCode size={100} color="#111111" strokeWidth={1} />
+          <p className="text-[11px] text-[#A09A94] text-center mb-4">Temporary read-only access to {pet.name}'s critical info.</p>
+          <div className="flex items-center gap-2 px-3 py-2.5 rounded-[12px] mb-3" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+            <span className="text-[12px] font-medium text-[#111] flex-1 truncate font-mono">fylos.com/e/luna-89x2</span>
+            <button onClick={() => handleCopy('fylos.com/e/luna-89x2', 'Link')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#EDE8E2' }}><Copy size={12} className="text-[#A09A94]" /></button>
           </div>
-          <p className="text-[15px] text-[#6E6E73] text-center max-w-[280px] mb-6">
-            Scanners will see a temporary read-only page with {pet.name}'s critical info.
-          </p>
-          
-          <div className="w-full bg-[#F7F7F8] rounded-[16px] p-4 mb-6">
-            <span className="text-[12px] font-semibold uppercase text-[#8E8E93] block mb-3">What's included</span>
-            <ul className="space-y-2 text-[14px] font-medium text-[#111111]">
-              <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#00C060]"/> Contacts & Vets</li>
-              <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#00C060]"/> Medical Conditions & Allergies</li>
-              <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#00C060]"/> Microchip ID</li>
-            </ul>
+          <p className="text-[10px] text-[#C4BBB3] text-center mb-4">Expires in 24 hours</p>
+          <div className="space-y-2">
+            <Button variant="primary" onClick={() => { setShareSheet(false); showToast('Sharing...'); }}>Share Link</Button>
+            <Button variant="ghost" onClick={() => onOpenPublicView()}>Preview public page</Button>
           </div>
-
-          <div className="w-full flex items-center bg-[#FFFFFF] border border-black/[0.08] rounded-xl p-2 mb-4">
-            <div className="flex-1 px-3 text-[14px] text-[#111111] truncate font-medium">fylos.com/e/luna-89x2</div>
-            <button onClick={() => handleCopy('fylos.com/e/luna-89x2', 'Link')} className="px-4 py-2 bg-[#F7F7F8] rounded-lg text-[13px] font-semibold active:bg-[#E5E5E5] transition-colors">
-              Copy
-            </button>
-          </div>
-          
-          <span className="text-[12px] text-[#8E8E93] text-center block">Link expires automatically in 24 hours.</span>
         </div>
       </CardModal>
 
-      {/* More Actions Sheet */}
-      <CardModal isOpen={moreSheet} onClose={() => setMoreSheet(false)} title="Quick Actions">
-        <div className="space-y-2 pt-2">
-          <button onClick={() => { setMoreSheet(false); handleCall({stopPropagation:()=>{}}, pet.vets.find(v=>v.type==='Primary')?.phone || '', 'Primary Vet'); }} className="w-full flex items-center gap-3 p-4 bg-[#F7F7F8] hover:bg-[#F0F0F2] active:scale-[0.98] rounded-xl transition-all text-left">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0"><Stethoscope size={18} className="text-[#FF6B35]"/></div>
-            <span className="text-[16px] font-medium text-[#111111]">Call Primary Vet</span>
+      {/* More Actions Sheet — minimal */}
+      <CardModal isOpen={moreSheet} onClose={() => setMoreSheet(false)} title="Actions">
+        <div className="pt-1 space-y-0">
+          <button onClick={() => { setMoreSheet(false); handleCall({stopPropagation:()=>{}}, pet.vets.find(v=>v.type==='Primary')?.phone || '', 'Primary Vet'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+            <Stethoscope size={15} className="text-[#A09A94]" />
+            <span className="text-[14px] font-semibold text-[#111]">Call Primary Vet</span>
           </button>
-          <button onClick={() => { setMoreSheet(false); handleCall({stopPropagation:()=>{}}, pet.emergencyContacts.find(c=>c.isPrimary)?.phone || '', 'Primary Contact'); }} className="w-full flex items-center gap-3 p-4 bg-[#F7F7F8] hover:bg-[#F0F0F2] active:scale-[0.98] rounded-xl transition-all text-left">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0"><PhoneCall size={18} className="text-[#111111]"/></div>
-            <span className="text-[16px] font-medium text-[#111111]">Call Primary Contact</span>
+          <button onClick={() => { setMoreSheet(false); handleCall({stopPropagation:()=>{}}, pet.emergencyContacts.find(c=>c.isPrimary)?.phone || '', 'Primary Contact'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+            <Phone size={15} className="text-[#A09A94]" />
+            <span className="text-[14px] font-semibold text-[#111]">Call Primary Contact</span>
           </button>
-          <button onClick={() => { setMoreSheet(false); handleCopy(pet.microchip, 'Microchip'); }} className="w-full flex items-center gap-3 p-4 bg-[#F7F7F8] hover:bg-[#F0F0F2] active:scale-[0.98] rounded-xl transition-all text-left">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0"><Copy size={18} className="text-[#111111]"/></div>
-            <span className="text-[16px] font-medium text-[#111111]">Copy Microchip ID</span>
+          <button onClick={() => { setMoreSheet(false); handleCopy(pet.microchip, 'Microchip'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
+            <Copy size={15} className="text-[#A09A94]" />
+            <span className="text-[14px] font-semibold text-[#111]">Copy Microchip ID</span>
           </button>
-          <button onClick={() => { setMoreSheet(false); handleCopy(pet.address, 'Address'); }} className="w-full flex items-center gap-3 p-4 bg-[#F7F7F8] hover:bg-[#F0F0F2] active:scale-[0.98] rounded-xl transition-all text-left">
-            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0"><MapPin size={18} className="text-[#111111]"/></div>
-            <span className="text-[16px] font-medium text-[#111111]">Copy Home Address</span>
+          <button onClick={() => { setMoreSheet(false); handleCopy(pet.address, 'Address'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
+            <MapPin size={15} className="text-[#A09A94]" />
+            <span className="text-[14px] font-semibold text-[#111]">Copy Home Address</span>
           </button>
         </div>
       </CardModal>
@@ -3458,47 +3437,31 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
         </div>
       </CardModal>
 
-      <CardModal 
-        isOpen={shareActiveSheet === 'change' && !!selectedShare} onClose={closeShareSheet} 
-        title="Change permissions"
-        footer={
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={() => openShareSheet('details', selectedShare)}>Cancel</Button>
-            <Button variant="primary" onClick={handleSavePermission}>Save changes</Button>
-          </div>
-        }
-      >
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 bg-[#F7F7F8] p-3 rounded-xl border border-black/[0.04]">
-            <Avatar src={selectedShare?.avatar} size={40} />
+      <CardModal isOpen={shareActiveSheet === 'change' && !!selectedShare} onClose={closeShareSheet} title="Permissions">
+        <div className="pt-1">
+          <div className="flex items-center gap-3 mb-4">
+            <Avatar src={selectedShare?.avatar} size={32} />
             <div>
-              <div className="text-[15px] font-semibold text-[#111111]">{selectedShare?.name}</div>
-              <div className="text-[13px] text-[#6E6E73]">Current: {selectedShare?.permission}</div>
+              <span className="text-[14px] font-semibold text-[#111]">{selectedShare?.name}</span>
+              <span className="text-[11px] text-[#A09A94] block">Current: {selectedShare?.permission}</span>
             </div>
           </div>
-          <div>
-            <h4 className="text-[14px] font-semibold text-[#6E6E73] uppercase tracking-wider mb-3">New Permission Level</h4>
+          <div className="mb-4">
             <RadioList options={PERMISSION_LEVELS} value={shareConfig.permission} onChange={(v) => setShareConfig({ ...shareConfig, permission: v })} />
           </div>
-          <Select label="Expires in" options={EXPIRY_OPTIONS} value={shareConfig.expiry} onChange={e => setShareConfig({ ...shareConfig, expiry: e.target.value })} />
+          <div className="flex gap-2">
+            <Button variant="secondary" onClick={() => openShareSheet('details', selectedShare)}>Cancel</Button>
+            <Button variant="primary" onClick={handleSavePermission}>Save</Button>
+          </div>
         </div>
       </CardModal>
-      
-      <CardModal 
-        isOpen={shareActiveSheet === 'revoke' && !!selectedShare} onClose={closeShareSheet} 
-        snap="compact"
-      >
-        <div className="flex flex-col items-center text-center px-2 py-2">
-          <div className="w-16 h-16 bg-[#FFF0F0] rounded-full flex items-center justify-center mb-6 shadow-sm">
-            <AlertTriangle size={32} className="text-[#FF3B30]" />
-          </div>
-          <h3 className="text-[20px] font-bold text-[#111111] mb-3">Revoke access?</h3>
-          <p className="text-[15px] text-[#6E6E73] mb-8 leading-relaxed max-w-[280px]">
-            {selectedShare?.name} will no longer be able to view {pet.name}'s profile. This action cannot be undone.
-          </p>
-          <div className="flex flex-col gap-3 w-full">
-            <Button variant="destructive" onClick={handleRevokeShare}>Yes, revoke access</Button>
+
+      <CardModal isOpen={shareActiveSheet === 'revoke' && !!selectedShare} onClose={closeShareSheet} title="Revoke access">
+        <div className="text-center pt-2">
+          <p className="text-[13px] text-[#A09A94] mb-4">{selectedShare?.name} will lose access to {pet.name}'s profile.</p>
+          <div className="flex gap-2">
             <Button variant="secondary" onClick={() => openShareSheet('details', selectedShare)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleRevokeShare}>Revoke</Button>
           </div>
         </div>
       </CardModal>
