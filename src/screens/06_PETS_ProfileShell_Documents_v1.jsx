@@ -4400,252 +4400,224 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
   };
 
   return (
-    <div className="absolute inset-0 bg-[var(--color-background)] z-[70] overflow-hidden flex flex-col">
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#FFFFFF] via-[#FFFFFF]/90 to-transparent pointer-events-none z-30" />
-      <header className="absolute top-12 left-0 w-full z-40 px-5 flex flex-col gap-4 pointer-events-none">
-        <div className="flex justify-between items-center w-full pointer-events-auto">
-          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
-            <ChevronLeft size={22} color="#111111" />
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[70] overflow-hidden flex flex-col">
+      {/* Header */}
+      <header className="bg-[#F7F5F2] pt-14 pb-3 px-5 z-40">
+        <div className="flex items-center gap-3">
+          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
+            <ChevronLeft size={20} color="#111" />
           </button>
-          <div className="flex flex-col items-center justify-center -mt-0.5">
-            <span className="text-[16px] font-bold text-[#111111] leading-tight tracking-tight">New Booking</span>
-            <span className="text-[11px] font-medium text-[#A09A94] leading-tight mt-0.5">Step 1 of 2</span>
-          </div>
-          <button onClick={() => setShowCloseDialog(true)} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
-            <X size={20} color="#111111" />
+          <span className="text-[17px] font-bold text-[#111] flex-1">Book</span>
+          <button onClick={() => setShowCloseDialog(true)} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
+            <X size={18} color="#111" />
           </button>
-        </div>
-        <div className="pointer-events-auto w-[calc(100%-40px)] mx-5 h-[3px] bg-black/[0.04] rounded-full overflow-hidden">
-          <div className="h-full bg-[#E85D2A] rounded-full w-1/2 transition-all duration-300" />
         </div>
       </header>
 
-      <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[130px] pb-[200px] px-5 bg-[var(--color-background)]">
+      <div className="flex-1 overflow-y-auto px-5 pb-[160px] bg-[#F7F5F2]">
         {showValidation && !isValid && (
-          <div className="mb-5 text-center">
-            <span className="text-[13px] font-medium text-[#FF3B30] bg-[#FFF0F0] px-3 py-1.5 rounded-full">Please complete all required fields</span>
+          <div className="mb-4 text-center">
+            <span className="text-[13px] font-medium text-[#FF3B30]">Please complete all required fields</span>
           </div>
         )}
 
-        <section className="mb-7 mt-2">
-          <div className="flex justify-between items-end mb-4">
-            <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">Select Service</h3>
+        {/* Service Selection */}
+        <section className="mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-[15px] font-semibold text-[#111]">Service</h3>
             {errors.service && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
           </div>
-          <div className="bg-[#FFFFFF] rounded-[20px] border border-[#EDE8E2]  overflow-hidden">
-            {mockBookingData.provider.services.map((svc, idx) => {
-              const isSelected = selectedServiceId === svc.id;
-              return (
-                <div key={svc.id}>
-                  <div
-                    onClick={() => { setSelectedServiceId(svc.id); setSelectedTime(null); if(errors.service) setErrors(prev => ({...prev, service: false})); }}
-                    className={`flex items-center justify-between py-3 pl-5 pr-4 cursor-pointer transition-colors ${isSelected ? 'bg-[#E85D2A]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[15px] ${isSelected ? 'font-semibold text-[#111111]' : 'font-medium text-[#111111]'}`}>{svc.label}</span>
-                        {svc.popular && <span className="text-[9px] font-bold text-[#E85D2A] bg-[#E85D2A]/[0.08] px-2.5 py-0.5 rounded-full uppercase tracking-wider">Popular</span>}
-                      </div>
-                      <span className="text-[13px] text-[#A09A94]">{svc.duration} minutes</span>
+          {mockBookingData.provider.services.map((svc, idx) => {
+            const isSelected = selectedServiceId === svc.id;
+            return (
+              <div key={svc.id}>
+                <div
+                  onClick={() => { setSelectedServiceId(svc.id); setSelectedTime(null); if(errors.service) setErrors(prev => ({...prev, service: false})); }}
+                  className="flex items-center justify-between py-3 cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0 ${isSelected ? 'border-[#E85D2A]' : 'border-[#CFCFD4]'}`}>
+                      {isSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-[15px] font-medium text-[#111111]">CHF {svc.price}</span>
-                      <div className={`w-[20px] h-[20px] rounded-full border-[1px] flex items-center justify-center transition-colors ${isSelected ? 'border-[#E85D2A] bg-transparent' : 'border-[#CFCFD4]'}`}>
-                        {isSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[14px] ${isSelected ? 'font-semibold' : 'font-medium'} text-[#111]`}>{svc.label}</span>
+                        {svc.popular && <span className="text-[9px] font-bold text-[#E85D2A] uppercase tracking-wider">Popular</span>}
                       </div>
+                      <span className="text-[12px] text-[#A09A94]">{svc.duration} min</span>
                     </div>
                   </div>
-                  {idx < mockBookingData.provider.services.length - 1 && <div className="mx-5 h-[1px] bg-black/[0.03]" />}
+                  <span className="text-[14px] font-semibold text-[#111]">CHF {svc.price}</span>
                 </div>
-              );
-            })}
-          </div>
+                {idx < mockBookingData.provider.services.length - 1 && <div className="h-[1px] bg-[#EDE8E2]" />}
+              </div>
+            );
+          })}
         </section>
 
-        <section className="mb-7">
-          <div className="flex justify-between items-end mb-4">
-            <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">Date & Time</h3>
+        {/* Date */}
+        <section className="mb-6">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-[15px] font-semibold text-[#111]">Date</h3>
             {errors.date && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
           </div>
-          <div className={`bg-[#FFFFFF] rounded-[20px] border transition-colors ${errors.date ? 'border-[#FF3B30]/30 shadow-sm' : 'border-[#EDE8E2] '}`}>
-            <button onClick={openCalendar} className="w-full flex justify-between items-center py-4 px-4 hover:bg-[#FAFAFA] rounded-[20px] transition-colors">
-              <div className="flex items-center gap-3.5">
-                <div className="w-9 h-9 rounded-full bg-[#FAFAFA] border border-black/[0.02] flex items-center justify-center shrink-0">
-                  <CalendarDays size={18} color="#111111" />
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-[12px] text-[#A09A94] font-medium leading-tight">Date</span>
-                  <span className={`text-[15px] font-medium leading-tight mt-0.5 ${selectedDate ? 'text-[#111111]' : 'text-[#E85D2A]'}`}>
-                    {formatDateLabel(selectedDate)}
-                  </span>
-                </div>
-              </div>
-              <ChevronRight size={18} className="text-[#CFCFD4] opacity-70" />
-            </button>
-            {selectedDate && (
-              <>
-                <div className="mx-4 h-[1px] bg-black/[0.03]" />
-                <div className="p-4">
-                  <span className="text-[12px] text-[#A09A94] font-medium mb-3 block">Available Times</span>
-                  {availableSlots.length > 0 ? (
-                    <div className="flex flex-wrap gap-3">
-                      {availableSlots.map((slot, idx) => {
-                        const isSlotSelected = selectedTime === slot.time;
-                        return (
-                          <button
-                            key={idx}
-                            disabled={!slot.available}
-                            onClick={() => { setSelectedTime(slot.time); if(errors.date) setErrors(prev => ({...prev, date: false})); }}
-                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-all border-[0.5px] ${!slot.available ? 'bg-[#FAFAFA] text-[#CFCFD4] border-transparent cursor-not-allowed' : isSlotSelected ? 'bg-[#E85D2A]/[0.06] text-[#E85D2A] border-transparent' : 'bg-[#FFFFFF] text-[#111111] border-[#EDE8E2] hover:border-black/20'}`}
-                          >
-                            {slot.time}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-[14px] text-[#A09A94] bg-[#FAFAFA] p-3 rounded-[12px] text-center">No available slots for this date.</div>
-                  )}
-                  {selectedTime && selectedService && (
-                    <div className="mt-4 flex items-center gap-2 text-[13px] font-medium text-[#A09A94] bg-[#FAFAFA] p-3 rounded-[12px]">
-                      <Clock size={15} />
-                      <span>Scheduled for {formatTimeRange(selectedTime, selectedService.duration)}</span>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+          <button onClick={openCalendar} className={`w-full flex justify-between items-center py-3 px-4 rounded-[12px] bg-[#F3EFEB] border transition-colors ${errors.date ? 'border-[#FF3B30]/30' : 'border-[#EDE8E2]'}`}>
+            <div className="flex items-center gap-2.5">
+              <CalendarDays size={16} color="#A09A94" />
+              <span className={`text-[14px] font-medium ${selectedDate ? 'text-[#111]' : 'text-[#A09A94]'}`}>
+                {formatDateLabel(selectedDate)}
+              </span>
+            </div>
+            <ChevronRight size={16} className="text-[#A09A94]" />
+          </button>
         </section>
 
+        {/* Time Slots */}
+        {selectedDate && (
+          <section className="mb-6">
+            <h3 className="text-[15px] font-semibold text-[#111] mb-3">Time</h3>
+            {availableSlots.length > 0 ? (
+              <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+                {availableSlots.map((slot, idx) => {
+                  const isSlotSelected = selectedTime === slot.time;
+                  return (
+                    <button
+                      key={idx}
+                      disabled={!slot.available}
+                      onClick={() => { setSelectedTime(slot.time); if(errors.date) setErrors(prev => ({...prev, date: false})); }}
+                      className={`px-4 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all ${!slot.available ? 'text-[#CFCFD4] cursor-not-allowed' : isSlotSelected ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] border border-[#EDE8E2] text-[#111]'}`}
+                    >
+                      {slot.time}
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-[13px] text-[#A09A94]">No slots available for this date.</p>
+            )}
+            {selectedTime && selectedService && (
+              <p className="mt-2 text-[12px] text-[#A09A94]">
+                <Clock size={12} className="inline mr-1 -mt-0.5" />
+                {formatTimeRange(selectedTime, selectedService.duration)}
+              </p>
+            )}
+          </section>
+        )}
+
+        {/* Pet Selection */}
         {showPetSelection && (
-          <section className="mb-7">
-            <div className="flex justify-between items-end mb-4">
-              <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">Which pet is going?</h3>
+          <section className="mb-6">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-[15px] font-semibold text-[#111]">Pet</h3>
               {errors.pet && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
             </div>
-            <div className={`bg-[#FFFFFF] rounded-[20px] overflow-hidden border transition-colors ${errors.pet ? 'border-[#FF3B30]/30 shadow-sm' : 'border-[#EDE8E2] '}`}>
-              {mockBookingData.userPets.map((pet, idx) => {
+            <div className="flex gap-2">
+              {mockBookingData.userPets.map((pet) => {
                 const isPetSelected = selectedPetId === pet.id;
                 return (
-                  <div key={pet.id}>
-                    <button
-                      onClick={() => { setSelectedPetId(pet.id); if(errors.pet) setErrors(prev => ({...prev, pet: false})); }}
-                      className={`w-full flex justify-between items-center py-4 px-4 transition-colors ${isPetSelected ? 'bg-[#E85D2A]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Avatar initials={pet.name.charAt(0)} size={40} />
-                        <div className="flex flex-col items-start">
-                          <span className={`text-[15px] ${isPetSelected ? 'font-semibold' : 'font-medium'} text-[#111111]`}>{pet.name}</span>
-                          <span className="text-[13px] text-[#A09A94]">{pet.breed}</span>
-                        </div>
-                      </div>
-                      <div className={`w-[20px] h-[20px] rounded-full border-[1px] flex items-center justify-center transition-colors ${isPetSelected ? 'border-[#E85D2A] bg-transparent' : 'border-[#CFCFD4]'}`}>
-                        {isPetSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
-                      </div>
-                    </button>
-                    {idx < mockBookingData.userPets.length - 1 && <div className="mx-4 h-[1px] bg-black/[0.03]" />}
-                  </div>
+                  <button
+                    key={pet.id}
+                    onClick={() => { setSelectedPetId(pet.id); if(errors.pet) setErrors(prev => ({...prev, pet: false})); }}
+                    className={`px-4 py-2 rounded-full text-[13px] font-medium transition-all ${isPetSelected ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] border border-[#EDE8E2] text-[#111]'}`}
+                  >
+                    {pet.name}
+                  </button>
                 );
               })}
             </div>
           </section>
         )}
 
-        <section className="mb-7">
-          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-4">Extras (Optional)</h3>
-          <div className="bg-[#FFFFFF] rounded-[20px] border border-[#EDE8E2]  overflow-hidden">
-            {mockBookingData.provider.addOns.map((addon, idx) => {
-              const isAddonSelected = selectedAddOns.includes(addon.id);
-              return (
-                <div key={addon.id}>
-                  <div
-                    onClick={() => {
-                      if (isAddonSelected) setSelectedAddOns(prev => prev.filter(id => id !== addon.id));
-                      else setSelectedAddOns(prev => [...prev, addon.id]);
-                    }}
-                    className="flex items-center justify-between py-3.5 px-4 cursor-pointer bg-[#FFFFFF] hover:bg-[#FAFAFA] transition-colors"
-                  >
-                    <div className="flex-1 flex flex-col pr-4 justify-center">
-                      <span className="text-[15px] font-medium text-[#111111]">{addon.label}</span>
-                      <span className="text-[13px] text-[#A1A1A6] mt-0.5 leading-snug">{addon.description}</span>
-                      <span className="text-[13px] font-medium text-[#111111] mt-1.5">+CHF {addon.price}</span>
-                    </div>
-                    <div className={`w-[18px] h-[18px] rounded-[5px] border-[1px] flex shrink-0 items-center justify-center transition-colors ${isAddonSelected ? 'bg-[#111111] border-[#111111]' : 'border-[#CFCFD4] bg-transparent'}`}>
-                      {isAddonSelected && <Check size={12} color="#FFF" strokeWidth={4} />}
+        {/* Extras */}
+        <section className="mb-6">
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Extras</h3>
+          {mockBookingData.provider.addOns.map((addon, idx) => {
+            const isAddonSelected = selectedAddOns.includes(addon.id);
+            return (
+              <div key={addon.id}>
+                <div
+                  onClick={() => {
+                    if (isAddonSelected) setSelectedAddOns(prev => prev.filter(id => id !== addon.id));
+                    else setSelectedAddOns(prev => [...prev, addon.id]);
+                  }}
+                  className="flex items-center justify-between py-3 cursor-pointer"
+                >
+                  <div className="flex-1">
+                    <span className="text-[14px] font-medium text-[#111]">{addon.label}</span>
+                    <span className="text-[12px] text-[#A09A94] block mt-0.5">{addon.description}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[13px] font-medium text-[#A09A94]">+CHF {addon.price}</span>
+                    <div className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex shrink-0 items-center justify-center transition-colors ${isAddonSelected ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#CFCFD4]'}`}>
+                      {isAddonSelected && <Check size={12} color="#FFF" strokeWidth={3} />}
                     </div>
                   </div>
-                  {idx < mockBookingData.provider.addOns.length - 1 && <div className="mx-4 h-[1px] bg-black/[0.03]" />}
                 </div>
-              );
-            })}
-          </div>
+                {idx < mockBookingData.provider.addOns.length - 1 && <div className="h-[1px] bg-[#EDE8E2]" />}
+              </div>
+            );
+          })}
         </section>
 
-        <section className="mb-7">
-          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-4">Special Instructions</h3>
+        {/* Instructions */}
+        <section className="mb-6">
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Instructions</h3>
           <div className="relative">
             <textarea
-              className="w-full bg-[#FAFAFA] rounded-[20px] p-4 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] border border-black/[0.03] focus:bg-[#FFFFFF] focus:border-[#E85D2A]/50 focus:ring-1 focus:ring-[#E85D2A]/30 focus: outline-none resize-none transition-all pb-8"
+              className="w-full bg-[#F3EFEB] rounded-[12px] p-3.5 text-[14px] text-[#111] placeholder:text-[#A09A94] border border-[#EDE8E2] focus:border-[#E85D2A]/40 outline-none resize-none transition-colors pb-7"
               rows={3}
               maxLength={500}
-              placeholder="e.g. Please make sure to lock the bottom gate..."
+              placeholder="e.g. Please lock the bottom gate..."
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
             />
-            <span className="absolute bottom-3 right-4 text-[10px] text-[#CFCFD4] font-medium text-right">{instructions.length}/500</span>
+            <span className="absolute bottom-2.5 right-3.5 text-[10px] text-[#A09A94]">{instructions.length}/500</span>
           </div>
         </section>
 
+        {/* Price Summary */}
         <section className="mb-4">
-          <div className="bg-[#FFFFFF] rounded-[20px] p-4  border border-[#EDE8E2]">
-            <div className="space-y-3">
-              <div className="flex justify-between text-[14px]">
-                <span className="text-[#A09A94]">{selectedService?.label || 'Service'}</span>
-                <span className="font-medium text-[#111111]">CHF {selectedService?.price || 0}</span>
+          <div className="h-[1px] bg-[#EDE8E2] mb-4" />
+          <div className="flex justify-between text-[14px] mb-2">
+            <span className="text-[#A09A94]">{selectedService?.label || 'Service'}</span>
+            <span className="font-semibold text-[#111]">CHF {selectedService?.price || 0}</span>
+          </div>
+          {selectedAddOns.map(id => {
+            const addon = mockBookingData.provider.addOns.find(a => a.id === id);
+            return addon ? (
+              <div key={id} className="flex justify-between text-[14px] mb-2">
+                <span className="text-[#A09A94]">{addon.label}</span>
+                <span className="font-semibold text-[#111]">+CHF {addon.price}</span>
               </div>
-              {selectedAddOns.map(id => {
-                const addon = mockBookingData.provider.addOns.find(a => a.id === id);
-                return addon ? (
-                  <div key={id} className="flex justify-between text-[14px]">
-                    <span className="text-[#A09A94]">{addon.label}</span>
-                    <span className="font-medium text-[#111111]">+CHF {addon.price}</span>
-                  </div>
-                ) : null;
-              })}
-            </div>
-            <div className="w-full h-[1px] bg-black/[0.03] mt-5 mb-4" />
-            <div className="flex justify-between items-center pt-1">
-              <span className="text-[15px] font-medium text-[#111111]">Total</span>
-              <span className="text-[18px] font-bold text-[#111111]">CHF {calculateBookingTotal(selectedServiceId, selectedAddOns)}</span>
-            </div>
+            ) : null;
+          })}
+          <div className="h-[1px] bg-[#EDE8E2] my-3" />
+          <div className="flex justify-between items-center">
+            <span className="text-[15px] font-semibold text-[#111]">Total</span>
+            <span className="text-[17px] font-bold text-[#111]">CHF {calculateBookingTotal(selectedServiceId, selectedAddOns)}</span>
           </div>
         </section>
       </div>
 
-      <div className="absolute bottom-[56px] left-[12px] right-[12px] z-40 pointer-events-none">
-        <div className="pointer-events-auto bg-[#FFFFFF]/95 backdrop-blur-2xl border border-black/[0.03]  rounded-full p-1 pl-5 flex justify-between items-center">
-          <div className="flex flex-col justify-center">
-            <span className="text-[10px] text-[#A09A94] font-medium leading-tight mb-0.5 uppercase tracking-wider">Total</span>
-            <span className="text-[15px] font-bold text-[#111111] leading-tight">CHF {calculateBookingTotal(selectedServiceId, selectedAddOns)}</span>
-          </div>
-          <button
-            className={`!w-auto py-3 px-6 rounded-full text-[14px] font-medium transition-all ${!isValid ? 'bg-[#F0F0F2] text-[#A1A1A6]' : 'bg-[#E85D2A] text-white shadow-[0_4px_12px_rgba(232,93,42,0.15)] active:scale-[0.96]'}`}
-            onClick={handleContinue}
-          >
-            Continue
-          </button>
-        </div>
+      {/* Bottom Button */}
+      <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40">
+        <button
+          className={`w-full py-3.5 rounded-[12px] text-[15px] font-semibold transition-all ${!isValid ? 'bg-[#EDE8E2] text-[#A09A94]' : 'bg-[#E85D2A] text-white active:scale-[0.98]'}`}
+          onClick={handleContinue}
+        >
+          Continue
+        </button>
       </div>
 
+      {/* Calendar Modal */}
       <CardModal isOpen={isCalendarOpen} onClose={() => setIsCalendarOpen(false)} title="">
         <div className="flex flex-col h-full relative">
           <div className="flex justify-between items-center text-center mb-6">
-            <span className="text-[18px] font-bold text-[#111111]">Select Date</span>
-            <span className="text-[15px] font-medium text-[#111111]">February 2026</span>
+            <span className="text-[17px] font-bold text-[#111]">Select Date</span>
+            <span className="text-[14px] font-medium text-[#A09A94]">February 2026</span>
           </div>
-          <div className="grid grid-cols-7 gap-y-4 text-center mb-6">
-            {['S','M','T','W','T','F','S'].map((d, i) => <span key={i} className="text-[13px] font-medium text-[#A09A94]">{d}</span>)}
+          <div className="grid grid-cols-7 gap-y-3 text-center mb-6">
+            {['S','M','T','W','T','F','S'].map((d, i) => <span key={i} className="text-[12px] font-medium text-[#A09A94]">{d}</span>)}
             {[...Array(28)].map((_, i) => {
               const day = i + 1;
               const dateStr = `2026-02-${day.toString().padStart(2, '0')}`;
@@ -4655,33 +4627,34 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
               const isSelectable = !isPast && hasAvailability && isAvailable;
               const isDateSelected = tempDate === dateStr;
               return (
-                <button key={day} disabled={!isSelectable} onClick={() => setTempDate(dateStr)} className="flex flex-col items-center justify-center gap-1.5">
-                  <div className={`w-10 h-10 flex items-center justify-center rounded-full text-[15px] font-medium transition-all ${isDateSelected ? 'bg-[#E85D2A] text-white shadow-md' : isSelectable ? 'bg-transparent text-[#111111] hover:bg-[#F0F0F2]' : 'text-[#CFCFD4] cursor-not-allowed'}`}>
+                <button key={day} disabled={!isSelectable} onClick={() => setTempDate(dateStr)} className="flex flex-col items-center justify-center gap-1">
+                  <div className={`w-9 h-9 flex items-center justify-center rounded-full text-[14px] font-medium transition-all ${isDateSelected ? 'bg-[#E85D2A] text-white' : isSelectable ? 'text-[#111] hover:bg-[#F3EFEB]' : 'text-[#CFCFD4] cursor-not-allowed'}`}>
                     {day}
                   </div>
-                  <div className={`w-1.5 h-1.5 rounded-full ${!isSelectable ? 'bg-transparent' : isAvailable ? 'bg-[#E85D2A]' : 'bg-transparent'}`} />
+                  {isSelectable && isAvailable && <div className="w-1 h-1 rounded-full bg-[#E85D2A]" />}
                 </button>
               );
             })}
           </div>
-          <div className="sticky bottom-0 bg-[#FFFFFF]/95 backdrop-blur-md pt-4 pb-4 border-t border-[#EDE8E2] -mx-6 px-6 mt-auto">
-            <Button variant="primary" disabled={!tempDate} onClick={confirmDate} className="!rounded-full !py-4 w-full shadow-[0_4px_12px_rgba(232,93,42,0.15)] font-medium">
+          <div className="pt-4 border-t border-[#EDE8E2] mt-auto">
+            <button disabled={!tempDate} onClick={confirmDate} className={`w-full py-3.5 rounded-[12px] text-[15px] font-semibold transition-all ${!tempDate ? 'bg-[#EDE8E2] text-[#A09A94]' : 'bg-[#E85D2A] text-white active:scale-[0.98]'}`}>
               Confirm Date
-            </Button>
+            </button>
           </div>
         </div>
       </CardModal>
 
+      {/* Close Dialog */}
       {showCloseDialog && (
         <div className="absolute inset-0 z-[120] bg-black/30 flex items-center justify-center p-5 animate-in fade-in duration-200">
-          <div className="bg-[#FFFFFF] rounded-[24px] p-6 w-full max-w-[320px] shadow-2xl border border-[#EDE8E2]">
-            <h3 className="text-[18px] font-bold text-[#111111] mb-2">Abandon Booking?</h3>
-            <p className="text-[14px] text-[#A09A94] mb-6 leading-relaxed">Your progress will be lost. Are you sure you want to leave?</p>
-            <div className="flex flex-col gap-3">
-              <button onClick={() => { setShowCloseDialog(false); onClose(); }} className="w-full py-3.5 rounded-[16px] font-medium bg-[#FFF0F0] text-[#FF3B30] active:scale-[0.98] transition-transform">
-                Yes, discard
+          <div className="bg-[#FFFFFF] rounded-[16px] p-5 w-full max-w-[300px] border border-[#EDE8E2]">
+            <h3 className="text-[17px] font-bold text-[#111] mb-1.5">Abandon Booking?</h3>
+            <p className="text-[14px] text-[#A09A94] mb-5 leading-relaxed">Your progress will be lost.</p>
+            <div className="flex flex-col gap-2.5">
+              <button onClick={() => { setShowCloseDialog(false); onClose(); }} className="w-full py-3 rounded-[12px] font-semibold text-[14px] bg-[#FFF0F0] text-[#FF3B30] active:scale-[0.98] transition-transform">
+                Discard
               </button>
-              <button onClick={() => setShowCloseDialog(false)} className="w-full py-3.5 rounded-[16px] font-medium bg-[#FAFAFA] text-[#111111] active:scale-[0.98] transition-transform">
+              <button onClick={() => setShowCloseDialog(false)} className="w-full py-3 rounded-[12px] font-semibold text-[14px] bg-[#F3EFEB] text-[#6E6058] active:scale-[0.98] transition-transform">
                 Keep editing
               </button>
             </div>
@@ -4735,244 +4708,204 @@ const PaymentScreen = ({ onBack, onComplete }) => {
   const canSubmit = selectedCardId && termsAccepted && !isAuthorizing;
 
   return (
-    <div className="absolute inset-0 bg-[var(--color-background)] z-[80] overflow-hidden flex flex-col animate-in slide-in-from-right duration-300">
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#FFFFFF] via-[#FFFFFF]/90 to-transparent pointer-events-none z-30" />
-      <header className="absolute top-12 left-0 w-full z-40 px-5 flex flex-col gap-4 pointer-events-none">
-        <div className="flex justify-between items-center w-full pointer-events-auto">
-          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
-            <ChevronLeft size={22} color="#111111" />
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[80] overflow-hidden flex flex-col animate-in slide-in-from-right duration-300">
+      {/* Header */}
+      <header className="bg-[#F7F5F2] pt-14 pb-3 px-5 z-40">
+        <div className="flex items-center gap-3">
+          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
+            <ChevronLeft size={20} color="#111" />
           </button>
-          <div className="flex flex-col items-center justify-center -mt-0.5">
-            <span className="text-[16px] font-bold text-[#111111] leading-tight tracking-tight">Payment</span>
-            <span className="text-[10px] font-medium text-[#A1A1A6] leading-tight mt-0.5">Step 2 of 2</span>
-          </div>
-          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
-            <X size={20} color="#111111" />
-          </button>
-        </div>
-        <div className="pointer-events-auto w-[calc(100%-40px)] mx-5 h-[3px] bg-[#F0F0F2] rounded-full overflow-hidden">
-          <div className="h-full bg-[#E85D2A] rounded-full w-full transition-all duration-300" />
+          <span className="text-[17px] font-bold text-[#111] flex-1">Payment</span>
         </div>
       </header>
 
-      <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[130px] pb-[160px] px-5 bg-[var(--color-background)]">
-        <section className="mb-5">
-          <div className="bg-[#FFFFFF] rounded-[16px] border border-[#EDE8E2]  overflow-hidden transition-all duration-300">
-            <button onClick={() => setIsSummaryExpanded(!isSummaryExpanded)} className="w-full flex justify-between items-center py-3.5 px-4 hover:bg-[#FAFAFA] transition-colors active:scale-[0.99]">
-              <span className="text-[11px] font-bold text-[#A09A94] uppercase tracking-wider">Booking summary</span>
-              <div className="flex items-center gap-2">
-                <span className="text-[15px] font-bold text-[#111111]">CHF {paymentData.total.toFixed(2)}</span>
-                <ChevronDown size={16} className={`text-[#A09A94] transition-transform duration-300 ${isSummaryExpanded ? 'rotate-180' : ''}`} />
-              </div>
-            </button>
-            <div className={`overflow-hidden transition-all duration-300 ${isSummaryExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-              <div className="p-4 pt-0 border-t border-black/[0.03]">
-                <div className="flex items-center gap-3 mt-3 mb-3">
-                  <Avatar src={paymentData.providerAvatar} size={28} />
-                  <span className="text-[14px] font-bold text-[#111111]">{paymentData.providerName}</span>
+      <div className="flex-1 overflow-y-auto px-5 pb-[160px] bg-[#F7F5F2]">
+        {/* Booking Summary */}
+        <section className="mb-6">
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Booking summary</h3>
+
+          <div className="flex items-center gap-3 mb-4">
+            <Avatar src={paymentData.providerAvatar} size={32} />
+            <span className="text-[14px] font-semibold text-[#111]">{paymentData.providerName}</span>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Service</span>
+              <span className="text-[14px] font-semibold text-[#111]">{paymentData.service}</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Date & time</span>
+              <span className="text-[14px] font-semibold text-[#111]">{paymentData.datetime}</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Pet</span>
+              <span className="text-[14px] font-semibold text-[#111]">{paymentData.pet}</span>
+            </div>
+            {paymentData.addOns.length > 0 && (
+              <>
+                <div className="h-[1px] bg-[#EDE8E2]" />
+                <div className="flex justify-between">
+                  <span className="text-[12px] text-[#A09A94]">Add-ons</span>
+                  <span className="text-[14px] font-semibold text-[#111]">{paymentData.addOns.map(a => a.label).join(', ')}</span>
                 </div>
-                <div className="space-y-1.5 mb-3">
-                  <div className="text-[13px] text-[#111111] font-medium">{paymentData.service}</div>
-                  <div className="text-[12px] text-[#A09A94]">{paymentData.datetime}</div>
-                  <div className="text-[12px] text-[#A09A94]">{paymentData.pet}</div>
-                </div>
-                {paymentData.addOns.length > 0 && (
-                  <div className="space-y-1.5 mb-3">
-                    {paymentData.addOns.map((addon, idx) => (
-                      <div key={idx} className="flex justify-between items-center">
-                        <div className="flex items-center gap-2"><div className="w-1 h-1 bg-[#CFCFD4] rounded-full" /><span className="text-[12px] text-[#A09A94]">{addon.label}</span></div>
-                        <span className="text-[12px] text-[#A09A94]">+CHF {addon.price.toFixed(2)}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div className="w-full h-[1px] bg-black/[0.03] my-3" />
-                <div className="space-y-2 mb-3">
-                  <div className="flex justify-between items-center"><span className="text-[13px] text-[#A09A94]">Service</span><span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.servicePrice.toFixed(2)}</span></div>
-                  <div className="flex justify-between items-center"><span className="text-[13px] text-[#A09A94]">Add-ons</span><span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.addOns.reduce((sum, a) => sum + a.price, 0).toFixed(2)}</span></div>
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-1.5 cursor-pointer active:opacity-70" onClick={(e) => { e.stopPropagation(); setActiveSheet('service_fee'); }}>
-                      <span className="text-[13px] text-[#A09A94]">Service fee</span><Info size={14} className="text-[#A09A94]" />
+              </>
+            )}
+          </div>
+
+          {/* Price breakdown */}
+          <div className="h-[1px] bg-[#EDE8E2] my-4" />
+          <div className="space-y-2">
+            <div className="flex justify-between text-[13px]">
+              <span className="text-[#A09A94]">Service</span>
+              <span className="font-medium text-[#111]">CHF {paymentData.servicePrice.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-[13px]">
+              <span className="text-[#A09A94]">Add-ons</span>
+              <span className="font-medium text-[#111]">CHF {paymentData.addOns.reduce((sum, a) => sum + a.price, 0).toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-[13px]">
+              <button className="text-[#A09A94] flex items-center gap-1 active:opacity-70" onClick={() => setActiveSheet('service_fee')}>
+                Service fee <Info size={12} className="text-[#A09A94]" />
+              </button>
+              <span className="font-medium text-[#111]">CHF {paymentData.platformFee.toFixed(2)}</span>
+            </div>
+          </div>
+          <div className="h-[1px] bg-[#EDE8E2] my-3" />
+          <div className="flex justify-between items-center">
+            <span className="text-[15px] font-semibold text-[#111]">Total</span>
+            <span className="text-[20px] font-bold text-[#111]">CHF {paymentData.total.toFixed(2)}</span>
+          </div>
+        </section>
+
+        {/* Payment Method */}
+        <section className="mb-6">
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Payment method</h3>
+          {paymentData.savedCards.map((card, idx) => {
+            const isSelected = selectedCardId === card.id;
+            return (
+              <div key={card.id}>
+                <div onClick={() => setSelectedCardId(card.id)} className="flex items-center justify-between py-3 cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0 ${isSelected ? 'border-[#E85D2A]' : 'border-[#CFCFD4]'}`}>
+                      {isSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
                     </div>
-                    <span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.platformFee.toFixed(2)}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center pt-2 border-t border-black/[0.03]">
-                  <span className="text-[14px] font-bold text-[#111111]">Total</span>
-                  <span className="text-[15px] font-bold text-[#111111]">CHF {paymentData.total.toFixed(2)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mb-5">
-          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-2.5">Payment method</h3>
-          <div className="bg-[#FFFFFF] rounded-[16px] border border-[#EDE8E2]  overflow-hidden">
-            {paymentData.savedCards.map((card, idx) => {
-              const isSelected = selectedCardId === card.id;
-              return (
-                <div key={card.id}>
-                  <div onClick={() => setSelectedCardId(card.id)} className={`flex items-center justify-between py-3 px-4 cursor-pointer transition-all duration-200 ${isSelected ? 'bg-[#E85D2A]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}>
-                    <div className="flex items-center gap-3 flex-1">
-                      <div className={`w-10 h-7 rounded-[4px] border border-[#EDE8E2] flex items-center justify-center shrink-0 ${card.brand === 'Visa' ? 'bg-[#1A1F71]' : 'bg-[#222222]'}`}>
-                        <span className="text-white text-[10px] font-bold italic leading-none">{card.brand}</span>
-                      </div>
-                      <div className="flex flex-col justify-center pt-0.5">
-                        <span className="text-[14px] font-semibold text-[#111111] leading-tight">{card.brand} •••• {card.last4}</span>
-                        <span className="text-[12px] text-[#A09A94] leading-tight mt-0.5">Expires {card.exp}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <button onClick={(e) => { e.stopPropagation(); setMenuCardId(card.id); setActiveSheet('card_menu'); }} className="p-1 text-[#CFCFD4] hover:text-[#111111] transition-colors">
-                        <MoreHorizontal size={18} />
-                      </button>
-                      <div className={`w-[20px] h-[20px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-200 shrink-0 ${isSelected ? 'border-[#E85D2A] ring-2 ring-[#E85D2A]/10 bg-transparent' : 'border-[#CFCFD4]'}`}>
-                        {isSelected && <div className="w-2 h-2 bg-[#E85D2A] rounded-full" />}
-                      </div>
+                    <div>
+                      <span className="text-[14px] font-semibold text-[#111]">{card.brand} ending {card.last4}</span>
+                      <span className="text-[12px] text-[#A09A94] block mt-0.5">Exp {card.exp}</span>
                     </div>
                   </div>
-                  {idx < paymentData.savedCards.length - 1 && <div className="mx-4 h-[1px] bg-black/[0.03]" />}
+                  <button onClick={(e) => { e.stopPropagation(); setMenuCardId(card.id); setActiveSheet('card_menu'); }} className="p-1 text-[#A09A94]">
+                    <MoreHorizontal size={16} />
+                  </button>
                 </div>
-              );
-            })}
-            <div className="mx-4 h-[1px] bg-black/[0.03]" />
-            <button onClick={() => setActiveSheet('add_card')} className="w-full flex items-center gap-3 py-3 px-4 bg-[#FFFFFF] hover:bg-[#FAFAFA] transition-colors text-[#E85D2A] active:scale-[0.99]">
-              <div className="w-10 h-7 rounded-[4px] border border-[#E85D2A]/20 bg-[#E85D2A]/[0.04] flex items-center justify-center shrink-0">
-                <span className="text-[15px] font-medium leading-none mb-0.5">+</span>
+                {idx < paymentData.savedCards.length - 1 && <div className="h-[1px] bg-[#EDE8E2]" />}
               </div>
-              <span className="text-[14px] font-medium">Add new card</span>
-            </button>
-          </div>
-        </section>
-
-        <section className="mb-5">
-          <div className="bg-[#F3EFEB] rounded-[16px] p-3.5 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-[3px] h-full bg-[#E85D2A] opacity-70" />
-            <div className="flex gap-3 items-start pl-1.5">
-              <ShieldCheck size={18} className="text-[#E85D2A] shrink-0 mt-[2px]" />
-              <div className="flex flex-col gap-0.5">
-                <h4 className="text-[13px] font-semibold text-[#111111]">Authorization hold</h4>
-                <p className="text-[12px] text-[#A09A94] leading-relaxed pr-2">
-                  We'll place a temporary hold for CHF {paymentData.total.toFixed(2)} on your card. 
-                  You'll only be charged if {paymentData.providerName} accepts your booking request. 
-                  If declined or not accepted within 24 hours, the hold is released automatically.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mb-4">
-          <div className="bg-[#FFFFFF] rounded-[16px] border border-[#EDE8E2]  p-4 flex gap-3 items-start cursor-pointer transition-colors hover:bg-[#FAFAFA]" onClick={() => setTermsAccepted(!termsAccepted)}>
-            <div className={`mt-[2px] w-[20px] h-[20px] rounded-[6px] border-[1.5px] shrink-0 flex items-center justify-center transition-colors ${termsAccepted ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#CFCFD4] bg-[#FFFFFF]'}`}>
-              {termsAccepted && <Check size={12} color="#FFFFFF" strokeWidth={3} />}
-            </div>
-            <div className="text-[13px] text-[#111111] leading-relaxed">
-              I agree to the{' '}
-              <span onClick={(e) => { e.stopPropagation(); setActiveSheet('terms'); }} className="text-[#E85D2A] font-semibold active:opacity-70">Terms of Service</span>
-              {' '}and{' '}
-              <span onClick={(e) => { e.stopPropagation(); setActiveSheet('terms'); }} className="text-[#E85D2A] font-semibold active:opacity-70">Cancellation Policy</span>.
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <div className="absolute bottom-[44px] left-[12px] right-[12px] z-40 pointer-events-none flex flex-col items-center gap-3">
-        <span className="text-[12px] text-[#A09A94] font-medium tracking-wide">Hold only, not charged yet</span>
-        <div className="pointer-events-auto w-full bg-[#FFFFFF]/95 backdrop-blur-2xl border border-black/[0.03]  rounded-full p-1 pl-5 flex justify-between items-center transition-all">
-          <div className="flex flex-col">
-            <span className="text-[10px] text-[#A09A94] font-medium leading-tight mb-0.5 uppercase">Total</span>
-            <span className="text-[15px] font-bold text-[#111111]">CHF {paymentData.total.toFixed(2)}</span>
-          </div>
-          <button
-            disabled={!canSubmit}
-            onClick={handleAuthorize}
-            className={`relative flex items-center justify-center py-3 px-6 rounded-full text-[14px] font-medium transition-all duration-300 min-w-[140px] shrink-0 overflow-hidden ml-4 ${!canSubmit ? 'bg-[#F0F0F2] text-[#A1A1A6]' : 'bg-[#E85D2A] text-white shadow-[0_4px_12px_rgba(232,93,42,0.15)] hover:bg-[#E85D2A] active:scale-[0.97]'}`}
-          >
-            {isAuthorizing ? <Loader2 size={18} className="animate-spin text-white" /> : <span>Authorize payment</span>}
+            );
+          })}
+          <div className="h-[1px] bg-[#EDE8E2]" />
+          <button onClick={() => setActiveSheet('add_card')} className="flex items-center gap-2 py-3 text-[#E85D2A] active:opacity-70">
+            <Plus size={16} />
+            <span className="text-[14px] font-medium">Add new card</span>
           </button>
-        </div>
+        </section>
       </div>
 
+      {/* Bottom Button */}
+      <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40">
+        <button
+          disabled={!canSubmit}
+          onClick={handleAuthorize}
+          className={`w-full py-3.5 rounded-[12px] text-[15px] font-semibold transition-all flex items-center justify-center ${!canSubmit ? 'bg-[#EDE8E2] text-[#A09A94]' : 'bg-[#E85D2A] text-white active:scale-[0.98]'}`}
+        >
+          {isAuthorizing ? <Loader2 size={18} className="animate-spin text-white" /> : <span>Authorize CHF {paymentData.total.toFixed(2)}</span>}
+        </button>
+      </div>
+
+      {/* Add Card Modal */}
       <CardModal isOpen={activeSheet === 'add_card'} onClose={() => setActiveSheet(null)} title="Add card">
         <div className="flex flex-col gap-4 pb-6">
           <div>
-            <label className="text-[11px] font-semibold text-[#A09A94] uppercase tracking-wider mb-2 block">Card Information</label>
-            <div className="bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 focus-within:ring-2 focus-within:ring-[#E85D2A]/10 transition-all overflow-hidden flex items-center px-4">
-              <CreditCard size={18} className="text-[#CFCFD4] mr-3" />
-              <input type="text" placeholder="Card number" value={cardNumber} onChange={handleCardNumberChange} maxLength="19" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
+            <label className="text-[12px] text-[#A09A94] mb-2 block">Card number</label>
+            <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all flex items-center px-3.5">
+              <CreditCard size={16} className="text-[#A09A94] mr-2.5" />
+              <input type="text" placeholder="0000 0000 0000 0000" value={cardNumber} onChange={handleCardNumberChange} maxLength="19" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="flex-1 bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 transition-all px-4">
-              <input type="text" placeholder="MM / YY" maxLength="5" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
-            </div>
-            <div className="flex-1 bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 transition-all px-4">
-              <input type="text" placeholder="CVV" maxLength="4" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
-            </div>
-          </div>
-          <div className="bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 transition-all px-4">
-            <input type="text" placeholder="Cardholder name" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
-          </div>
-          <div className="mt-1">
-            <label className="text-[11px] font-semibold text-[#A09A94] uppercase tracking-wider mb-2 block">Billing Address</label>
-            <div onClick={() => setSameAsHome(!sameAsHome)} className="flex items-center gap-3 cursor-pointer">
-              <div className={`w-5 h-5 rounded-[6px] border-[1.5px] flex items-center justify-center transition-colors ${sameAsHome ? 'bg-[#111111] border-[#111111]' : 'border-[#CFCFD4]'}`}>
-                {sameAsHome && <Check size={12} color="#FFFFFF" strokeWidth={3} />}
+            <div className="flex-1">
+              <label className="text-[12px] text-[#A09A94] mb-2 block">Expiry</label>
+              <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all px-3.5">
+                <input type="text" placeholder="MM / YY" maxLength="5" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
               </div>
-              <span className="text-[14px] text-[#111111]">Same as home address</span>
+            </div>
+            <div className="flex-1">
+              <label className="text-[12px] text-[#A09A94] mb-2 block">CVV</label>
+              <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all px-3.5">
+                <input type="text" placeholder="123" maxLength="4" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
+              </div>
             </div>
           </div>
-          <div className="flex justify-between items-center py-1 mt-1">
-            <span className="text-[14px] font-medium text-[#111111]">Set as default payment method</span>
-            <div className="w-[44px] h-[24px] bg-[#E85D2A] rounded-full p-[2px] cursor-pointer shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
-              <div className="w-[20px] h-[20px] bg-white rounded-full shadow-sm transform translate-x-[20px] transition-transform" />
+          <div>
+            <label className="text-[12px] text-[#A09A94] mb-2 block">Cardholder name</label>
+            <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all px-3.5">
+              <input type="text" placeholder="Full name" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
             </div>
           </div>
-          <button onClick={() => setActiveSheet(null)} className="w-full mt-2 py-3.5 rounded-[20px] text-[15px] font-semibold bg-[#E85D2A] text-white shadow-[0_4px_14px_rgba(232,93,42,0.15)] active:scale-[0.98] transition-transform">
+          <div onClick={() => setSameAsHome(!sameAsHome)} className="flex items-center gap-2.5 cursor-pointer mt-1">
+            <div className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex items-center justify-center transition-colors ${sameAsHome ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#CFCFD4]'}`}>
+              {sameAsHome && <Check size={12} color="#FFF" strokeWidth={3} />}
+            </div>
+            <span className="text-[13px] text-[#111]">Same as home address</span>
+          </div>
+          <button onClick={() => setActiveSheet(null)} className="w-full mt-2 py-3.5 rounded-[12px] text-[15px] font-semibold bg-[#E85D2A] text-white active:scale-[0.98] transition-transform">
             Save card
           </button>
-          <div className="flex justify-center items-center gap-1.5 mt-1">
-            <Lock size={12} className="text-[#CFCFD4]" />
-            <span className="text-[11px] text-[#A1A1A6] font-medium tracking-wide">Secured by Stripe</span>
+          <div className="flex justify-center items-center gap-1.5">
+            <Lock size={11} className="text-[#A09A94]" />
+            <span className="text-[11px] text-[#A09A94]">Secured by Stripe</span>
           </div>
         </div>
       </CardModal>
 
+      {/* Terms Modal */}
       <CardModal isOpen={activeSheet === 'terms'} onClose={() => setActiveSheet(null)} title="Legal">
         <div className="flex flex-col gap-4 pb-20">
-          <h4 className="font-bold text-[16px]">Terms of Service</h4>
-          <p className="text-[14px] text-[#A09A94] leading-relaxed">
+          <h4 className="font-bold text-[15px] text-[#111]">Terms of Service</h4>
+          <p className="text-[13px] text-[#A09A94] leading-relaxed">
             By accepting these terms, you agree to FYLOS's core platform policies. We facilitate connections between pet owners and care providers. Payment authorization holds are placed 24 hours prior to booking confirmation and are automatically released if the provider declines or fails to respond.
           </p>
-          <h4 className="font-bold text-[16px] mt-2">Cancellation Policy</h4>
-          <p className="text-[14px] text-[#A09A94] leading-relaxed">
+          <h4 className="font-bold text-[15px] text-[#111] mt-2">Cancellation Policy</h4>
+          <p className="text-[13px] text-[#A09A94] leading-relaxed">
             Bookings can be cancelled free of charge up to 24 hours before the scheduled start time. Cancellations within 24 hours may be subject to a 50% fee. If the provider cancels, a full refund (and release of any holds) will be processed immediately.
           </p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white to-transparent">
-          <button onClick={() => { setTermsAccepted(true); setActiveSheet(null); }} className="w-full py-4 rounded-[20px] text-[16px] font-semibold bg-[#E85D2A] text-white shadow-[0_4px_14px_rgba(232,93,42,0.15)] active:scale-[0.98] transition-transform">
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white via-white to-transparent">
+          <button onClick={() => { setTermsAccepted(true); setActiveSheet(null); }} className="w-full py-3.5 rounded-[12px] text-[15px] font-semibold bg-[#E85D2A] text-white active:scale-[0.98] transition-transform">
             I Agree
           </button>
         </div>
       </CardModal>
 
+      {/* Card Menu Modal */}
       <CardModal isOpen={activeSheet === 'card_menu'} onClose={() => setActiveSheet(null)} title="Card Options" snap="compact">
         <div className="flex flex-col gap-2 pb-6">
-          <button onClick={() => { setActiveSheet(null); setSelectedCardId(menuCardId); }} className="w-full flex items-center gap-4 px-4 py-4 rounded-[16px] hover:bg-[#FAFAFA] active:scale-[0.98] transition-all">
-            <CheckCircle2 size={20} className="text-[#111111]" /><span className="text-[16px] font-semibold text-[#111111]">Set as default</span>
+          <button onClick={() => { setActiveSheet(null); setSelectedCardId(menuCardId); }} className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] hover:bg-[#F3EFEB] active:scale-[0.98] transition-all">
+            <CheckCircle2 size={18} className="text-[#111]" /><span className="text-[15px] font-semibold text-[#111]">Set as default</span>
           </button>
-          <button onClick={() => setActiveSheet(null)} className="w-full flex items-center gap-4 px-4 py-4 rounded-[16px] hover:bg-[#FFE5E5] active:scale-[0.98] transition-all">
-            <AlertTriangle size={20} className="text-[#FF3B30]" /><span className="text-[16px] font-semibold text-[#FF3B30]">Remove card</span>
+          <button onClick={() => setActiveSheet(null)} className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] hover:bg-[#FFF0F0] active:scale-[0.98] transition-all">
+            <AlertTriangle size={18} className="text-[#FF3B30]" /><span className="text-[15px] font-semibold text-[#FF3B30]">Remove card</span>
           </button>
         </div>
       </CardModal>
 
+      {/* Service Fee Modal */}
       <CardModal isOpen={activeSheet === 'service_fee'} onClose={() => setActiveSheet(null)} title="Service fee" snap="compact">
-        <div className="flex flex-col gap-6 pb-6">
-          <p className="text-[15px] text-[#A09A94] leading-relaxed">This fee covers secure payments, customer support, and platform protection.</p>
-          <button onClick={() => setActiveSheet(null)} className="w-full py-4 rounded-[20px] text-[16px] font-semibold bg-[#FAFAFA] text-[#111111] hover:bg-[#F0F0F2] active:scale-[0.98] transition-all">
+        <div className="flex flex-col gap-5 pb-6">
+          <p className="text-[14px] text-[#A09A94] leading-relaxed">This fee covers secure payments, customer support, and platform protection.</p>
+          <button onClick={() => setActiveSheet(null)} className="w-full py-3.5 rounded-[12px] text-[15px] font-semibold bg-[#F3EFEB] border border-[#EDE8E2] text-[#6E6058] active:scale-[0.98] transition-all">
             Got it
           </button>
         </div>
@@ -4994,66 +4927,64 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F3EFEB] z-[90] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-400">
-      <div className="absolute top-[48px] right-[16px] z-50">
-        <button onClick={onClose} className="w-11 h-11 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-95 transition-transform" aria-label="Close">
-          <X size={22} color="#111111" />
-        </button>
-      </div>
-
-      <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[110px] pb-[180px] px-4 flex flex-col items-center">
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[90] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-400">
+      <div className="flex-1 overflow-y-auto px-5 pb-[160px] flex flex-col items-center justify-center">
+        {/* Success Icon + Title */}
         <div className="flex flex-col items-center text-center w-full max-w-[280px] mb-8">
-          <div className="relative w-[104px] h-[104px] bg-[#E85D2A]/10 rounded-full flex items-center justify-center mb-5 pop-animation">
-            <Check size={48} color="#E85D2A" strokeWidth={3} className="check-animation" />
+          <div className="w-[72px] h-[72px] bg-[#E85D2A]/10 rounded-full flex items-center justify-center mb-5 pop-animation">
+            <Check size={36} color="#E85D2A" strokeWidth={3} className="check-animation" />
           </div>
-          <h2 className="text-[24px] font-bold text-[#111111] tracking-tight mb-2.5">Request sent</h2>
-          <p className="text-[15px] text-[#A09A94] leading-relaxed">
-            We sent your request to {mockRequestSentData.providerName}. You'll get a notification when they respond (usually within 1h).
+          <h2 className="text-[22px] font-bold text-[#111] tracking-tight mb-2">Request sent</h2>
+          <p className="text-[14px] text-[#A09A94] leading-relaxed">
+            We notified {mockRequestSentData.providerName}. You'll hear back usually within 1h.
           </p>
         </div>
 
-        <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA]  p-4 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-3">
-              <Avatar src={mockRequestSentData.providerAvatar} size={40} />
-              <div className="flex flex-col">
-                <span className="text-[15px] font-bold text-[#111111] leading-tight">{mockRequestSentData.providerName}</span>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <Star size={12} className="text-[#111111] fill-[#111111]" />
-                  <span className="text-[13px] font-medium text-[#A09A94]">{mockRequestSentData.providerRating}</span>
-                </div>
+        {/* Flat Info Rows */}
+        <div className="w-full max-w-[340px]">
+          <div className="flex items-center gap-3 mb-5">
+            <Avatar src={mockRequestSentData.providerAvatar} size={36} />
+            <div>
+              <span className="text-[14px] font-semibold text-[#111] block leading-tight">{mockRequestSentData.providerName}</span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <Star size={11} className="text-[#111] fill-[#111]" />
+                <span className="text-[12px] text-[#A09A94]">{mockRequestSentData.providerRating}</span>
               </div>
             </div>
-            <div className="text-[16px] font-bold text-[#111111]">CHF {mockRequestSentData.total.toFixed(2)}</div>
           </div>
-          <div className="w-full h-[1px] bg-[#EAEAEA] mb-4" />
-          <div className="space-y-3 text-[14px]">
-            <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Service</span><span className="font-medium text-[#111111]">{mockRequestSentData.service}</span></div>
-            <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Time</span><span className="font-medium text-[#111111]">{mockRequestSentData.datetime}</span></div>
-            <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Pet</span><span className="font-medium text-[#111111]">{mockRequestSentData.pet}</span></div>
-            {mockRequestSentData.addOns.length > 0 && (
-              <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Extras</span><span className="font-medium text-[#111111] leading-snug">{mockRequestSentData.addOns.join(', ')}</span></div>
-            )}
-          </div>
-        </div>
 
-        <div className="w-full mb-4">
-          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-wider mb-3 ml-1">What happens next</h3>
-          <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA]  p-4 space-y-4">
-            <div className="flex gap-3 items-start"><Clock size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">{mockRequestSentData.providerName} has up to 24h to respond</span></div>
-            <div className="flex gap-3 items-start"><CreditCard size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">CHF {mockRequestSentData.total.toFixed(2)} is on hold (not charged yet)</span></div>
-            <div className="flex gap-3 items-start"><Bell size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">You'll be notified when they respond</span></div>
-            <div className="flex gap-3 items-start"><CheckCircle2 size={20} className="text-[#E85D2A] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If accepted → payment is processed</span></div>
-            <div className="flex gap-3 items-start"><XCircle size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If declined → hold is released automatically</span></div>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Service</span>
+              <span className="text-[14px] font-semibold text-[#111]">{mockRequestSentData.service}</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Date</span>
+              <span className="text-[14px] font-semibold text-[#111]">{mockRequestSentData.datetime}</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Pet</span>
+              <span className="text-[14px] font-semibold text-[#111]">{mockRequestSentData.pet}</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Total</span>
+              <span className="text-[15px] font-bold text-[#111]">CHF {mockRequestSentData.total.toFixed(2)}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 px-4 pb-[32px] pt-8 bg-gradient-to-t from-[#F3EFEB] via-[#F3EFEB]/95 to-transparent z-40 flex flex-col gap-3 pointer-events-none">
-        <div className="pointer-events-auto flex flex-col gap-3">
-          <Button variant="secondary" size="medium" onClick={onViewBooking}>View booking</Button>
-          <Button variant="primary" size="medium" onClick={onClose}>Done</Button>
-        </div>
+      {/* Bottom Actions */}
+      <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40 flex flex-col items-center gap-3">
+        <button onClick={onViewBooking} className="w-full py-3.5 rounded-[12px] text-[15px] font-semibold bg-[#E85D2A] text-white active:scale-[0.98] transition-transform">
+          View booking
+        </button>
+        <button onClick={onClose} className="text-[14px] font-medium text-[#A09A94] active:opacity-70 transition-opacity py-1">
+          Back to home
+        </button>
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
@@ -5527,203 +5458,212 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
   };
 
   return (
-    <div className="absolute inset-0 bg-[var(--color-background)] z-[90] flex flex-col animate-in slide-in-from-right duration-300">
-      <div className="absolute top-0 left-0 w-full h-[160px] pointer-events-none z-10 bg-gradient-to-b from-[var(--color-background)] to-transparent" />
-      <div className="absolute top-0 left-0 w-full z-20 pt-14 px-5 flex flex-col pointer-events-none">
-        <div className="relative flex justify-between items-center w-full mb-4 pointer-events-auto">
-          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center bg-white/80 backdrop-blur-md border border-black/[0.04] text-[#111111] rounded-full active:scale-[0.96] transition-all">
-            <ChevronLeft size={18} strokeWidth={2.5} />
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[90] flex flex-col animate-in slide-in-from-right duration-300">
+      {/* Header */}
+      <header className="bg-[#F7F5F2] pt-14 pb-3 px-5 z-40">
+        <div className="flex items-center gap-3">
+          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
+            <ChevronLeft size={20} color="#111" />
           </button>
-          <h2 className="absolute left-1/2 -translate-x-1/2 text-[16px] font-bold text-[#111111]">Booking Details</h2>
-          <button onClick={() => setIsMenuOpen(true)} className="w-9 h-9 flex items-center justify-center bg-white/80 backdrop-blur-md border border-black/[0.04] text-[#111111] rounded-full active:scale-[0.96] transition-all">
-            <MoreVertical size={16} strokeWidth={2.5} />
+          <span className="text-[17px] font-bold text-[#111] flex-1">Booking</span>
+          <button onClick={() => setIsMenuOpen(true)} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
+            <MoreVertical size={16} color="#111" />
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar pt-[98px] pb-[140px] px-5 flex flex-col gap-4">
-        <div className="w-full rounded-[20px] p-4 flex flex-col gap-2" style={{ backgroundColor: currentConfig.bg }}>
-          <div className="flex items-center gap-2">
-            <currentConfig.icon size={18} color={currentConfig.color} strokeWidth={2.5} />
-            <span className="text-[13px] font-bold uppercase tracking-wide" style={{ color: currentConfig.color }}>{currentConfig.label}</span>
+      <div className="flex-1 overflow-y-auto px-5 pb-[140px] bg-[#F7F5F2]">
+        {/* Status Pill */}
+        <div className="mb-5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ backgroundColor: currentConfig.bg }}>
+            <currentConfig.icon size={14} color={currentConfig.color} strokeWidth={2.5} />
+            <span className="text-[12px] font-bold uppercase tracking-wide" style={{ color: currentConfig.color }}>{currentConfig.label}</span>
           </div>
-          <p className="text-[15px] font-medium text-[#111111]">{currentConfig.subtext}</p>
+          <p className="text-[13px] text-[#A09A94] mt-1.5">{currentConfig.subtext}</p>
         </div>
 
-        <div className="w-full bg-[#FFFFFF] rounded-[20px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-[#EAEAEA]">
-          <div className="flex flex-col gap-0 relative">
-            {getTimelineSteps().map((step, idx, arr) => (
-              <div key={step.id} className="flex gap-4 relative">
-                {idx < arr.length - 1 && (
-                  <div className={`absolute left-[7px] top-[24px] bottom-[-8px] w-[2px] ${step.state === 'done' ? 'bg-[#FF6B35]' : 'bg-[#EAEAEA] dashed-line'}`} />
-                )}
-                <div className="flex flex-col items-center pt-1 z-10">
-                  {step.state === 'done' ? (
-                    <div className="w-4 h-4 rounded-full bg-[#FF6B35] flex items-center justify-center border-2 border-white shadow-sm"><Check size={10} color="#FFFFFF" strokeWidth={3} /></div>
-                  ) : step.state === 'current' ? (
-                    <div className="w-4 h-4 rounded-full bg-[#FF6B35] border-[4px] border-[#FFF0EA]" />
-                  ) : step.state === 'failed' ? (
-                    <div className="w-4 h-4 rounded-full bg-[#FF3B30] flex items-center justify-center border-2 border-white shadow-sm"><X size={10} color="#FFFFFF" strokeWidth={3} /></div>
-                  ) : (
-                    <div className="w-4 h-4 rounded-full bg-white border-2 border-[#EAEAEA]" />
-                  )}
-                </div>
-                <div className={`flex flex-col pb-6 ${step.state === 'upcoming' ? 'opacity-50' : 'opacity-100'}`}>
-                  <span className={`text-[15px] ${step.state === 'current' ? 'font-extrabold text-[#111111]' : 'font-medium text-[#111111]'}`}>{step.label}</span>
-                  <span className="text-[13px] text-[#6E6E73] mt-0.5">{step.time}</span>
-                </div>
+        {/* Provider Row */}
+        <section className="mb-6">
+          <div className="flex items-center gap-3">
+            <Avatar src="https://i.pravatar.cc/150?img=12" size={44} />
+            <div className="flex-1">
+              <span className="text-[15px] font-semibold text-[#111] block leading-tight">Lukas F.</span>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <Star size={12} className="text-[#111] fill-[#111]" />
+                <span className="text-[13px] font-medium text-[#111]">4.9</span>
+                <span className="text-[12px] text-[#A09A94]">(128)</span>
               </div>
-            ))}
+            </div>
+            <button onClick={() => onNavigateToProvider && onNavigateToProvider()} className="text-[13px] font-medium text-[#E85D2A] active:opacity-70">Profile</button>
           </div>
-        </div>
+        </section>
 
-        <div className="w-full bg-[#FFFFFF] rounded-[20px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-[#EAEAEA] flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar src="https://i.pravatar.cc/150?img=12" size={56} />
-              <div className="flex flex-col">
-                <span className="text-[17px] font-bold text-[#111111] leading-tight">Lukas F.</span>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <Star size={14} className="text-[#111111] fill-[#111111]" />
-                  <span className="text-[14px] font-medium text-[#111111]">4.9</span>
-                  <span className="text-[14px] text-[#8E8E93]">(128)</span>
-                  <span className="text-[#EAEAEA]">·</span>
-                  <span className="text-[13px] text-[#8E8E93]">Replies ~1h</span>
-                </div>
+        {/* Service Details - Flat Rows */}
+        <section className="mb-6">
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Details</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Service</span>
+              <span className="text-[14px] font-semibold text-[#111]">90 min Dog Walk</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Date & time</span>
+              <span className="text-[14px] font-semibold text-[#111]">Mon, Feb 24 · 14:00–15:30</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Location</span>
+              <span className="text-[14px] font-semibold text-[#111]">Bahnhofstrasse 12, Zurich</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Pet</span>
+              <span className="text-[14px] font-semibold text-[#111]">Luna (Golden Retriever)</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[12px] text-[#A09A94]">Add-ons</span>
+              <span className="text-[14px] font-semibold text-[#111]">Photo updates, Feed</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between items-start">
+              <span className="text-[12px] text-[#A09A94] pt-0.5">Instructions</span>
+              <div className="flex flex-col items-end">
+                <span className="text-[14px] text-[#111] text-right line-clamp-1 max-w-[200px]">Keys under the doormat...</span>
+                <button onClick={() => setIsInstructionsOpen(true)} className="text-[12px] font-medium text-[#E85D2A] mt-0.5">Read more</button>
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" size="small" icon={status === 'cancelled' || status === 'declined' ? Lock : MessageCircle} disabled={status === 'cancelled' || status === 'declined'} onClick={onOpenChat} className="flex-1 bg-[#F7F7F8] border-none shadow-none text-[13px] font-bold">Message</Button>
-            <Button variant="secondary" size="small" icon={status === 'pending' || status === 'cancelled' || status === 'declined' ? Lock : Phone} disabled={status === 'pending' || status === 'cancelled' || status === 'declined'} className="flex-1 bg-[#F7F7F8] border-none shadow-none text-[13px] font-bold">Call</Button>
-            <Button variant="secondary" size="small" icon={User} className="flex-1 bg-[#F7F7F8] border-none shadow-none text-[13px] font-bold" onClick={() => onNavigateToProvider && onNavigateToProvider()}>Profile</Button>
-          </div>
-          {status === 'pending' && <p className="text-[12px] text-[#8E8E93] text-center w-full mt-[-4px]">Contact options available after acceptance</p>}
-        </div>
+        </section>
 
-        <div className="w-full bg-[#FFFFFF] rounded-[20px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-[#EAEAEA]">
-          <h3 className="text-[16px] font-bold text-[#111111] mb-4">Service Details</h3>
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-3"><Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} /><div className="flex flex-col"><span className="text-[15px] font-medium text-[#111111]">Mon, Feb 24 · 14:00–15:30</span><span className="text-[13px] text-[#6E6E73]">90 min Dog Walk</span></div></div>
-            <div className="flex gap-3"><MapPin size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} /><div className="flex flex-col"><span className="text-[15px] font-medium text-[#111111]">Bahnhofstrasse 12, Zurich</span><span className="text-[13px] text-[#6E6E73]">Pick-up & Drop-off</span></div></div>
-            <div className="w-full h-[1px] bg-[#F0F0F2] my-1" />
-            <div className="flex gap-3"><span className="text-[14px] text-[#8E8E93] w-[80px] shrink-0">Pet</span><span className="text-[14px] font-medium text-[#111111]">Luna (Golden Retriever)</span></div>
-            <div className="flex gap-3"><span className="text-[14px] text-[#8E8E93] w-[80px] shrink-0">Add-ons</span><span className="text-[14px] font-medium text-[#111111]">Photo updates, Feed after walk</span></div>
-            <div className="flex gap-3">
-              <span className="text-[14px] text-[#8E8E93] w-[80px] shrink-0">Instructions</span>
-              <div className="flex flex-col items-start gap-1">
-                <span className="text-[14px] text-[#111111] line-clamp-2">Please make sure she doesn't eat anything from the ground. Keys are under the doormat.</span>
-                <button onClick={() => setIsInstructionsOpen(true)} className="text-[13px] font-bold text-[#FF6B35]">Read more</button>
-              </div>
+        {/* Payment */}
+        <section className="mb-6">
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Payment</h3>
+          <div className="space-y-2.5">
+            <div className="flex justify-between text-[13px]">
+              <span className="text-[#A09A94]">Subtotal</span>
+              <span className="font-medium text-[#111]">CHF 85.00</span>
             </div>
-          </div>
-        </div>
-
-        <div className="w-full bg-[#FFFFFF] rounded-[20px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-[#EAEAEA]">
-          <h3 className="text-[16px] font-bold text-[#111111] mb-4">Payment</h3>
-          <div className="flex flex-col gap-3">
-            <div className="flex justify-between items-center"><span className="text-[14px] text-[#6E6E73]">Subtotal</span><span className="text-[14px] text-[#111111]">CHF 85.00</span></div>
-            <div className="flex justify-between items-center"><span className="text-[14px] text-[#6E6E73]">Add-ons</span><span className="text-[14px] text-[#111111]">CHF 10.00</span></div>
-            <div className="w-full h-[1px] bg-[#F0F0F2] my-1" />
-            <div className="flex justify-between items-center"><span className="text-[16px] font-bold text-[#111111]">Total</span><span className="text-[16px] font-bold text-[#111111]">CHF 95.00</span></div>
-            <div className="mt-2 p-3 bg-[#F7F7F8] rounded-[12px] flex items-center justify-between border border-[#EAEAEA]">
-              <div className="flex items-center gap-2"><CreditCard size={18} className="text-[#111111]" /><span className="text-[14px] font-medium text-[#111111]">Visa •••• 4242</span></div>
+            <div className="flex justify-between text-[13px]">
+              <span className="text-[#A09A94]">Add-ons</span>
+              <span className="font-medium text-[#111]">CHF 10.00</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between">
+              <span className="text-[15px] font-semibold text-[#111]">Total</span>
+              <span className="text-[15px] font-bold text-[#111]">CHF 95.00</span>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex items-center gap-2">
+                <CreditCard size={14} className="text-[#A09A94]" />
+                <span className="text-[13px] text-[#A09A94]">Visa •••• 4242</span>
+              </div>
               {(status === 'pending' || status === 'confirmed' || status === 'in-progress') ? (
-                <span className="text-[12px] font-bold text-[#007AFF] bg-[#E5F0FF] px-2 py-1 rounded-md">Authorized</span>
+                <span className="text-[11px] font-bold text-[#E85D2A]">Hold active</span>
               ) : status === 'completed' ? (
-                <span className="text-[12px] font-bold text-[#FF6B35] bg-[#FFF4EF] px-2 py-1 rounded-md">Charged</span>
+                <span className="text-[11px] font-bold text-[#E85D2A]">Charged</span>
               ) : (
-                <span className="text-[12px] font-bold text-[#8E8E93] bg-[#EAEAEA] px-2 py-1 rounded-md">Released</span>
+                <span className="text-[11px] font-bold text-[#A09A94]">Released</span>
               )}
             </div>
-            {(status === 'pending' || status === 'confirmed' || status === 'in-progress') && <p className="text-[12px] text-[#8E8E93] px-1">Hold active — not charged yet</p>}
-            {(status === 'cancelled' || status === 'declined') && <p className="text-[12px] text-[#8E8E93] px-1">Hold released. Expected 3–5 business days.</p>}
           </div>
-        </div>
+        </section>
 
-        <div className="w-full bg-[#FFFFFF] rounded-[20px] p-5 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-[#EAEAEA]">
-          <h3 className="text-[16px] font-bold text-[#111111] mb-4">Updates</h3>
-          <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-center h-[30px]"><span className="text-[15px] font-medium text-[#111111]">Push notifications</span><Toggle checked={notifications.push} onChange={() => handleTogglePref('push')} /></div>
-            <div className="flex justify-between items-center h-[30px]"><span className="text-[15px] font-medium text-[#111111]">SMS updates</span><Toggle checked={notifications.sms} onChange={() => handleTogglePref('sms')} /></div>
-          </div>
-        </div>
-
-        <div className="w-full bg-[#FFFFFF] rounded-[20px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-[#EAEAEA] mb-8">
-          <div className="flex justify-between items-center p-4 border-b border-[#F0F0F2] active:bg-[#F7F7F8] cursor-pointer">
-            <span className="text-[15px] font-medium text-[#111111]">Modify booking</span>
-            <div className="flex items-center gap-2"><span className="text-[13px] text-[#8E8E93]">Unavailable &lt;24h</span><ChevronRight size={18} className="text-[#8E8E93]" /></div>
-          </div>
-          {(status === 'pending' || status === 'confirmed') && (
-            <div className="flex justify-between items-center p-4 border-b border-[#F0F0F2] active:bg-[#F7F7F8] cursor-pointer">
-              <span className="text-[15px] font-medium text-[#FF3B30]">Cancel booking</span>
-              <ChevronRight size={18} className="text-[#8E8E93]" />
+        {/* Updates */}
+        <section className="mb-6">
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Notifications</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-[14px] text-[#111]">Push notifications</span>
+              <Toggle checked={notifications.push} onChange={() => handleTogglePref('push')} />
             </div>
-          )}
-          <div className="flex justify-between items-center p-4 border-b border-[#F0F0F2] active:bg-[#F7F7F8] cursor-pointer">
-            <span className="text-[15px] font-medium text-[#111111]">Report issue</span>
-            <ChevronRight size={18} className="text-[#8E8E93]" />
-          </div>
-          <div className="flex justify-between items-center p-4 active:bg-[#F7F7F8] cursor-pointer">
-            <span className="text-[15px] font-medium text-[#111111]">Contact support</span>
-            <ChevronRight size={18} className="text-[#8E8E93]" />
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 px-4 pb-[32px] pt-12 bg-gradient-to-t from-[#F7F7F8] via-[#F7F7F8]/90 to-transparent z-40 flex justify-center pointer-events-none">
-        {status === 'pending' && (
-          <div className="pointer-events-auto w-full max-w-[200px]">
-            <Button variant="destructiveOutline" size="medium" onClick={() => setStatus('cancelled')}>Cancel request</Button>
-          </div>
-        )}
-        {status === 'in-progress' && (
-          <div className="pointer-events-auto flex gap-3 w-full bg-white/80 backdrop-blur-md p-2 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white">
-            <Button variant="secondary" size="small" icon={Navigation2} className="flex-1 h-[48px] rounded-[16px] border-none shadow-none bg-[#F7F7F8]">Track live</Button>
-            <Button variant="primary" size="small" icon={Camera} className="flex-1 h-[48px] rounded-[16px]">View photos</Button>
-          </div>
-        )}
-        {status === 'completed' && (
-          <div className="pointer-events-auto flex gap-3 w-full bg-white/80 backdrop-blur-md p-2 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-white">
-            <Button variant="secondary" size="small" icon={Star} className="flex-1 h-[48px] rounded-[16px] border-none shadow-none bg-[#F7F7F8]">Leave review</Button>
-            <Button variant="primary" size="small" className="flex-1 h-[48px] rounded-[16px]">Book again</Button>
-          </div>
-        )}
-      </div>
-
-      <CardModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} title="Booking Options">
-        <div className="flex flex-col gap-2">
-          <div className="bg-[#F7F7F8] p-3 rounded-[12px] mb-4">
-            <span className="text-[11px] font-bold text-[#8E8E93] uppercase tracking-wider mb-2 block">Debug Status</span>
-            <div className="flex flex-wrap gap-2">
-              {Object.keys(STATUS_CONFIG).map(s => (
-                <button key={s} onClick={() => { const prev = status; setStatus(s); setIsMenuOpen(false); if (s === 'confirmed' && prev !== 'confirmed' && onShowAccepted) onShowAccepted(); if (s === 'declined' && prev !== 'declined' && onShowDeclined) onShowDeclined(); }} className={`text-[12px] px-3 py-1.5 rounded-full font-bold ${status === s ? 'bg-[#FF6B35] text-white' : 'bg-[#EAEAEA] text-[#111111]'}`}>{s}</button>
-              ))}
+            <div className="h-[1px] bg-[#EDE8E2]" />
+            <div className="flex justify-between items-center">
+              <span className="text-[14px] text-[#111]">SMS updates</span>
+              <Toggle checked={notifications.sms} onChange={() => handleTogglePref('sms')} />
             </div>
           </div>
-          <button className="w-full text-left px-4 py-4 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><FileText size={20} className="text-[#8E8E93]" /> Download Receipt</button>
-          <button className="w-full text-left px-4 py-4 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><HelpCircle size={20} className="text-[#8E8E93]" /> Contact FYLOS Support</button>
-          <div className="w-full h-[1px] bg-[#EAEAEA] my-2" />
-          <button className="w-full text-left px-4 py-4 text-[16px] font-bold text-[#FF3B30] active:bg-[#FFF5F5] rounded-[12px] flex items-center gap-3"><AlertTriangle size={20} className="text-[#FF3B30]" /> Report Issue</button>
+        </section>
+
+        {/* Actions */}
+        <section className="mb-8">
+          <div className="flex gap-4 justify-center">
+            <button
+              disabled={status === 'cancelled' || status === 'declined'}
+              onClick={onOpenChat}
+              className={`text-[14px] font-medium transition-opacity ${status === 'cancelled' || status === 'declined' ? 'text-[#CFCFD4] cursor-not-allowed' : 'text-[#E85D2A] active:opacity-70'}`}
+            >
+              Message
+            </button>
+            {(status === 'pending' || status === 'confirmed') && (
+              <button
+                onClick={() => setStatus('cancelled')}
+                className="text-[14px] font-medium text-[#FF3B30] active:opacity-70 transition-opacity"
+              >
+                Cancel booking
+              </button>
+            )}
+          </div>
+        </section>
+      </div>
+
+      {/* Bottom status-specific actions */}
+      {status === 'in-progress' && (
+        <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40 flex gap-3">
+          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#F3EFEB] border border-[#EDE8E2] text-[#6E6058] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+            <Navigation2 size={16} /> Track
+          </button>
+          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#E85D2A] text-white flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+            <Camera size={16} /> Photos
+          </button>
         </div>
-      </CardModal>
-
-      <CardModal isOpen={isInstructionsOpen} onClose={() => setIsInstructionsOpen(false)} title="Special Instructions">
-        <p className="text-[15px] text-[#111111] leading-relaxed pb-8">
-          Please make sure she doesn't eat anything from the ground. Keys are under the doormat. She can be a bit shy with big dogs, so please keep her on a short leash when passing by them. Give her a treat after the walk (they are on the kitchen counter).
-        </p>
-        <Button variant="primary" onClick={() => setIsInstructionsOpen(false)}>Done</Button>
-      </CardModal>
-
-      {bdToast && (
-        <div className="absolute top-[100px] left-1/2 transform -translate-x-1/2 bg-[#111111] text-white px-4 py-2 rounded-full text-[13px] font-medium shadow-lg z-[150] animate-in slide-in-from-top fade-in">
-          {bdToast}
+      )}
+      {status === 'completed' && (
+        <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40 flex gap-3">
+          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#F3EFEB] border border-[#EDE8E2] text-[#6E6058] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+            <Star size={16} /> Review
+          </button>
+          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#E85D2A] text-white flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+            Book again
+          </button>
         </div>
       )}
 
-      <style dangerouslySetInnerHTML={{__html: `
-        .dashed-line { background-image: linear-gradient(to bottom, #EAEAEA 50%, transparent 50%); background-size: 2px 8px; background-repeat: repeat-y; background-color: transparent !important; }
-      `}} />
+      {/* Menu Modal */}
+      <CardModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} title="Options">
+        <div className="flex flex-col gap-1">
+          <div className="bg-[#F3EFEB] p-3 rounded-[12px] mb-3">
+            <span className="text-[11px] font-bold text-[#A09A94] uppercase tracking-wider mb-2 block">Debug Status</span>
+            <div className="flex flex-wrap gap-2">
+              {Object.keys(STATUS_CONFIG).map(s => (
+                <button key={s} onClick={() => { const prev = status; setStatus(s); setIsMenuOpen(false); if (s === 'confirmed' && prev !== 'confirmed' && onShowAccepted) onShowAccepted(); if (s === 'declined' && prev !== 'declined' && onShowDeclined) onShowDeclined(); }} className={`text-[12px] px-3 py-1.5 rounded-full font-bold ${status === s ? 'bg-[#E85D2A] text-white' : 'bg-[#EDE8E2] text-[#111]'}`}>{s}</button>
+              ))}
+            </div>
+          </div>
+          <button className="w-full text-left px-4 py-3 text-[15px] font-medium text-[#111] active:bg-[#F3EFEB] rounded-[12px] flex items-center gap-3"><FileText size={18} className="text-[#A09A94]" /> Download receipt</button>
+          <button className="w-full text-left px-4 py-3 text-[15px] font-medium text-[#111] active:bg-[#F3EFEB] rounded-[12px] flex items-center gap-3"><HelpCircle size={18} className="text-[#A09A94]" /> Contact support</button>
+          <div className="h-[1px] bg-[#EDE8E2] my-1" />
+          <button className="w-full text-left px-4 py-3 text-[15px] font-bold text-[#FF3B30] active:bg-[#FFF0F0] rounded-[12px] flex items-center gap-3"><AlertTriangle size={18} className="text-[#FF3B30]" /> Report issue</button>
+        </div>
+      </CardModal>
+
+      {/* Instructions Modal */}
+      <CardModal isOpen={isInstructionsOpen} onClose={() => setIsInstructionsOpen(false)} title="Special Instructions">
+        <p className="text-[14px] text-[#111] leading-relaxed pb-6">
+          Please make sure she doesn't eat anything from the ground. Keys are under the doormat. She can be a bit shy with big dogs, so please keep her on a short leash when passing by them. Give her a treat after the walk (they are on the kitchen counter).
+        </p>
+        <button onClick={() => setIsInstructionsOpen(false)} className="w-full py-3.5 rounded-[12px] text-[15px] font-semibold bg-[#F3EFEB] border border-[#EDE8E2] text-[#6E6058] active:scale-[0.98] transition-transform">
+          Done
+        </button>
+      </CardModal>
+
+      {/* Toast */}
+      {bdToast && (
+        <div className="absolute top-[100px] left-1/2 transform -translate-x-1/2 bg-[#111] text-white px-4 py-2 rounded-full text-[13px] font-medium z-[150] animate-in slide-in-from-top fade-in">
+          {bdToast}
+        </div>
+      )}
     </div>
   );
 };
