@@ -4400,27 +4400,27 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
   };
 
   return (
-    <div className="absolute inset-0 bg-[#FFFFFF] z-[70] overflow-hidden flex flex-col">
+    <div className="absolute inset-0 bg-[var(--color-background)] z-[70] overflow-hidden flex flex-col">
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#FFFFFF] via-[#FFFFFF]/90 to-transparent pointer-events-none z-30" />
       <header className="absolute top-12 left-0 w-full z-40 px-5 flex flex-col gap-4 pointer-events-none">
         <div className="flex justify-between items-center w-full pointer-events-auto">
-          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-black/[0.04] rounded-full active:scale-[0.96] transition-transform">
+          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
             <ChevronLeft size={22} color="#111111" />
           </button>
           <div className="flex flex-col items-center justify-center -mt-0.5">
             <span className="text-[16px] font-bold text-[#111111] leading-tight tracking-tight">New Booking</span>
-            <span className="text-[11px] font-medium text-[#8E8E93] leading-tight mt-0.5">Step 1 of 2</span>
+            <span className="text-[11px] font-medium text-[#A09A94] leading-tight mt-0.5">Step 1 of 2</span>
           </div>
-          <button onClick={() => setShowCloseDialog(true)} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-black/[0.04] rounded-full active:scale-[0.96] transition-transform">
+          <button onClick={() => setShowCloseDialog(true)} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
             <X size={20} color="#111111" />
           </button>
         </div>
         <div className="pointer-events-auto w-[calc(100%-40px)] mx-5 h-[3px] bg-black/[0.04] rounded-full overflow-hidden">
-          <div className="h-full bg-[#FF6B35] rounded-full w-1/2 transition-all duration-300" />
+          <div className="h-full bg-[#E85D2A] rounded-full w-1/2 transition-all duration-300" />
         </div>
       </header>
 
-      <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[130px] pb-[200px] px-5 bg-[#FFFFFF]">
+      <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[130px] pb-[200px] px-5 bg-[var(--color-background)]">
         {showValidation && !isValid && (
           <div className="mb-5 text-center">
             <span className="text-[13px] font-medium text-[#FF3B30] bg-[#FFF0F0] px-3 py-1.5 rounded-full">Please complete all required fields</span>
@@ -4429,29 +4429,29 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
 
         <section className="mb-7 mt-2">
           <div className="flex justify-between items-end mb-4">
-            <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em]">Select Service</h3>
+            <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">Select Service</h3>
             {errors.service && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
           </div>
-          <div className="bg-[#FFFFFF] rounded-[20px] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
+          <div className="bg-[#FFFFFF] rounded-[20px] border border-[#EDE8E2]  overflow-hidden">
             {mockBookingData.provider.services.map((svc, idx) => {
               const isSelected = selectedServiceId === svc.id;
               return (
                 <div key={svc.id}>
                   <div
                     onClick={() => { setSelectedServiceId(svc.id); setSelectedTime(null); if(errors.service) setErrors(prev => ({...prev, service: false})); }}
-                    className={`flex items-center justify-between py-3 pl-5 pr-4 cursor-pointer transition-colors ${isSelected ? 'bg-[#FF6B35]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}
+                    className={`flex items-center justify-between py-3 pl-5 pr-4 cursor-pointer transition-colors ${isSelected ? 'bg-[#E85D2A]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}
                   >
                     <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
                         <span className={`text-[15px] ${isSelected ? 'font-semibold text-[#111111]' : 'font-medium text-[#111111]'}`}>{svc.label}</span>
-                        {svc.popular && <span className="text-[9px] font-bold text-[#FF6B35] bg-[#FF6B35]/[0.08] px-2.5 py-0.5 rounded-full uppercase tracking-wider">Popular</span>}
+                        {svc.popular && <span className="text-[9px] font-bold text-[#E85D2A] bg-[#E85D2A]/[0.08] px-2.5 py-0.5 rounded-full uppercase tracking-wider">Popular</span>}
                       </div>
-                      <span className="text-[13px] text-[#8E8E93]">{svc.duration} minutes</span>
+                      <span className="text-[13px] text-[#A09A94]">{svc.duration} minutes</span>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className="text-[15px] font-medium text-[#111111]">CHF {svc.price}</span>
-                      <div className={`w-[20px] h-[20px] rounded-full border-[1px] flex items-center justify-center transition-colors ${isSelected ? 'border-[#FF6B35] bg-transparent' : 'border-[#CFCFD4]'}`}>
-                        {isSelected && <div className="w-2.5 h-2.5 bg-[#FF6B35] rounded-full" />}
+                      <div className={`w-[20px] h-[20px] rounded-full border-[1px] flex items-center justify-center transition-colors ${isSelected ? 'border-[#E85D2A] bg-transparent' : 'border-[#CFCFD4]'}`}>
+                        {isSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
                       </div>
                     </div>
                   </div>
@@ -4464,18 +4464,18 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
 
         <section className="mb-7">
           <div className="flex justify-between items-end mb-4">
-            <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em]">Date & Time</h3>
+            <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">Date & Time</h3>
             {errors.date && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
           </div>
-          <div className={`bg-[#FFFFFF] rounded-[20px] border transition-colors ${errors.date ? 'border-[#FF3B30]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
+          <div className={`bg-[#FFFFFF] rounded-[20px] border transition-colors ${errors.date ? 'border-[#FF3B30]/30 shadow-sm' : 'border-[#EDE8E2] '}`}>
             <button onClick={openCalendar} className="w-full flex justify-between items-center py-4 px-4 hover:bg-[#FAFAFA] rounded-[20px] transition-colors">
               <div className="flex items-center gap-3.5">
                 <div className="w-9 h-9 rounded-full bg-[#FAFAFA] border border-black/[0.02] flex items-center justify-center shrink-0">
                   <CalendarDays size={18} color="#111111" />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-[12px] text-[#8E8E93] font-medium leading-tight">Date</span>
-                  <span className={`text-[15px] font-medium leading-tight mt-0.5 ${selectedDate ? 'text-[#111111]' : 'text-[#FF6B35]'}`}>
+                  <span className="text-[12px] text-[#A09A94] font-medium leading-tight">Date</span>
+                  <span className={`text-[15px] font-medium leading-tight mt-0.5 ${selectedDate ? 'text-[#111111]' : 'text-[#E85D2A]'}`}>
                     {formatDateLabel(selectedDate)}
                   </span>
                 </div>
@@ -4486,7 +4486,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
               <>
                 <div className="mx-4 h-[1px] bg-black/[0.03]" />
                 <div className="p-4">
-                  <span className="text-[12px] text-[#8E8E93] font-medium mb-3 block">Available Times</span>
+                  <span className="text-[12px] text-[#A09A94] font-medium mb-3 block">Available Times</span>
                   {availableSlots.length > 0 ? (
                     <div className="flex flex-wrap gap-3">
                       {availableSlots.map((slot, idx) => {
@@ -4496,7 +4496,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                             key={idx}
                             disabled={!slot.available}
                             onClick={() => { setSelectedTime(slot.time); if(errors.date) setErrors(prev => ({...prev, date: false})); }}
-                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-all border-[0.5px] ${!slot.available ? 'bg-[#FAFAFA] text-[#CFCFD4] border-transparent cursor-not-allowed' : isSlotSelected ? 'bg-[#FF6B35]/[0.06] text-[#FF6B35] border-transparent' : 'bg-[#FFFFFF] text-[#111111] border-black/[0.06] hover:border-black/20'}`}
+                            className={`px-4 py-2 rounded-full text-[14px] font-medium transition-all border-[0.5px] ${!slot.available ? 'bg-[#FAFAFA] text-[#CFCFD4] border-transparent cursor-not-allowed' : isSlotSelected ? 'bg-[#E85D2A]/[0.06] text-[#E85D2A] border-transparent' : 'bg-[#FFFFFF] text-[#111111] border-[#EDE8E2] hover:border-black/20'}`}
                           >
                             {slot.time}
                           </button>
@@ -4504,10 +4504,10 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                       })}
                     </div>
                   ) : (
-                    <div className="text-[14px] text-[#8E8E93] bg-[#FAFAFA] p-3 rounded-[12px] text-center">No available slots for this date.</div>
+                    <div className="text-[14px] text-[#A09A94] bg-[#FAFAFA] p-3 rounded-[12px] text-center">No available slots for this date.</div>
                   )}
                   {selectedTime && selectedService && (
-                    <div className="mt-4 flex items-center gap-2 text-[13px] font-medium text-[#8E8E93] bg-[#FAFAFA] p-3 rounded-[12px]">
+                    <div className="mt-4 flex items-center gap-2 text-[13px] font-medium text-[#A09A94] bg-[#FAFAFA] p-3 rounded-[12px]">
                       <Clock size={15} />
                       <span>Scheduled for {formatTimeRange(selectedTime, selectedService.duration)}</span>
                     </div>
@@ -4521,27 +4521,27 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         {showPetSelection && (
           <section className="mb-7">
             <div className="flex justify-between items-end mb-4">
-              <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em]">Which pet is going?</h3>
+              <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">Which pet is going?</h3>
               {errors.pet && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
             </div>
-            <div className={`bg-[#FFFFFF] rounded-[20px] overflow-hidden border transition-colors ${errors.pet ? 'border-[#FF3B30]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
+            <div className={`bg-[#FFFFFF] rounded-[20px] overflow-hidden border transition-colors ${errors.pet ? 'border-[#FF3B30]/30 shadow-sm' : 'border-[#EDE8E2] '}`}>
               {mockBookingData.userPets.map((pet, idx) => {
                 const isPetSelected = selectedPetId === pet.id;
                 return (
                   <div key={pet.id}>
                     <button
                       onClick={() => { setSelectedPetId(pet.id); if(errors.pet) setErrors(prev => ({...prev, pet: false})); }}
-                      className={`w-full flex justify-between items-center py-4 px-4 transition-colors ${isPetSelected ? 'bg-[#FF6B35]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}
+                      className={`w-full flex justify-between items-center py-4 px-4 transition-colors ${isPetSelected ? 'bg-[#E85D2A]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}
                     >
                       <div className="flex items-center gap-3">
                         <Avatar initials={pet.name.charAt(0)} size={40} />
                         <div className="flex flex-col items-start">
                           <span className={`text-[15px] ${isPetSelected ? 'font-semibold' : 'font-medium'} text-[#111111]`}>{pet.name}</span>
-                          <span className="text-[13px] text-[#8E8E93]">{pet.breed}</span>
+                          <span className="text-[13px] text-[#A09A94]">{pet.breed}</span>
                         </div>
                       </div>
-                      <div className={`w-[20px] h-[20px] rounded-full border-[1px] flex items-center justify-center transition-colors ${isPetSelected ? 'border-[#FF6B35] bg-transparent' : 'border-[#CFCFD4]'}`}>
-                        {isPetSelected && <div className="w-2.5 h-2.5 bg-[#FF6B35] rounded-full" />}
+                      <div className={`w-[20px] h-[20px] rounded-full border-[1px] flex items-center justify-center transition-colors ${isPetSelected ? 'border-[#E85D2A] bg-transparent' : 'border-[#CFCFD4]'}`}>
+                        {isPetSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
                       </div>
                     </button>
                     {idx < mockBookingData.userPets.length - 1 && <div className="mx-4 h-[1px] bg-black/[0.03]" />}
@@ -4553,8 +4553,8 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         )}
 
         <section className="mb-7">
-          <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] mb-4">Extras (Optional)</h3>
-          <div className="bg-[#FFFFFF] rounded-[20px] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
+          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-4">Extras (Optional)</h3>
+          <div className="bg-[#FFFFFF] rounded-[20px] border border-[#EDE8E2]  overflow-hidden">
             {mockBookingData.provider.addOns.map((addon, idx) => {
               const isAddonSelected = selectedAddOns.includes(addon.id);
               return (
@@ -4583,10 +4583,10 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         </section>
 
         <section className="mb-7">
-          <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] mb-4">Special Instructions</h3>
+          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-4">Special Instructions</h3>
           <div className="relative">
             <textarea
-              className="w-full bg-[#FAFAFA] rounded-[20px] p-4 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] border border-black/[0.03] focus:bg-[#FFFFFF] focus:border-[#FF6B35]/50 focus:ring-1 focus:ring-[#FF6B35]/30 focus:shadow-[0_2px_12px_rgba(0,0,0,0.02)] outline-none resize-none transition-all pb-8"
+              className="w-full bg-[#FAFAFA] rounded-[20px] p-4 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] border border-black/[0.03] focus:bg-[#FFFFFF] focus:border-[#E85D2A]/50 focus:ring-1 focus:ring-[#E85D2A]/30 focus: outline-none resize-none transition-all pb-8"
               rows={3}
               maxLength={500}
               placeholder="e.g. Please make sure to lock the bottom gate..."
@@ -4598,17 +4598,17 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         </section>
 
         <section className="mb-4">
-          <div className="bg-[#FFFFFF] rounded-[20px] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-black/[0.04]">
+          <div className="bg-[#FFFFFF] rounded-[20px] p-4  border border-[#EDE8E2]">
             <div className="space-y-3">
               <div className="flex justify-between text-[14px]">
-                <span className="text-[#6E6E73]">{selectedService?.label || 'Service'}</span>
+                <span className="text-[#A09A94]">{selectedService?.label || 'Service'}</span>
                 <span className="font-medium text-[#111111]">CHF {selectedService?.price || 0}</span>
               </div>
               {selectedAddOns.map(id => {
                 const addon = mockBookingData.provider.addOns.find(a => a.id === id);
                 return addon ? (
                   <div key={id} className="flex justify-between text-[14px]">
-                    <span className="text-[#6E6E73]">{addon.label}</span>
+                    <span className="text-[#A09A94]">{addon.label}</span>
                     <span className="font-medium text-[#111111]">+CHF {addon.price}</span>
                   </div>
                 ) : null;
@@ -4624,13 +4624,13 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
       </div>
 
       <div className="absolute bottom-[56px] left-[12px] right-[12px] z-40 pointer-events-none">
-        <div className="pointer-events-auto bg-[#FFFFFF]/95 backdrop-blur-2xl border border-black/[0.03] shadow-[0_8px_32px_-8px_rgba(0,0,0,0.12)] rounded-full p-1 pl-5 flex justify-between items-center">
+        <div className="pointer-events-auto bg-[#FFFFFF]/95 backdrop-blur-2xl border border-black/[0.03]  rounded-full p-1 pl-5 flex justify-between items-center">
           <div className="flex flex-col justify-center">
-            <span className="text-[10px] text-[#8E8E93] font-medium leading-tight mb-0.5 uppercase tracking-wider">Total</span>
+            <span className="text-[10px] text-[#A09A94] font-medium leading-tight mb-0.5 uppercase tracking-wider">Total</span>
             <span className="text-[15px] font-bold text-[#111111] leading-tight">CHF {calculateBookingTotal(selectedServiceId, selectedAddOns)}</span>
           </div>
           <button
-            className={`!w-auto py-3 px-6 rounded-full text-[14px] font-medium transition-all ${!isValid ? 'bg-[#F0F0F2] text-[#A1A1A6]' : 'bg-[#FF6B35] text-white shadow-[0_4px_12px_rgba(255,107,53,0.25)] active:scale-[0.96]'}`}
+            className={`!w-auto py-3 px-6 rounded-full text-[14px] font-medium transition-all ${!isValid ? 'bg-[#F0F0F2] text-[#A1A1A6]' : 'bg-[#E85D2A] text-white shadow-[0_4px_12px_rgba(232,93,42,0.15)] active:scale-[0.96]'}`}
             onClick={handleContinue}
           >
             Continue
@@ -4645,7 +4645,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
             <span className="text-[15px] font-medium text-[#111111]">February 2026</span>
           </div>
           <div className="grid grid-cols-7 gap-y-4 text-center mb-6">
-            {['S','M','T','W','T','F','S'].map((d, i) => <span key={i} className="text-[13px] font-medium text-[#8E8E93]">{d}</span>)}
+            {['S','M','T','W','T','F','S'].map((d, i) => <span key={i} className="text-[13px] font-medium text-[#A09A94]">{d}</span>)}
             {[...Array(28)].map((_, i) => {
               const day = i + 1;
               const dateStr = `2026-02-${day.toString().padStart(2, '0')}`;
@@ -4656,16 +4656,16 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
               const isDateSelected = tempDate === dateStr;
               return (
                 <button key={day} disabled={!isSelectable} onClick={() => setTempDate(dateStr)} className="flex flex-col items-center justify-center gap-1.5">
-                  <div className={`w-10 h-10 flex items-center justify-center rounded-full text-[15px] font-medium transition-all ${isDateSelected ? 'bg-[#FF6B35] text-white shadow-md' : isSelectable ? 'bg-transparent text-[#111111] hover:bg-[#F0F0F2]' : 'text-[#CFCFD4] cursor-not-allowed'}`}>
+                  <div className={`w-10 h-10 flex items-center justify-center rounded-full text-[15px] font-medium transition-all ${isDateSelected ? 'bg-[#E85D2A] text-white shadow-md' : isSelectable ? 'bg-transparent text-[#111111] hover:bg-[#F0F0F2]' : 'text-[#CFCFD4] cursor-not-allowed'}`}>
                     {day}
                   </div>
-                  <div className={`w-1.5 h-1.5 rounded-full ${!isSelectable ? 'bg-transparent' : isAvailable ? 'bg-[#FF6B35]' : 'bg-transparent'}`} />
+                  <div className={`w-1.5 h-1.5 rounded-full ${!isSelectable ? 'bg-transparent' : isAvailable ? 'bg-[#E85D2A]' : 'bg-transparent'}`} />
                 </button>
               );
             })}
           </div>
-          <div className="sticky bottom-0 bg-[#FFFFFF]/95 backdrop-blur-md pt-4 pb-4 border-t border-black/[0.04] -mx-6 px-6 mt-auto">
-            <Button variant="primary" disabled={!tempDate} onClick={confirmDate} className="!rounded-full !py-4 w-full shadow-[0_4px_12px_rgba(255,107,53,0.25)] font-medium">
+          <div className="sticky bottom-0 bg-[#FFFFFF]/95 backdrop-blur-md pt-4 pb-4 border-t border-[#EDE8E2] -mx-6 px-6 mt-auto">
+            <Button variant="primary" disabled={!tempDate} onClick={confirmDate} className="!rounded-full !py-4 w-full shadow-[0_4px_12px_rgba(232,93,42,0.15)] font-medium">
               Confirm Date
             </Button>
           </div>
@@ -4674,9 +4674,9 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
 
       {showCloseDialog && (
         <div className="absolute inset-0 z-[120] bg-black/30 flex items-center justify-center p-5 animate-in fade-in duration-200">
-          <div className="bg-[#FFFFFF] rounded-[24px] p-6 w-full max-w-[320px] shadow-2xl border border-black/[0.04]">
+          <div className="bg-[#FFFFFF] rounded-[24px] p-6 w-full max-w-[320px] shadow-2xl border border-[#EDE8E2]">
             <h3 className="text-[18px] font-bold text-[#111111] mb-2">Abandon Booking?</h3>
-            <p className="text-[14px] text-[#6E6E73] mb-6 leading-relaxed">Your progress will be lost. Are you sure you want to leave?</p>
+            <p className="text-[14px] text-[#A09A94] mb-6 leading-relaxed">Your progress will be lost. Are you sure you want to leave?</p>
             <div className="flex flex-col gap-3">
               <button onClick={() => { setShowCloseDialog(false); onClose(); }} className="w-full py-3.5 rounded-[16px] font-medium bg-[#FFF0F0] text-[#FF3B30] active:scale-[0.98] transition-transform">
                 Yes, discard
@@ -4735,34 +4735,34 @@ const PaymentScreen = ({ onBack, onComplete }) => {
   const canSubmit = selectedCardId && termsAccepted && !isAuthorizing;
 
   return (
-    <div className="absolute inset-0 bg-[#FFFFFF] z-[80] overflow-hidden flex flex-col animate-in slide-in-from-right duration-300">
+    <div className="absolute inset-0 bg-[var(--color-background)] z-[80] overflow-hidden flex flex-col animate-in slide-in-from-right duration-300">
       <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#FFFFFF] via-[#FFFFFF]/90 to-transparent pointer-events-none z-30" />
       <header className="absolute top-12 left-0 w-full z-40 px-5 flex flex-col gap-4 pointer-events-none">
         <div className="flex justify-between items-center w-full pointer-events-auto">
-          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-black/[0.04] rounded-full active:scale-[0.96] transition-transform">
+          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
             <ChevronLeft size={22} color="#111111" />
           </button>
           <div className="flex flex-col items-center justify-center -mt-0.5">
             <span className="text-[16px] font-bold text-[#111111] leading-tight tracking-tight">Payment</span>
             <span className="text-[10px] font-medium text-[#A1A1A6] leading-tight mt-0.5">Step 2 of 2</span>
           </div>
-          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-black/[0.04] rounded-full active:scale-[0.96] transition-transform">
+          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-[0.96] transition-transform">
             <X size={20} color="#111111" />
           </button>
         </div>
         <div className="pointer-events-auto w-[calc(100%-40px)] mx-5 h-[3px] bg-[#F0F0F2] rounded-full overflow-hidden">
-          <div className="h-full bg-[#FF6B35] rounded-full w-full transition-all duration-300" />
+          <div className="h-full bg-[#E85D2A] rounded-full w-full transition-all duration-300" />
         </div>
       </header>
 
-      <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[130px] pb-[160px] px-5 bg-[#FFFFFF]">
+      <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[130px] pb-[160px] px-5 bg-[var(--color-background)]">
         <section className="mb-5">
-          <div className="bg-[#FFFFFF] rounded-[16px] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden transition-all duration-300">
+          <div className="bg-[#FFFFFF] rounded-[16px] border border-[#EDE8E2]  overflow-hidden transition-all duration-300">
             <button onClick={() => setIsSummaryExpanded(!isSummaryExpanded)} className="w-full flex justify-between items-center py-3.5 px-4 hover:bg-[#FAFAFA] transition-colors active:scale-[0.99]">
-              <span className="text-[11px] font-bold text-[#8E8E93] uppercase tracking-wider">Booking summary</span>
+              <span className="text-[11px] font-bold text-[#A09A94] uppercase tracking-wider">Booking summary</span>
               <div className="flex items-center gap-2">
                 <span className="text-[15px] font-bold text-[#111111]">CHF {paymentData.total.toFixed(2)}</span>
-                <ChevronDown size={16} className={`text-[#8E8E93] transition-transform duration-300 ${isSummaryExpanded ? 'rotate-180' : ''}`} />
+                <ChevronDown size={16} className={`text-[#A09A94] transition-transform duration-300 ${isSummaryExpanded ? 'rotate-180' : ''}`} />
               </div>
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${isSummaryExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -4773,26 +4773,26 @@ const PaymentScreen = ({ onBack, onComplete }) => {
                 </div>
                 <div className="space-y-1.5 mb-3">
                   <div className="text-[13px] text-[#111111] font-medium">{paymentData.service}</div>
-                  <div className="text-[12px] text-[#8E8E93]">{paymentData.datetime}</div>
-                  <div className="text-[12px] text-[#8E8E93]">{paymentData.pet}</div>
+                  <div className="text-[12px] text-[#A09A94]">{paymentData.datetime}</div>
+                  <div className="text-[12px] text-[#A09A94]">{paymentData.pet}</div>
                 </div>
                 {paymentData.addOns.length > 0 && (
                   <div className="space-y-1.5 mb-3">
                     {paymentData.addOns.map((addon, idx) => (
                       <div key={idx} className="flex justify-between items-center">
-                        <div className="flex items-center gap-2"><div className="w-1 h-1 bg-[#CFCFD4] rounded-full" /><span className="text-[12px] text-[#8E8E93]">{addon.label}</span></div>
-                        <span className="text-[12px] text-[#8E8E93]">+CHF {addon.price.toFixed(2)}</span>
+                        <div className="flex items-center gap-2"><div className="w-1 h-1 bg-[#CFCFD4] rounded-full" /><span className="text-[12px] text-[#A09A94]">{addon.label}</span></div>
+                        <span className="text-[12px] text-[#A09A94]">+CHF {addon.price.toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
                 )}
                 <div className="w-full h-[1px] bg-black/[0.03] my-3" />
                 <div className="space-y-2 mb-3">
-                  <div className="flex justify-between items-center"><span className="text-[13px] text-[#6E6E73]">Service</span><span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.servicePrice.toFixed(2)}</span></div>
-                  <div className="flex justify-between items-center"><span className="text-[13px] text-[#6E6E73]">Add-ons</span><span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.addOns.reduce((sum, a) => sum + a.price, 0).toFixed(2)}</span></div>
+                  <div className="flex justify-between items-center"><span className="text-[13px] text-[#A09A94]">Service</span><span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.servicePrice.toFixed(2)}</span></div>
+                  <div className="flex justify-between items-center"><span className="text-[13px] text-[#A09A94]">Add-ons</span><span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.addOns.reduce((sum, a) => sum + a.price, 0).toFixed(2)}</span></div>
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-1.5 cursor-pointer active:opacity-70" onClick={(e) => { e.stopPropagation(); setActiveSheet('service_fee'); }}>
-                      <span className="text-[13px] text-[#6E6E73]">Service fee</span><Info size={14} className="text-[#8E8E93]" />
+                      <span className="text-[13px] text-[#A09A94]">Service fee</span><Info size={14} className="text-[#A09A94]" />
                     </div>
                     <span className="text-[13px] font-medium text-[#111111]">CHF {paymentData.platformFee.toFixed(2)}</span>
                   </div>
@@ -4807,28 +4807,28 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         </section>
 
         <section className="mb-5">
-          <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] mb-2.5">Payment method</h3>
-          <div className="bg-[#FFFFFF] rounded-[16px] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
+          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-2.5">Payment method</h3>
+          <div className="bg-[#FFFFFF] rounded-[16px] border border-[#EDE8E2]  overflow-hidden">
             {paymentData.savedCards.map((card, idx) => {
               const isSelected = selectedCardId === card.id;
               return (
                 <div key={card.id}>
-                  <div onClick={() => setSelectedCardId(card.id)} className={`flex items-center justify-between py-3 px-4 cursor-pointer transition-all duration-200 ${isSelected ? 'bg-[#FF6B35]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}>
+                  <div onClick={() => setSelectedCardId(card.id)} className={`flex items-center justify-between py-3 px-4 cursor-pointer transition-all duration-200 ${isSelected ? 'bg-[#E85D2A]/[0.02]' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}>
                     <div className="flex items-center gap-3 flex-1">
-                      <div className={`w-10 h-7 rounded-[4px] border border-black/[0.06] flex items-center justify-center shrink-0 ${card.brand === 'Visa' ? 'bg-[#1A1F71]' : 'bg-[#222222]'}`}>
+                      <div className={`w-10 h-7 rounded-[4px] border border-[#EDE8E2] flex items-center justify-center shrink-0 ${card.brand === 'Visa' ? 'bg-[#1A1F71]' : 'bg-[#222222]'}`}>
                         <span className="text-white text-[10px] font-bold italic leading-none">{card.brand}</span>
                       </div>
                       <div className="flex flex-col justify-center pt-0.5">
                         <span className="text-[14px] font-semibold text-[#111111] leading-tight">{card.brand} •••• {card.last4}</span>
-                        <span className="text-[12px] text-[#8E8E93] leading-tight mt-0.5">Expires {card.exp}</span>
+                        <span className="text-[12px] text-[#A09A94] leading-tight mt-0.5">Expires {card.exp}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <button onClick={(e) => { e.stopPropagation(); setMenuCardId(card.id); setActiveSheet('card_menu'); }} className="p-1 text-[#CFCFD4] hover:text-[#111111] transition-colors">
                         <MoreHorizontal size={18} />
                       </button>
-                      <div className={`w-[20px] h-[20px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-200 shrink-0 ${isSelected ? 'border-[#FF6B35] ring-2 ring-[#FF6B35]/10 bg-transparent' : 'border-[#CFCFD4]'}`}>
-                        {isSelected && <div className="w-2 h-2 bg-[#FF6B35] rounded-full" />}
+                      <div className={`w-[20px] h-[20px] rounded-full border-[1.5px] flex items-center justify-center transition-all duration-200 shrink-0 ${isSelected ? 'border-[#E85D2A] ring-2 ring-[#E85D2A]/10 bg-transparent' : 'border-[#CFCFD4]'}`}>
+                        {isSelected && <div className="w-2 h-2 bg-[#E85D2A] rounded-full" />}
                       </div>
                     </div>
                   </div>
@@ -4837,8 +4837,8 @@ const PaymentScreen = ({ onBack, onComplete }) => {
               );
             })}
             <div className="mx-4 h-[1px] bg-black/[0.03]" />
-            <button onClick={() => setActiveSheet('add_card')} className="w-full flex items-center gap-3 py-3 px-4 bg-[#FFFFFF] hover:bg-[#FAFAFA] transition-colors text-[#FF6B35] active:scale-[0.99]">
-              <div className="w-10 h-7 rounded-[4px] border border-[#FF6B35]/20 bg-[#FF6B35]/[0.04] flex items-center justify-center shrink-0">
+            <button onClick={() => setActiveSheet('add_card')} className="w-full flex items-center gap-3 py-3 px-4 bg-[#FFFFFF] hover:bg-[#FAFAFA] transition-colors text-[#E85D2A] active:scale-[0.99]">
+              <div className="w-10 h-7 rounded-[4px] border border-[#E85D2A]/20 bg-[#E85D2A]/[0.04] flex items-center justify-center shrink-0">
                 <span className="text-[15px] font-medium leading-none mb-0.5">+</span>
               </div>
               <span className="text-[14px] font-medium">Add new card</span>
@@ -4847,13 +4847,13 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         </section>
 
         <section className="mb-5">
-          <div className="bg-[#F7F7F8] rounded-[16px] p-3.5 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-[3px] h-full bg-[#FF6B35] opacity-70" />
+          <div className="bg-[#F3EFEB] rounded-[16px] p-3.5 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-[3px] h-full bg-[#E85D2A] opacity-70" />
             <div className="flex gap-3 items-start pl-1.5">
-              <ShieldCheck size={18} className="text-[#FF6B35] shrink-0 mt-[2px]" />
+              <ShieldCheck size={18} className="text-[#E85D2A] shrink-0 mt-[2px]" />
               <div className="flex flex-col gap-0.5">
                 <h4 className="text-[13px] font-semibold text-[#111111]">Authorization hold</h4>
-                <p className="text-[12px] text-[#6E6E73] leading-relaxed pr-2">
+                <p className="text-[12px] text-[#A09A94] leading-relaxed pr-2">
                   We'll place a temporary hold for CHF {paymentData.total.toFixed(2)} on your card. 
                   You'll only be charged if {paymentData.providerName} accepts your booking request. 
                   If declined or not accepted within 24 hours, the hold is released automatically.
@@ -4864,31 +4864,31 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         </section>
 
         <section className="mb-4">
-          <div className="bg-[#FFFFFF] rounded-[16px] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] p-4 flex gap-3 items-start cursor-pointer transition-colors hover:bg-[#FAFAFA]" onClick={() => setTermsAccepted(!termsAccepted)}>
-            <div className={`mt-[2px] w-[20px] h-[20px] rounded-[6px] border-[1.5px] shrink-0 flex items-center justify-center transition-colors ${termsAccepted ? 'bg-[#FF6B35] border-[#FF6B35]' : 'border-[#CFCFD4] bg-[#FFFFFF]'}`}>
+          <div className="bg-[#FFFFFF] rounded-[16px] border border-[#EDE8E2]  p-4 flex gap-3 items-start cursor-pointer transition-colors hover:bg-[#FAFAFA]" onClick={() => setTermsAccepted(!termsAccepted)}>
+            <div className={`mt-[2px] w-[20px] h-[20px] rounded-[6px] border-[1.5px] shrink-0 flex items-center justify-center transition-colors ${termsAccepted ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#CFCFD4] bg-[#FFFFFF]'}`}>
               {termsAccepted && <Check size={12} color="#FFFFFF" strokeWidth={3} />}
             </div>
             <div className="text-[13px] text-[#111111] leading-relaxed">
               I agree to the{' '}
-              <span onClick={(e) => { e.stopPropagation(); setActiveSheet('terms'); }} className="text-[#FF6B35] font-semibold active:opacity-70">Terms of Service</span>
+              <span onClick={(e) => { e.stopPropagation(); setActiveSheet('terms'); }} className="text-[#E85D2A] font-semibold active:opacity-70">Terms of Service</span>
               {' '}and{' '}
-              <span onClick={(e) => { e.stopPropagation(); setActiveSheet('terms'); }} className="text-[#FF6B35] font-semibold active:opacity-70">Cancellation Policy</span>.
+              <span onClick={(e) => { e.stopPropagation(); setActiveSheet('terms'); }} className="text-[#E85D2A] font-semibold active:opacity-70">Cancellation Policy</span>.
             </div>
           </div>
         </section>
       </div>
 
       <div className="absolute bottom-[44px] left-[12px] right-[12px] z-40 pointer-events-none flex flex-col items-center gap-3">
-        <span className="text-[12px] text-[#8E8E93] font-medium tracking-wide">Hold only, not charged yet</span>
-        <div className="pointer-events-auto w-full bg-[#FFFFFF]/95 backdrop-blur-2xl border border-black/[0.03] shadow-[0_8px_32px_-8px_rgba(0,0,0,0.12)] rounded-full p-1 pl-5 flex justify-between items-center transition-all">
+        <span className="text-[12px] text-[#A09A94] font-medium tracking-wide">Hold only, not charged yet</span>
+        <div className="pointer-events-auto w-full bg-[#FFFFFF]/95 backdrop-blur-2xl border border-black/[0.03]  rounded-full p-1 pl-5 flex justify-between items-center transition-all">
           <div className="flex flex-col">
-            <span className="text-[10px] text-[#8E8E93] font-medium leading-tight mb-0.5 uppercase">Total</span>
+            <span className="text-[10px] text-[#A09A94] font-medium leading-tight mb-0.5 uppercase">Total</span>
             <span className="text-[15px] font-bold text-[#111111]">CHF {paymentData.total.toFixed(2)}</span>
           </div>
           <button
             disabled={!canSubmit}
             onClick={handleAuthorize}
-            className={`relative flex items-center justify-center py-3 px-6 rounded-full text-[14px] font-medium transition-all duration-300 min-w-[140px] shrink-0 overflow-hidden ml-4 ${!canSubmit ? 'bg-[#F0F0F2] text-[#A1A1A6]' : 'bg-[#FF6B35] text-white shadow-[0_4px_12px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A] active:scale-[0.97]'}`}
+            className={`relative flex items-center justify-center py-3 px-6 rounded-full text-[14px] font-medium transition-all duration-300 min-w-[140px] shrink-0 overflow-hidden ml-4 ${!canSubmit ? 'bg-[#F0F0F2] text-[#A1A1A6]' : 'bg-[#E85D2A] text-white shadow-[0_4px_12px_rgba(232,93,42,0.15)] hover:bg-[#E85D2A] active:scale-[0.97]'}`}
           >
             {isAuthorizing ? <Loader2 size={18} className="animate-spin text-white" /> : <span>Authorize payment</span>}
           </button>
@@ -4898,25 +4898,25 @@ const PaymentScreen = ({ onBack, onComplete }) => {
       <CardModal isOpen={activeSheet === 'add_card'} onClose={() => setActiveSheet(null)} title="Add card">
         <div className="flex flex-col gap-4 pb-6">
           <div>
-            <label className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider mb-2 block">Card Information</label>
-            <div className="bg-[#FAFAFA] rounded-[16px] border border-black/[0.04] focus-within:border-[#FF6B35]/50 focus-within:ring-2 focus-within:ring-[#FF6B35]/10 transition-all overflow-hidden flex items-center px-4">
+            <label className="text-[11px] font-semibold text-[#A09A94] uppercase tracking-wider mb-2 block">Card Information</label>
+            <div className="bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 focus-within:ring-2 focus-within:ring-[#E85D2A]/10 transition-all overflow-hidden flex items-center px-4">
               <CreditCard size={18} className="text-[#CFCFD4] mr-3" />
               <input type="text" placeholder="Card number" value={cardNumber} onChange={handleCardNumberChange} maxLength="19" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="flex-1 bg-[#FAFAFA] rounded-[16px] border border-black/[0.04] focus-within:border-[#FF6B35]/50 transition-all px-4">
+            <div className="flex-1 bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 transition-all px-4">
               <input type="text" placeholder="MM / YY" maxLength="5" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
             </div>
-            <div className="flex-1 bg-[#FAFAFA] rounded-[16px] border border-black/[0.04] focus-within:border-[#FF6B35]/50 transition-all px-4">
+            <div className="flex-1 bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 transition-all px-4">
               <input type="text" placeholder="CVV" maxLength="4" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
             </div>
           </div>
-          <div className="bg-[#FAFAFA] rounded-[16px] border border-black/[0.04] focus-within:border-[#FF6B35]/50 transition-all px-4">
+          <div className="bg-[#FAFAFA] rounded-[16px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/50 transition-all px-4">
             <input type="text" placeholder="Cardholder name" className="w-full bg-transparent py-3.5 text-[15px] text-[#111111] placeholder:text-[#A1A1A6] outline-none" />
           </div>
           <div className="mt-1">
-            <label className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider mb-2 block">Billing Address</label>
+            <label className="text-[11px] font-semibold text-[#A09A94] uppercase tracking-wider mb-2 block">Billing Address</label>
             <div onClick={() => setSameAsHome(!sameAsHome)} className="flex items-center gap-3 cursor-pointer">
               <div className={`w-5 h-5 rounded-[6px] border-[1.5px] flex items-center justify-center transition-colors ${sameAsHome ? 'bg-[#111111] border-[#111111]' : 'border-[#CFCFD4]'}`}>
                 {sameAsHome && <Check size={12} color="#FFFFFF" strokeWidth={3} />}
@@ -4926,11 +4926,11 @@ const PaymentScreen = ({ onBack, onComplete }) => {
           </div>
           <div className="flex justify-between items-center py-1 mt-1">
             <span className="text-[14px] font-medium text-[#111111]">Set as default payment method</span>
-            <div className="w-[44px] h-[24px] bg-[#FF6B35] rounded-full p-[2px] cursor-pointer shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
+            <div className="w-[44px] h-[24px] bg-[#E85D2A] rounded-full p-[2px] cursor-pointer shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]">
               <div className="w-[20px] h-[20px] bg-white rounded-full shadow-sm transform translate-x-[20px] transition-transform" />
             </div>
           </div>
-          <button onClick={() => setActiveSheet(null)} className="w-full mt-2 py-3.5 rounded-[20px] text-[15px] font-semibold bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] active:scale-[0.98] transition-transform">
+          <button onClick={() => setActiveSheet(null)} className="w-full mt-2 py-3.5 rounded-[20px] text-[15px] font-semibold bg-[#E85D2A] text-white shadow-[0_4px_14px_rgba(232,93,42,0.15)] active:scale-[0.98] transition-transform">
             Save card
           </button>
           <div className="flex justify-center items-center gap-1.5 mt-1">
@@ -4943,16 +4943,16 @@ const PaymentScreen = ({ onBack, onComplete }) => {
       <CardModal isOpen={activeSheet === 'terms'} onClose={() => setActiveSheet(null)} title="Legal">
         <div className="flex flex-col gap-4 pb-20">
           <h4 className="font-bold text-[16px]">Terms of Service</h4>
-          <p className="text-[14px] text-[#6E6E73] leading-relaxed">
+          <p className="text-[14px] text-[#A09A94] leading-relaxed">
             By accepting these terms, you agree to FYLOS's core platform policies. We facilitate connections between pet owners and care providers. Payment authorization holds are placed 24 hours prior to booking confirmation and are automatically released if the provider declines or fails to respond.
           </p>
           <h4 className="font-bold text-[16px] mt-2">Cancellation Policy</h4>
-          <p className="text-[14px] text-[#6E6E73] leading-relaxed">
+          <p className="text-[14px] text-[#A09A94] leading-relaxed">
             Bookings can be cancelled free of charge up to 24 hours before the scheduled start time. Cancellations within 24 hours may be subject to a 50% fee. If the provider cancels, a full refund (and release of any holds) will be processed immediately.
           </p>
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white to-transparent">
-          <button onClick={() => { setTermsAccepted(true); setActiveSheet(null); }} className="w-full py-4 rounded-[20px] text-[16px] font-semibold bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] active:scale-[0.98] transition-transform">
+          <button onClick={() => { setTermsAccepted(true); setActiveSheet(null); }} className="w-full py-4 rounded-[20px] text-[16px] font-semibold bg-[#E85D2A] text-white shadow-[0_4px_14px_rgba(232,93,42,0.15)] active:scale-[0.98] transition-transform">
             I Agree
           </button>
         </div>
@@ -4971,7 +4971,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
 
       <CardModal isOpen={activeSheet === 'service_fee'} onClose={() => setActiveSheet(null)} title="Service fee" snap="compact">
         <div className="flex flex-col gap-6 pb-6">
-          <p className="text-[15px] text-[#6E6E73] leading-relaxed">This fee covers secure payments, customer support, and platform protection.</p>
+          <p className="text-[15px] text-[#A09A94] leading-relaxed">This fee covers secure payments, customer support, and platform protection.</p>
           <button onClick={() => setActiveSheet(null)} className="w-full py-4 rounded-[20px] text-[16px] font-semibold bg-[#FAFAFA] text-[#111111] hover:bg-[#F0F0F2] active:scale-[0.98] transition-all">
             Got it
           </button>
@@ -4994,25 +4994,25 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F7F7F8] z-[90] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-400">
+    <div className="absolute inset-0 bg-[#F3EFEB] z-[90] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-400">
       <div className="absolute top-[48px] right-[16px] z-50">
-        <button onClick={onClose} className="w-11 h-11 flex items-center justify-center bg-[#FFFFFF] shadow-[0_4px_16px_rgba(0,0,0,0.08)] border border-black/[0.04] rounded-full active:scale-95 transition-transform" aria-label="Close">
+        <button onClick={onClose} className="w-11 h-11 flex items-center justify-center bg-[#FFFFFF]  border border-[#EDE8E2] rounded-full active:scale-95 transition-transform" aria-label="Close">
           <X size={22} color="#111111" />
         </button>
       </div>
 
       <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[110px] pb-[180px] px-4 flex flex-col items-center">
         <div className="flex flex-col items-center text-center w-full max-w-[280px] mb-8">
-          <div className="relative w-[104px] h-[104px] bg-[#E8F8EC] rounded-full flex items-center justify-center mb-5 pop-animation">
-            <Check size={48} color="#FF6B35" strokeWidth={3} className="check-animation" />
+          <div className="relative w-[104px] h-[104px] bg-[#E85D2A]/10 rounded-full flex items-center justify-center mb-5 pop-animation">
+            <Check size={48} color="#E85D2A" strokeWidth={3} className="check-animation" />
           </div>
           <h2 className="text-[24px] font-bold text-[#111111] tracking-tight mb-2.5">Request sent</h2>
-          <p className="text-[15px] text-[#6E6E73] leading-relaxed">
+          <p className="text-[15px] text-[#A09A94] leading-relaxed">
             We sent your request to {mockRequestSentData.providerName}. You'll get a notification when they respond (usually within 1h).
           </p>
         </div>
 
-        <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA] shadow-[0_2px_12px_rgba(0,0,0,0.02)] p-4 mb-6">
+        <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA]  p-4 mb-6">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-3">
               <Avatar src={mockRequestSentData.providerAvatar} size={40} />
@@ -5020,7 +5020,7 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
                 <span className="text-[15px] font-bold text-[#111111] leading-tight">{mockRequestSentData.providerName}</span>
                 <div className="flex items-center gap-1 mt-0.5">
                   <Star size={12} className="text-[#111111] fill-[#111111]" />
-                  <span className="text-[13px] font-medium text-[#6E6E73]">{mockRequestSentData.providerRating}</span>
+                  <span className="text-[13px] font-medium text-[#A09A94]">{mockRequestSentData.providerRating}</span>
                 </div>
               </div>
             </div>
@@ -5028,28 +5028,28 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
           </div>
           <div className="w-full h-[1px] bg-[#EAEAEA] mb-4" />
           <div className="space-y-3 text-[14px]">
-            <div className="flex gap-3"><span className="text-[#8E8E93] w-[60px] shrink-0">Service</span><span className="font-medium text-[#111111]">{mockRequestSentData.service}</span></div>
-            <div className="flex gap-3"><span className="text-[#8E8E93] w-[60px] shrink-0">Time</span><span className="font-medium text-[#111111]">{mockRequestSentData.datetime}</span></div>
-            <div className="flex gap-3"><span className="text-[#8E8E93] w-[60px] shrink-0">Pet</span><span className="font-medium text-[#111111]">{mockRequestSentData.pet}</span></div>
+            <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Service</span><span className="font-medium text-[#111111]">{mockRequestSentData.service}</span></div>
+            <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Time</span><span className="font-medium text-[#111111]">{mockRequestSentData.datetime}</span></div>
+            <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Pet</span><span className="font-medium text-[#111111]">{mockRequestSentData.pet}</span></div>
             {mockRequestSentData.addOns.length > 0 && (
-              <div className="flex gap-3"><span className="text-[#8E8E93] w-[60px] shrink-0">Extras</span><span className="font-medium text-[#111111] leading-snug">{mockRequestSentData.addOns.join(', ')}</span></div>
+              <div className="flex gap-3"><span className="text-[#A09A94] w-[60px] shrink-0">Extras</span><span className="font-medium text-[#111111] leading-snug">{mockRequestSentData.addOns.join(', ')}</span></div>
             )}
           </div>
         </div>
 
         <div className="w-full mb-4">
-          <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-wider mb-3 ml-1">What happens next</h3>
-          <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA] shadow-[0_2px_12px_rgba(0,0,0,0.02)] p-4 space-y-4">
-            <div className="flex gap-3 items-start"><Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">{mockRequestSentData.providerName} has up to 24h to respond</span></div>
-            <div className="flex gap-3 items-start"><CreditCard size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">CHF {mockRequestSentData.total.toFixed(2)} is on hold (not charged yet)</span></div>
-            <div className="flex gap-3 items-start"><Bell size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">You'll be notified when they respond</span></div>
-            <div className="flex gap-3 items-start"><CheckCircle2 size={20} className="text-[#FF6B35] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If accepted → payment is processed</span></div>
-            <div className="flex gap-3 items-start"><XCircle size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If declined → hold is released automatically</span></div>
+          <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-wider mb-3 ml-1">What happens next</h3>
+          <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA]  p-4 space-y-4">
+            <div className="flex gap-3 items-start"><Clock size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">{mockRequestSentData.providerName} has up to 24h to respond</span></div>
+            <div className="flex gap-3 items-start"><CreditCard size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">CHF {mockRequestSentData.total.toFixed(2)} is on hold (not charged yet)</span></div>
+            <div className="flex gap-3 items-start"><Bell size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">You'll be notified when they respond</span></div>
+            <div className="flex gap-3 items-start"><CheckCircle2 size={20} className="text-[#E85D2A] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If accepted → payment is processed</span></div>
+            <div className="flex gap-3 items-start"><XCircle size={20} className="text-[#A09A94] shrink-0" strokeWidth={1.5} /><span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If declined → hold is released automatically</span></div>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 px-4 pb-[32px] pt-8 bg-gradient-to-t from-[#F7F7F8] via-[#F7F7F8]/95 to-transparent z-40 flex flex-col gap-3 pointer-events-none">
+      <div className="absolute bottom-0 left-0 right-0 px-4 pb-[32px] pt-8 bg-gradient-to-t from-[#F3EFEB] via-[#F3EFEB]/95 to-transparent z-40 flex flex-col gap-3 pointer-events-none">
         <div className="pointer-events-auto flex flex-col gap-3">
           <Button variant="secondary" size="medium" onClick={onViewBooking}>View booking</Button>
           <Button variant="primary" size="medium" onClick={onClose}>Done</Button>
@@ -5735,24 +5735,24 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
   const [galleryViewer, setGalleryViewer] = useState(null);
 
   const OptionRow = ({ icon: Icon, label, danger, onClick }) => (
-    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#FF3B30] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F7F7F8]'}`}>
+    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#FF3B30] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F3EFEB]'}`}>
        <Icon size={20} className={danger ? "text-[#FF3B30]" : "text-[#111111]"} />
        <span className="text-[16px] font-semibold">{label}</span>
     </button>
   );
 
   return (
-    <div className="absolute inset-0 bg-[#FFFFFF] z-50 overflow-hidden">
-       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-10 px-5 pointer-events-none bg-gradient-to-b from-white/95 via-white/80 to-transparent flex justify-between items-start">
-          <button onClick={onBack} className="pointer-events-auto w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]">
+    <div className="absolute inset-0 bg-[var(--color-background)] z-50 overflow-hidden">
+       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-10 px-5 pointer-events-none bg-gradient-to-b from-[#FBF9F7]/95 via-[#FBF9F7]/80 to-transparent flex justify-between items-start">
+          <button onClick={onBack} className="pointer-events-auto w-[44px] h-[44px] flex items-center justify-center bg-[#F3EFEB] border border-[#EDE8E2] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]">
              <ChevronLeft size={22} color="#111111" />
           </button>
-          <div className="pointer-events-auto flex items-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] p-1 h-[44px]">
-             <button className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[#F7F7F8] active:scale-[0.98] transition-all">
+          <div className="pointer-events-auto flex items-center bg-[#F3EFEB] border border-[#EDE8E2] rounded-[9999px] p-1 h-[44px]">
+             <button className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[#F3EFEB] active:scale-[0.98] transition-all">
                 <Share size={18} color="#111111"/>
              </button>
-             <div className="w-[1px] h-[16px] bg-black/[0.06] mx-1" />
-             <button onClick={() => setMenuSheet(true)} className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[#F7F7F8] active:scale-[0.98] transition-all">
+             <div className="w-[1px] h-[16px] bg-[#EDE8E2] mx-1" />
+             <button onClick={() => setMenuSheet(true)} className="w-[36px] h-[36px] flex items-center justify-center rounded-full hover:bg-[#F3EFEB] active:scale-[0.98] transition-all">
                 <MoreHorizontal size={18} color="#111111"/>
              </button>
           </div>
@@ -5765,13 +5765,13 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                </div>
                <h1 className="text-[24px] font-bold text-[#111111] mb-1.5">{provider.name}</h1>
                <div className="flex items-center gap-1.5 mb-5">
-                  <Star size={16} fill={THEME.colors.accent} color={THEME.colors.accent} />
+                  <Star size={16} fill={'#E85D2A'} color={'#E85D2A'} />
                   <span className="text-[16px] font-bold text-[#111111]">{provider.rating}</span>
-                  <span className="text-[13px] text-[#6E6E73]">({provider.reviewCount} reviews)</span>
+                  <span className="text-[13px] text-[#A09A94]">({provider.reviewCount} reviews)</span>
                </div>
                <div className="flex flex-wrap justify-center gap-2 mb-8">
                   {provider.badges.slice(0, 3).map(b => (
-                     <Badge key={b} variant="default" className="!px-3 !py-1 font-semibold text-[10px] uppercase tracking-wider bg-[#F7F7F8] text-[#6E6E73] border-none shadow-none">
+                     <Badge key={b} variant="default" className="!px-3 !py-1 font-semibold text-[10px] uppercase tracking-wider bg-[#F3EFEB] text-[#A09A94] border-none shadow-none">
                         {b}
                      </Badge>
                   ))}
@@ -5779,60 +5779,60 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
             </div>
 
             <div className="px-5 mb-10">
-               <div className="bg-[#F7F7F8] rounded-[20px] p-4 flex justify-between items-center divide-x divide-black/[0.06]">
+               <div className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px] p-4 flex justify-between items-center divide-x divide-[#EDE8E2]">
                   <div className="flex-1 flex flex-col items-center gap-1">
                      <span className="text-[16px] font-bold text-[#111111]">CHF 75</span>
-                     <span className="text-[12px] text-[#8E8E93]">per 90min</span>
+                     <span className="text-[12px] text-[#A09A94]">per 90min</span>
                   </div>
                   <div className="flex-1 flex flex-col items-center gap-1">
                      <span className="text-[16px] font-bold text-[#111111]">{provider.responseTime}</span>
-                     <span className="text-[12px] text-[#8E8E93]">response</span>
+                     <span className="text-[12px] text-[#A09A94]">response</span>
                   </div>
                   <div className="flex-1 flex flex-col items-center gap-1">
                      <span className="text-[16px] font-bold text-[#111111]">{provider.distance}km</span>
-                     <span className="text-[12px] text-[#8E8E93]">distance</span>
+                     <span className="text-[12px] text-[#A09A94]">distance</span>
                   </div>
                </div>
             </div>
 
             <section className="px-5 mb-10 space-y-4">
-               <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] ml-1">About</h3>
+               <h3 className="text-[15px] font-semibold text-[#111] ml-1">About</h3>
                <p className="text-[16px] text-[#111111] leading-relaxed opacity-95">{provider.bio}</p>
-               <div className="bg-[#F7F7F8] rounded-[20px] p-5 space-y-3 mt-4">
+               <div className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px] p-5 space-y-3 mt-4">
                   <div className="flex items-center gap-3">
-                     <IconWrapper icon={Info} size={18} color="#6E6E73" />
-                     <span className="text-[14px] text-[#6E6E73] w-[80px]">Languages</span>
+                     <IconWrapper icon={Info} size={18} color="#A09A94" />
+                     <span className="text-[14px] text-[#A09A94] w-[80px]">Languages</span>
                      <span className="text-[14px] text-[#111111] font-semibold">{provider.languages.join(', ')}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                     <IconWrapper icon={Clock} size={18} color="#6E6E73" />
-                     <span className="text-[14px] text-[#6E6E73] w-[80px]">Experience</span>
+                     <IconWrapper icon={Clock} size={18} color="#A09A94" />
+                     <span className="text-[14px] text-[#A09A94] w-[80px]">Experience</span>
                      <span className="text-[14px] text-[#111111] font-semibold">{provider.yearsExperience} years</span>
                   </div>
                   <div className="flex items-center gap-3">
-                     <IconWrapper icon={Activity} size={18} color="#6E6E73" />
-                     <span className="text-[14px] text-[#6E6E73] w-[80px]">Total Walks</span>
+                     <IconWrapper icon={Activity} size={18} color="#A09A94" />
+                     <span className="text-[14px] text-[#A09A94] w-[80px]">Total Walks</span>
                      <span className="text-[14px] text-[#111111] font-semibold">{provider.totalWalks}</span>
                   </div>
                </div>
             </section>
 
             <section className="px-5 mb-10 space-y-4">
-               <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] ml-1">Services & Pricing</h3>
+               <h3 className="text-[15px] font-semibold text-[#111] ml-1">Services & Pricing</h3>
                <div className="space-y-3">
                   {provider.services.map(svc => (
-                     <Card key={svc.id} clickable className="relative overflow-hidden !p-4" onClick={() => onNavigate('booking', { preselectedServiceId: svc.id })}>
+                     <div key={svc.id} onClick={() => onNavigate('booking', { preselectedServiceId: svc.id })} className="relative overflow-hidden p-4 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] cursor-pointer active:scale-[0.98] transition-all">
                         {svc.popular && (
-                           <div className="absolute top-0 right-0 bg-[#FF6B35] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-bl-[12px]">
+                           <div className="absolute top-0 right-0 bg-[#E85D2A] text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-bl-[12px]">
                               Most Popular
                            </div>
                         )}
                         <div className="flex justify-between items-center gap-4">
                            <div className="flex-1 min-w-0 flex items-start gap-3">
-                              <div className="pt-0.5">{renderLegacyIcon(svc.icon, 22, 'text-[#6E6E73]')}</div>
+                              <div className="pt-0.5">{renderLegacyIcon(svc.icon, 22, 'text-[#A09A94]')}</div>
                               <div className="flex flex-col gap-0.5 pt-0.5">
                                  <span className="text-[15px] font-semibold text-[#111111]">{svc.label}</span>
-                                 <span className="text-[13px] text-[#6E6E73] leading-snug pr-4">{svc.description}</span>
+                                 <span className="text-[13px] text-[#A09A94] leading-snug pr-4">{svc.description}</span>
                               </div>
                            </div>
                            <div className="flex items-center gap-2 shrink-0 pt-1">
@@ -5840,37 +5840,37 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                               <ChevronRight size={18} color="#CFCFD4" />
                            </div>
                         </div>
-                     </Card>
+                     </div>
                   ))}
                </div>
             </section>
 
             <section className="px-5 mb-10 space-y-4">
                <div className="flex justify-between items-center">
-                  <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] ml-1">Reviews ({provider.reviewCount})</h3>
-                  <button onClick={() => onNavigate('reviews')} className="text-[#FF6B35] text-[14px] font-semibold flex items-center gap-1 active:opacity-70">
+                  <h3 className="text-[15px] font-semibold text-[#111] ml-1">Reviews ({provider.reviewCount})</h3>
+                  <button onClick={() => onNavigate('reviews')} className="text-[#E85D2A] text-[14px] font-semibold flex items-center gap-1 active:opacity-70">
                     View all <ChevronRight size={16}/>
                   </button>
                </div>
                <div className="space-y-3">
                   {provider.reviews.map(r => (
-                     <Card key={r.id} clickable className="!p-4">
+                     <div key={r.id} className="p-4 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px]">
                         <div className="flex justify-between items-start mb-2">
                            <div className="flex gap-0.5">
-                              {[...Array(5)].map((_, i) => <Star key={i} size={14} fill={i < Math.floor(r.rating) ? "#FF6B35" : "transparent"} color={i < Math.floor(r.rating) ? "#FF6B35" : "#E5E5E5"} />)}
+                              {[...Array(5)].map((_, i) => <Star key={i} size={14} fill={i < Math.floor(r.rating) ? "#E85D2A" : "transparent"} color={i < Math.floor(r.rating) ? "#E85D2A" : "#E5E5E5"} />)}
                            </div>
-                           <span className="text-[13px] font-semibold text-[#8E8E93]">{r.rating.toFixed(1)}</span>
+                           <span className="text-[13px] font-semibold text-[#A09A94]">{r.rating.toFixed(1)}</span>
                         </div>
-                        <div className="text-[14px] text-[#111111] font-semibold mb-1">{r.author} <span className="text-[13px] text-[#8E8E93] font-normal mx-1">·</span> <span className="text-[13px] text-[#8E8E93] font-normal">{r.date}</span></div>
-                        <p className="text-[14px] text-[#6E6E73] line-clamp-2 leading-relaxed">{r.text}</p>
-                     </Card>
+                        <div className="text-[14px] text-[#111111] font-semibold mb-1">{r.author} <span className="text-[13px] text-[#A09A94] font-normal mx-1">·</span> <span className="text-[13px] text-[#A09A94] font-normal">{r.date}</span></div>
+                        <p className="text-[14px] text-[#A09A94] line-clamp-2 leading-relaxed">{r.text}</p>
+                     </div>
                   ))}
                </div>
             </section>
 
             <section className="px-5 mb-10 space-y-4">
-               <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] ml-1">Availability</h3>
-               <Card className="!p-5">
+               <h3 className="text-[15px] font-semibold text-[#111] ml-1">Availability</h3>
+               <div className="p-5 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px]">
                   <div className="flex justify-between items-center mb-5">
                      <span className="text-[14px] font-bold text-[#111111]">February 2026</span>
                      <div className="flex gap-3">
@@ -5879,7 +5879,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                      </div>
                   </div>
                   <div className="flex justify-between text-center mb-3">
-                     {['M','T','W','T','F','S','S'].map((d, i) => <span key={i} className="text-[11px] font-semibold text-[#8E8E93] w-8">{d}</span>)}
+                     {['M','T','W','T','F','S','S'].map((d, i) => <span key={i} className="text-[11px] font-semibold text-[#A09A94] w-8">{d}</span>)}
                   </div>
                   <div className="flex justify-between text-center">
                      {[22, 23, 24, 25, 26, 27, 28].map(day => {
@@ -5888,7 +5888,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                         return (
                            <div key={day} className="flex flex-col items-center gap-1.5 w-8">
                               <span className="text-[15px] font-medium text-[#111111]">{day}</span>
-                              <div className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-[#FF6B35]' : 'bg-[#E5E5E5]'}`} />
+                              <div className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-[#E85D2A]' : 'bg-[#E5E5E5]'}`} />
                            </div>
                         );
                      })}
@@ -5896,33 +5896,33 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                   <Divider spacing="medium" className="my-5" />
                   <div className="flex justify-between items-center">
                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#FF6B35]"/><span className="text-[12px] font-semibold text-[#6E6E73]">Available</span></div>
-                        <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]"/><span className="text-[12px] font-semibold text-[#6E6E73]">Booked</span></div>
+                        <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A]"/><span className="text-[12px] font-semibold text-[#A09A94]">Available</span></div>
+                        <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-[#E5E5E5]"/><span className="text-[12px] font-semibold text-[#A09A94]">Booked</span></div>
                      </div>
-                     <button onClick={() => setCalendarSheet(true)} className="text-[#FF6B35] text-[13px] font-semibold active:opacity-70">Check full schedule →</button>
+                     <button onClick={() => setCalendarSheet(true)} className="text-[#E85D2A] text-[13px] font-semibold active:opacity-70">Check full schedule →</button>
                   </div>
-               </Card>
+               </div>
             </section>
 
             <section className="space-y-4 mb-10">
-               <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] ml-6">Photos</h3>
+               <h3 className="text-[15px] font-semibold text-[#111] ml-6">Photos</h3>
                <div className="flex gap-3 overflow-x-auto custom-scrollbar px-5 pb-2">
                   {provider.gallery.map((img, i) => (
                      <button key={i} onClick={() => setGalleryViewer(i)} className="shrink-0 active:scale-[0.98] transition-transform">
-                        <img src={img} className="w-[140px] h-[140px] rounded-[16px] object-cover border border-black/[0.04]" alt={`Gallery ${i+1}`}/>
+                        <img src={img} className="w-[140px] h-[140px] rounded-[16px] object-cover border border-[#EDE8E2]" alt={`Gallery ${i+1}`}/>
                      </button>
                   ))}
                </div>
             </section>
 
             <section className="px-5 space-y-4">
-               <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] ml-1">Verified Information</h3>
-               <div className="bg-[#F7F7F8] rounded-[20px] p-2">
+               <h3 className="text-[15px] font-semibold text-[#111] ml-1">Verified Information</h3>
+               <div className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[20px] p-2">
                   {provider.certifications.map((cert, i) => (
-                     <div key={i} onClick={() => setCertSheet(cert)} className="flex items-center gap-3 px-3 py-3 active:bg-black/[0.04] cursor-pointer rounded-[14px] transition-colors">
-                        <CheckCircle2 size={20} className="text-[#6E6E73] shrink-0" />
+                     <div key={i} onClick={() => setCertSheet(cert)} className="flex items-center gap-3 px-3 py-3 active:bg-[#EDE8E2] cursor-pointer rounded-[14px] transition-colors">
+                        <CheckCircle2 size={20} className="text-[#A09A94] shrink-0" />
                         <span className="text-[15px] font-medium text-[#111111] flex-1">{cert.label}</span>
-                        <span className="text-[12px] text-[#8E8E93] shrink-0 font-medium">{cert.verifiedDate ? new Date(cert.verifiedDate).toLocaleDateString('en-US', {month:'short', year:'numeric'}) : ''}</span>
+                        <span className="text-[12px] text-[#A09A94] shrink-0 font-medium">{cert.verifiedDate ? new Date(cert.verifiedDate).toLocaleDateString('en-US', {month:'short', year:'numeric'}) : ''}</span>
                      </div>
                   ))}
                </div>
@@ -5930,13 +5930,13 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
        </div>
 
        <div className="absolute bottom-8 left-5 right-5 z-40 pointer-events-none">
-           <div className="pointer-events-auto bg-white/95 backdrop-blur-xl border border-black/[0.06] shadow-[0_16px_40px_-8px_rgba(0,0,0,0.15)] rounded-[24px] p-2 pl-6 flex justify-between items-center">
+           <div className="pointer-events-auto bg-[#FBF9F7]/95 backdrop-blur-xl border border-[#EDE8E2] rounded-[24px] p-2 pl-6 flex justify-between items-center">
                <div className="flex flex-col justify-center">
-                  <span className="text-[12px] text-[#8E8E93] font-medium leading-tight mb-0.5">Book from</span>
+                  <span className="text-[12px] text-[#A09A94] font-medium leading-tight mb-0.5">Book from</span>
                   <span className="text-[16px] font-bold text-[#111111] leading-tight">CHF 45</span>
                </div>
                <button 
-                 className="!w-auto !py-3.5 !px-6 !rounded-[18px] bg-[#FF6B35] text-white font-semibold shadow-[0_4px_14px_rgba(255,107,53,0.3)] active:scale-95 transition-all"
+                 className="!w-auto !py-3.5 !px-6 !rounded-[18px] bg-[#E85D2A] text-white font-semibold active:scale-95 transition-all"
                  onClick={() => onNavigate('booking', { providerId: provider.id, source: 'provider_profile' })}
                >
                  Book {provider.name}
@@ -5954,8 +5954,8 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
 
        <CardModal isOpen={calendarSheet} onClose={() => setCalendarSheet(false)} title="Full Availability">
           <div className="py-4 space-y-6">
-             <div className="bg-[#F7F7F8] w-full rounded-[20px] h-[300px] flex items-center justify-center border border-black/[0.04]">
-                <span className="text-[#8E8E93] text-[14px] font-medium">Full month calendar grid</span>
+             <div className="bg-[#F3EFEB] w-full rounded-[20px] h-[300px] flex items-center justify-center border border-[#EDE8E2]">
+                <span className="text-[#A09A94] text-[14px] font-medium">Full month calendar grid</span>
              </div>
              <Button variant="primary" onClick={() => setCalendarSheet(false)}>Close</Button>
           </div>
@@ -5965,28 +5965,28 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
           {certSheet && (
              <div className="py-4 space-y-6">
                 <div className="flex items-center gap-4">
-                   <div className="w-14 h-14 bg-[#F7F7F8] rounded-[16px] flex items-center justify-center shrink-0">
-                      <CheckCircle2 size={26} className="text-[#6E6E73]" />
+                   <div className="w-14 h-14 bg-[#F3EFEB] rounded-[16px] flex items-center justify-center shrink-0">
+                      <CheckCircle2 size={26} className="text-[#A09A94]" />
                    </div>
                    <div>
                       <h3 className="text-[18px] font-bold text-[#111111]">{certSheet.label}</h3>
-                      <p className="text-[14px] text-[#6E6E73] font-semibold flex items-center gap-1 mt-0.5"><CheckCircle2 size={14}/> Verified via FYLOS</p>
+                      <p className="text-[14px] text-[#A09A94] font-semibold flex items-center gap-1 mt-0.5"><CheckCircle2 size={14}/> Verified via FYLOS</p>
                    </div>
                 </div>
-                <div className="space-y-4 bg-[#F7F7F8] p-5 rounded-[20px] border border-black/[0.04]">
+                <div className="space-y-4 bg-[#F3EFEB] p-5 rounded-[20px] border border-[#EDE8E2]">
                    <div className="flex justify-between items-center">
-                      <span className="text-[14px] text-[#6E6E73]">Date Verified</span>
+                      <span className="text-[14px] text-[#A09A94]">Date Verified</span>
                       <span className="text-[14px] font-semibold text-[#111111]">{new Date(certSheet.verifiedDate).toLocaleDateString('en-US', {month:'long', year:'numeric'})}</span>
                    </div>
                    {certSheet.expiryDate && (
                       <div className="flex justify-between items-center">
-                         <span className="text-[14px] text-[#6E6E73]">Valid Until</span>
+                         <span className="text-[14px] text-[#A09A94]">Valid Until</span>
                          <span className="text-[14px] font-semibold text-[#111111]">{new Date(certSheet.expiryDate).toLocaleDateString('en-US', {month:'long', year:'numeric'})}</span>
                       </div>
                    )}
                    {certSheet.provider && (
                       <div className="flex justify-between items-center">
-                         <span className="text-[14px] text-[#6E6E73]">Issuer</span>
+                         <span className="text-[14px] text-[#A09A94]">Issuer</span>
                          <span className="text-[14px] font-semibold text-[#111111] truncate max-w-[180px] text-right">{certSheet.provider}</span>
                       </div>
                    )}
