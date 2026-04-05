@@ -4268,105 +4268,78 @@ const ServicesScreen = ({ onNavigate }) => {
 
   return (
     <ScreenContainer>
-      <div className="px-5 pb-8 space-y-7 pt-2">
-        <section className="space-y-3.5">
-          <ServicesSectionHeader title="CATEGORIES" />
+      <div className="px-5 pb-8 space-y-6 pt-2">
+        {/* Categories — warm grid */}
+        <section>
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Categories</h3>
           <div className="grid grid-cols-3 gap-2">
-            {[...orderedCategoryTiles, { id: 'more-tile', label: 'More', icon: ChevronDown, active: true, isMore: true }].map((cat) => {
-              if (cat.isMore) {
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setMoreCategoriesExpanded((v) => !v)}
-                    className="relative min-h-[74px] rounded-[16px] border border-black/[0.04] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(0,0,0,0.02)] px-2 py-2 flex flex-col items-center justify-center gap-1 text-center transition-all active:scale-[0.98]"
-                  >
-                    <ChevronDown size={15} className={`text-[#111111] transition-transform duration-200 ${moreCategoriesExpanded ? 'rotate-180' : ''}`} strokeWidth={1.9} />
-                    <span className="text-[12px] font-semibold text-[#111111] leading-tight">More</span>
-                  </button>
-                );
-              }
+            {orderedCategoryTiles.map((cat) => {
               const Icon = cat.icon;
-              const isSelected = activeCategoryId === cat.id && cat.active;
               const isComingSoon = !cat.active;
               return (
                 <button
                   key={cat.id}
-                  onClick={() => {
-                    if (isComingSoon) return;
-                    setActiveCategoryId(cat.id);
-                    if (cat.id === 'walking' && onNavigate) onNavigate('services/walking');
-                  }}
+                  onClick={() => { if (!isComingSoon) { setActiveCategoryId(cat.id); if (cat.id === 'walking' && onNavigate) onNavigate('services/walking'); } }}
                   disabled={isComingSoon}
-                  className={`relative min-h-[74px] rounded-[16px] border bg-[#FFFFFF] shadow-[0_2px_12px_rgba(0,0,0,0.02)] px-2 py-2 flex flex-col items-center justify-center gap-1 text-center transition-all ${isComingSoon ? 'opacity-65 cursor-not-allowed border-black/[0.05]' : isSelected ? 'border-black/[0.10] bg-[#F7F7F8] active:scale-[0.98]' : 'border-black/[0.04] active:scale-[0.98]'}`}
+                  className={`relative py-3 rounded-[14px] flex flex-col items-center justify-center gap-1.5 active:scale-[0.96] transition-transform ${isComingSoon ? 'opacity-50' : ''}`}
+                  style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}
                 >
-                  {isComingSoon && (
-                    <div className="absolute -top-1 left-1 right-1 flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-full bg-[#FFF4EF] border border-[#FF6B35]/25 text-[8px] font-semibold tracking-wide text-[#C35D37] shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
-                      <Lock size={7} className="text-[#C35D37]" />
-                      <span>Coming soon</span>
-                    </div>
-                  )}
-                  <Icon size={15} className="text-[#111111]" strokeWidth={1.9} />
-                  <span className="text-[12px] font-semibold text-[#111111] leading-tight">{cat.label}</span>
+                  {isComingSoon && <span className="absolute -top-1.5 text-[7px] font-bold px-1.5 py-0.5 rounded-full bg-[#FFF5F0] text-[#E85D2A] border border-[#FFE0D0]">Soon</span>}
+                  <Icon size={16} className="text-[#A09A94]" strokeWidth={1.8} />
+                  <span className="text-[11px] font-semibold text-[#6E6058]">{cat.label}</span>
                 </button>
               );
             })}
           </div>
-          <div className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-out ${moreCategoriesExpanded ? 'max-h-[220px] opacity-100' : 'max-h-0 opacity-0'}`}>
-            <div className={`grid grid-cols-3 gap-2 pt-2 transition-[transform,opacity] duration-220 ease-out ${moreCategoriesExpanded ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}>
+          {/* More categories */}
+          <button onClick={() => setMoreCategoriesExpanded(v => !v)} className="w-full mt-2 py-2 flex items-center justify-center gap-1.5 text-[12px] font-medium text-[#A09A94] active:opacity-70">
+            {moreCategoriesExpanded ? 'Show less' : 'More services'} <ChevronDown size={13} className={`transition-transform ${moreCategoriesExpanded ? 'rotate-180' : ''}`} />
+          </button>
+          {moreCategoriesExpanded && (
+            <div className="grid grid-cols-3 gap-2 mt-1">
               {MOCK_MORE_SERVICE_CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 return (
-                  <div
-                    key={cat.id}
-                    className="relative min-h-[74px] rounded-[16px] border border-black/[0.05] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(0,0,0,0.02)] px-2 py-2 flex flex-col items-center justify-center gap-1 text-center opacity-65"
-                  >
-                    <div className="absolute -top-1 left-1 right-1 flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-full bg-[#FFF4EF] border border-[#FF6B35]/25 text-[8px] font-semibold tracking-wide text-[#C35D37] shadow-[0_2px_6px_rgba(0,0,0,0.04)]">
-                      <Lock size={7} className="text-[#C35D37]" />
-                      <span>Coming soon</span>
-                    </div>
-                    <Icon size={15} className="text-[#111111]" strokeWidth={1.9} />
-                    <span className="text-[12px] font-semibold text-[#111111] leading-tight">{cat.label}</span>
+                  <div key={cat.id} className="relative py-3 rounded-[14px] flex flex-col items-center justify-center gap-1.5 opacity-50" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+                    <span className="absolute -top-1.5 text-[7px] font-bold px-1.5 py-0.5 rounded-full bg-[#FFF5F0] text-[#E85D2A] border border-[#FFE0D0]">Soon</span>
+                    <Icon size={16} className="text-[#A09A94]" strokeWidth={1.8} />
+                    <span className="text-[11px] font-semibold text-[#6E6058]">{cat.label}</span>
                   </div>
                 );
               })}
             </div>
-          </div>
+          )}
         </section>
 
+        {/* Upcoming — warm rows */}
         {MOCK_UPCOMING_BOOKINGS.length > 0 && (
-          <section className="space-y-3.5">
-            <ServicesSectionHeader title="UPCOMING" actionLabel="My Bookings →" onAction={() => onNavigate('services/bookings')} />
-            <div className="space-y-3.5">
+          <section>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-[15px] font-semibold text-[#111]">Upcoming</h3>
+              <button onClick={() => onNavigate('services/bookings')} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">My Bookings</button>
+            </div>
+            <div className="space-y-2">
               {MOCK_UPCOMING_BOOKINGS.slice(0, 2).map((booking) => {
                 const statusMeta = getBookingStatusMeta(booking.status);
-                const ServiceIcon = getServiceIcon(booking.type);
                 return (
-                <Card key={booking.id} clickable className="!px-5 !py-3 active:scale-[0.98] relative overflow-visible" onClick={() => onNavigate && onNavigate('booking_details')}>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#F3F3F5] border border-black/[0.05] flex items-center justify-center shrink-0 mt-0.5">
-                      <ServiceIcon size={14} className="text-[#6E6E73]" strokeWidth={2.2} />
-                    </div>
-                    <div className="flex-1 min-w-0 pt-0.5">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <h4 className="font-semibold text-[#111111] text-[14px] leading-tight truncate">{booking.providerLabel || booking.provider}</h4>
-                        <span className="text-[14px] text-[#8E8E93] leading-none">·</span>
-                        <span className="text-[14px] font-semibold text-[#111111] leading-none">{booking.providerRating || '4.9'}</span>
-                        <Star size={11} className="fill-[#FF6B35] text-[#FF6B35] shrink-0" />
+                <div key={booking.id} className="rounded-[16px] p-4 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }} onClick={() => onNavigate && onNavigate('booking_details')}>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="text-[14px] font-semibold text-[#111] truncate">{booking.providerLabel || booking.provider}</h4>
+                        <span className="text-[13px] text-[#C4BBB3]">·</span>
+                        <span className="text-[13px] font-medium text-[#111]">{booking.providerRating || '4.9'}</span>
+                        <Star size={10} className="fill-[#E85D2A] text-[#E85D2A] shrink-0" />
                       </div>
-                      <p className="text-[13px] text-[#6E6E73] mt-0.5 leading-tight truncate">{booking.serviceSummary || `${booking.title} · Leo`}</p>
+                      <p className="text-[12px] text-[#A09A94] mt-0.5 truncate">{booking.serviceSummary || `${booking.title} · Leo`}</p>
+                      <div className="flex items-center gap-2 mt-1.5 text-[11px] text-[#A09A94]">
+                        <Calendar size={10} className="text-[#C4BBB3]" />
+                        <span>{booking.scheduleLabel || booking.date}</span>
+                      </div>
                     </div>
-                    <span className={`h-[18px] px-2.5 rounded-full text-[9px] font-semibold tracking-[0.03em] border inline-flex items-center leading-none self-start mt-1 ${statusMeta.className}`}>
-                      {statusMeta.label}
-                    </span>
+                    <span className={`h-[17px] px-2 rounded-full text-[9px] font-semibold border inline-flex items-center shrink-0 ${statusMeta.className}`}>{statusMeta.label}</span>
                   </div>
-                  <div className="mt-2 pl-[44px] flex items-center justify-between gap-2 text-[12px] text-[#8E8E93] leading-tight">
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <Calendar size={12} className="text-[#A1A1A6] shrink-0" />
-                      <span className="truncate">{booking.scheduleLabel || booking.date}</span>
-                    </div>
-                    <ChevronRight size={13} className="text-[#B0B0B5] shrink-0" />
-                  </div>
-                </Card>
+                </div>
               )})}
             </div>
           </section>
@@ -4383,53 +4356,29 @@ const ServicesScreen = ({ onNavigate }) => {
           </section>
         )}
 
-        <section className="space-y-3.5">
-          <ServicesSectionHeader title="FEATURED PROVIDERS" />
-          <div className="space-y-3.5">
-            {MOCK_PROVIDERS.map((provider) => {
+        {/* Providers — clean rows */}
+        <section>
+          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Featured Providers</h3>
+          <div>
+            {MOCK_PROVIDERS.map((provider, i) => {
               const availabilityMeta = getAvailabilityMeta(provider.availability);
-              const cornerBadgeMeta = getCornerBadgeMeta(provider.cornerBadge);
               return (
-                <Card key={provider.id} clickable className="!px-3.5 !py-3 group active:scale-[0.98] relative overflow-visible" onClick={() => provider.id === 'provider_001' && onNavigate && onNavigate('provider_profile')}>
-                  {provider.cornerBadge ? (
-                    <span className={`absolute -top-1.5 left-2.5 h-[18px] px-2 rounded-full border text-[8px] font-medium inline-flex items-center z-[2] shadow-[0_2px_8px_rgba(0,0,0,0.06)] ${cornerBadgeMeta.className}`}>
-                      {provider.cornerBadge}
-                    </span>
-                  ) : null}
-                  <div className="absolute top-2 right-3 h-[18px] inline-flex items-center gap-1 bg-white/92 backdrop-blur-md px-1.5 rounded-full border border-black/[0.05] shadow-[0_2px_8px_rgba(0,0,0,0.05)] z-[1]">
-                    <Star size={9} className="fill-[#FF6B35] text-[#FF6B35]" />
-                    <span className="text-[10px] font-semibold text-[#1C1C1E] leading-none tracking-[0.01em]">{provider.rating}</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="shrink-0">
-                      <Avatar src={provider.avatar} size={50} />
+                <div key={provider.id} className={`flex items-center gap-3 py-3 cursor-pointer active:opacity-70 ${i < MOCK_PROVIDERS.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => provider.id === 'provider_001' && onNavigate && onNavigate('provider_profile')}>
+                  <Avatar src={provider.avatar} size={40} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[14px] font-semibold text-[#111] truncate">{formatProviderDisplayName(provider.name)}</span>
+                      <Star size={10} className="fill-[#E85D2A] text-[#E85D2A] shrink-0" />
+                      <span className="text-[12px] font-medium text-[#111]">{provider.rating}</span>
                     </div>
-
-                    <div className="flex-1 min-w-0 flex flex-col gap-1">
-                      <div className="flex items-center gap-1 min-w-0 flex-1 pr-14">
-                          <h4 className="text-[15px] font-semibold text-[#111111] leading-tight whitespace-nowrap truncate">{formatProviderDisplayName(provider.name)}</h4>
-                          {provider.trustTag === 'Verified' ? (
-                            <span className="w-[18px] h-[18px] inline-flex items-center justify-center rounded-full bg-[#F7F7F8] border border-black/[0.04] shrink-0 ml-0.5" aria-label="Verified provider">
-                              <ShieldCheck size={11} className="text-[#6E6E73]" />
-                            </span>
-                          ) : null}
-                      </div>
-
-                      <p className="text-[12px] text-[#8E8E93] leading-tight truncate">{provider.type}</p>
-
-                      <div className={`flex items-center gap-1.5 text-[11px] ${availabilityMeta.textClass}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${availabilityMeta.dotClass}`} />
-                        <span className="truncate">{provider.availability?.label || ''}</span>
-                      </div>
-                    </div>
-
-                    <div className="w-[48px] shrink-0 flex flex-col items-end self-stretch justify-center">
-                      <div className="text-right">
-                        <div className="text-[15px] font-bold text-[#111111] leading-tight whitespace-nowrap">{provider.priceValue}</div>
-                      </div>
+                    <p className="text-[11px] text-[#A09A94] truncate">{provider.type}</p>
+                    <div className="flex items-center gap-1.5 text-[10px] text-[#A09A94] mt-0.5">
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${availabilityMeta.dotClass}`} />
+                      <span>{provider.availability?.label || ''}</span>
                     </div>
                   </div>
-                </Card>
+                  <span className="text-[14px] font-bold text-[#111] shrink-0">{provider.priceValue}</span>
+                </div>
               );
             })}
           </div>
