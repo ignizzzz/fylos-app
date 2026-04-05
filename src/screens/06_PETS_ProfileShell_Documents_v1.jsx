@@ -1757,53 +1757,37 @@ const AddDocumentSheet = ({ isOpen, onClose, onSave, showToast }) => {
 
   return (
     <CardModal isOpen={isOpen} onClose={onClose} title="Add Document">
-      <div className="space-y-5 pt-2">
-        <TextInput label="Document Name" placeholder="e.g., Blood Test Results" value={title} onChange={e=>setTitle(e.target.value)} disabled={uploading} />
+      <div className="space-y-4 pt-1">
+        <TextInput label="Name" placeholder="e.g., Blood Test Results" value={title} onChange={e=>setTitle(e.target.value)} disabled={uploading} />
         <Select label="Category" options={CATEGORY_OPTIONS.map(c => ({label: c, value: c}))} value={category} onChange={e=>setCategory(e.target.value)} disabled={uploading} />
         <TextInput label="Date" type="date" value={date} onChange={e=>setDate(e.target.value)} disabled={uploading} />
-        <TextInput label="Notes (Optional)" placeholder="Add some details..." value={notes} onChange={e=>setNotes(e.target.value)} disabled={uploading} />
-        
-        <div className="pt-2">
-           <label className="text-[13px] font-medium text-[#6E6E73] ml-1 mb-1.5 block">File</label>
+
+        <div>
            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf,.png,.jpeg,.jpg" className="hidden" />
            {!file ? (
-             <button onClick={() => fileInputRef.current?.click()} className="w-full h-[80px] border-2 border-dashed border-black/[0.08] rounded-xl flex flex-col items-center justify-center gap-1 hover:bg-[#F7F7F8] active:bg-[#F0F0F2] transition-colors" disabled={uploading}>
-                <Upload size={20} className="text-[#8E8E93]" />
-                <span className="text-[13px] font-medium text-[#6E6E73]">Tap to upload or take photo</span>
+             <button onClick={() => fileInputRef.current?.click()} className="w-full py-3 rounded-[12px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1.5px dashed #DDD8D2' }} disabled={uploading}>
+                <Upload size={14} className="text-[#A09A94]" />
+                <span className="text-[12px] font-semibold text-[#6E6058]">Upload file or photo</span>
              </button>
            ) : (
-             <div className="w-full p-4 border border-black/[0.08] rounded-xl flex items-center justify-between bg-[#FAFAFB]">
-                <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center text-[#FF6B35]">
-                     {file.type === 'application/pdf' ? <FileText size={20}/> : <ImageIcon size={20}/>}
-                   </div>
-                   <div className="flex flex-col">
-                      <span className="text-[14px] font-semibold text-[#111111] max-w-[200px] truncate">{file.name}</span>
-                      <span className="text-[12px] text-[#8E8E93]">{(file.size / (1024*1024)).toFixed(2)} MB</span>
-                   </div>
-                </div>
-                {!uploading && (
-                  <button onClick={() => setFile(null)} className="p-2 text-[#8E8E93] hover:text-[#FF3B30] transition-colors">
-                     <X size={18} />
-                  </button>
-                )}
+             <div className="flex items-center gap-3 py-2">
+                <span className="text-[13px] font-semibold text-[#111] flex-1 truncate">{file.name}</span>
+                <span className="text-[10px] text-[#A09A94]">{(file.size / (1024*1024)).toFixed(1)} MB</span>
+                {!uploading && <button onClick={() => setFile(null)} className="text-[#A09A94] active:text-[#E85D2A]"><X size={14} /></button>}
              </div>
            )}
         </div>
 
         {uploading && (
-          <div className="pt-2">
-            <div className="flex justify-between text-[12px] font-medium text-[#6E6E73] mb-1.5">
-              <span>Uploading...</span>
-              <span>{progress}%</span>
-            </div>
-            <div className="w-full h-1.5 bg-[#F0F0F2] rounded-full overflow-hidden">
-              <div className="h-full bg-[#FF6B35] transition-all duration-150 ease-out" style={{ width: `${progress}%` }} />
+          <div>
+            <div className="flex justify-between text-[11px] text-[#A09A94] mb-1"><span>Uploading...</span><span>{progress}%</span></div>
+            <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ background: '#EDE8E2' }}>
+              <div className="h-full rounded-full transition-all duration-150" style={{ width: `${progress}%`, background: '#E85D2A' }} />
             </div>
           </div>
         )}
 
-        <div className="flex gap-3 pt-4">
+        <div className="flex gap-2 pt-2">
           <Button variant="secondary" onClick={onClose} disabled={uploading}>Cancel</Button>
           <Button variant="primary" onClick={handleUpload} disabled={!title || !file || uploading}>
             {uploading ? 'Saving...' : 'Upload'}
@@ -3392,191 +3376,85 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
         />
       )}
 
-      {/* SHARE TAB SHEETS */}
-      <CardModal 
-        isOpen={shareActiveSheet === 'add'} onClose={closeShareSheet} 
-        title={`Share ${pet.name}'s Profile`}
-        snap="compact"
-        footer={<Button variant="secondary" onClick={closeShareSheet}>Cancel</Button>}
-      >
-        <div className="space-y-3">
-          <button onClick={() => openShareSheet('qr')} className="w-full flex items-center gap-4 p-4 bg-[#F7F7F8] rounded-[16px] hover:bg-black/5 active:scale-[0.98] transition-all text-left">
-            <div className="w-12 h-12 bg-[#FFFFFF] rounded-full flex items-center justify-center shadow-sm"><QrCode size={24} className="text-[#FF6B35]" /></div>
-            <div>
-              <div className="text-[16px] font-semibold text-[#111111]">QR Code</div>
-              <div className="text-[13px] text-[#6E6E73]">Let someone scan to access instantly</div>
-            </div>
+      {/* SHARE TAB SHEETS — minimal warm */}
+      <CardModal isOpen={shareActiveSheet === 'add'} onClose={closeShareSheet} title="Share">
+        <div className="space-y-2 pt-1">
+          <button onClick={() => openShareSheet('qr')} className="w-full flex items-center gap-3 py-3 active:opacity-60 transition-opacity text-left border-b border-[#EDE8E2]">
+            <QrCode size={16} className="text-[#A09A94]" />
+            <span className="text-[14px] font-semibold text-[#111]">QR Code</span>
           </button>
-          <button onClick={() => openShareSheet('link')} className="w-full flex items-center gap-4 p-4 bg-[#F7F7F8] rounded-[16px] hover:bg-black/5 active:scale-[0.98] transition-all text-left">
-            <div className="w-12 h-12 bg-[#FFFFFF] rounded-full flex items-center justify-center shadow-sm"><LinkIcon size={24} className="text-[#007AFF]" /></div>
-            <div>
-              <div className="text-[16px] font-semibold text-[#111111]">Share Link</div>
-              <div className="text-[13px] text-[#6E6E73]">Send a secure link via message</div>
-            </div>
+          <button onClick={() => openShareSheet('link')} className="w-full flex items-center gap-3 py-3 active:opacity-60 transition-opacity text-left border-b border-[#EDE8E2]">
+            <LinkIcon size={16} className="text-[#A09A94]" />
+            <span className="text-[14px] font-semibold text-[#111]">Share Link</span>
           </button>
-          <button onClick={() => { showToast('Email invites coming soon'); closeShareSheet(); }} className="w-full flex items-center gap-4 p-4 bg-[#F7F7F8] rounded-[16px] hover:bg-black/5 active:scale-[0.98] transition-all text-left">
-            <div className="w-12 h-12 bg-[#FFFFFF] rounded-full flex items-center justify-center shadow-sm"><Mail size={24} className="text-[#00C060]" /></div>
-            <div>
-              <div className="text-[16px] font-semibold text-[#111111]">Invite via Email</div>
-              <div className="text-[13px] text-[#6E6E73]">Send a formal invitation to an inbox</div>
-            </div>
+          <button onClick={() => { showToast('Coming soon'); closeShareSheet(); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 transition-opacity text-left">
+            <Mail size={16} className="text-[#A09A94]" />
+            <span className="text-[14px] font-semibold text-[#111]">Email Invite</span>
           </button>
         </div>
       </CardModal>
 
-      <CardModal 
-        isOpen={shareActiveSheet === 'qr'} onClose={closeShareSheet} 
-        title="Share via QR"
-        footer={!qrGenerated ? (
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={closeShareSheet}>Cancel</Button>
-            <Button variant="primary" onClick={() => setQrGenerated(true)}>Generate QR</Button>
-          </div>
-        ) : (
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={() => { showToast('Saved to photos'); closeShareSheet(); }}>Save Image</Button>
-            <Button variant="primary" onClick={() => { showToast('Opening share menu...'); closeShareSheet(); }}>Share QR</Button>
-          </div>
-        )}
-      >
-        <div className="space-y-6">
+      <CardModal isOpen={shareActiveSheet === 'qr'} onClose={closeShareSheet} title="QR Code">
+        <div className="pt-1">
           {!qrGenerated ? (
-            <>
-              <div>
-                <h4 className="text-[14px] font-semibold text-[#6E6E73] uppercase tracking-wider mb-3">Permission Level</h4>
-                <RadioList options={PERMISSION_LEVELS} value={shareConfig.permission} onChange={(v) => setShareConfig({ ...shareConfig, permission: v })} />
-              </div>
+            <div className="space-y-4">
               <Select label="Expires in" options={EXPIRY_OPTIONS} value={shareConfig.expiry} onChange={e => setShareConfig({ ...shareConfig, expiry: e.target.value })} />
-            </>
+              <Button variant="primary" onClick={() => setQrGenerated(true)}>Generate</Button>
+            </div>
           ) : (
-            <div className="text-center animate-in fade-in zoom-in-95 duration-300">
-              <div className="w-[200px] h-[200px] mx-auto bg-white border border-black/10 rounded-2xl shadow-sm p-4 flex flex-col items-center justify-center relative mb-4 mt-2">
-                <QrCode size={140} color="#111111" strokeWidth={1.5} />
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/20 rounded-2xl pointer-events-none" />
-                <FylosLogo fontSize="12px" className="absolute bg-white px-2 py-1 rounded-full bottom-[-10px] shadow-sm border border-black/[0.04]" />
+            <div className="text-center">
+              <div className="w-[160px] h-[160px] mx-auto rounded-[16px] flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}>
+                <QrCode size={120} color="#111" strokeWidth={1.5} />
               </div>
-              <p className="text-[14px] font-medium text-[#FF6B35] mb-2 flex items-center justify-center gap-1.5"><Shield size={16}/> Active · Expires in {EXPIRY_OPTIONS.find(o => o.value === shareConfig.expiry)?.label}</p>
+              <p className="text-[11px] text-[#A09A94] mb-4">Expires in {EXPIRY_OPTIONS.find(o => o.value === shareConfig.expiry)?.label}</p>
+              <div className="flex gap-2">
+                <Button variant="secondary" onClick={() => { showToast('Saved'); closeShareSheet(); }}>Save</Button>
+                <Button variant="primary" onClick={() => { showToast('Sharing...'); closeShareSheet(); }}>Share</Button>
+              </div>
             </div>
           )}
         </div>
       </CardModal>
 
-      <CardModal 
-        isOpen={shareActiveSheet === 'link'} onClose={closeShareSheet} 
-        title="Share via Link"
-        footer={
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={closeShareSheet}>Cancel</Button>
-            <Button variant="primary" onClick={() => { showToast('Opening share menu...'); closeShareSheet(); }}>Share Link</Button>
-          </div>
-        }
-      >
-        <div className="space-y-6">
-          <div>
-            <h4 className="text-[14px] font-semibold text-[#6E6E73] uppercase tracking-wider mb-3">Permission Level</h4>
-            <RadioList options={PERMISSION_LEVELS} value={shareConfig.permission} onChange={(v) => setShareConfig({ ...shareConfig, permission: v })} />
-          </div>
+      <CardModal isOpen={shareActiveSheet === 'link'} onClose={closeShareSheet} title="Share Link">
+        <div className="space-y-4 pt-1">
           <Select label="Expires in" options={EXPIRY_OPTIONS} value={shareConfig.expiry} onChange={e => setShareConfig({ ...shareConfig, expiry: e.target.value })} />
-          
-          <div className="p-4 bg-[#FFF4E5] rounded-[14px] border border-[#FF9500]/20 flex items-start gap-3">
-            <AlertTriangle size={20} className="text-[#FF9500] shrink-0 mt-0.5" />
-            <p className="text-[13px] text-[#111111] leading-relaxed">Anyone with this generated link will be able to access {pet.name}'s profile until it expires.</p>
+          <div className="flex items-center gap-2 px-3 py-2.5 rounded-[12px]" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+            <span className="text-[13px] font-medium text-[#111] flex-1 truncate font-mono">fylos.app/s/lx89q2m</span>
+            <button onClick={() => handleCopyLink('fylos.app/s/lx89q2m')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#EDE8E2' }}><Copy size={13} className="text-[#A09A94]" /></button>
           </div>
-          
-          <div className="relative">
-            <input type="text" readOnly value="fylos.app/s/lx89q2m" className="w-full h-[52px] pl-4 pr-12 bg-[#F7F7F8] border border-black/[0.08] rounded-[14px] text-[16px] text-[#111111] font-medium" />
-            <button onClick={() => handleCopyLink('fylos.app/s/lx89q2m')} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-[#6E6E73] hover:text-[#111111] transition-colors bg-white rounded-md shadow-sm border border-black/5">
-              <Copy size={16} />
-            </button>
-          </div>
+          <p className="text-[11px] text-[#A09A94]">Anyone with this link can view {pet.name}'s profile until it expires.</p>
+          <Button variant="primary" onClick={() => { showToast('Sharing...'); closeShareSheet(); }}>Share Link</Button>
         </div>
       </CardModal>
 
-      <CardModal 
-        isOpen={shareActiveSheet === 'details' && !!selectedShare} onClose={closeShareSheet} 
-        title="Access Details"
-        footer={
-          <div className="flex flex-col gap-3">
-            <Button variant="secondary" onClick={() => {
-              const mapPermId = PERMISSION_LEVELS.find(p => p.label === selectedShare.permission)?.id || 'view';
-              setShareConfig({ ...shareConfig, permission: mapPermId });
-              openShareSheet('change', selectedShare);
-            }}>Change permissions</Button>
-            <Button variant="destructive" onClick={() => openShareSheet('revoke', selectedShare)}>Revoke access</Button>
-          </div>
-        }
-      >
+      <CardModal isOpen={shareActiveSheet === 'details' && !!selectedShare} onClose={closeShareSheet} title="Access">
         {selectedShare && (
-          <div className="space-y-6">
-            <div className="flex flex-col items-center text-center">
-              <Avatar src={selectedShare.avatar} initials={selectedShare.name.charAt(0)} size={72} className="mb-3" />
-              <h3 className="text-[20px] font-bold text-[#111111]">{selectedShare.name}</h3>
-              <p className="text-[14px] text-[#6E6E73] mt-1">{selectedShare.role}</p>
-              <Badge variant={getPermissionBadgeVariant(selectedShare.permission)} className="mt-3">{selectedShare.permission}</Badge>
-            </div>
-            
-            <Divider />
-
-            <div className="grid grid-cols-2 gap-4 bg-[#F7F7F8] p-4 rounded-[16px]">
+          <div className="pt-1">
+            <div className="flex items-center gap-3 mb-4">
+              <Avatar src={selectedShare.avatar} initials={selectedShare.name.charAt(0)} size={40} />
               <div>
-                <p className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider mb-1">Added</p>
-                <p className="text-[14px] font-medium text-[#111111]">{selectedShare.added}</p>
-              </div>
-              <div>
-                <p className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider mb-1">Expires</p>
-                <p className="text-[14px] font-medium text-[#111111]">Never</p>
-              </div>
-              <div className="col-span-2 pt-2 border-t border-black/[0.04]">
-                <p className="text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider mb-1">Last Accessed</p>
-                <p className="text-[14px] font-medium text-[#111111]">Today, 10:42 AM</p>
+                <h3 className="text-[15px] font-bold text-[#111]">{selectedShare.name}</h3>
+                <p className="text-[12px] text-[#A09A94]">{selectedShare.role} · Added {selectedShare.added}</p>
               </div>
             </div>
-
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-[14px] font-semibold text-[#111111] mb-2 flex items-center gap-2"><Check size={16} className="text-[#00C060]"/> What they can do</h4>
-                <ul className="space-y-1.5 text-[14px] text-[#6E6E73] pl-6">
-                  {selectedShare.permission.includes('View') || selectedShare.permission.includes('Medical') ? (
-                    <li>View basic info and health records</li>
-                  ) : (
-                    <><li>Edit profile details and preferences</li><li>Add new milestones and documents</li></>
-                  )}
-                  {selectedShare.permission.includes('Full') && <li>Manage sharing and family members</li>}
-                </ul>
-              </div>
-              {selectedShare.permission.includes('View') && (
-                <div>
-                  <h4 className="text-[14px] font-semibold text-[#111111] mb-2 flex items-center gap-2"><X size={16} className="text-[#FF3B30]"/> What they cannot do</h4>
-                  <ul className="space-y-1.5 text-[14px] text-[#6E6E73] pl-6">
-                    <li>Edit any profile information</li>
-                    <li>Delete records or milestones</li>
-                  </ul>
-                </div>
-              )}
+            <div className="space-y-0 mb-4">
+              <div className="flex justify-between py-2.5 border-b border-[#EDE8E2]"><span className="text-[12px] text-[#A09A94]">Permission</span><span className="text-[13px] font-semibold text-[#111]">{selectedShare.permission}</span></div>
+              <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Last accessed</span><span className="text-[13px] font-semibold text-[#111]">Today</span></div>
+            </div>
+            <div className="space-y-2">
+              <Button variant="secondary" onClick={() => { openShareSheet('change', selectedShare); }}>Change permissions</Button>
+              <Button variant="destructive" onClick={() => openShareSheet('revoke', selectedShare)}>Revoke access</Button>
             </div>
           </div>
         )}
       </CardModal>
 
-      <CardModal isOpen={shareActiveSheet === 'miniMenu' && !!selectedShare} onClose={closeShareSheet} snap="compact">
-        <div className="space-y-3 pb-2 px-1">
-          <div className="bg-[#F7F7F8] rounded-[16px] overflow-hidden flex flex-col">
-            <button onClick={() => openShareSheet('details', selectedShare)} className="w-full p-4 text-[16px] font-semibold text-[#111111] border-b border-black/[0.04] hover:bg-black/5 active:bg-black/10 transition-colors">
-              View details
-            </button>
-            <button onClick={() => {
-                const mapPermId = PERMISSION_LEVELS.find(p => p.label === selectedShare.permission)?.id || 'view';
-                setShareConfig({ ...shareConfig, permission: mapPermId });
-                openShareSheet('change', selectedShare);
-            }} className="w-full p-4 text-[16px] font-semibold text-[#111111] hover:bg-black/5 active:bg-black/10 transition-colors">
-              Change permissions
-            </button>
-          </div>
-          <div className="bg-[#FFFFFF] rounded-[16px] overflow-hidden border border-black/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col">
-            <button onClick={() => openShareSheet('revoke', selectedShare)} className="w-full p-4 text-[16px] font-semibold text-[#FF3B30] hover:bg-[#FFF0F0] active:bg-[#FFE5E5] transition-colors">
-              Revoke access
-            </button>
-          </div>
+      <CardModal isOpen={shareActiveSheet === 'miniMenu' && !!selectedShare} onClose={closeShareSheet}>
+        <div className="space-y-1 pt-1">
+          <button onClick={() => openShareSheet('details', selectedShare)} className="w-full py-3 text-[14px] font-semibold text-[#111] text-left active:opacity-60 border-b border-[#EDE8E2]">View details</button>
+          <button onClick={() => { openShareSheet('change', selectedShare); }} className="w-full py-3 text-[14px] font-semibold text-[#111] text-left active:opacity-60 border-b border-[#EDE8E2]">Change permissions</button>
+          <button onClick={() => openShareSheet('revoke', selectedShare)} className="w-full py-3 text-[14px] font-semibold text-[#E85D2A] text-left active:opacity-60">Revoke access</button>
         </div>
       </CardModal>
 
