@@ -5684,138 +5684,93 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
   return (
     <div className="absolute inset-0 bg-[var(--color-background)] z-50 overflow-hidden flex flex-col">
        {/* Header */}
-       <header className="shrink-0 pt-14 pb-3 px-5 flex justify-between items-center">
+       <header className="shrink-0 pt-14 pb-2 px-5 flex justify-between items-center">
           <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
              <ChevronLeft size={18} color="#111" />
           </button>
-          <span className="text-[15px] font-semibold text-[#111]">{provider.name}</span>
           <button onClick={() => setMenuSheet(true)} className="w-9 h-9 flex items-center justify-center rounded-full active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
              <MoreHorizontal size={16} color="#111" />
           </button>
        </header>
 
-       {/* Scrollable content */}
        <div className="flex-1 overflow-y-auto px-5 pb-[100px]" style={{ scrollbarWidth: 'none' }}>
-            {/* Profile hero */}
-            <div className="flex items-center gap-4 mb-5">
-               <img src={provider.photo} alt={provider.name} className="w-[64px] h-[64px] rounded-[18px] object-cover" />
-               <div className="flex-1 min-w-0">
-                  <h2 className="text-[20px] font-bold text-[#111] tracking-[-0.3px]">{provider.name}</h2>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <Star size={12} className="fill-[#E85D2A] text-[#E85D2A]" />
-                    <span className="text-[14px] font-semibold text-[#111]">{provider.rating}</span>
-                    <span className="text-[12px] text-[#A09A94]">({provider.reviewCount} reviews)</span>
-                  </div>
-               </div>
+            {/* Hero — photo left, info right */}
+            <div className="flex gap-4 pt-2 pb-5">
+              <img src={provider.photo} alt={provider.name} className="w-[110px] h-[130px] rounded-[16px] object-cover shrink-0" />
+              <div className="flex-1 flex flex-col justify-center min-w-0">
+                <h1 className="text-[20px] font-bold text-[#111] tracking-[-0.2px]">{provider.name}</h1>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Star size={12} className="fill-[#E85D2A] text-[#E85D2A]" />
+                  <span className="text-[14px] font-bold text-[#111]">{provider.rating}</span>
+                  <span className="text-[11px] text-[#A09A94]">({provider.reviewCount})</span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                  <span className="text-[10px] font-semibold text-[#3F8D63] flex items-center gap-0.5"><Check size={9} />Verified</span>
+                  <span className="text-[10px] font-semibold text-[#3F8D63] flex items-center gap-0.5"><Check size={9} />Insured</span>
+                </div>
+                <div className="text-[11px] text-[#A09A94] mt-2">{provider.yearsExperience}y exp · {provider.distance}km · {provider.responseTime} reply</div>
+              </div>
             </div>
 
-            {/* Quick stats */}
-            <div className="flex items-center gap-1.5 mb-6">
-              {provider.badges.slice(0, 3).map(b => (
-                <span key={b} className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-[#6E6058]" style={{ background: '#F3EFEB' }}>{b}</span>
+            {/* Services — scrollable pills */}
+            <div className="mb-5">
+              <h3 className="text-[15px] font-semibold text-[#111] mb-3">Services</h3>
+              <div className="flex gap-2 overflow-x-auto -mx-5 px-5" style={{ scrollbarWidth: 'none' }}>
+                {provider.services.map(svc => (
+                  <div key={svc.id} className="shrink-0 rounded-[14px] px-4 py-3 text-center active:scale-[0.96] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2', minWidth: '110px' }}>
+                    <span className="text-[13px] font-semibold text-[#111] block">{svc.label}</span>
+                    <span className="text-[14px] font-bold text-[#E85D2A] block mt-1">CHF {svc.price}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bio */}
+            <p className="text-[12px] text-[#A09A94] leading-relaxed mb-5 line-clamp-2">{provider.bio}</p>
+
+            {/* Reviews */}
+            <div className="mb-5">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-[15px] font-semibold text-[#111]">Reviews</h3>
+                <button onClick={() => onNavigate && onNavigate('reviews')} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">All {provider.reviewCount}</button>
+              </div>
+              {provider.reviews.slice(0, 1).map(rev => (
+                <div key={rev.id}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <img src={rev.authorPhoto} alt={rev.author} className="w-6 h-6 rounded-full object-cover" />
+                    <span className="text-[12px] font-semibold text-[#111]">{rev.author}</span>
+                    <span className="text-[10px] text-[#C4BBB3] ml-auto">{rev.date}</span>
+                  </div>
+                  <p className="text-[12px] text-[#A09A94] leading-relaxed line-clamp-2">{rev.text}</p>
+                </div>
               ))}
             </div>
 
-            {/* Stats row */}
-            <div className="flex items-center gap-4 mb-6 text-[12px]">
-              <div><span className="font-bold text-[#111] text-[14px]">CHF {provider.services[0]?.price}</span><span className="text-[#A09A94] ml-1">from</span></div>
-              <span className="text-[#EDE8E2]">|</span>
-              <div><span className="font-bold text-[#111]">{provider.responseTime}</span><span className="text-[#A09A94] ml-1">response</span></div>
-              <span className="text-[#EDE8E2]">|</span>
-              <div><span className="font-bold text-[#111]">{provider.distance}km</span></div>
-            </div>
-
-            {/* About */}
-            <div className="mb-6">
-              <h3 className="text-[15px] font-semibold text-[#111] mb-2">About</h3>
-              <p className="text-[13px] text-[#A09A94] leading-relaxed">{provider.bio}</p>
-            </div>
-
-            {/* Services */}
-            <div className="mb-6">
-              <h3 className="text-[15px] font-semibold text-[#111] mb-3">Services</h3>
-              <div>
-                {provider.services.map((svc, i) => (
-                  <div key={svc.id} className={`flex items-center justify-between py-3 ${i < provider.services.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
-                    <div>
-                      <span className="text-[14px] font-semibold text-[#111]">{svc.label}</span>
-                      <span className="text-[11px] text-[#A09A94] block mt-0.5">{svc.description}</span>
-                    </div>
-                    <span className="text-[14px] font-bold text-[#111]">CHF {svc.price}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Reviews */}
-            <div className="mb-6">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="text-[15px] font-semibold text-[#111]">Reviews ({provider.reviewCount})</h3>
-                <button onClick={() => onNavigate && onNavigate('reviews')} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">See all</button>
-              </div>
-              <div>
-                {provider.reviews.slice(0, 2).map((rev, i) => (
-                  <div key={rev.id} className={`py-3 ${i < 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <img src={rev.authorPhoto} alt={rev.author} className="w-6 h-6 rounded-full object-cover" />
-                      <span className="text-[13px] font-semibold text-[#111]">{rev.author}</span>
-                      <div className="flex items-center gap-0.5">
-                        {Array.from({length: rev.rating}).map((_, j) => <Star key={j} size={9} className="fill-[#E85D2A] text-[#E85D2A]" />)}
-                      </div>
-                      <span className="text-[10px] text-[#C4BBB3] ml-auto">{rev.date}</span>
-                    </div>
-                    <p className="text-[12px] text-[#A09A94] leading-relaxed">{rev.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Photos */}
-            <div className="mb-6">
-              <h3 className="text-[15px] font-semibold text-[#111] mb-3">Photos</h3>
-              <div className="flex gap-2 overflow-x-auto -mx-5 px-5" style={{ scrollbarWidth: 'none' }}>
+            {/* Gallery */}
+            {provider.gallery.length > 0 && (
+              <div className="flex gap-1.5 overflow-x-auto -mx-5 px-5" style={{ scrollbarWidth: 'none' }}>
                 {provider.gallery.map((img, i) => (
-                  <img key={i} src={img} alt="" onClick={() => setGalleryViewer(i)} className="w-[80px] h-[80px] rounded-[12px] object-cover shrink-0 cursor-pointer active:scale-[0.96] transition-transform" />
+                  <img key={i} src={img} alt="" onClick={() => setGalleryViewer(i)} className="w-[56px] h-[56px] rounded-[10px] object-cover shrink-0 cursor-pointer active:scale-[0.96] transition-transform" />
                 ))}
               </div>
-            </div>
-
-            {/* Certifications */}
-            <div className="mb-6">
-              <h3 className="text-[15px] font-semibold text-[#111] mb-3">Verified</h3>
-              <div>
-                {provider.certifications.map((cert, i) => (
-                  <div key={i} className={`flex items-center justify-between py-2.5 ${i < provider.certifications.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
-                    <span className="text-[13px] font-semibold text-[#111]">{cert.label}</span>
-                    <span className="text-[11px] text-[#A09A94]">{cert.verifiedDate ? new Date(cert.verifiedDate).toLocaleDateString('en', {month:'short', year:'numeric'}) : ''}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
        </div>
 
        {/* Bottom CTA */}
-       <div className="shrink-0 px-5 py-4 border-t border-[#EDE8E2] flex items-center justify-between" style={{ background: '#FBF9F7' }}>
-         <div>
-           <span className="text-[11px] text-[#A09A94]">From</span>
-           <span className="text-[18px] font-bold text-[#111] ml-1">CHF {provider.services[0]?.price}</span>
-         </div>
-         <button onClick={() => onNavigate && onNavigate('booking')} className="px-6 py-3 rounded-[12px] text-[14px] font-semibold text-white active:scale-[0.97] transition-transform" style={{ background: '#E85D2A' }}>
-           Book {provider.name}
+       <div className="shrink-0 px-5 py-4 border-t border-[#EDE8E2]" style={{ background: '#FBF9F7' }}>
+         <button onClick={() => onNavigate && onNavigate('booking')} className="w-full py-3.5 rounded-[12px] text-[14px] font-semibold text-white active:scale-[0.97] transition-transform text-center" style={{ background: '#E85D2A' }}>
+           Book {provider.name} · from CHF {provider.services[0]?.price}
          </button>
        </div>
 
-       {/* Menu sheet */}
+       {/* Menu */}
        <CardModal isOpen={menuSheet} onClose={() => setMenuSheet(false)} title="Options">
          <div className="pt-1 space-y-0">
-           <button onClick={() => { setMenuSheet(false); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+           <button onClick={() => setMenuSheet(false)} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
              <Share2 size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Share</span>
            </button>
-           <button onClick={() => { setMenuSheet(false); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
+           <button onClick={() => setMenuSheet(false)} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
              <AlertTriangle size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Report</span>
-           </button>
-           <button onClick={() => { setMenuSheet(false); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
-             <ShieldAlert size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Block</span>
            </button>
          </div>
        </CardModal>
