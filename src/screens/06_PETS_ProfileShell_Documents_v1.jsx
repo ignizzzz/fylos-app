@@ -116,7 +116,7 @@ import {
 const FylosLogo = ({ 
   text = 'FYLOS',
   textColor = '#000000', 
-  dotColor = '#FF6B35',  
+  dotColor = '#E85D2A',
   fontSize = '2rem',     
   className = ''         
 }) => {
@@ -863,11 +863,11 @@ const THEME = {
     accent: '#E85D2A',
     accentHover: '#D04A1C',
     primaryText: '#111111',
-    secondaryText: '#6E6E73',
-    tertiaryText: '#8E8E93',
-    background: '#F9F9FB',
+    secondaryText: '#6E6058',
+    tertiaryText: '#A09A94',
+    background: '#F7F5F2',
     surface: '#FFFFFF',
-    surfaceAlt: '#F2F2F7',
+    surfaceAlt: '#F3EFEB',
     danger: '#FF3B30',
     success: '#00C060',
     warning: '#FF9500',
@@ -894,12 +894,13 @@ const GlobalStyles = () => (
       --color-accent: #E85D2A;
       --color-accent-hover: #D04A1C;
       --color-primary-text: #111111;
-      --color-secondary-text: #6E6E73;
-      --color-tertiary-text: #8E8E93;
-      --color-background: #F9F9FB;
+      --color-secondary-text: #6E6058;
+      --color-tertiary-text: #A09A94;
+      --color-background: #F7F5F2;
       --color-surface: #FFFFFF;
-      --color-surface-hover: #F2F2F7;
+      --color-surface-hover: #F3EFEB;
       --color-border: rgba(0, 0, 0, 0.04);
+      --color-divider: #EDE8E2;
       --color-danger: #FF3B30;
       --color-danger-bg: #FFF0F0;
       --color-success: #34C759;
@@ -1243,19 +1244,19 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
   const handleAction = (action) => alert(`${action} — Coming in future steps`);
 
   return (
-    <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[var(--color-background)] to-transparent">
+    <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[var(--color-background)] via-[var(--color-background)]/95 to-transparent transition-all duration-300">
       {variant === 'default' && (
         <div className="flex justify-between items-center w-full pointer-events-auto">
-          <h1 className="font-bold tracking-tight text-[var(--color-primary-text)] ml-1 flex items-center">
-            <FylosLogo text={title || 'FYLOS'} fontSize="22px" textColor="var(--color-primary-text)" />
+          <h1 className="font-bold tracking-tight text-[#111] ml-1 flex items-center">
+            <FylosLogo text={title || 'FYLOS'} fontSize="22px" textColor="#111" />
           </h1>
           {showActions && (
             <div className="flex items-center gap-2">
-              <button onClick={onInbox || (() => handleAction('Inbox'))} className="relative w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all" style={{ background: '#F3EFEB' }}>
+              <button onClick={onInbox || (() => handleAction('Inbox'))} className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all" style={{ background: '#F3EFEB' }}>
                 <Bell size={17} className="text-[#6E6058]" strokeWidth={1.8} />
                 {unreadCount > 0 && <span className="absolute top-[6px] right-[7px] w-[7px] h-[7px] bg-[#E85D2A] rounded-full border-[1.5px] border-[var(--color-background)]" />}
               </button>
-              <button onClick={onProfile || (() => handleAction('Profile'))} className="w-[38px] h-[38px] rounded-full active:scale-[0.95] transition-all overflow-hidden border-2 border-[#EDE8E2]">
+              <button onClick={onProfile || (() => handleAction('Profile'))} className="w-[44px] h-[44px] rounded-full active:scale-[0.95] transition-all overflow-hidden border-2 border-[#EDE8E2]">
                 <img src={user?.avatar || 'https://i.pravatar.cc/150?u=alex_fylos'} alt={user?.name || 'Profile'} className="w-full h-full object-cover" />
               </button>
             </div>
@@ -1265,17 +1266,17 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
 
       {variant === 'detail' && (
         <div className="flex justify-between items-center w-full pointer-events-auto">
-          <button onClick={onBack || (() => handleAction('Back'))} className="w-[44px] h-[44px] flex items-center justify-center bg-[var(--color-surface)] shadow-[var(--shadow-level-1)] rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-            <ChevronLeft size={20} color="var(--color-primary-text)" strokeWidth={1.5} />
+          <button onClick={onBack || (() => handleAction('Back'))} className="w-[44px] h-[44px] flex items-center justify-center rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]" style={{ background: '#F3EFEB' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
           </button>
-          <h2 className="text-[17px] font-semibold text-[var(--color-primary-text)] tracking-tight">{title}</h2>
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">{title}</h2>
           {rightActions ? (
             <div className="flex items-center bg-[var(--color-surface)] rounded-full p-1 h-[36px] shadow-[var(--shadow-level-1)]">
               {rightActions}
             </div>
           ) : (
-            <button onClick={onRightAction || (() => handleAction('Menu'))} className="w-[44px] h-[44px] flex items-center justify-center bg-[var(--color-surface)] shadow-[var(--shadow-level-1)] rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-              {RightIcon ? <RightIcon size={20} color="var(--color-primary-text)" strokeWidth={1.5} /> : <MoreHorizontal size={20} color="var(--color-primary-text)" strokeWidth={1.5} />}
+            <button onClick={onRightAction || (() => handleAction('Menu'))} className="w-[44px] h-[44px] flex items-center justify-center rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]" style={{ background: '#F3EFEB' }}>
+              {RightIcon ? <RightIcon size={20} color="#111" strokeWidth={1.5} /> : <MoreHorizontal size={20} color="#111" strokeWidth={1.5} />}
             </button>
           )}
         </div>
@@ -1285,15 +1286,31 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
 };
 
 const FAB_ACTIONS = [
-  { id: 'book-walk', label: 'Book a walk', icon: Calendar },
-  { id: 'log-med', label: 'Log medication', icon: Pill },
-  { id: 'add-photo', label: 'Add photo', icon: Camera },
+  { id: 'book-walk', label: 'Book', icon: Calendar },
+  { id: 'log-med', label: 'Log med', icon: Pill },
+  { id: 'add-photo', label: 'Photo', icon: Camera },
   { id: 'add-pet', label: 'Add pet', icon: PawPrint },
-  { id: 'upload-doc', label: 'Upload file', icon: FileText },
+  { id: 'upload-doc', label: 'Upload', icon: FileText },
 ];
 
 const TabBar = ({ activeTab, onTabChange, visible = true }) => {
   const [fabOpen, setFabOpen] = useState(false);
+  const tabBarRef = useRef(null);
+  const [pillStyle, setPillStyle] = useState({});
+
+  useEffect(() => {
+    if (!tabBarRef.current) return;
+    const bar = tabBarRef.current;
+    const activeBtn = bar.querySelector(`[data-tab="${activeTab}"]`);
+    if (activeBtn) {
+      const barRect = bar.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+      setPillStyle({
+        left: btnRect.left - barRect.left,
+        width: btnRect.width,
+      });
+    }
+  }, [activeTab]);
 
   const handleFabAction = (actionId) => {
     setFabOpen(false);
@@ -1313,47 +1330,66 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
         </div>
       )}
 
-      {/* ═══ FAB MENU — centered grid above tab bar ═══ */}
+      {/* ═══ FAB MENU — bottom sheet style ═══ */}
       {fabOpen && (
-        <div className="absolute bottom-[100px] left-0 right-0 z-[85] px-8">
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-5">
-            {FAB_ACTIONS.map((action, i) => {
-              const Icon = action.icon;
-              return (
-                <button
-                  key={action.id}
-                  onClick={(e) => { e.stopPropagation(); handleFabAction(action.id); }}
-                  className="flex flex-col items-center gap-2 w-[72px] active:scale-[0.92] transition-transform"
-                  style={{ animation: `fabReveal 0.35s ${i * 0.05}s cubic-bezier(0.22, 1, 0.36, 1) both` }}
-                >
-                  <div className="w-[56px] h-[56px] rounded-[18px] bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
-                    <Icon size={24} className="text-[#111]" strokeWidth={1.5} />
-                  </div>
-                  <span className="text-[11px] font-medium text-[#111] text-center leading-tight">{action.label}</span>
-                </button>
-              );
-            })}
+        <div className="absolute bottom-[96px] left-4 right-4 z-[85] pointer-events-none">
+          <div
+            className="pointer-events-auto px-2 py-2"
+            style={{ animation: 'fabSheetUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) both' }}
+          >
+            <div className="flex justify-between items-start">
+              {FAB_ACTIONS.map((action, i) => {
+                const Icon = action.icon;
+                return (
+                  <button
+                    key={action.id}
+                    onClick={(e) => { e.stopPropagation(); handleFabAction(action.id); }}
+                    className="flex flex-col items-center gap-2.5 flex-1 active:scale-[0.88] transition-transform"
+                    style={{ animation: `fabIconBounce 0.4s ${0.06 + i * 0.05}s cubic-bezier(0.34, 1.56, 0.64, 1) both` }}
+                  >
+                    <div className="w-[54px] h-[54px] rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.1),0_0_0_0.5px_rgba(0,0,0,0.04)] flex items-center justify-center">
+                      <Icon size={22} className="text-[#111]" strokeWidth={1.75} />
+                    </div>
+                    <span className="text-[11px] font-semibold text-[#111] text-center leading-[1.2]">{action.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
 
-      {/* ═══ TAB BAR ═══ */}
-      <nav className={`absolute bottom-[22px] left-0 w-full px-5 z-[90] pointer-events-none transition-all duration-250 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} role="tablist">
-        <div className="pointer-events-auto bg-white/75 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-white/60 rounded-[28px] h-[58px] flex items-center relative">
+      {/* ═══ TAB BAR — sliding pill indicator ═══ */}
+      <nav className={`absolute bottom-[22px] left-0 w-full px-4 z-[90] pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} role="tablist">
+        <div ref={tabBarRef} className="pointer-events-auto bg-white/80 backdrop-blur-2xl shadow-[0_2px_20px_rgba(0,0,0,0.06),0_0_0_0.5px_rgba(0,0,0,0.04)] rounded-[26px] h-[62px] flex items-center relative px-1">
+
+          {/* Sliding pill indicator — measured position */}
+          {pillStyle.width > 0 && (
+            <div
+              className="absolute top-[5px] bottom-[5px] rounded-[20px] bg-[#F3EFEB] transition-all duration-[450ms] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+              style={{
+                left: `${pillStyle.left}px`,
+                width: `${pillStyle.width}px`,
+              }}
+            />
+          )}
+
           {TABS.map((tab) => {
             if (tab.id === '_fab') {
               return (
-                <div key="_fab" className="relative flex-[0.8] h-full flex items-center justify-center">
+                <div key="_fab" className="relative flex-[0.65] h-full flex items-center justify-center z-10">
                   <button
                     onClick={() => setFabOpen(!fabOpen)}
-                    className="w-[48px] h-[48px] rounded-full flex items-center justify-center active:scale-[0.9] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                    className="w-[44px] h-[44px] rounded-full flex items-center justify-center active:scale-[0.88] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
                     style={{
                       background: fabOpen ? '#111' : '#E85D2A',
-                      boxShadow: fabOpen ? '0 4px 20px rgba(0,0,0,0.25)' : '0 4px 16px rgba(232,93,42,0.35)',
-                      transform: fabOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+                      boxShadow: fabOpen
+                        ? '0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1)'
+                        : '0 4px 14px rgba(232,93,42,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
+                      transform: fabOpen ? 'rotate(45deg) scale(1.05)' : 'rotate(0deg) scale(1)',
                     }}
                   >
-                    <Plus size={24} color="#FFF" strokeWidth={2} />
+                    <Plus size={22} color="#FFF" strokeWidth={2.5} />
                   </button>
                 </div>
               );
@@ -1363,17 +1399,27 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
             return (
               <button
                 key={tab.id}
+                data-tab={tab.id}
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => { setFabOpen(false); onTabChange(tab.id); }}
-                className="relative flex-1 h-full flex flex-col items-center justify-center gap-1 active:scale-[0.93] transition-all duration-200"
+                className="relative flex-1 h-full flex flex-col items-center justify-center z-10 active:scale-[0.92] transition-transform duration-150"
               >
-                <Icon
-                  size={20}
-                  strokeWidth={isActive ? 2 : 1.5}
-                  className={`transition-all duration-200 ${isActive ? 'text-[#E85D2A]' : 'text-[#A09A94]'}`}
-                />
-                <span className={`text-[9px] font-semibold tracking-wide transition-all duration-200 ${isActive ? 'text-[#E85D2A] opacity-100' : 'text-[#A09A94] opacity-0 translate-y-1'}`}>
+                <div className="relative">
+                  <Icon
+                    size={20}
+                    strokeWidth={isActive ? 2.2 : 1.5}
+                    className={`transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isActive ? 'text-[#E85D2A] scale-110' : 'text-[#A09A94]'}`}
+                  />
+                </div>
+                <span
+                  className={`text-[9px] font-bold tracking-[0.04em] mt-0.5 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                    isActive
+                      ? 'text-[#E85D2A] opacity-100 translate-y-0 max-h-[12px]'
+                      : 'text-[#A09A94] opacity-0 translate-y-2 max-h-0'
+                  }`}
+                  style={{ overflow: 'hidden' }}
+                >
                   {tab.label}
                 </span>
               </button>
@@ -1383,9 +1429,13 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
       </nav>
 
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes fabReveal {
-          0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+        @keyframes fabSheetUp {
+          0% { opacity: 0; transform: translateY(16px) scale(0.95); }
           100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes fabIconBounce {
+          0% { opacity: 0; transform: scale(0.5) translateY(8px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
         }
         .fab-overlay-enter {
           animation: fabOverlayIn 0.25s ease-out both;
@@ -1455,8 +1505,8 @@ const Toast = ({ message }) => {
   if (!message) return null;
   return (
     <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="bg-[var(--color-surface)] text-[var(--color-primary-text)] px-5 py-3 rounded-full shadow-[var(--shadow-level-2)] text-[14px] font-medium flex items-center gap-2">
-        <CheckCircle2 size={16} className="text-[var(--color-success)]" />
+      <div className="bg-[#111]/90 backdrop-blur-md text-white px-5 py-3 rounded-[14px] shadow-[var(--shadow-level-2)] text-[14px] font-medium flex items-center gap-2">
+        <CheckCircle2 size={16} className="text-[#34C759]" />
         {message}
       </div>
     </div>
@@ -6064,8 +6114,8 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
 
 const ReviewsScreen = ({ provider, onBack }) => {
   return (
-    <div className="absolute inset-0 bg-[#F7F7F8] z-50 overflow-hidden flex flex-col">
-       <header className="flex-none pt-14 pb-4 px-5 flex items-center bg-[#FFFFFF]/95 backdrop-blur-md z-10 sticky top-0 border-b border-black/[0.04]">
+    <div className="absolute inset-0 bg-[#F7F5F2] z-50 overflow-hidden flex flex-col">
+       <header className="flex-none pt-14 pb-4 px-5 flex items-center bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/95 to-transparent z-10 sticky top-0 transition-all duration-300">
           <button onClick={onBack} className="w-10 h-10 flex items-center justify-center bg-[#F7F7F8] border border-black/[0.04] rounded-full active:scale-95 transition-all mr-4"><ChevronLeft size={20}/></button>
           <h2 className="text-[17px] font-semibold text-[#111111]">All Reviews</h2>
        </header>
@@ -10665,7 +10715,7 @@ export default function App() {
           content: "";
           position: absolute;
           inset: 0;
-          opacity: 0.02;
+          opacity: 0.015;
           pointer-events: none;
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
@@ -10799,21 +10849,25 @@ export default function App() {
         }
       `}} />
 
-      <div className="relative w-full h-[100dvh] sm:h-[844px] sm:w-[390px] bg-[var(--color-background)] sm:rounded-[50px] shadow-2xl overflow-hidden sm:border-[8px] border-black sm:ring-1 sm:ring-gray-200">
+      <div className="relative w-full h-[100dvh] sm:h-[844px] sm:w-[390px] bg-[#F7F5F2] sm:rounded-[50px] shadow-2xl overflow-hidden sm:border-[8px] border-black sm:ring-1 sm:ring-black/10">
         <div className="absolute top-[12px] left-1/2 transform -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-[120] pointer-events-none hidden sm:block shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)]" />
 
         {isLoading ? (
-          <div className="absolute inset-0 bg-[var(--color-background)] z-50 flex flex-col items-center justify-center animate-out fade-out duration-500 fill-mode-forwards delay-700">
-            <FylosLogo fontSize="32px" textColor="var(--color-primary-text)" className="mb-3" />
-            <p className="text-[14px] text-[var(--color-tertiary-text)] animate-pulse">Loading...</p>
+          <div className="absolute inset-0 bg-[#F7F5F2] z-50 flex flex-col items-center justify-center">
+            <FylosLogo fontSize="32px" textColor="#111" className="mb-3" />
+            <div className="flex gap-1 mt-4">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] animate-pulse" style={{ animationDelay: '0s' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] animate-pulse" style={{ animationDelay: '0.15s' }} />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] animate-pulse" style={{ animationDelay: '0.3s' }} />
+            </div>
           </div>
         ) : (
           <>
-            <main className={`absolute inset-0 w-full h-full transition-opacity duration-200 ease-in-out ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+            <main className={`absolute inset-0 w-full h-full transition-all duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${isFading ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'}`}>
               {renderScreen()}
             </main>
             
-            <div className={`transition-opacity duration-300 ${(pushedScreen && pushedScreen !== 'vault_documents') || overlayOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <div className={`transition-all duration-300 ${(pushedScreen && pushedScreen !== 'vault_documents') || overlayOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
               {!hideGlobalHeader && headerConfig && (
                 <Header
                   {...headerConfig}
@@ -11020,7 +11074,7 @@ export default function App() {
                       <div style={{
                         width: 9, height: 9,
                         borderRadius: 9999,
-                        backgroundColor: '#FF6B35',
+                        backgroundColor: '#E85D2A',
                         marginLeft: 3,
                         opacity: 0,
                         animation: 'celebDotPop 0.5s 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both',
