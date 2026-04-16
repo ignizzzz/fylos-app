@@ -3836,6 +3836,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const [quickLogStep, setQuickLogStep] = useState('picker');
   const [selectedQuickLogType, setSelectedQuickLogType] = useState(null);
   const [quickLogTime, setQuickLogTime] = useState('');
+  const [quickLogTimeChanged, setQuickLogTimeChanged] = useState(false);
+  const [quickLogDoneNow, setQuickLogDoneNow] = useState(true);
   const [quickLogCustomTitle, setQuickLogCustomTitle] = useState('');
   const [quickLogEntries, setQuickLogEntries] = useState([]);
   const [medName, setMedName] = useState('');
@@ -3900,6 +3902,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const handleQuickTypeSelect = (type) => {
     setSelectedQuickLogType(type);
     setQuickLogTime(new Date().toTimeString().slice(0, 5));
+    setQuickLogTimeChanged(false);
+    setQuickLogDoneNow(true);
     setQuickLogCustomTitle('');
     setQuickLogStep('details');
   };
@@ -3922,6 +3926,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
       isCustom: entryType === 'custom'
     };
     setQuickLogEntries((prev) => [newEntry, ...prev]);
+    if (quickLogDoneNow) {
+      setCompletedReminders((prev) => { const next = new Set(prev); next.add(entryId); return next; });
+    }
     setQuickLogModalOpen(false);
     setQuickLogStep('picker');
     setSelectedQuickLogType(null);
@@ -4196,27 +4203,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* ═══ 5. QUICK LOG ENTRIES — inline above tasks ═══ */}
-          {quickLogEntries.filter(e => e.petId === displayPetId).length > 0 && (
-            <div className="mb-4" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">Logged</div>
-              {quickLogEntries.filter(e => e.petId === displayPetId).slice(0, 3).map((entry) => {
-                const quickOpt = activityQuickOptions.find(o => o.id === entry.type) || activityQuickOptions.find(o => o.id === 'manual');
-                const LogIcon = quickOpt?.icon || FileText;
-                return (
-                  <div key={entry.id} className="flex items-center gap-3 py-2.5 border-b border-[#EDE8E2]">
-                    <div className="w-[22px] h-[22px] rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0">
-                      <LogIcon size={11} className="text-[#A09A94]" />
-                    </div>
-                    <span className="text-[13px] font-medium text-[#111] flex-1">{entry.title}</span>
-                    <span className="text-[12px] text-[#A09A94]" style={{ fontVariantNumeric: 'tabular-nums' }}>{entry.time}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* ═══ 5. TODAY'S TASKS — flat list, no card ═══ */}
+          {/* ═══ 5. TODAY'S TASKS — flat list (includes logged entries) ═══ */}
           {filteredReminders.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
               <div className="flex items-center justify-between mb-3">
@@ -4435,7 +4422,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                     <ChevronLeft size={18} color="#111" strokeWidth={2} />
                   </button>
                   <h3 className="text-[17px] font-semibold text-[#111] tracking-tight">
-                    {quickLogMeta[selectedQuickLogType]?.icon} {quickLogMeta[selectedQuickLogType]?.title}
+                    {quickLogMeta[selectedQuickLogType]?.title}
                   </h3>
                   <button onClick={() => setQuickLogModalOpen(false)} className="w-[36px] h-[36px] rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
                     <X size={16} color="#111" strokeWidth={2} />
@@ -4459,10 +4446,20 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                     <input
                       type="time"
                       value={quickLogTime}
-                      onChange={(e) => setQuickLogTime(e.target.value)}
+                      onChange={(e) => { setQuickLogTime(e.target.value); setQuickLogTimeChanged(true); setQuickLogDoneNow(false); }}
                       className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] outline-none focus:border-[#E85D2A]/40 transition-colors"
                     />
                   </div>
+                  {/* Done now toggle */}
+                  <button
+                    onClick={() => setQuickLogDoneNow(!quickLogDoneNow)}
+                    className="w-full flex items-center justify-between py-3 active:opacity-70"
+                  >
+                    <span className="text-[14px] text-[#111]">Mark as completed</span>
+                    <div className={`w-[44px] h-[26px] rounded-full transition-all duration-200 flex items-center ${quickLogDoneNow ? 'bg-[#E85D2A] justify-end' : 'bg-[#D5CEC7] justify-start'}`}>
+                      <div className="w-[22px] h-[22px] rounded-full bg-white shadow-sm mx-[2px]" />
+                    </div>
+                  </button>
                   <button
                     onClick={handleSaveQuickLog}
                     disabled={!quickLogTime || (selectedQuickLogType === 'manual' && !quickLogCustomTitle.trim())}
