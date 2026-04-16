@@ -1,387 +1,1261 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   ChevronLeft,
-  MapPin,
-  AlertTriangle,
-  Eye,
-  Navigation,
-  Share2,
+  ChevronRight,
   Plus,
   X,
+  Filter,
+  AlertTriangle,
+  MapPin,
   Clock,
   Shield,
-  AlertCircle,
-  Info
+  Camera,
+  Navigation,
+  Check,
+  CheckCheck,
+  Loader2,
 } from 'lucide-react';
 
 /**
  * 56_DANGER_REPORTS_v1.jsx
- * Community Safety Reports -- report and view hazardous areas
- * (poison baits, broken glass, aggressive dogs, icy paths).
+ * Community Safety Reports — warm minimal redesign.
+ * Map + Feed views, pin sheet, and a centered report popup.
  */
 
-const DANGER_TYPES = [
-  { id: 'poison', label: 'Poison Bait', icon: AlertTriangle, color: '#FF3B30' },
-  { id: 'glass', label: 'Broken Glass', icon: AlertCircle, color: '#FF9500' },
-  { id: 'dog', label: 'Aggressive Dog', icon: Shield, color: '#FFCC00' },
-  { id: 'ice', label: 'Icy Path', icon: Info, color: '#007AFF' }
-];
-
-const MOCK_REPORTS = [
-  { id: 1, type: 'poison', location: 'Lindenhof Park', timeAgo: '25 min ago', description: 'Suspicious meat pieces found near the fountain area. Multiple colored pellets visible inside.', confirms: 12, confirmed: false, coords: { x: 38, y: 42 } },
-  { id: 2, type: 'glass', location: 'Seefeld Promenade', timeAgo: '1 hr ago', description: 'Broken bottle shards scattered across the walking path near the lake shore.', confirms: 7, confirmed: true, coords: { x: 65, y: 55 } },
-  { id: 3, type: 'dog', location: 'Rieterpark', timeAgo: '2 hrs ago', description: 'Unleashed large dog showing aggressive behavior towards smaller dogs and people.', confirms: 4, confirmed: false, coords: { x: 45, y: 68 } },
-  { id: 4, type: 'ice', location: 'Uetliberg Trail', timeAgo: '3 hrs ago', description: 'Steep section of the trail is completely frozen. Very slippery, no salt applied.', confirms: 9, confirmed: false, coords: { x: 22, y: 35 } },
-  { id: 5, type: 'poison', location: 'Josefwiese', timeAgo: '4 hrs ago', description: 'Small white pellets found along the fence line near the dog park entrance.', confirms: 15, confirmed: true, coords: { x: 50, y: 28 } }
-];
-
-const getDangerType = (typeId) => DANGER_TYPES.find(t => t.id === typeId) || DANGER_TYPES[0];
-
-/* ── Severity border color for cards ── */
-const severityBorder = (type) => {
-  switch (type) {
-    case 'poison': return '#FF3B30';
-    case 'glass':  return '#FF9500';
-    case 'dog':    return '#FFCC00';
-    case 'ice':    return '#007AFF';
-    default:       return '#8E8E93';
-  }
+// ---------------- Category definitions ----------------
+const CATEGORIES = {
+  poison: {
+    id: 'poison',
+    label: 'Poison bait',
+    short: 'Poison',
+    color: '#FF3B30',
+    bg: '#FFEBEA',
+    ring: 'rgba(255,59,48,0.18)',
+    severity: 'Critical',
+  },
+  glass: {
+    id: 'glass',
+    label: 'Broken glass',
+    short: 'Glass',
+    color: '#FF6B35',
+    bg: '#FFF1EC',
+    ring: 'rgba(255,107,53,0.16)',
+    severity: 'High',
+  },
+  aggressive: {
+    id: 'aggressive',
+    label: 'Aggressive animal',
+    short: 'Aggressive',
+    color: '#FF6B35',
+    bg: '#FFF1EC',
+    ring: 'rgba(255,107,53,0.16)',
+    severity: 'High',
+  },
+  icy: {
+    id: 'icy',
+    label: 'Icy path',
+    short: 'Icy',
+    color: '#FFB800',
+    bg: '#FFF8E5',
+    ring: 'rgba(255,184,0,0.18)',
+    severity: 'Medium',
+  },
+  construction: {
+    id: 'construction',
+    label: 'Construction',
+    short: 'Construction',
+    color: '#6E6058',
+    bg: '#F3EFEB',
+    ring: 'rgba(110,96,88,0.18)',
+    severity: 'Info',
+  },
+  other: {
+    id: 'other',
+    label: 'Other hazard',
+    short: 'Other',
+    color: '#6E6058',
+    bg: '#F3EFEB',
+    ring: 'rgba(110,96,88,0.18)',
+    severity: 'Info',
+  },
 };
 
-/* ── Map Pin ── */
-const DangerPin = ({ report, onClick }) => {
-  const type = getDangerType(report.type);
-  const Icon = type.icon;
+// ---------------- Mini SVG glyphs for categories ----------------
+function CategoryGlyph({ id, size = 14, color = '#FFF' }) {
+  const common = {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: color,
+    strokeWidth: 2,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+  };
+  switch (id) {
+    case 'poison':
+      return (
+        <svg {...common}>
+          <path d="M12 3l9 16H3z" />
+          <path d="M12 10v4" />
+          <circle cx="12" cy="17" r="0.6" fill={color} stroke="none" />
+        </svg>
+      );
+    case 'glass':
+      return (
+        <svg {...common}>
+          <path d="M4 4l6 6-3 10 8-7 5 5" />
+          <path d="M10 10l4-2" />
+        </svg>
+      );
+    case 'aggressive':
+      return (
+        <svg {...common}>
+          <circle cx="5.5" cy="9" r="1.6" />
+          <circle cx="10" cy="5.5" r="1.6" />
+          <circle cx="14" cy="5.5" r="1.6" />
+          <circle cx="18.5" cy="9" r="1.6" />
+          <path d="M7 16c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5-2 3.5-5 3.5-5-1-5-3.5z" />
+        </svg>
+      );
+    case 'icy':
+      return (
+        <svg {...common}>
+          <path d="M12 2v20" />
+          <path d="M4.5 6.5l15 11" />
+          <path d="M4.5 17.5l15-11" />
+        </svg>
+      );
+    case 'construction':
+      return (
+        <svg {...common}>
+          <path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 005.4-5.4l-2.3 2.3-2.8-2.8 2.3-2.3z" />
+        </svg>
+      );
+    default:
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 8v4" />
+          <circle cx="12" cy="16" r="0.6" fill={color} stroke="none" />
+        </svg>
+      );
+  }
+}
+
+// ---------------- Custom pin ----------------
+function DangerPin({ category, selected, onClick, style }) {
+  const c = CATEGORIES[category] || CATEGORIES.other;
   return (
-    <div
+    <button
       onClick={onClick}
+      className="absolute pointer-events-auto transition-transform"
       style={{
-        position: 'absolute', left: `${report.coords.x}%`, top: `${report.coords.y}%`,
-        transform: 'translate(-50%, -100%)', cursor: 'pointer'
+        ...style,
+        transform: `translate(-50%, -100%) scale(${selected ? 1.08 : 1})`,
+        filter: selected ? 'drop-shadow(0 6px 14px rgba(0,0,0,0.18))' : 'drop-shadow(0 3px 6px rgba(0,0,0,0.15))',
+        transition: 'transform 260ms cubic-bezier(0.22, 1, 0.36, 1)',
       }}
     >
-      <div style={{
-        width: 32, height: 32,
-        borderRadius: '50% 50% 50% 0', backgroundColor: type.color,
-        transform: 'rotate(-45deg)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: `0 4px 12px ${type.color}44`
-      }}>
-        <Icon size={14} color="white" style={{ transform: 'rotate(45deg)' }} />
+      <div className="relative flex flex-col items-center">
+        <div
+          className="w-[36px] h-[36px] rounded-full flex items-center justify-center"
+          style={{
+            background: c.color,
+            border: '3px solid #FFF',
+            boxShadow: `0 0 0 4px ${c.ring}`,
+          }}
+        >
+          <CategoryGlyph id={category} size={16} color="#FFF" />
+        </div>
+        <div
+          style={{
+            width: 0,
+            height: 0,
+            borderLeft: '6px solid transparent',
+            borderRight: '6px solid transparent',
+            borderTop: `10px solid ${c.color}`,
+            marginTop: -2,
+          }}
+        />
       </div>
+    </button>
+  );
+}
+
+// ---------------- Mock data ----------------
+const MOCK_REPORTS = [
+  {
+    id: 'r1',
+    category: 'poison',
+    title: 'Poison bait sighting',
+    location: 'Seefeld Park',
+    distance: 320,
+    time: '5m ago',
+    description:
+      'Found near the entrance, looks like rat poison in a small blue container. Stay alert with your dog.',
+    confirmations: 3,
+    resolved: 0,
+    photo:
+      'https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?auto=format&fit=crop&w=600&q=60',
+    posX: 62, posY: 34,
+    author: 'Lena K.',
+    status: 'active',
+  },
+  {
+    id: 'r2',
+    category: 'aggressive',
+    title: 'Off-leash aggressive dog',
+    location: 'Kreuzstrasse',
+    distance: 540,
+    time: '22m ago',
+    description: 'Large dog off leash, owner not in sight. Growled at my terrier.',
+    confirmations: 2,
+    resolved: 0,
+    posX: 34, posY: 58,
+    author: 'Marco B.',
+    status: 'active',
+  },
+  {
+    id: 'r3',
+    category: 'glass',
+    title: 'Broken glass on path',
+    location: 'Limmat riverside',
+    distance: 780,
+    time: '1h ago',
+    description: 'Shattered bottle across the gravel walkway just past the bench cluster.',
+    confirmations: 5,
+    resolved: 0,
+    posX: 74, posY: 68,
+    author: 'Iris M.',
+    status: 'active',
+  },
+  {
+    id: 'r4',
+    category: 'icy',
+    title: 'Icy stretch along slope',
+    location: 'Burghölzli hill',
+    distance: 910,
+    time: '2h ago',
+    description: 'Frozen patch after the bend — slippery, paws and ankles at risk.',
+    confirmations: 1,
+    resolved: 0,
+    posX: 22, posY: 22,
+    author: 'Jonas T.',
+    status: 'active',
+  },
+  {
+    id: 'r5',
+    category: 'construction',
+    title: 'Sidewalk construction',
+    location: 'Bahnhofstrasse',
+    distance: 1120,
+    time: '5h ago',
+    description: 'Fenced-off work area, narrow detour. Noise and debris nearby.',
+    confirmations: 0,
+    resolved: 0,
+    posX: 82, posY: 18,
+    author: 'Ana R.',
+    status: 'active',
+  },
+  {
+    id: 'r6',
+    category: 'glass',
+    title: 'Glass shards in sandbox',
+    location: 'Hottingen playground',
+    distance: 640,
+    time: '3h ago',
+    description: 'Someone reported glass fragments mixed in the sand — avoid for pups.',
+    confirmations: 2,
+    resolved: 1,
+    photo:
+      'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&w=600&q=60',
+    posX: 48, posY: 80,
+    author: 'Peter S.',
+    status: 'active',
+  },
+  {
+    id: 'r7',
+    category: 'poison',
+    title: 'Suspicious food scraps',
+    location: 'Zürichhorn',
+    distance: 1450,
+    time: 'yesterday',
+    description: 'Meat pieces scattered near fence line. Possibly tampered.',
+    confirmations: 4,
+    resolved: 1,
+    posX: 12, posY: 72,
+    author: 'Sofia L.',
+    status: 'resolved',
+  },
+  {
+    id: 'r8',
+    category: 'aggressive',
+    title: 'Territorial cat reports',
+    location: 'Hirslanden backstreet',
+    distance: 820,
+    time: 'yesterday',
+    description: 'Stray cat attacking smaller dogs passing through the alley.',
+    confirmations: 1,
+    resolved: 0,
+    posX: 56, posY: 50,
+    author: 'Nora F.',
+    status: 'active',
+  },
+];
+
+const FILTER_CHIPS = [
+  { id: 'all', label: 'All' },
+  { id: 'poison', label: 'Poison' },
+  { id: 'glass', label: 'Glass' },
+  { id: 'aggressive', label: 'Aggressive' },
+  { id: 'icy', label: 'Icy' },
+  { id: 'construction', label: 'Work' },
+];
+
+const CATEGORY_GRID = ['poison', 'glass', 'aggressive', 'icy', 'construction', 'other'];
+
+// ---------------- Map background ----------------
+function MapCanvas() {
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        background:
+          'radial-gradient(ellipse at 50% 40%, #F3EFEB 0%, #ECE6DF 55%, #E4DDD4 100%)',
+      }}
+    >
+      {/* subtle grid */}
+      <svg className="absolute inset-0 w-full h-full" style={{ opacity: 0.35 }}>
+        <defs>
+          <pattern id="mapgrid" width="44" height="44" patternUnits="userSpaceOnUse">
+            <path d="M 44 0 L 0 0 0 44" fill="none" stroke="#D9D1C6" strokeWidth="0.6" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#mapgrid)" />
+      </svg>
+
+      {/* faux roads */}
+      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+        <path d="M -20 280 Q 180 220 420 340" stroke="#E6DFD4" strokeWidth="26" fill="none" />
+        <path d="M 60 -20 Q 120 240 260 500 Q 320 640 460 700"
+          stroke="#E6DFD4" strokeWidth="20" fill="none" />
+        <path d="M -20 540 Q 200 500 440 520" stroke="#E6DFD4" strokeWidth="18" fill="none" />
+        <path d="M 320 -20 Q 360 160 260 320 Q 180 440 440 540"
+          stroke="#E6DFD4" strokeWidth="14" fill="none" />
+      </svg>
+
+      {/* green blob (park) */}
+      <div
+        className="absolute rounded-[40%_55%_45%_60%]"
+        style={{
+          background: 'linear-gradient(135deg, rgba(196,210,176,0.55), rgba(214,224,197,0.35))',
+          width: 200,
+          height: 160,
+          left: '52%',
+          top: '22%',
+          filter: 'blur(1px)',
+        }}
+      />
+      {/* water blob */}
+      <div
+        className="absolute rounded-[55%_45%_60%_40%]"
+        style={{
+          background: 'linear-gradient(135deg, rgba(183,204,216,0.55), rgba(206,222,230,0.35))',
+          width: 260,
+          height: 140,
+          left: '-10%',
+          top: '60%',
+          filter: 'blur(1px)',
+        }}
+      />
     </div>
   );
-};
+}
 
-/* ── Map Legend ── */
-const MapLegend = () => (
-  <div style={{
-    position: 'absolute', bottom: 16, left: 16,
-    backgroundColor: '#FFFFFF', borderRadius: 8, padding: '8px 12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.06)', display: 'flex', gap: 12,
-    border: '1px solid rgba(0,0,0,0.03)'
-  }}>
-    {DANGER_TYPES.map(type => (
-      <div key={type.id} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        <div style={{ width: 8, height: 8, borderRadius: 9999, backgroundColor: type.color }} />
-        <span style={{ fontSize: 11, color: '#6E6E73', fontWeight: 500 }}>{type.label.split(' ')[0]}</span>
-      </div>
-    ))}
-  </div>
-);
+// ---------------- User location dot ----------------
+function UserDot() {
+  return (
+    <div
+      className="absolute"
+      style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
+    >
+      {/* radius ring */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: 260,
+          height: 260,
+          left: -130,
+          top: -130,
+          border: '1px dashed rgba(232,93,42,0.35)',
+          background:
+            'radial-gradient(circle, rgba(232,93,42,0.06) 0%, rgba(232,93,42,0) 70%)',
+        }}
+      />
+      {/* pulse */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: 44, height: 44, left: -22, top: -22,
+          background: 'rgba(46,111,221,0.18)',
+          animation: 'dangerPulse 2.2s ease-out infinite',
+        }}
+      />
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: 16, height: 16, left: -8, top: -8,
+          background: '#2E6FDD',
+          border: '3px solid #FFF',
+          boxShadow: '0 2px 6px rgba(46,111,221,0.45)',
+        }}
+      />
+    </div>
+  );
+}
 
-/* ── Map View ── */
-const MapView = ({ reports, onSelectReport }) => (
-  <div style={{ position: 'relative', flex: 1, backgroundColor: '#F2F2F7', overflow: 'hidden' }}>
-    <svg viewBox="0 0 400 500" style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
-      <ellipse cx="280" cy="350" rx="120" ry="180" fill="#E8F0FE" opacity={0.6} />
-      <path d="M160 250 Q200 230 240 250 Q280 270 320 250 L320 500 L160 500 Z" fill="#E8F0FE" opacity={0.4} />
-      <g stroke="#DDDDE1" strokeWidth="1.5" fill="none" opacity={0.5}>
-        <line x1="50" y1="100" x2="350" y2="100" />
-        <line x1="50" y1="180" x2="350" y2="180" />
-        <line x1="50" y1="260" x2="300" y2="260" />
-        <line x1="80" y1="340" x2="250" y2="340" />
-        <line x1="100" y1="50" x2="100" y2="400" />
-        <line x1="200" y1="50" x2="200" y2="350" />
-        <line x1="300" y1="50" x2="300" y2="300" />
-      </g>
-      <rect x="120" y="130" width="50" height="40" rx="8" fill="#D4EDDA" opacity={0.5} />
-      <rect x="220" y="200" width="40" height="50" rx="8" fill="#D4EDDA" opacity={0.5} />
-      <rect x="60" y="280" width="60" height="45" rx="8" fill="#D4EDDA" opacity={0.5} />
-      <path d="M180 50 Q190 100 185 150 Q180 200 190 250 Q200 300 195 350" fill="none" stroke="#C5D9F0" strokeWidth="4" opacity={0.6} />
-    </svg>
-    {reports.map(report => (
-      <DangerPin key={report.id} report={report} onClick={() => onSelectReport(report)} />
-    ))}
-    <button className="active:scale-[0.97] transition-all duration-[120ms]" style={{
-      position: 'absolute', top: 16, right: 16, width: 40, height: 40, borderRadius: 12,
-      backgroundColor: '#FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-      border: '1px solid rgba(0,0,0,0.03)'
-    }}>
-      <Navigation size={18} color="#111111" />
-    </button>
-    <MapLegend />
-  </div>
-);
-
-/* ── Report Card with severity border ── */
-const ReportCard = ({ report }) => {
-  const [confirmed, setConfirmed] = useState(report.confirmed);
-  const [confirms, setConfirms] = useState(report.confirms);
-  const type = getDangerType(report.type);
-  const Icon = type.icon;
-
-  const handleConfirm = () => {
-    if (!confirmed) { setConfirms(c => c + 1); setConfirmed(true); }
-  };
+// ---------------- Feed card ----------------
+function FeedCard({ report, onTap }) {
+  const c = CATEGORIES[report.category];
+  const distanceLabel =
+    report.distance >= 1000 ? `${(report.distance / 1000).toFixed(1)}km` : `${report.distance}m`;
 
   return (
-    <div className="bg-white rounded-[20px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.02),inset_0_0_0_1px_rgba(0,0,0,0.03)]"
-      style={{ borderLeft: `3px solid ${severityBorder(report.type)}` }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: 9999, backgroundColor: `${type.color}14`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}>
-            <Icon size={18} color={type.color} />
-          </div>
-          <div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: type.color, display: 'block', lineHeight: 1 }}>{type.label}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
-              <MapPin size={12} color="#6E6E73" />
-              <span style={{ fontSize: 13, color: '#6E6E73' }}>{report.location}</span>
+    <button
+      onClick={onTap}
+      className="w-full text-left rounded-[18px] overflow-hidden active:scale-[0.995] transition-all"
+      style={{
+        background: '#FFFFFF',
+        border: '1px solid #EDE8E2',
+        boxShadow: '0 1px 0 rgba(0,0,0,0.015)',
+      }}
+    >
+      <div className="flex">
+        <div style={{ width: 3, background: c.color }} />
+        <div className="flex-1 p-4">
+          <div className="flex items-start gap-3">
+            <div
+              className="w-[36px] h-[36px] rounded-full flex items-center justify-center shrink-0"
+              style={{ background: c.bg }}
+            >
+              <CategoryGlyph id={report.category} size={16} color={c.color} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-[15px] font-semibold text-[#111] tracking-tight truncate">
+                  {report.title}
+                </h3>
+                <span className="text-[11px] text-[#A09A94] shrink-0 mt-[2px]">{report.time}</span>
+              </div>
+              <div className="flex items-center gap-1.5 mt-0.5 text-[12px] text-[#6E6058]">
+                <MapPin size={11} strokeWidth={1.75} />
+                <span className="truncate">{report.location}</span>
+                <span className="text-[#A09A94]">·</span>
+                <span>{distanceLabel} away</span>
+              </div>
+              <p
+                className="mt-2 text-[13px] leading-snug text-[#3F3A35]"
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}
+              >
+                {report.description}
+              </p>
+
+              {report.photo && (
+                <div
+                  className="mt-3 rounded-[12px] overflow-hidden"
+                  style={{ border: '1px solid #EDE8E2', height: 110 }}
+                >
+                  <img
+                    src={report.photo}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
+              <div className="mt-3 flex items-center gap-3 text-[12px]">
+                <div className="flex items-center gap-1 text-[#6E6058]">
+                  <CheckCheck size={13} strokeWidth={1.75} color={c.color} />
+                  <span>
+                    <span className="text-[#111] font-medium">{report.confirmations}</span>{' '}
+                    confirmed
+                  </span>
+                </div>
+                {report.resolved > 0 && (
+                  <div className="flex items-center gap-1 text-[#6E6058]">
+                    <Shield size={12} strokeWidth={1.75} />
+                    <span>{report.resolved} resolved</span>
+                  </div>
+                )}
+                <div
+                  className="ml-auto text-[11px] font-medium px-2 py-0.5 rounded-full"
+                  style={{
+                    color: c.color,
+                    background: c.bg,
+                  }}
+                >
+                  {c.severity}
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <Clock size={12} color="#8E8E93" />
-          <span style={{ fontSize: 12, color: '#8E8E93' }}>{report.timeAgo}</span>
-        </div>
       </div>
-
-      {/* Description */}
-      <p style={{
-        fontSize: 15, lineHeight: 1.5, color: '#111111', opacity: 0.9, margin: '0 0 14px',
-        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'
-      }}>
-        {report.description}
-      </p>
-
-      {/* Actions */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <button onClick={handleConfirm} className="active:scale-[0.97] transition-all duration-[120ms]" style={{
-          display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 9999,
-          backgroundColor: confirmed ? 'rgba(232,93,42,0.08)' : '#F2F2F7',
-          border: 'none', cursor: 'pointer'
-        }}>
-          <AlertTriangle size={14} color={confirmed ? '#E85D2A' : '#6E6E73'} />
-          <span style={{ fontSize: 13, fontWeight: 500, color: confirmed ? '#E85D2A' : '#6E6E73' }}>{confirms}</span>
-        </button>
-        <button className="active:scale-[0.97] transition-all duration-[120ms]" style={{
-          width: 32, height: 32, borderRadius: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'none', border: 'none', cursor: 'pointer'
-        }}>
-          <Share2 size={16} color="#8E8E93" />
-        </button>
-      </div>
-    </div>
+    </button>
   );
-};
+}
 
-/* ── Feed View ── */
-const FeedView = ({ reports }) => (
-  <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-    {reports.map(report => <ReportCard key={report.id} report={report} />)}
-  </div>
-);
+// ---------------- Main component ----------------
+export default function DangerReportsScreen() {
+  const [viewMode, setViewMode] = useState('map'); // map | feed
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [reportFormOpen, setReportFormOpen] = useState(false);
+  const [reportFormStep, setReportFormStep] = useState('category');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [formLocation, setFormLocation] = useState('Current location · Seefeld');
+  const [formDescription, setFormDescription] = useState('');
+  const [formSeverity, setFormSeverity] = useState('High');
+  const [formPhoto, setFormPhoto] = useState(false);
+  const [confirmedIds, setConfirmedIds] = useState(new Set());
 
-/* ── Report Modal ── */
-const ReportModal = ({ isOpen, onClose }) => {
-  const [selectedType, setSelectedType] = useState('poison');
-  const [location, setLocation] = useState('');
-  const [description, setDescription] = useState('');
+  const filteredReports = useMemo(() => {
+    if (activeFilter === 'all') return MOCK_REPORTS;
+    return MOCK_REPORTS.filter((r) => r.category === activeFilter);
+  }, [activeFilter]);
 
-  if (!isOpen) return null;
+  const openReportForm = () => {
+    setReportFormOpen(true);
+    setReportFormStep('category');
+    setSelectedCategory(null);
+    setFormDescription('');
+    setFormPhoto(false);
+  };
+
+  const closeReportForm = () => {
+    setReportFormOpen(false);
+    setTimeout(() => {
+      setReportFormStep('category');
+      setSelectedCategory(null);
+    }, 220);
+  };
+
+  const toggleConfirm = (id) => {
+    setConfirmedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const isEmpty = filteredReports.length === 0;
 
   return (
-    <>
-      <div onClick={onClose} className="absolute inset-0 bg-black/40 backdrop-blur-[2px] z-50" style={{ transition: 'opacity 200ms ease' }} />
-      <div className="absolute bottom-0 left-0 right-0 z-[51] bg-white rounded-t-[20px] shadow-[0_-8px_40px_rgba(0,0,0,0.12)]" style={{ padding: '12px 20px 34px', maxHeight: '75%', overflowY: 'auto' }}>
-        {/* Drag handle */}
-        <div className="w-full flex flex-col items-center pt-2 pb-3">
-          <div className="w-10 h-1 rounded-full bg-[#D1D1D6]" />
-        </div>
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#E5E5E5',
+        padding: '20px',
+        fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+      }}
+    >
+    <div className="relative" style={{ width: 390, height: 844, borderRadius: 50, border: '8px solid #000', overflow: 'hidden', backgroundColor: '#F7F5F2', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)' }}>
+      <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
+    <div
+      className="relative w-full h-full overflow-hidden"
+      style={{ background: '#F7F5F2' }}
+    >
+      <style>{`
+        @keyframes dangerPulse {
+          0% { transform: scale(0.6); opacity: 0.6; }
+          100% { transform: scale(2.2); opacity: 0; }
+        }
+        @keyframes quickLogPopIn {
+          0% { transform: scale(0.92); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes quickLogFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes sheetSlideUp {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
+        .ease-soft { transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { scrollbar-width: none; }
+      `}</style>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 600, color: '#111111', margin: 0 }}>New Report</h2>
-          <button onClick={onClose} className="active:scale-[0.97] transition-all duration-[120ms]" style={{
-            width: 32, height: 32, borderRadius: 9999, backgroundColor: '#F2F2F7',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer'
-          }}>
-            <X size={16} color="#6E6E73" />
+      {/* HEADER */}
+      <header
+        className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent"
+      >
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <button
+            onClick={() => window.history.back()}
+            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
+            style={{ background: '#F3EFEB' }}
+          >
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+          </button>
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Safety</h2>
+          <button
+            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
+            style={{ background: '#F3EFEB' }}
+          >
+            <Filter size={18} color="#111" strokeWidth={1.75} />
           </button>
         </div>
+      </header>
 
-        {/* Type selector */}
-        <div style={{ marginBottom: 20 }}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#8E8E93', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 10 }}>Type</span>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {DANGER_TYPES.map(type => {
-              const isActive = selectedType === type.id;
-              const TypeIcon = type.icon;
+      {/* Segmented control */}
+      <div className="absolute top-[96px] left-0 w-full z-30 px-5">
+        <div
+          className="flex items-center p-1 rounded-full w-full"
+          style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+        >
+          {['map', 'feed'].map((mode) => {
+            const active = viewMode === mode;
+            return (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className="flex-1 h-[36px] rounded-full text-[13px] font-medium tracking-tight capitalize transition-all ease-soft"
+                style={{
+                  background: active ? '#111' : 'transparent',
+                  color: active ? '#FFF' : '#6E6058',
+                }}
+              >
+                {mode}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="absolute inset-0 pt-[148px] pb-[88px]">
+        {viewMode === 'map' ? (
+          <MapView
+            reports={filteredReports}
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            onSelect={(r) => setSelectedReport(r)}
+            selectedId={selectedReport?.id}
+            isEmpty={isEmpty}
+            openReportForm={openReportForm}
+          />
+        ) : (
+          <FeedView
+            reports={filteredReports}
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            onSelect={(r) => setSelectedReport(r)}
+            isEmpty={isEmpty}
+            openReportForm={openReportForm}
+          />
+        )}
+      </div>
+
+      {/* FAB */}
+      <button
+        onClick={openReportForm}
+        className="absolute bottom-6 right-5 z-30 w-[56px] h-[56px] rounded-full flex items-center justify-center active:scale-[0.92] transition-all ease-soft"
+        style={{
+          background: '#FF3B30',
+          boxShadow: '0 4px 20px rgba(255,59,48,0.35)',
+        }}
+      >
+        <Plus size={24} color="#FFF" strokeWidth={2.5} />
+      </button>
+
+      {/* Pin/Card detail sheet */}
+      {selectedReport && (
+        <ReportDetailSheet
+          report={selectedReport}
+          onClose={() => setSelectedReport(null)}
+          confirmed={confirmedIds.has(selectedReport.id)}
+          toggleConfirm={() => toggleConfirm(selectedReport.id)}
+        />
+      )}
+
+      {/* Report form popup */}
+      {reportFormOpen && (
+        <ReportFormPopup
+          step={reportFormStep}
+          setStep={setReportFormStep}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          location={formLocation}
+          setLocation={setFormLocation}
+          description={formDescription}
+          setDescription={setFormDescription}
+          severity={formSeverity}
+          setSeverity={setFormSeverity}
+          photo={formPhoto}
+          setPhoto={setFormPhoto}
+          onClose={closeReportForm}
+        />
+      )}
+    </div>
+    </div>
+    </div>
+  );
+}
+
+// ---------------- Map View ----------------
+function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId, isEmpty, openReportForm }) {
+  return (
+    <div className="relative w-full h-full">
+      <div
+        className="absolute left-4 right-4 top-0 bottom-0 rounded-[24px] overflow-hidden"
+        style={{ border: '1px solid #EDE8E2' }}
+      >
+        <MapCanvas />
+
+        {/* Filter chips overlay */}
+        <div className="absolute top-3 left-0 right-0 px-3 z-10">
+          <div className="flex gap-1.5 overflow-x-auto hide-scroll">
+            {FILTER_CHIPS.map((chip) => {
+              const active = activeFilter === chip.id;
               return (
-                <button key={type.id} onClick={() => setSelectedType(type.id)}
-                  className="active:scale-[0.96] transition-all duration-[180ms]"
+                <button
+                  key={chip.id}
+                  onClick={() => setActiveFilter(chip.id)}
+                  className="shrink-0 px-3 h-[30px] rounded-full text-[12px] font-medium tracking-tight ease-soft transition-all"
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 9999,
-                    backgroundColor: isActive ? `${type.color}14` : '#F2F2F7',
-                    border: isActive ? `1.5px solid ${type.color}` : '1.5px solid transparent',
-                    cursor: 'pointer'
-                  }}>
-                  <TypeIcon size={14} color={isActive ? type.color : '#8E8E93'} />
-                  <span style={{ fontSize: 13, fontWeight: 500, color: isActive ? type.color : '#6E6E73' }}>{type.label}</span>
+                    background: active ? '#111' : 'rgba(255,255,255,0.9)',
+                    color: active ? '#FFF' : '#6E6058',
+                    border: '1px solid #EDE8E2',
+                    backdropFilter: 'blur(6px)',
+                  }}
+                >
+                  {chip.label}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Location input */}
-        <div style={{ marginBottom: 16 }}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#8E8E93', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>Location</span>
-          <div className="w-full h-[52px] px-4 bg-[#F9F9FB] border border-black/[0.04] rounded-[16px] flex items-center gap-3">
-            <MapPin size={16} color="#8E8E93" />
-            <input value={location} onChange={e => setLocation(e.target.value)} placeholder="Enter location or use current"
-              className="flex-1 text-[16px] text-[#111111] placeholder:text-[#8E8E93] bg-transparent border-none outline-none focus:outline-none"
-              style={{ fontFamily: 'inherit' }} />
-            <Navigation size={16} color="#E85D2A" style={{ cursor: 'pointer' }} />
+        {/* Pins */}
+        {reports.map((r) => (
+          <DangerPin
+            key={r.id}
+            category={r.category}
+            selected={selectedId === r.id}
+            onClick={() => onSelect(r)}
+            style={{ left: `${r.posX}%`, top: `${r.posY}%` }}
+          />
+        ))}
+
+        <UserDot />
+
+        {/* Empty map */}
+        {isEmpty && (
+          <div
+            className="absolute left-1/2 top-[66%] -translate-x-1/2 px-4 py-3 rounded-[14px] text-center"
+            style={{
+              background: 'rgba(255,255,255,0.95)',
+              border: '1px solid #EDE8E2',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            <div className="text-[13px] font-medium text-[#111]">You're in a safe zone</div>
+            <div className="text-[11px] text-[#6E6058] mt-0.5">No reports within 1km</div>
           </div>
+        )}
+
+        {/* Legend */}
+        <div className="absolute bottom-3 left-3 right-3 z-10">
+          <div
+            className="flex items-center gap-2 px-3 py-2 rounded-full overflow-x-auto hide-scroll"
+            style={{
+              background: 'rgba(255,255,255,0.9)',
+              border: '1px solid #EDE8E2',
+              backdropFilter: 'blur(6px)',
+            }}
+          >
+            {['poison', 'glass', 'aggressive', 'icy', 'construction'].map((k) => {
+              const c = CATEGORIES[k];
+              return (
+                <div key={k} className="flex items-center gap-1.5 shrink-0">
+                  <span
+                    className="w-[8px] h-[8px] rounded-full"
+                    style={{ background: c.color }}
+                  />
+                  <span className="text-[11px] text-[#6E6058]">{c.short}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------- Feed View ----------------
+function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, openReportForm }) {
+  return (
+    <div className="w-full h-full overflow-y-auto hide-scroll">
+      <div className="px-5">
+        {/* Filter row */}
+        <div className="flex gap-1.5 overflow-x-auto hide-scroll pb-3">
+          {FILTER_CHIPS.map((chip) => {
+            const active = activeFilter === chip.id;
+            return (
+              <button
+                key={chip.id}
+                onClick={() => setActiveFilter(chip.id)}
+                className="shrink-0 px-3 h-[32px] rounded-full text-[12px] font-medium tracking-tight ease-soft transition-all"
+                style={{
+                  background: active ? '#111' : '#F3EFEB',
+                  color: active ? '#FFF' : '#6E6058',
+                  border: '1px solid #EDE8E2',
+                }}
+              >
+                {chip.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Heading strip */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-[12px] text-[#A09A94] tracking-wide uppercase">Nearby</div>
+          <div className="text-[12px] text-[#6E6058]">
+            {reports.length} report{reports.length !== 1 ? 's' : ''}
+          </div>
+        </div>
+
+        {/* Cards */}
+        {isEmpty ? (
+          <EmptyState onReport={() => {}} />
+        ) : (
+          <div className="flex flex-col gap-3 pb-6">
+            {reports.map((r) => (
+              <FeedCard key={r.id} report={r} onTap={() => onSelect(r)} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------- Empty state ----------------
+function EmptyState({ onReport }) {
+  return (
+    <div
+      className="rounded-[20px] px-6 py-10 flex flex-col items-center text-center"
+      style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+    >
+      <div
+        className="w-[64px] h-[64px] rounded-full flex items-center justify-center mb-4"
+        style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
+      >
+        <Shield size={28} color="#E85D2A" strokeWidth={1.5} />
+      </div>
+      <div className="text-[16px] font-semibold text-[#111] tracking-tight">
+        You're in a safe zone
+      </div>
+      <div className="text-[13px] text-[#6E6058] mt-1">No reports within 1km</div>
+      <button
+        onClick={onReport}
+        className="mt-5 px-5 h-[40px] rounded-full text-[13px] font-semibold text-[#FFF] active:scale-[0.97] transition-all"
+        style={{ background: '#111' }}
+      >
+        Report a danger
+      </button>
+    </div>
+  );
+}
+
+// ---------------- Report detail sheet ----------------
+function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm }) {
+  const c = CATEGORIES[report.category];
+  const distanceLabel =
+    report.distance >= 1000 ? `${(report.distance / 1000).toFixed(1)}km` : `${report.distance}m`;
+
+  return (
+    <div className="absolute inset-0 z-50">
+      <div
+        className="absolute inset-0 bg-black/30"
+        style={{ animation: 'quickLogFadeIn 220ms ease-out' }}
+        onClick={onClose}
+      />
+      <div
+        className="absolute left-0 right-0 bottom-0 rounded-t-[24px] p-5 pb-8"
+        style={{
+          background: '#F7F5F2',
+          border: '1px solid #EDE8E2',
+          boxShadow: '0 -10px 30px rgba(0,0,0,0.08)',
+          animation: 'sheetSlideUp 320ms cubic-bezier(0.22, 1, 0.36, 1)',
+          maxHeight: '85%',
+          overflowY: 'auto',
+        }}
+      >
+        {/* grabber */}
+        <div className="flex justify-center mb-3">
+          <div
+            className="w-[36px] h-[4px] rounded-full"
+            style={{ background: '#D9D1C6' }}
+          />
+        </div>
+
+        {/* header */}
+        <div className="flex items-start gap-3">
+          <div
+            className="w-[52px] h-[52px] rounded-full flex items-center justify-center shrink-0"
+            style={{ background: c.bg }}
+          >
+            <CategoryGlyph id={report.category} size={22} color={c.color} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[11px] uppercase tracking-wide" style={{ color: c.color }}>
+              {c.severity}
+            </div>
+            <div className="text-[18px] font-semibold text-[#111] tracking-tight">
+              {report.title}
+            </div>
+            <div className="text-[12px] text-[#6E6058] mt-0.5">
+              Posted by {report.author} · {report.time}
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-[36px] h-[36px] rounded-full flex items-center justify-center"
+            style={{ background: '#F3EFEB' }}
+          >
+            <X size={16} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
+
+        {/* Photo */}
+        {report.photo && (
+          <div
+            className="mt-4 rounded-[16px] overflow-hidden"
+            style={{ border: '1px solid #EDE8E2', height: 170 }}
+          >
+            <img src={report.photo} alt="" className="w-full h-full object-cover" />
+          </div>
+        )}
+
+        {/* Location + directions */}
+        <div
+          className="mt-4 p-4 rounded-[16px] flex items-center gap-3"
+          style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+        >
+          <div
+            className="w-[40px] h-[40px] rounded-full flex items-center justify-center"
+            style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
+          >
+            <MapPin size={16} color="#111" strokeWidth={1.75} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[14px] font-medium text-[#111] truncate">{report.location}</div>
+            <div className="text-[12px] text-[#6E6058]">{distanceLabel} from you</div>
+          </div>
+          <button
+            className="h-[36px] px-3 rounded-full flex items-center gap-1 text-[12px] font-medium text-[#FFF]"
+            style={{ background: '#111' }}
+          >
+            <Navigation size={13} strokeWidth={2} />
+            Directions
+          </button>
         </div>
 
         {/* Description */}
-        <div style={{ marginBottom: 24 }}>
-          <span style={{ fontSize: 12, fontWeight: 700, color: '#8E8E93', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 8 }}>Description</span>
-          <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe what you found..." rows={3}
-            className="w-full px-4 py-3 bg-[#F9F9FB] border border-black/[0.04] rounded-[16px] text-[16px] text-[#111111] placeholder:text-[#8E8E93] focus:outline-none focus:border-[#E85D2A] focus:ring-4 focus:ring-[#E85D2A]/10 transition-all duration-200"
-            style={{ fontFamily: 'inherit', resize: 'none', lineHeight: 1.5, boxSizing: 'border-box' }} />
+        <div className="mt-4">
+          <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1">Details</div>
+          <p className="text-[14px] leading-relaxed text-[#3F3A35]">{report.description}</p>
         </div>
 
-        {/* Submit */}
-        <button className="active:scale-[0.97] transition-all duration-[120ms]" style={{
-          width: '100%', padding: '15px 0', borderRadius: 16,
-          background: 'linear-gradient(to bottom, #FF7240, #E85D2A)',
-          color: '#FFFFFF', fontSize: 16, fontWeight: 600, textAlign: 'center',
-          border: 'none', cursor: 'pointer',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(0,0,0,0.03)'
-        }}>
-          Submit Report
+        {/* Confirmations */}
+        <div
+          className="mt-4 p-4 rounded-[16px]"
+          style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
+        >
+          <div className="flex items-center gap-2">
+            <CheckCheck size={16} color={c.color} strokeWidth={1.75} />
+            <div className="text-[14px] text-[#111]">
+              <span className="font-semibold">
+                {report.confirmations + (confirmed ? 1 : 0)} people
+              </span>{' '}
+              confirmed this
+            </div>
+          </div>
+          <button
+            onClick={toggleConfirm}
+            className="mt-3 w-full h-[42px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+            style={{
+              background: confirmed ? c.bg : '#111',
+              color: confirmed ? c.color : '#FFF',
+              border: confirmed ? `1px solid ${c.color}` : 'none',
+            }}
+          >
+            {confirmed ? <Check size={15} strokeWidth={2.25} /> : null}
+            {confirmed ? 'You confirmed' : 'I confirm too'}
+          </button>
+        </div>
+
+        {/* Status / Actions */}
+        <div className="mt-4 flex items-center gap-2">
+          <div
+            className="flex-1 h-[40px] rounded-full flex items-center justify-center gap-1.5 text-[12px] font-medium"
+            style={{
+              background: report.status === 'resolved' ? '#EEF7EC' : '#FFF',
+              color: report.status === 'resolved' ? '#2E7D32' : '#6E6058',
+              border: '1px solid #EDE8E2',
+            }}
+          >
+            {report.status === 'resolved' ? (
+              <CheckCheck size={13} strokeWidth={2} />
+            ) : (
+              <Loader2 size={13} strokeWidth={2} />
+            )}
+            {report.status === 'resolved' ? 'Resolved' : 'Active'}
+          </div>
+          <button
+            className="h-[40px] px-4 rounded-full text-[12px] font-medium text-[#6E6058]"
+            style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+          >
+            Mark resolved
+          </button>
+        </div>
+
+        <button
+          className="mt-3 w-full text-[12px] text-[#A09A94] py-2"
+          onClick={onClose}
+        >
+          Report inaccurate
         </button>
       </div>
-    </>
+    </div>
   );
-};
+}
 
-/* ── Main Screen ── */
-export default function Screen_56_DANGER_REPORTS_v1() {
-  const [activeTab, setActiveTab] = useState('map');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState(null);
+// ---------------- Report form popup ----------------
+function ReportFormPopup({
+  step,
+  setStep,
+  selectedCategory,
+  setSelectedCategory,
+  location,
+  setLocation,
+  description,
+  setDescription,
+  severity,
+  setSeverity,
+  photo,
+  setPhoto,
+  onClose,
+}) {
+  const cat = selectedCategory ? CATEGORIES[selectedCategory] : null;
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        .wallet-scroll::-webkit-scrollbar { display: none; }
-        .wallet-scroll { scrollbar-width: none; }
-      `}</style>
-
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: '#E5E5E5', padding: 20,
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
-      }}>
-        <div className="relative" style={{ width: 390, height: 844, borderRadius: 50, border: '8px solid #000', overflow: 'hidden', backgroundColor: '#F9F9FB' }}>
-          {/* Notch */}
-          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
-          {/* Home Indicator */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
-
-          {/* Status Bar */}
-          <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
-            <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
-            <div className="flex items-center gap-1">
-              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#111"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111"/></svg>
-              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111"/><path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/><path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/></svg>
-              <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35"/><rect x="2" y="2" width="16" height="9" rx="2" fill="#111"/><path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4"/></svg>
-            </div>
+    <div className="absolute inset-0 z-[60] flex items-center justify-center px-5">
+      <div
+        className="absolute inset-0 bg-black/40"
+        style={{ animation: 'quickLogFadeIn 220ms ease-out' }}
+        onClick={onClose}
+      />
+      <div
+        className="relative w-full max-w-[360px] rounded-[24px] p-5"
+        style={{
+          background: '#F7F5F2',
+          border: '1px solid #EDE8E2',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.18)',
+          animation: 'quickLogPopIn 260ms cubic-bezier(0.22, 1, 0.36, 1)',
+          maxHeight: '88%',
+          overflowY: 'auto',
+        }}
+      >
+        {/* header */}
+        <div className="flex items-center justify-between">
+          {step === 'details' ? (
+            <button
+              onClick={() => setStep('category')}
+              className="w-[32px] h-[32px] rounded-full flex items-center justify-center"
+              style={{ background: '#F3EFEB' }}
+            >
+              <ChevronLeft size={16} color="#111" strokeWidth={1.75} />
+            </button>
+          ) : (
+            <div className="w-[32px]" />
+          )}
+          <div className="text-[15px] font-semibold text-[#111] tracking-tight">
+            {step === 'category' ? 'Report a danger' : 'Add details'}
           </div>
+          <button
+            onClick={onClose}
+            className="w-[32px] h-[32px] rounded-full flex items-center justify-center"
+            style={{ background: '#F3EFEB' }}
+          >
+            <X size={14} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
 
-          {/* Floating Header */}
-          <header className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-white/95 via-white/70 to-transparent" style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}>
-            <div className="flex justify-between items-center w-full pointer-events-auto">
-              <button onClick={() => window.history.back()}
-                className="w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]">
-                <ChevronLeft size={22} color="#111111" />
-              </button>
-              <h2 className="text-[17px] font-semibold text-[#111111]">Safety Reports</h2>
-              <div className="w-[44px]" />
+        {step === 'category' ? (
+          <>
+            <div className="text-[12px] text-[#6E6058] text-center mt-1">
+              What did you spot?
             </div>
-          </header>
-
-          {/* Content */}
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
-            <div className="wallet-scroll" style={{ flex: 1, paddingTop: 100, paddingBottom: 40, overflowY: 'auto' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(844px - 100px - 40px)' }}>
-
-                {/* Tab toggle */}
-                <div style={{ margin: '0 20px 16px', padding: 3, borderRadius: 12, backgroundColor: '#F2F2F7', display: 'flex', flexShrink: 0 }}>
-                  {['map', 'feed'].map(tab => {
-                    const isActive = activeTab === tab;
-                    return (
-                      <button key={tab} onClick={() => setActiveTab(tab)}
-                        className="active:scale-[0.97] transition-all duration-[120ms]"
-                        style={{
-                          flex: 1, padding: '8px 0', textAlign: 'center', fontSize: 14, fontWeight: 600,
-                          borderRadius: 10, cursor: 'pointer', border: 'none',
-                          backgroundColor: isActive ? '#FFFFFF' : 'transparent',
-                          color: isActive ? '#111111' : '#6E6E73',
-                          boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.04)' : 'none'
-                        }}>
-                        {tab === 'map' ? 'Map' : 'Feed'}
-                      </button>
-                    );
-                  })}
+            <div className="grid grid-cols-3 gap-2 mt-4">
+              {CATEGORY_GRID.map((id) => {
+                const c = CATEGORIES[id];
+                return (
+                  <button
+                    key={id}
+                    onClick={() => {
+                      setSelectedCategory(id);
+                      setSeverity(c.severity);
+                      setStep('details');
+                    }}
+                    className="aspect-square rounded-[16px] flex flex-col items-center justify-center gap-1.5 active:scale-[0.97] transition-all ease-soft"
+                    style={{
+                      background: c.bg,
+                      border: `1px solid ${c.color}22`,
+                    }}
+                  >
+                    <div
+                      className="w-[36px] h-[36px] rounded-full flex items-center justify-center"
+                      style={{ background: c.color }}
+                    >
+                      <CategoryGlyph id={id} size={16} color="#FFF" />
+                    </div>
+                    <span
+                      className="text-[11px] font-medium tracking-tight"
+                      style={{ color: c.color }}
+                    >
+                      {c.short}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Category tag */}
+            {cat && (
+              <div className="flex items-center gap-2 mt-3">
+                <div
+                  className="w-[32px] h-[32px] rounded-full flex items-center justify-center"
+                  style={{ background: cat.color }}
+                >
+                  <CategoryGlyph id={cat.id} size={14} color="#FFF" />
                 </div>
+                <div>
+                  <div className="text-[14px] font-semibold text-[#111]">{cat.label}</div>
+                  <div className="text-[11px]" style={{ color: cat.color }}>
+                    {cat.severity} severity
+                  </div>
+                </div>
+              </div>
+            )}
 
-                {activeTab === 'map' ? (
-                  <MapView reports={MOCK_REPORTS} onSelectReport={setSelectedReport} />
-                ) : (
-                  <FeedView reports={MOCK_REPORTS} />
-                )}
+            {/* Location */}
+            <div className="mt-4">
+              <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1.5">
+                Location
+              </div>
+              <button
+                className="w-full flex items-center gap-2 px-3 h-[44px] rounded-[12px] text-left"
+                style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
+              >
+                <MapPin size={15} color="#E85D2A" strokeWidth={1.75} />
+                <span className="flex-1 text-[13px] text-[#111] truncate">{location}</span>
+                <ChevronRight size={14} color="#A09A94" strokeWidth={1.75} />
+              </button>
+            </div>
 
-                {/* FAB */}
-                <button onClick={() => setModalOpen(true)}
-                  className="active:scale-[0.95] transition-all duration-[120ms]"
-                  style={{
-                    position: 'absolute', bottom: 34, right: 20,
-                    width: 52, height: 52, borderRadius: 9999,
-                    background: 'linear-gradient(to bottom, #FF7240, #E85D2A)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: '0 4px 12px rgba(232,93,42,0.3)', zIndex: 30,
-                    border: 'none', cursor: 'pointer'
-                  }}>
-                  <Plus size={24} color="#FFFFFF" />
-                </button>
+            {/* Description */}
+            <div className="mt-3">
+              <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1.5">
+                Description
+              </div>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="What should others know?"
+                rows={3}
+                className="w-full px-3 py-2.5 rounded-[12px] text-[13px] text-[#111] placeholder-[#A09A94] resize-none focus:outline-none"
+                style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
+              />
+            </div>
 
-                <ReportModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+            {/* Severity */}
+            <div className="mt-3">
+              <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1.5">
+                Severity
+              </div>
+              <div className="flex gap-1.5">
+                {['Critical', 'High', 'Medium', 'Info'].map((s) => {
+                  const active = severity === s;
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => setSeverity(s)}
+                      className="flex-1 h-[34px] rounded-full text-[12px] font-medium tracking-tight"
+                      style={{
+                        background: active ? '#111' : '#FFFFFF',
+                        color: active ? '#FFF' : '#6E6058',
+                        border: '1px solid #EDE8E2',
+                      }}
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          </div>
-        </div>
+
+            {/* Photo */}
+            <button
+              onClick={() => setPhoto(!photo)}
+              className="mt-3 w-full h-[44px] rounded-[12px] flex items-center gap-2 px-3 text-[13px] font-medium"
+              style={{
+                background: photo ? '#FFEBEA' : '#FFFFFF',
+                color: photo ? '#FF3B30' : '#6E6058',
+                border: `1px solid ${photo ? '#FF3B30' : '#EDE8E2'}`,
+              }}
+            >
+              <Camera size={15} strokeWidth={1.75} />
+              {photo ? 'Photo attached' : 'Add photo (optional)'}
+              {photo && <Check size={14} className="ml-auto" strokeWidth={2.25} />}
+            </button>
+
+            {/* Submit */}
+            <button
+              onClick={onClose}
+              className="mt-5 w-full h-[48px] rounded-full text-[14px] font-semibold text-[#FFF] flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+              style={{
+                background: '#FF3B30',
+                boxShadow: '0 6px 20px rgba(255,59,48,0.3)',
+              }}
+            >
+              <AlertTriangle size={15} strokeWidth={2.25} />
+              Report danger
+            </button>
+            <div className="mt-2 text-center text-[11px] text-[#A09A94]">
+              Your report helps keep the community safe
+            </div>
+          </>
+        )}
       </div>
-    </>
+    </div>
   );
 }
