@@ -1255,6 +1255,9 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
           </h1>
           {showActions && (
             <div className="flex items-center gap-2">
+              <button onClick={() => { window.location.href = '/danger-reports'; }} className="w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.9] transition-all" style={{ background: '#FFEBEA' }}>
+                <AlertTriangle size={15} className="text-[#FF3B30]" strokeWidth={2} />
+              </button>
               <button onClick={onInbox || (() => handleAction('Inbox'))} className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all" style={{ background: '#F3EFEB' }}>
                 <Bell size={17} className="text-[#6E6058]" strokeWidth={1.8} />
                 {unreadCount > 0 && <span className="absolute top-[6px] right-[7px] w-[7px] h-[7px] bg-[#E85D2A] rounded-full border-[1.5px] border-[var(--color-background)]" />}
@@ -4155,17 +4158,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               <ArrowRight size={11} className="text-[#A09A94] ml-auto shrink-0" />
             </button>
 
-            {/* Report button — always visible */}
-            <button
-              onClick={() => onNavigate('danger-reports')}
-              className="flex items-center gap-2 w-full py-2 active:opacity-70 transition-opacity"
-            >
-              <div className="w-[22px] h-[22px] rounded-full bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center shrink-0">
-                <AlertTriangle size={10} className="text-[#A09A94]" />
-              </div>
-              <span className="text-[12px] font-medium text-[#6E6058]">Report a danger</span>
-              <ChevronRight size={12} className="text-[#A09A94] ml-auto shrink-0" />
-            </button>
           </div>
 
           {/* ═══ VACCINE ALERT — inline pill (if exists) ═══ */}
@@ -4189,22 +4181,18 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           {/* ═══ 4. NEXT BOOKING — compact card ═══ */}
           {nextBooking && (
             <div
-              className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] px-4 py-3.5 mb-5 active:scale-[0.985] transition-transform cursor-pointer flex items-center gap-3.5"
+              onClick={() => onNavigate('services')}
+              className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] px-4 py-3.5 mb-5 active:scale-[0.985] transition-transform cursor-pointer flex items-center"
               style={{ animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}
             >
-              <div className="w-[42px] h-[42px] rounded-[12px] bg-[#EDE8E2] flex items-center justify-center shrink-0">
-                {(() => { const BIcon = getHomeBookingIcon(nextBooking.service); return <BIcon size={20} className="text-[#6E6058]" strokeWidth={1.75} />; })()}
-              </div>
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-[15px] font-bold text-[#111] leading-tight">{nextBooking.service}</span>
-                  <div className={`h-[18px] px-2 rounded-full text-[9px] font-bold border inline-flex items-center ${getHomeBookingStatusMeta(nextBooking.status).className}`}>
-                    {nextBooking.status}
-                  </div>
-                </div>
+                <span className="text-[15px] font-bold text-[#111] leading-tight block">{nextBooking.service}</span>
                 <span className="text-[12px] text-[#A09A94] mt-0.5 block">{nextBooking.walkerName} · {formatDateTime(nextBooking.date)}</span>
               </div>
-              <ChevronRight size={16} className="text-[#A09A94] shrink-0" />
+              <div className={`flex items-center gap-1 shrink-0 ml-3 px-2.5 py-1 rounded-full ${nextBooking.status === 'Confirmed' ? 'bg-[#EEF7F1]' : 'bg-[#FFF5F0]'}`}>
+                <span className={`text-[11px] font-semibold ${nextBooking.status === 'Confirmed' ? 'text-[#3F8D63]' : 'text-[#E85D2A]'}`}>{nextBooking.status}</span>
+                <ChevronRight size={12} className={nextBooking.status === 'Confirmed' ? 'text-[#3F8D63]' : 'text-[#E85D2A]'} />
+              </div>
             </div>
           )}
 
@@ -4341,7 +4329,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 { label: 'Vet', icon: Stethoscope, color: '#A09A94' },
               ].map((svc, i) => (
                 <button key={i} onClick={() => onNavigate('services')} className="flex flex-col items-center gap-1.5 py-2.5 rounded-[14px] active:scale-[0.96] transition-transform" style={{ background: '#F3EFEB' }}>
-                  <svc.icon size={18} className={`text-[${svc.color}]`} style={{ color: svc.color }} />
+                  <svc.icon size={18} style={{ color: svc.color }} />
                   <span className="text-[11px] font-semibold text-[#6E6058]">{svc.label}</span>
                 </button>
               ))}
