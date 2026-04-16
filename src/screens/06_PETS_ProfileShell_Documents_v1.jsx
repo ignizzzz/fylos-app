@@ -4200,13 +4200,18 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           {quickLogEntries.filter(e => e.petId === displayPetId).length > 0 && (
             <div className="mb-4" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
               <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">Logged</div>
-              {quickLogEntries.filter(e => e.petId === displayPetId).slice(0, 3).map((entry) => (
-                <div key={entry.id} className="flex items-center gap-3 py-2 border-b border-[#EDE8E2]">
-                  <span className="text-[14px]">{entry.icon}</span>
-                  <span className="text-[13px] font-medium text-[#6E6058] flex-1">{entry.title}</span>
-                  <span className="text-[12px] text-[#A09A94]">{entry.time}</span>
-                </div>
-              ))}
+              {quickLogEntries.filter(e => e.petId === displayPetId).slice(0, 3).map((entry) => {
+                const LogIcon = getTimelineIcon(entry.type);
+                return (
+                  <div key={entry.id} className="flex items-center gap-3 py-2.5 border-b border-[#EDE8E2]">
+                    <div className="w-[22px] h-[22px] rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0">
+                      <LogIcon size={11} className="text-[#A09A94]" />
+                    </div>
+                    <span className="text-[13px] font-medium text-[#111] flex-1">{entry.title}</span>
+                    <span className="text-[12px] text-[#A09A94]" style={{ fontVariantNumeric: 'tabular-nums' }}>{entry.time}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
 
@@ -4389,26 +4394,34 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
       {/* ═══ QUICK LOG MODAL (preserved) ═══ */}
       {quickLogModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center px-6" role="dialog" aria-modal="true">
-          <button className="absolute inset-0 bg-black/20" onClick={() => setQuickLogModalOpen(false)} aria-label="Close quick log modal" />
-          <div className="relative z-10 w-full max-w-[320px] max-h-[80vh] overflow-y-auto rounded-[20px] bg-white border border-black/[0.04] shadow-[0_12px_40px_rgba(0,0,0,0.14)] p-4">
+          <button className="absolute inset-0 bg-[#F7F5F2]/80 backdrop-blur-[6px]" onClick={() => setQuickLogModalOpen(false)} style={{ animation: 'fabOverlayIn 0.2s ease-out both' }} />
+          <div
+            className="relative z-10 w-full max-w-[340px] max-h-[80vh] overflow-y-auto rounded-[24px] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12),0_0_0_0.5px_rgba(0,0,0,0.04)] px-5 pb-6 pt-5"
+            style={{ animation: 'quickLogPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both', scrollbarWidth: 'none' }}
+          >
+
             {quickLogStep === 'picker' ? (
               <>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-[17px] font-semibold text-[#111111]">Add activity</h3>
-                  <button onClick={() => setQuickLogModalOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-[#A1A1A6] active:opacity-70" aria-label="Close"><X size={15} /></button>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-[20px] font-bold text-[#111] tracking-[-0.3px]">Log activity</h3>
+                  <button onClick={() => setQuickLogModalOpen(false)} className="w-[36px] h-[36px] rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+                    <X size={16} color="#111" strokeWidth={2} />
+                  </button>
                 </div>
-                <p className="text-[13px] text-[#8E8E93] mb-3">Quick log</p>
-                <div className="grid grid-cols-3 gap-2">
-                  {activityQuickOptions.map((option) => {
+                <div className="grid grid-cols-3 gap-3">
+                  {activityQuickOptions.map((option, i) => {
                     const Icon = option.icon;
                     return (
                       <button
                         key={option.id}
                         onClick={() => handleQuickTypeSelect(option.id)}
-                        className="h-[62px] px-2 rounded-[12px] border border-black/[0.05] bg-white flex flex-col items-center justify-center gap-1 text-center active:opacity-70"
+                        className="py-4 rounded-[16px] flex flex-col items-center justify-center gap-2.5 active:scale-[0.94] transition-transform"
+                        style={{ background: '#F3EFEB', animation: `fabIconBounce 0.35s ${0.05 + i * 0.04}s cubic-bezier(0.34, 1.56, 0.64, 1) both` }}
                       >
-                        <Icon size={15} className="text-[#8E8E93] shrink-0" />
-                        <span className="text-[12px] font-medium text-[#111111] leading-none">{option.label}</span>
+                        <div className="w-[40px] h-[40px] rounded-full bg-white flex items-center justify-center shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+                          <Icon size={18} className="text-[#111]" strokeWidth={1.75} />
+                        </div>
+                        <span className="text-[12px] font-semibold text-[#6E6058]">{option.label}</span>
                       </button>
                     );
                   })}
@@ -4416,37 +4429,62 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               </>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-2">
-                  <button onClick={() => setQuickLogStep('picker')} className="w-8 h-8 rounded-full flex items-center justify-center text-[#8E8E93] active:opacity-70" aria-label="Back"><ArrowLeft size={15} /></button>
-                  <h3 className="text-[17px] font-semibold text-[#111111]">Add activity</h3>
-                  <button onClick={() => setQuickLogModalOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-[#A1A1A6] active:opacity-70" aria-label="Close"><X size={15} /></button>
+                <div className="flex items-center justify-between mb-5">
+                  <button onClick={() => setQuickLogStep('picker')} className="w-[36px] h-[36px] rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+                    <ChevronLeft size={18} color="#111" strokeWidth={2} />
+                  </button>
+                  <h3 className="text-[17px] font-semibold text-[#111] tracking-tight">
+                    {quickLogMeta[selectedQuickLogType]?.icon} {quickLogMeta[selectedQuickLogType]?.title}
+                  </h3>
+                  <button onClick={() => setQuickLogModalOpen(false)} className="w-[36px] h-[36px] rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+                    <X size={16} color="#111" strokeWidth={2} />
+                  </button>
                 </div>
-                <p className="text-[13px] text-[#8E8E93] mb-3">Quick log</p>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {selectedQuickLogType === 'manual' && (
-                    <TextInput
-                      label="Activity title"
-                      placeholder="e.g. Training session"
-                      value={quickLogCustomTitle}
-                      onChange={(e) => setQuickLogCustomTitle(e.target.value)}
-                    />
+                    <div>
+                      <label className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-[0.1em] mb-2 block">Title</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Training session"
+                        value={quickLogCustomTitle}
+                        onChange={(e) => setQuickLogCustomTitle(e.target.value)}
+                        className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none focus:border-[#E85D2A]/40 transition-colors"
+                      />
+                    </div>
                   )}
-                  <TextInput
-                    label="Time"
-                    type="time"
-                    value={quickLogTime}
-                    onChange={(e) => setQuickLogTime(e.target.value)}
-                  />
-                  <div className="flex gap-2">
-                    <Button variant="secondary" size="small" onClick={() => setQuickLogStep('picker')}>Cancel</Button>
-                    <Button variant="primary" size="small" onClick={handleSaveQuickLog} disabled={!quickLogTime || (selectedQuickLogType === 'manual' && !quickLogCustomTitle.trim())}>Save</Button>
+                  <div>
+                    <label className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-[0.1em] mb-2 block">Time</label>
+                    <input
+                      type="time"
+                      value={quickLogTime}
+                      onChange={(e) => setQuickLogTime(e.target.value)}
+                      className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] outline-none focus:border-[#E85D2A]/40 transition-colors"
+                    />
                   </div>
+                  <button
+                    onClick={handleSaveQuickLog}
+                    disabled={!quickLogTime || (selectedQuickLogType === 'manual' && !quickLogCustomTitle.trim())}
+                    className={`w-full py-3.5 rounded-[14px] text-[14px] font-semibold transition-all flex items-center justify-center ${
+                      !quickLogTime || (selectedQuickLogType === 'manual' && !quickLogCustomTitle.trim())
+                        ? 'bg-[#EDE8E2] text-[#A09A94] cursor-not-allowed'
+                        : 'bg-[#111] text-white active:scale-[0.97] shadow-[0_4px_20px_rgba(0,0,0,0.12)]'
+                    }`}
+                  >
+                    Save activity
+                  </button>
                 </div>
               </>
             )}
           </div>
         </div>
       )}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes quickLogPopIn {
+          0% { opacity: 0; transform: scale(0.9) translateY(10px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}} />
       <CardModal isOpen={medSheetOpen} onClose={() => setMedSheetOpen(false)} title="Quick med log"><div className="space-y-6 pt-2"><TextInput label="Medication Name" placeholder="e.g. Heartworm chew" value={medName} onChange={(e) => setMedName(e.target.value)} /><div className="flex gap-3 pt-2"><Button variant="secondary" onClick={() => setMedSheetOpen(false)}>Cancel</Button><Button variant="primary" onClick={() => { alert("Saved (mock)"); setMedSheetOpen(false); setMedName(''); }} disabled={!medName.trim()}>Save</Button></div></div></CardModal>
       <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; } .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}} />
     </ScreenContainer>
