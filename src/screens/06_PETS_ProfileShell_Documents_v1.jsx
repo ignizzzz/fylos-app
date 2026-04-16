@@ -4201,7 +4201,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             <div className="mb-4" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
               <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">Logged</div>
               {quickLogEntries.filter(e => e.petId === displayPetId).slice(0, 3).map((entry) => {
-                const LogIcon = getTimelineIcon(entry.type);
+                const quickOpt = activityQuickOptions.find(o => o.id === entry.type) || activityQuickOptions.find(o => o.id === 'manual');
+                const LogIcon = quickOpt?.icon || FileText;
                 return (
                   <div key={entry.id} className="flex items-center gap-3 py-2.5 border-b border-[#EDE8E2]">
                     <div className="w-[22px] h-[22px] rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0">
