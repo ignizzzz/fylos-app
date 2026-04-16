@@ -605,40 +605,25 @@ export default function DangerReportsScreen() {
       {/* BOTTOM GRADIENT FADE — covers FAB zone */}
       <div className="absolute bottom-0 left-0 w-full h-[120px] z-20 pointer-events-none bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2]/85 to-transparent" />
 
-      {/* HEADER — matches Activity tab pattern exactly */}
+      {/* HEADER — back / centered title / filter */}
       <header
-        className="absolute top-0 left-0 w-full z-40 pt-14 pb-4 px-5 pointer-events-none"
+        className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none"
       >
-        <div className="flex justify-between items-end w-full pointer-events-auto">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
           <button
             onClick={() => window.history.back()}
-            className="flex items-baseline gap-1 active:opacity-70 transition-opacity"
+            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
+            style={{ background: '#F3EFEB' }}
           >
-            <ChevronLeft size={20} color="#111" strokeWidth={2} className="self-center" />
-            <h1 className="text-[28px] font-bold text-[#111] tracking-tight flex items-baseline">
-              Safety<span className="text-[#E85D2A] ml-0.5">•</span>
-            </h1>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
           </button>
-          <div className="flex items-center gap-2">
-            <button
-              className="relative w-[40px] h-[40px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all"
-              style={{ background: '#FFEBEA' }}
-            >
-              <AlertTriangle size={16} color="#FF3B30" strokeWidth={2} />
-            </button>
-            <button
-              className="relative w-[40px] h-[40px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all"
-              style={{ background: '#F3EFEB' }}
-            >
-              <Bell size={16} color="#6E6058" strokeWidth={1.75} />
-              <span className="absolute top-2 right-2 w-[6px] h-[6px] bg-[#E85D2A] rounded-full" />
-            </button>
-            <img
-              src="https://i.pravatar.cc/150?u=alex_fylos"
-              alt="Profile"
-              className="w-[40px] h-[40px] rounded-full object-cover border-2 border-[#EDE8E2]"
-            />
-          </div>
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Safety</h2>
+          <button
+            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
+            style={{ background: '#F3EFEB' }}
+          >
+            <Filter size={18} color="#111" strokeWidth={1.75} />
+          </button>
         </div>
       </header>
 
