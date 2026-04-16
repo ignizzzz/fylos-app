@@ -554,8 +554,8 @@ const MOCK_HEALTH_DATA = {
 };
 
 const MOCK_DASHBOARD_PETS = [
-  { id: 'p1', name: 'Leo', type: 'Dog', avatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop' },
-  { id: 'p2', name: 'Zyon', type: 'Dog', avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=300&h=300&fit=crop' }
+  { id: 'p1', name: 'Leo', type: 'Dog', breed: 'Golden Retriever', age: 3, weight: 28, avatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop' },
+  { id: 'p2', name: 'Zyon', type: 'Cat', breed: 'Domestic Shorthair', age: 5, weight: 5.2, avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=300&h=300&fit=crop' }
 ];
 const MOCK_BOOKINGS = [
   { id: 'b1', petId: 'p1', walkerName: 'Sofia L.', walkerRating: '4.9', walkerAvatar: null, service: '90 min Walk', date: '2026-02-16T09:00:00Z', status: 'Confirmed' },
@@ -4057,20 +4057,44 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
     setTimeout(() => { setMascotTapped(false); setMascotMessage(null); }, 2000);
   };
 
+  const remainingCount = filteredReminders.filter(r => !completedReminders.has(r.id) && r.action === 'complete').length;
+
   return (
     <ScreenContainer>
       <div className="px-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
 
-        {/* ═══ TOP: Greeting + Pet ═══ */}
-        <div className="pt-2 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
-          <div className="flex items-center gap-3 mb-5">
-            <img src={selectedPet.avatar} alt={selectedPet.name} className="w-[52px] h-[52px] rounded-[16px] object-cover shadow-sm" />
+        {/* ═══ 1. GREETING + INLINE PET SELECTOR ═══ */}
+        <div className="pt-3 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
+          <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <h2 className="text-[22px] font-bold text-[#111] tracking-[-0.3px] leading-tight">{calmGreeting}, {MOCK_USER.name}.</h2>
-              <p className="text-[13px] text-[#A09A94] mt-0.5">{selectedPet.name} · 18°C, great for walks</p>
+              <h2 className="text-[24px] font-bold text-[#111] tracking-[-0.4px] leading-[1.15]">{calmGreeting}, {MOCK_USER.name}.</h2>
+              <div className="flex items-center gap-2 mt-2">
+                {/* Pet avatars inline */}
+                {MOCK_DASHBOARD_PETS.length > 1 ? (
+                  <div className="flex items-center gap-0.5 mr-1">
+                    {MOCK_DASHBOARD_PETS.map((pet) => { const isSelected = selectedPetId === pet.id; return (
+                      <button
+                        key={pet.id}
+                        onClick={() => handlePetSelect(pet.id)}
+                        className="active:scale-[0.9] transition-all duration-200"
+                      >
+                        <img
+                          src={pet.avatar}
+                          alt={pet.name}
+                          className={`rounded-full object-cover transition-all duration-300 ${
+                            isSelected
+                              ? 'w-[26px] h-[26px] ring-[1.5px] ring-[#E85D2A] ring-offset-1 ring-offset-[#F7F5F2]'
+                              : 'w-[22px] h-[22px] opacity-35 -ml-1'
+                          }`}
+                        />
+                      </button>
+                    ); })}
+                  </div>
+                ) : null}
+                <p className="text-[13px] text-[#A09A94]">{selectedPet.name} · 18°C, great for walks</p>
+              </div>
             </div>
-            <div className="shrink-0 relative" onClick={handleMascotTap} style={{ cursor: 'pointer' }}>
-              {/* Speech bubble */}
+            <div className="shrink-0 relative ml-3 mt-0.5" onClick={handleMascotTap} style={{ cursor: 'pointer' }}>
               {mascotMessage && (
                 <div className="absolute -bottom-7 right-0 z-10 whitespace-nowrap" style={{ animation: 'homeReveal 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
                   <div className="px-2.5 py-1 rounded-[10px] text-[10px] font-semibold text-[#6E6058]" style={{ background: '#F3EFEB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
@@ -4079,8 +4103,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 </div>
               )}
               <div style={{
-                transform: `scale(0.5) ${mascotTapped ? 'translateY(-4px)' : ''}`,
-                transformOrigin: 'center right',
+                transform: `scale(0.38) ${mascotTapped ? 'translateY(-4px)' : ''}`,
+                transformOrigin: 'top right',
                 animation: 'homeMascotWave 3s ease-in-out infinite',
                 transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
               }}>
@@ -4088,97 +4112,118 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               </div>
             </div>
           </div>
-
-          {/* Pet switcher — only if multiple pets */}
-          {MOCK_DASHBOARD_PETS.length > 1 && (
-            <div className="flex gap-2 mb-1">
-              {MOCK_DASHBOARD_PETS.map((pet) => { const isSelected = selectedPetId === pet.id; return (
-                <button
-                  key={pet.id}
-                  onClick={() => handlePetSelect(pet.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 active:scale-[0.97] ${isSelected ? 'bg-[#111] text-white' : 'bg-[#F3EFEB] text-[#A09A94]'}`}
-                >
-                  <img src={pet.avatar} alt={pet.name} className="w-5 h-5 rounded-full object-cover" />
-                  <span className="text-[12px] font-semibold">{pet.name}</span>
-                </button>
-              ); })}
-            </div>
-          )}
         </div>
 
-        {/* ═══ THE FOCUS CARD ═══ */}
-        <div className={`flex-1 flex flex-col gap-4 transition-all duration-[350ms] ${isFading ? 'opacity-0 scale-[0.98] translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
+        {/* ═══ CROSSFADE WRAPPER ═══ */}
+        <div className={`flex-1 flex flex-col transition-all duration-[350ms] ${isFading ? 'opacity-0 scale-[0.98] translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
 
-          {/* Priority alert if exists */}
-          {visibleHealthAlert && (
-            <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#FFF5F0', border: '1px solid #FFE0D0', animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }} onClick={handleHealthAlertAction}>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#FFE0D0] flex items-center justify-center shrink-0">
-                  <AlertTriangle size={18} className="text-[#E85D2A]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[16px] font-bold text-[#111]">Vaccine overdue</h3>
-                  <p className="text-[13px] text-[#A09A94] mt-1">DHPP · 2 days late</p>
-                </div>
-                <span className="text-[13px] font-semibold text-[#E85D2A] flex items-center gap-1 shrink-0 mt-1">Review <ArrowRight size={13} /></span>
-              </div>
-            </div>
-          )}
+          {/* ═══ 3. SAFETY — always first: active alert + report button ═══ */}
+          <div className="mb-4" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
+            {/* Active safety alert (only if exists) */}
+            <button
+              onClick={() => onNavigate('danger-reports')}
+              className="flex items-center gap-2 w-full py-2 mb-2 active:opacity-70 transition-opacity"
+            >
+              <div className="w-[6px] h-[6px] rounded-full bg-[#FF3B30] animate-pulse shrink-0" />
+              <span className="text-[12px] font-medium text-[#FF3B30]">Safety alert nearby</span>
+              <span className="text-[12px] text-[#A09A94]">· Seefeld</span>
+              <ArrowRight size={11} className="text-[#A09A94] ml-auto shrink-0" />
+            </button>
 
-          {/* Safety alert — nearby danger reports */}
-          <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#FFEBEA', border: '1px solid #FFCCC9', animation: 'homeReveal 0.4s 0.12s cubic-bezier(0.22,1,0.36,1) both' }} onClick={() => onNavigate('danger-reports')}>
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#FF3B30]/15 flex items-center justify-center shrink-0">
-                <AlertTriangle size={18} className="text-[#FF3B30]" />
+            {/* Report button — always visible */}
+            <button
+              onClick={() => onNavigate('danger-reports')}
+              className="flex items-center gap-2 w-full py-2 active:opacity-70 transition-opacity"
+            >
+              <div className="w-[22px] h-[22px] rounded-full bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center shrink-0">
+                <AlertTriangle size={10} className="text-[#A09A94]" />
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-[16px] font-bold text-[#111]">Safety alert nearby</h3>
-                <p className="text-[13px] text-[#A09A94] mt-1">Poison bait reported · Seefeld</p>
-              </div>
-              <span className="text-[13px] font-semibold text-[#FF3B30] flex items-center gap-1 shrink-0 mt-1">View <ArrowRight size={13} /></span>
-            </div>
+              <span className="text-[12px] font-medium text-[#6E6058]">Report a danger</span>
+              <ChevronRight size={12} className="text-[#A09A94] ml-auto shrink-0" />
+            </button>
           </div>
 
-          {/* Next up card — the ONE thing to focus on */}
-          {nextBooking && (
-            <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <div className="text-[10px] font-bold text-[#B5AFA8] uppercase tracking-[0.08em] mb-3">Next up</div>
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full flex items-center justify-center bg-[#EDE8E2] shrink-0">
-                  <PawPrint size={18} className="text-[#8E8580]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[16px] font-bold text-[#111] leading-tight">{nextBooking.service}</h3>
-                  <p className="text-[13px] text-[#A09A94] mt-0.5">{nextBooking.walkerName} · {formatDateTime(nextBooking.date)}</p>
-                </div>
-                <div className={`h-[22px] px-2.5 rounded-full text-[10px] font-semibold border inline-flex items-center ${getHomeBookingStatusMeta(nextBooking.status).className}`}>
-                  {nextBooking.status}
-                </div>
+          {/* ═══ VACCINE ALERT — inline pill (if exists) ═══ */}
+          {visibleHealthAlert && (
+            <button
+              onClick={handleHealthAlertAction}
+              className="flex items-center gap-2.5 w-full px-4 py-3 mb-5 rounded-[14px] bg-[#FFF5F0] active:scale-[0.98] transition-transform"
+              style={{ animation: 'homeReveal 0.4s 0.13s cubic-bezier(0.22,1,0.36,1) both' }}
+            >
+              <div className="w-[32px] h-[32px] rounded-full bg-[#E85D2A]/15 flex items-center justify-center shrink-0">
+                <AlertTriangle size={14} className="text-[#E85D2A]" />
               </div>
+              <div className="flex-1 min-w-0 text-left">
+                <span className="text-[13px] font-semibold text-[#111]">DHPP vaccine overdue</span>
+                <span className="text-[11px] text-[#A09A94] block">2 days late · Tap to review</span>
+              </div>
+              <ArrowRight size={14} className="text-[#E85D2A] shrink-0" />
+            </button>
+          )}
+
+          {/* ═══ 4. NEXT BOOKING — compact card ═══ */}
+          {nextBooking && (
+            <div
+              className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] px-4 py-3.5 mb-5 active:scale-[0.985] transition-transform cursor-pointer flex items-center gap-3.5"
+              style={{ animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}
+            >
+              <div className="w-[42px] h-[42px] rounded-[12px] bg-[#EDE8E2] flex items-center justify-center shrink-0">
+                {(() => { const BIcon = getHomeBookingIcon(nextBooking.service); return <BIcon size={20} className="text-[#6E6058]" strokeWidth={1.75} />; })()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-[15px] font-bold text-[#111] leading-tight">{nextBooking.service}</span>
+                  <div className={`h-[18px] px-2 rounded-full text-[9px] font-bold border inline-flex items-center ${getHomeBookingStatusMeta(nextBooking.status).className}`}>
+                    {nextBooking.status}
+                  </div>
+                </div>
+                <span className="text-[12px] text-[#A09A94] mt-0.5 block">{nextBooking.walkerName} · {formatDateTime(nextBooking.date)}</span>
+              </div>
+              <ChevronRight size={16} className="text-[#A09A94] shrink-0" />
             </div>
           )}
 
-          {/* Today's tasks — compact */}
-          {nextReminder && (
-            <div className="rounded-[20px] p-5" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <div className="text-[10px] font-bold text-[#B5AFA8] uppercase tracking-[0.08em] mb-3">Today · {filteredReminders.filter(r => !completedReminders.has(r.id)).length} remaining</div>
-              <div className="space-y-2">
-                {filteredReminders.slice(0, 3).map((r) => {
+          {/* ═══ 5. QUICK LOG ENTRIES — inline above tasks ═══ */}
+          {quickLogEntries.filter(e => e.petId === displayPetId).length > 0 && (
+            <div className="mb-4" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">Logged</div>
+              {quickLogEntries.filter(e => e.petId === displayPetId).slice(0, 3).map((entry) => (
+                <div key={entry.id} className="flex items-center gap-3 py-2 border-b border-[#EDE8E2]">
+                  <span className="text-[14px]">{entry.icon}</span>
+                  <span className="text-[13px] font-medium text-[#6E6058] flex-1">{entry.title}</span>
+                  <span className="text-[12px] text-[#A09A94]">{entry.time}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ═══ 5. TODAY'S TASKS — flat list, no card ═══ */}
+          {filteredReminders.length > 0 && (
+            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Today · {remainingCount} remaining</div>
+                <button onClick={openQuickLogModal} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+                  <Plus size={14} className="text-[#A09A94]" />
+                </button>
+              </div>
+              <div>
+                {filteredReminders.map((r) => {
                   const Icon = getTimelineIcon(r.type);
                   const isDone = completedReminders.has(r.id);
                   const canSwipe = r.action === 'complete' && !isDone;
+                  const isExpandable = r.action === 'expand';
                   return (
-                    <div key={r.id} className="relative overflow-hidden rounded-[12px]">
+                    <div key={r.id} className="relative overflow-hidden">
                       {/* Swipe reveal background */}
                       {canSwipe && (
-                        <div className="absolute inset-0 bg-[#E85D2A] flex items-center pl-4 rounded-[12px]">
+                        <div className="absolute inset-0 bg-[#E85D2A] flex items-center pl-4">
                           <Check size={16} className="text-white" strokeWidth={2.5} />
                           <span className="text-white text-[12px] font-semibold ml-1.5">Done</span>
                         </div>
                       )}
                       <div
-                        className={`relative flex items-center gap-3 py-2.5 px-1 bg-[#F7F5F2] transition-all duration-200 ${isDone ? 'opacity-40' : ''}`}
-                        style={{ touchAction: canSwipe ? 'pan-y' : 'auto' }}
+                        className={`relative flex items-center gap-3 py-3 border-b border-[#EDE8E2] transition-all duration-200 ${isDone ? 'opacity-40' : ''}`}
+                        style={{ touchAction: canSwipe ? 'pan-y' : 'auto', background: '#F7F5F2' }}
                         onTouchStart={canSwipe ? (e) => {
                           const startX = e.touches[0].clientX;
                           const el = e.currentTarget;
@@ -4207,19 +4252,25 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                           }
                         } : undefined}
                       >
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isDone ? 'bg-[#EDEAE6]' : 'bg-[#EDE8E2]'}`}>
-                          <Icon size={14} className={isDone ? 'text-[#C4BBB3]' : 'text-[#8E8580]'} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <span className={`text-[14px] font-semibold ${isDone ? 'text-[#A09A94] line-through' : 'text-[#111]'}`}>{r.title}</span>
-                          <span className="text-[12px] text-[#A09A94] ml-2">{r.time}</span>
-                        </div>
-                        {r.action === 'complete' && (
+                        {r.action === 'complete' ? (
                           <button
                             onClick={() => handleCompleteReminder(r.id)}
-                            className={`w-[24px] h-[24px] rounded-full border-2 inline-flex items-center justify-center transition-all duration-200 ${isDone ? 'bg-[#E85D2A] border-[#E85D2A] scale-110' : 'border-[#D4CCC4] active:scale-90'}`}
+                            className={`w-[22px] h-[22px] rounded-full border-[1.5px] inline-flex items-center justify-center transition-all duration-200 shrink-0 ${isDone ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#D4CCC4] active:scale-90'}`}
                           >
-                            {isDone && <Check size={13} className="text-white" strokeWidth={3} />}
+                            {isDone && <Check size={11} className="text-white" strokeWidth={3} />}
+                          </button>
+                        ) : (
+                          <div className="w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0 bg-[#EDE8E2]">
+                            <Icon size={11} className="text-[#8E8580]" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <span className={`text-[14px] font-medium ${isDone ? 'text-[#A09A94] line-through' : 'text-[#111]'}`}>{r.title}</span>
+                        </div>
+                        <span className="text-[12px] text-[#A09A94] tabular-nums shrink-0">{r.time}</span>
+                        {isExpandable && (
+                          <button onClick={() => handleToggleHomeExpand(r.id)} className="ml-1 shrink-0">
+                            <ChevronRight size={14} className="text-[#C4BBB3]" />
                           </button>
                         )}
                       </div>
@@ -4227,14 +4278,11 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   );
                 })}
               </div>
-              {filteredReminders.length > 3 && (
-                <button onClick={openQuickLogModal} className="mt-3 text-[12px] font-semibold text-[#E85D2A] active:opacity-70">See all tasks <ArrowRight size={11} className="inline ml-0.5" /></button>
-              )}
             </div>
           )}
 
-          {/* Streak + Quick actions inline */}
-          <div className="flex items-center gap-3 pt-1" style={{ animation: 'homeReveal 0.4s 0.25s cubic-bezier(0.22,1,0.36,1) both' }}>
+          {/* ═══ 6. STREAK + QUICK ACTIONS ═══ */}
+          <div className="flex items-center gap-3 mb-5" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
             <div className="flex items-center gap-1.5 px-3 py-2 rounded-full" style={{ background: '#FFF5F0' }}>
               <Activity size={13} className="text-[#E85D2A]" />
               <span className="text-[11px] font-bold text-[#E85D2A]">45-day streak</span>
@@ -4251,11 +4299,11 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </button>
           </div>
 
-          {/* ═══ DISCOVERY: Scroll reveals more ═══ */}
-          <div className="h-[1px] bg-[#EDE8E2] my-1" />
+          {/* ═══ DIVIDER ═══ */}
+          <div className="h-[1px] bg-[#EDE8E2] mb-5" />
 
-          {/* Services row */}
-          <div style={{ animation: 'homeReveal 0.4s 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
+          {/* ═══ 7. SERVICES ═══ */}
+          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.32s cubic-bezier(0.22,1,0.36,1) both' }}>
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-[15px] font-semibold text-[#111]">Services</h3>
               <button onClick={() => onNavigate('services')} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">Browse all</button>
@@ -4275,9 +4323,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           </div>
 
-          {/* Suggested */}
+          {/* ═══ 8. SUGGESTED ═══ */}
           {filteredSuggestions.length > 0 && (
-            <div style={{ animation: 'homeReveal 0.4s 0.35s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.36s cubic-bezier(0.22,1,0.36,1) both' }}>
               {filteredSuggestions.slice(0, 1).map(s => (
                 <div key={s.id} className="rounded-[16px] p-4 flex items-center gap-3 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F3EFEB' }}>
                   <div className="w-10 h-10 rounded-[12px] bg-[#EDE8E2] flex items-center justify-center shrink-0">{renderLegacyIcon(s.icon, 18, 'text-[#8E8580]')}</div>
@@ -4291,8 +4339,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* Nearby Friends — compact */}
-          <div style={{ animation: 'homeReveal 0.4s 0.4s cubic-bezier(0.22,1,0.36,1) both' }}>
+          {/* ═══ 9. NEARBY FRIENDS ═══ */}
+          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.4s cubic-bezier(0.22,1,0.36,1) both' }}>
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-[15px] font-semibold text-[#111]">Nearby</h3>
               <button className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">See all</button>
@@ -4324,6 +4372,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           <div className="h-6" />
         </div>
       </div>
+
+      {/* ═══ QUICK LOG MODAL (preserved) ═══ */}
       {quickLogModalOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center px-6" role="dialog" aria-modal="true">
           <button className="absolute inset-0 bg-black/20" onClick={() => setQuickLogModalOpen(false)} aria-label="Close quick log modal" />
