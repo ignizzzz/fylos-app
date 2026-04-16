@@ -4483,7 +4483,45 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           100% { opacity: 1; transform: scale(1) translateY(0); }
         }
       `}} />
-      <CardModal isOpen={medSheetOpen} onClose={() => setMedSheetOpen(false)} title="Quick med log"><div className="space-y-6 pt-2"><TextInput label="Medication Name" placeholder="e.g. Heartworm chew" value={medName} onChange={(e) => setMedName(e.target.value)} /><div className="flex gap-3 pt-2"><Button variant="secondary" onClick={() => setMedSheetOpen(false)}>Cancel</Button><Button variant="primary" onClick={() => { alert("Saved (mock)"); setMedSheetOpen(false); setMedName(''); }} disabled={!medName.trim()}>Save</Button></div></div></CardModal>
+      {medSheetOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center px-6" role="dialog" aria-modal="true">
+          <button className="absolute inset-0 bg-[#F7F5F2]/80 backdrop-blur-[6px]" onClick={() => setMedSheetOpen(false)} style={{ animation: 'fabOverlayIn 0.2s ease-out both' }} />
+          <div
+            className="relative z-10 w-full max-w-[340px] rounded-[24px] bg-white shadow-[0_12px_48px_rgba(0,0,0,0.12),0_0_0_0.5px_rgba(0,0,0,0.04)] px-5 pb-6 pt-5"
+            style={{ animation: 'quickLogPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both' }}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-[20px] font-bold text-[#111] tracking-[-0.3px]">Log medication</h3>
+              <button onClick={() => setMedSheetOpen(false)} className="w-[36px] h-[36px] rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+                <X size={16} color="#111" strokeWidth={2} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-[0.1em] mb-2 block">Medication name</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Heartworm chew"
+                  value={medName}
+                  onChange={(e) => setMedName(e.target.value)}
+                  className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none focus:border-[#E85D2A]/40 transition-colors"
+                />
+              </div>
+              <button
+                onClick={() => { alert("Saved (mock)"); setMedSheetOpen(false); setMedName(''); }}
+                disabled={!medName.trim()}
+                className={`w-full py-3.5 rounded-[14px] text-[14px] font-semibold transition-all flex items-center justify-center ${
+                  !medName.trim()
+                    ? 'bg-[#EDE8E2] text-[#A09A94] cursor-not-allowed'
+                    : 'bg-[#111] text-white active:scale-[0.97] shadow-[0_4px_20px_rgba(0,0,0,0.12)]'
+                }`}
+              >
+                Save medication
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; } .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}} />
     </ScreenContainer>
   );
