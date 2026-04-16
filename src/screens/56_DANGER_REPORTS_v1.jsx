@@ -598,9 +598,15 @@ export default function DangerReportsScreen() {
         .hide-scroll { scrollbar-width: none; }
       `}</style>
 
+      {/* TOP GRADIENT FADE — covers header + tabs + chips zone */}
+      <div className="absolute top-0 left-0 w-full h-[200px] z-20 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2] via-50% to-transparent" />
+
+      {/* BOTTOM GRADIENT FADE — covers FAB zone */}
+      <div className="absolute bottom-0 left-0 w-full h-[120px] z-20 pointer-events-none bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2]/85 to-transparent" />
+
       {/* HEADER */}
       <header
-        className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent"
+        className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none"
       >
         <div className="flex justify-between items-center w-full pointer-events-auto">
           <button
@@ -621,7 +627,7 @@ export default function DangerReportsScreen() {
       </header>
 
       {/* Segmented control */}
-      <div className="absolute top-[96px] left-0 w-full z-30 px-5">
+      <div className="absolute top-[110px] left-0 w-full z-30 px-5">
         <div
           className="flex items-center p-1 rounded-full w-full"
           style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
@@ -646,7 +652,7 @@ export default function DangerReportsScreen() {
       </div>
 
       {/* CONTENT */}
-      <div className="absolute inset-0 pt-[148px] pb-[88px]">
+      <div className={`absolute inset-0 ${viewMode === 'map' ? '' : 'pt-[160px] pb-[40px]'}`}>
         {viewMode === 'map' ? (
           <MapView
             reports={filteredReports}
@@ -719,14 +725,11 @@ export default function DangerReportsScreen() {
 function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId, isEmpty, openReportForm }) {
   return (
     <div className="relative w-full h-full">
-      <div
-        className="absolute left-4 right-4 top-0 bottom-0 rounded-[24px] overflow-hidden"
-        style={{ border: '1px solid #EDE8E2' }}
-      >
+      <div className="absolute inset-0 overflow-hidden">
         <MapCanvas />
 
         {/* Filter chips overlay */}
-        <div className="absolute top-3 left-0 right-0 px-3 z-10">
+        <div className="absolute top-[160px] left-0 right-0 px-5 z-30">
           <div className="flex gap-1.5 overflow-x-auto hide-scroll">
             {FILTER_CHIPS.map((chip) => {
               const active = activeFilter === chip.id;
@@ -778,7 +781,7 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
         )}
 
         {/* Legend */}
-        <div className="absolute bottom-3 left-3 right-3 z-10">
+        <div className="absolute bottom-[100px] left-3 right-[80px] z-30">
           <div
             className="flex items-center gap-2 px-3 py-2 rounded-full overflow-x-auto hide-scroll"
             style={{
