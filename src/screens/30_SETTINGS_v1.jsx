@@ -12,7 +12,7 @@ import {
 /**
  * FYLOS Logo Component
  */
-const FylosLogo = ({ textColor = '#000000', dotColor = '#FF6B35', fontSize = '2rem', className = '' }) => (
+const FylosLogo = ({ textColor = '#000000', dotColor = '#E85D2A', fontSize = '2rem', className = '' }) => (
   <div className={className} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: `calc(${fontSize} * 0.15)`, fontFamily: '"Nunito", sans-serif' }}>
     <span style={{ fontSize: fontSize, fontWeight: 800, color: textColor, letterSpacing: '-0.5px', lineHeight: 1 }}>FYLOS</span>
     <div style={{ width: `calc(${fontSize} * 0.25)`, height: `calc(${fontSize} * 0.25)`, borderRadius: '50%', backgroundColor: dotColor }} />
@@ -66,24 +66,24 @@ const TABS = [
 ];
 
 const THEME = {
-  colors: { accent: '#FF6B35', primaryText: '#111111', secondaryText: '#6E6E73', danger: '#FF3B30', success: '#00C060', divider: '#E5E5E5' }
+  colors: { accent: '#E85D2A', primaryText: '#111', secondaryText: '#6E6058', danger: '#FF3B30', success: '#00C060', divider: '#CFCFD4' }
 };
 
 // --- DESIGN SYSTEM COMPONENTS ---
 const Text = ({ variant = 'body', className = '', children, ...props }) => {
   const variants = {
-    title: "text-[24px] font-bold text-[#111111] tracking-tight",
-    subtitle: "text-[17px] font-semibold text-[#111111]",
-    body: "text-[15px] text-[#111111] leading-relaxed",
-    caption: "text-[13px] text-[#6E6E73]",
-    label: "text-[12px] font-semibold text-[#8E8E93] uppercase tracking-wider"
+    title: "text-[24px] font-bold text-[#111] tracking-tight",
+    subtitle: "text-[17px] font-semibold text-[#111]",
+    body: "text-[15px] text-[#111] leading-relaxed",
+    caption: "text-[13px] text-[#6E6058]",
+    label: "text-[12px] font-semibold text-[#A09A94] uppercase tracking-wider"
   };
   return <div className={`${variants[variant]} ${className}`} {...props}>{children}</div>;
 };
 
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
-    default: "bg-[#F7F7F8] text-[#6E6E73]",
+    default: "bg-[#F3EFEB] text-[#6E6058]",
     count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
@@ -102,7 +102,7 @@ const Avatar = ({ src, initials, size = 48, badge, badgeColor = THEME.colors.dan
     {src ? (
       <img src={src} className="w-full h-full rounded-full object-cover border border-black/[0.04]" alt="Avatar" />
     ) : (
-      <div className="w-full h-full rounded-full bg-[#F7F7F8] border border-black/[0.04] flex items-center justify-center text-[#111111] font-semibold" style={{ fontSize: size * 0.4 }}>
+      <div className="w-full h-full rounded-full bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center text-[#111] font-semibold" style={{ fontSize: size * 0.4 }}>
         {initials}
       </div>
     )}
@@ -112,8 +112,8 @@ const Avatar = ({ src, initials, size = 48, badge, badgeColor = THEME.colors.dan
 
 const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = true, icon: Icon, isLoading, disabled, className = '', ...props }) => {
   const variants = {
-    primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
-    secondary: "bg-transparent text-[#111111] border-[1.5px] border-black/[0.08] hover:bg-[#F7F7F8]",
+    primary: "bg-[#111] text-white shadow-[0_4px_20px_rgba(0,0,0,0.12)]",
+    secondary: "bg-transparent text-[#111] border-[1.5px] border-[#EDE8E2] hover:bg-[#F3EFEB]",
     destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]"
   };
   const sizes = { small: "px-3 py-2 text-[14px] rounded-xl", medium: "px-4 py-[14px] text-[16px]", large: "px-6 py-4 text-[18px] rounded-[20px]" };
@@ -131,30 +131,30 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
 
 const TextInput = ({ label, error, helperText, disabled, className = '', ...props }) => (
   <div className={`flex flex-col gap-1.5 w-full ${className} ${disabled ? 'opacity-50' : ''}`}>
-    {label && <label className="text-[13px] font-medium text-[#6E6E73] ml-1">{label}</label>}
-    <input disabled={disabled} className={`w-full h-[52px] px-4 bg-[#FFFFFF] border text-[16px] text-[#111111] rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/10 ${error ? 'border-[#FF3B30] focus:border-[#FF3B30]' : 'border-black/[0.08] focus:border-[#FF6B35]'} placeholder:text-[#8E8E93]`} {...props} />
-    {error ? <span className="text-[12px] text-[#FF3B30] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span> : helperText ? <span className="text-[12px] text-[#8E8E93] ml-1">{helperText}</span> : null}
+    {label && <label className="text-[13px] font-medium text-[#6E6058] ml-1">{label}</label>}
+    <input disabled={disabled} className={`w-full h-[52px] px-4 bg-[#FFFFFF] border text-[16px] text-[#111] rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#E85D2A]/10 ${error ? 'border-[#FF3B30] focus:border-[#FF3B30]' : 'border-[#EDE8E2] focus:border-[#E85D2A]'} placeholder:text-[#A09A94]`} {...props} />
+    {error ? <span className="text-[12px] text-[#FF3B30] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span> : helperText ? <span className="text-[12px] text-[#A09A94] ml-1">{helperText}</span> : null}
   </div>
 );
 
 const Select = ({ label, options = [], value, onChange, disabled, className = '' }) => (
   <div className={`flex flex-col gap-1.5 w-full ${className} ${disabled ? 'opacity-50' : ''}`}>
-    {label && <label className="text-[13px] font-medium text-[#6E6E73] ml-1">{label}</label>}
+    {label && <label className="text-[13px] font-medium text-[#6E6058] ml-1">{label}</label>}
     <div className="relative">
-      <select 
-        disabled={disabled} 
+      <select
+        disabled={disabled}
         {...(onChange ? { value, onChange } : { defaultValue: value })}
-        className="w-full h-[52px] px-4 pr-10 bg-[#FFFFFF] border border-black/[0.08] text-[16px] text-[#111111] rounded-2xl appearance-none transition-all focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10"
+        className="w-full h-[52px] px-4 pr-10 bg-[#FFFFFF] border border-[#EDE8E2] text-[16px] text-[#111] rounded-2xl appearance-none transition-all focus:outline-none focus:border-[#E85D2A] focus:ring-4 focus:ring-[#E85D2A]/10"
       >
         {options.map((opt, i) => <option key={i} value={opt.value}>{opt.label}</option>)}
       </select>
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#8E8E93]"><ChevronDown size={18} /></div>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#A09A94]"><ChevronDown size={18} /></div>
     </div>
   </div>
 );
 
 const Switch = ({ checked, onChange }) => (
-  <button role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={`w-[50px] h-[30px] rounded-full p-1 transition-colors duration-200 ease-in-out ${checked ? 'bg-[#00C060]' : 'bg-[#E5E5E5]'} shrink-0`}>
+  <button role="switch" aria-checked={checked} onClick={() => onChange(!checked)} className={`w-[50px] h-[30px] rounded-full p-1 transition-colors duration-200 ease-in-out ${checked ? 'bg-[#00C060]' : 'bg-[#D5CEC7]'} shrink-0`}>
     <div className={`w-[22px] h-[22px] bg-white rounded-full shadow-sm transition-transform duration-200 ease-in-out ${checked ? 'translate-x-[20px]' : 'translate-x-0'}`} />
   </button>
 );
@@ -201,7 +201,7 @@ const BottomSheet = ({ isOpen, onClose, title, children }) => {
           <div className="w-12 h-1.5 bg-black/[0.08] rounded-full" />
         </div>
         <div className="px-6 pb-6 overflow-y-auto flex-1 custom-scrollbar">
-          {title && <h3 className="text-[20px] font-bold text-[#111111] mb-4">{title}</h3>}
+          {title && <h3 className="text-[20px] font-bold text-[#111] mb-4">{title}</h3>}
           {children}
         </div>
       </div>
@@ -222,11 +222,11 @@ const TabBar = ({ activeTab, onTabChange }) => (
             onClick={() => onTabChange(tab.id)}
             className="relative flex-1 h-full flex flex-col items-center justify-center gap-[4px] group"
           >
-            <div className={`absolute top-[12px] w-[32px] h-[32px] bg-[#FF6B35] rounded-full blur-[12px] transition-opacity duration-[240ms] ${isActive ? 'opacity-25' : 'opacity-0'}`} />
-            <div className={`relative z-10 flex items-center justify-center transition-colors duration-[240ms] ${isActive ? 'text-[#FF6B35] animate-spring-bump' : 'text-[#8E8E93]'}`}>
+            <div className={`absolute top-[12px] w-[32px] h-[32px] bg-[#E85D2A] rounded-full blur-[12px] transition-opacity duration-[240ms] ${isActive ? 'opacity-25' : 'opacity-0'}`} />
+            <div className={`relative z-10 flex items-center justify-center transition-colors duration-[240ms] ${isActive ? 'text-[#E85D2A] animate-spring-bump' : 'text-[#A09A94]'}`}>
               <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
             </div>
-            <span className={`text-[11px] font-medium transition-colors ${isActive ? 'text-[#FF6B35]' : 'text-[#8E8E93]'}`}>
+            <span className={`text-[11px] font-medium transition-colors ${isActive ? 'text-[#E85D2A]' : 'text-[#A09A94]'}`}>
               {tab.label}
             </span>
           </button>
@@ -240,11 +240,11 @@ const TabBar = ({ activeTab, onTabChange }) => (
 
 const SettingsSection = ({ title, children, footer }) => (
   <div className="mb-6 px-5">
-    {title && <h3 className="mb-2 text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider ml-1">{title}</h3>}
-    <div className="bg-white rounded-[20px] border border-black/[0.04] overflow-hidden shadow-sm">
+    {title && <h3 className="mb-2 text-[12px] font-semibold text-[#A09A94] uppercase tracking-wider ml-1">{title}</h3>}
+    <div className="bg-[#F3EFEB] rounded-[20px] border border-[#EDE8E2] overflow-hidden">
       {children}
     </div>
-    {footer && <p className="mt-2 text-[13px] text-[#6E6E73] ml-1">{footer}</p>}
+    {footer && <p className="mt-2 text-[13px] text-[#6E6058] ml-1">{footer}</p>}
   </div>
 );
 
@@ -252,29 +252,29 @@ const SettingsRow = ({ icon: Icon, title, subtitle, right, onClick, destructive,
   <div className="relative">
     <div onClick={onClick} className={`flex items-center gap-3 px-4 py-3.5 ${onClick ? 'cursor-pointer active:bg-black/5 transition-colors' : ''}`}>
       {Icon && (
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${destructive ? 'bg-[#FFE5E5]' : iconBg || 'bg-[#F7F7F8]'}`}>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${destructive ? 'bg-[#FFE5E5]' : iconBg || 'bg-[#F7F5F2]'}`}>
           <Icon size={18} color={destructive ? THEME.colors.danger : (iconBg ? '#FFFFFF' : THEME.colors.primaryText)} />
         </div>
       )}
       <div className="flex-1 min-w-0 pr-2">
-        <div className={`text-[16px] truncate ${destructive ? 'text-[#FF3B30] font-semibold' : 'text-[#111111]'}`}>{title}</div>
-        {subtitle && <div className="text-[13px] text-[#6E6E73] truncate mt-0.5 leading-snug">{subtitle}</div>}
+        <div className={`text-[16px] truncate ${destructive ? 'text-[#FF3B30] font-semibold' : 'text-[#111]'}`}>{title}</div>
+        {subtitle && <div className="text-[13px] text-[#6E6058] truncate mt-0.5 leading-snug">{subtitle}</div>}
       </div>
       {right && <div className="shrink-0">{right}</div>}
       {onClick && !right && !destructive && <ChevronRight size={20} className="text-[#CFCFD4] shrink-0" />}
     </div>
-    {!isLast && <div className="absolute bottom-0 left-[52px] right-0 h-[1px] bg-black/[0.04]" />}
+    {!isLast && <div className="absolute bottom-0 left-[52px] right-4 border-t border-dashed border-[#CFCFD4]" />}
   </div>
 );
 
 const SettingsScreenLayout = ({ title, onBack, children }) => (
-  <div className="absolute inset-0 bg-[#F0F0F2] z-[60] flex flex-col animate-in slide-in-from-right-full duration-200 ease-out">
-    <header className="pt-14 pb-4 px-5 bg-[#F0F0F2] flex items-center justify-between shrink-0">
-      <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06] shadow-sm active:scale-95 transition-all">
-        <ChevronLeft size={22} color="#111111" />
+  <div className="absolute inset-0 bg-[#F7F5F2] z-[60] flex flex-col animate-in slide-in-from-right-full duration-200 ease-out">
+    <header className="pt-14 pb-4 px-5 bg-[#F7F5F2] flex items-center justify-between shrink-0">
+      <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>
+        <ChevronLeft size={22} color="#111" />
       </button>
-      <h2 className="text-[17px] font-semibold text-[#111111]">{title}</h2>
-      <div className="w-10" />
+      <h2 className="text-[17px] font-semibold text-[#111]">{title}</h2>
+      <div className="w-[44px]" />
     </header>
     <div className="flex-1 overflow-y-auto custom-scrollbar pb-10">
       {children}
@@ -291,7 +291,7 @@ const AccountSettings = ({ onBack }) => {
       <div className="flex flex-col items-center mt-4 mb-8">
         <div className="relative mb-3">
           <Avatar src={MOCK_USER.avatar} size={100} />
-          <button onClick={() => setPhotoSheet(true)} className="absolute bottom-0 right-0 w-8 h-8 bg-[#FF6B35] rounded-full border-[3px] border-[#F0F0F2] flex items-center justify-center shadow-sm">
+          <button onClick={() => setPhotoSheet(true)} className="absolute bottom-0 right-0 w-8 h-8 bg-[#E85D2A] rounded-full border-[3px] border-[#F7F5F2] flex items-center justify-center shadow-sm">
             <Camera size={14} color="white" />
           </button>
         </div>
@@ -337,7 +337,7 @@ const PetsManagement = ({ onBack }) => (
           title={
             <div className="flex items-center gap-2">
               {pet.name}
-              {pet.isActive ? <span className="w-2 h-2 bg-[#00C060] rounded-full" /> : <span className="w-2 h-2 border border-[#8E8E93] rounded-full" />}
+              {pet.isActive ? <span className="w-2 h-2 bg-[#00C060] rounded-full" /> : <span className="w-2 h-2 border border-[#A09A94] rounded-full" />}
             </div>
           }
           subtitle={`${pet.breed} • ${pet.age}`}
@@ -405,9 +405,9 @@ const PrivacySettings = ({ onBack }) => {
           <Select label="Milestones" value={s.activitySharing.milestones} onChange={(e) => setS({...s, activitySharing: {...s.activitySharing, milestones: e.target.value}})} options={[{label: 'Private', value: 'private'}, {label: 'Friends Only', value: 'friends'}, {label: 'Public', value: 'public'}]} />
           <Select label="Service Reviews" value={s.activitySharing.serviceReviews} onChange={(e) => setS({...s, activitySharing: {...s.activitySharing, serviceReviews: e.target.value}})} options={[{label: 'Friends Only', value: 'friends'}, {label: 'Public', value: 'public'}]} helperText="Public reviews help the community." />
         </div>
-        <div className="border-t border-black/[0.04] p-4 bg-[#F7F7F8] flex items-center gap-3">
-          <Lock size={16} color="#8E8E93" />
-          <span className="text-[13px] text-[#6E6E73] font-medium">Health Data is Always Private</span>
+        <div className="border-t border-dashed border-[#CFCFD4] p-4 bg-[#F7F5F2] flex items-center gap-3">
+          <Lock size={16} color="#A09A94" />
+          <span className="text-[13px] text-[#6E6058] font-medium">Health Data is Always Private</span>
         </div>
       </SettingsSection>
 
@@ -449,8 +449,8 @@ const PaymentMethods = ({ onBack }) => {
       <SettingsSection title="Billing History">
         <SettingsRow title="Feb 20, 2026 · CHF 95.00" subtitle="90 min Walk with Lukas F." right={<Button variant="secondary" size="small" fullWidth={false}>Receipt</Button>} />
         <SettingsRow title="Feb 15, 2026 · CHF 120.00" subtitle="Grooming at Paws & Claws" right={<Button variant="secondary" size="small" fullWidth={false}>Receipt</Button>} />
-        <div className="p-3 text-center border-t border-black/[0.04]">
-          <span className="text-[14px] text-[#FF6B35] font-semibold cursor-pointer">View All Transactions</span>
+        <div className="p-3 text-center border-t border-dashed border-[#CFCFD4]">
+          <span className="text-[14px] text-[#E85D2A] font-semibold cursor-pointer">View All Transactions</span>
         </div>
       </SettingsSection>
 
@@ -463,7 +463,7 @@ const PaymentMethods = ({ onBack }) => {
           </div>
           <TextInput label="Cardholder Name" placeholder="Alex Mueller" />
           <Button variant="primary" onClick={() => setSheet(false)} className="mt-4">Save Card</Button>
-          <p className="text-center text-[12px] text-[#8E8E93] flex items-center justify-center gap-1 mt-2"><Lock size={12}/> Secured by Stripe</p>
+          <p className="text-center text-[12px] text-[#A09A94] flex items-center justify-center gap-1 mt-2"><Lock size={12}/> Secured by Stripe</p>
         </div>
       </BottomSheet>
     </SettingsScreenLayout>
@@ -512,7 +512,7 @@ const DataManagement = ({ onBack }) => {
 
       <SettingsSection title="Backup & Restore">
         <SettingsRow title="iCloud Backup" subtitle="Last backup: Today, 3:00 AM" right={<Switch checked={true} onChange={()=>{}} />} isLast />
-        <div className="flex gap-3 p-4 border-t border-black/[0.04]">
+        <div className="flex gap-3 p-4 border-t border-dashed border-[#CFCFD4]">
           <Button variant="secondary" className="flex-1">Backup Now</Button>
           <Button variant="secondary" className="flex-1">Restore</Button>
         </div>
@@ -521,7 +521,7 @@ const DataManagement = ({ onBack }) => {
       <SettingsSection title="Storage">
         <SettingsRow title="Photos & Videos" subtitle="245 MB" />
         <SettingsRow title="Documents" subtitle="18 MB" isLast />
-        <div className="p-4 border-t border-black/[0.04]">
+        <div className="p-4 border-t border-dashed border-[#CFCFD4]">
           <Button variant="secondary">Manage Storage</Button>
         </div>
       </SettingsSection>
@@ -558,7 +558,7 @@ const HelpSupport = ({ onBack }) => (
       <SettingsRow title="How do I add a pet?" />
       <SettingsRow title="How do I book a walk?" />
       <SettingsRow title="How do I cancel a booking?" />
-      <div className="p-3 text-center border-t border-black/[0.04]"><span className="text-[14px] text-[#FF6B35] font-semibold cursor-pointer">View All FAQs</span></div>
+      <div className="p-3 text-center border-t border-dashed border-[#CFCFD4]"><span className="text-[14px] text-[#E85D2A] font-semibold cursor-pointer">View All FAQs</span></div>
     </SettingsSection>
 
     <SettingsSection title="Contact Us">
@@ -577,8 +577,8 @@ const AboutScreen = ({ onBack }) => (
   <SettingsScreenLayout title="About" onBack={onBack}>
     <div className="flex flex-col items-center py-8">
       <FylosLogo fontSize="40px" className="mb-4" />
-      <h3 className="text-[20px] font-bold text-[#111111]">FYLOS</h3>
-      <p className="text-[#6E6E73] mb-1">Your Pet-Care OS</p>
+      <h3 className="text-[20px] font-bold text-[#111]">FYLOS</h3>
+      <p className="text-[#6E6058] mb-1">Your Pet-Care OS</p>
       <Badge>Version 1.2.0</Badge>
     </div>
 
@@ -589,10 +589,10 @@ const AboutScreen = ({ onBack }) => (
     </SettingsSection>
 
     <SettingsSection title="Company">
-      <div className="p-5 text-center text-[#6E6E73] text-[13px] leading-relaxed">
+      <div className="p-5 text-center text-[#6E6058] text-[13px] leading-relaxed">
         © 2026 FYLOS GmbH<br/>
         Zürich, Switzerland<br/><br/>
-        <div className="flex justify-center gap-4 text-[#FF6B35] font-semibold">
+        <div className="flex justify-center gap-4 text-[#E85D2A] font-semibold">
           <span>Website</span><span>Twitter</span><span>Instagram</span>
         </div>
       </div>
@@ -604,24 +604,24 @@ const SettingsHome = ({ onNavigate, onClose }) => {
   const [logoutSheet, setLogoutSheet] = useState(false);
   
   return (
-    <div className="absolute inset-0 bg-[#F0F0F2] z-[60] flex flex-col animate-in slide-in-from-bottom-full duration-300 ease-out">
-      <header className="pt-14 pb-4 px-5 bg-[#F0F0F2] flex items-center justify-between shrink-0 sticky top-0 z-10">
-        <h2 className="text-[24px] font-bold text-[#111111]">Settings</h2>
-        <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-black/[0.06] shadow-sm hover:bg-[#F7F7F8] active:scale-95 transition-all">
-          <X size={22} color="#111111" />
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[60] flex flex-col animate-in slide-in-from-bottom-full duration-300 ease-out">
+      <header className="pt-14 pb-4 px-5 bg-[#F7F5F2] flex items-center justify-between shrink-0 sticky top-0 z-10">
+        <h2 className="text-[24px] font-bold text-[#111]">Settings</h2>
+        <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>
+          <X size={22} color="#111" />
         </button>
       </header>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar pb-10">
         {/* Profile Card */}
         <div className="px-5 mb-6">
-          <div onClick={() => onNavigate('account')} className="bg-white rounded-[24px] p-5 flex items-center gap-4 border border-black/[0.04] shadow-sm cursor-pointer active:scale-[0.98] transition-all">
+          <div onClick={() => onNavigate('account')} className="bg-[#F3EFEB] rounded-[24px] p-5 flex items-center gap-4 border border-[#EDE8E2] cursor-pointer active:scale-[0.98] transition-all">
             <Avatar src={MOCK_USER.avatar} size={60} />
             <div className="flex-1 min-w-0">
-              <h3 className="text-[18px] font-bold text-[#111111] truncate">{MOCK_USER.name}</h3>
-              <p className="text-[14px] text-[#6E6E73] truncate">{MOCK_USER.email}</p>
+              <h3 className="text-[18px] font-bold text-[#111] truncate">{MOCK_USER.name}</h3>
+              <p className="text-[14px] text-[#6E6058] truncate">{MOCK_USER.email}</p>
             </div>
-            <div className="shrink-0 flex items-center gap-1 text-[#FF6B35] font-semibold text-[14px]">
+            <div className="shrink-0 flex items-center gap-1 text-[#E85D2A] font-semibold text-[14px]">
               Edit <ChevronRight size={16} />
             </div>
           </div>
@@ -636,7 +636,7 @@ const SettingsHome = ({ onNavigate, onClose }) => {
         </SettingsSection>
 
         <SettingsSection title="Data & Storage">
-          <SettingsRow icon={Database} iconBg="bg-[#8E8E93]" title="Data Management" subtitle="Export, backup, delete" onClick={() => onNavigate('data')} isLast />
+          <SettingsRow icon={Database} iconBg="bg-[#A09A94]" title="Data Management" subtitle="Export, backup, delete" onClick={() => onNavigate('data')} isLast />
         </SettingsSection>
 
         <SettingsSection title="Support & About">
@@ -645,13 +645,13 @@ const SettingsHome = ({ onNavigate, onClose }) => {
         </SettingsSection>
 
         <div className="px-5 mt-8">
-          <SettingsRow icon={LogOut} title="Log Out" destructive onClick={() => setLogoutSheet(true)} className="rounded-[20px] bg-white border border-black/[0.04] shadow-sm" isLast />
+          <SettingsRow icon={LogOut} title="Log Out" destructive onClick={() => setLogoutSheet(true)} className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2]" isLast />
         </div>
       </div>
 
       <BottomSheet isOpen={logoutSheet} onClose={() => setLogoutSheet(false)} title="Log Out?">
         <div className="space-y-4 mt-2">
-          <p className="text-[15px] text-[#6E6E73]">You can always log back in to your account.</p>
+          <p className="text-[15px] text-[#6E6058]">You can always log back in to your account.</p>
           <div className="flex flex-col gap-3 pt-2">
             <Button variant="destructive" onClick={() => { setLogoutSheet(false); onClose(); }}>Log Out</Button>
             <Button variant="secondary" onClick={() => setLogoutSheet(false)}>Cancel</Button>
@@ -686,7 +686,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F0F2] flex items-center justify-center font-sans antialiased">
+    <div className="min-h-screen bg-[#F7F5F2] flex items-center justify-center font-sans antialiased">
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar { display: none; }
         .custom-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -694,24 +694,24 @@ export default function App() {
         .animate-spring-bump { animation: springBump 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
       `}} />
 
-      <div className="relative w-full h-[100dvh] sm:h-[844px] sm:w-[390px] bg-[#FFFFFF] sm:rounded-[50px] shadow-2xl overflow-hidden sm:border-[8px] border-black">
+      <div className="relative w-full h-[100dvh] sm:h-[844px] sm:w-[390px] bg-[#F7F5F2] sm:rounded-[50px] shadow-2xl overflow-hidden sm:border-[8px] border-black">
         <div className="absolute top-[12px] left-1/2 -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-50 pointer-events-none hidden sm:block" />
 
         {isLoading ? (
-          <div className="absolute inset-0 bg-[#FFFFFF] z-50 flex flex-col items-center justify-center">
-            <FylosLogo fontSize="32px" textColor="#111111" className="mb-3" />
-            <p className="text-[14px] text-[#8E8E93] animate-pulse">Loading...</p>
+          <div className="absolute inset-0 bg-[#F7F5F2] z-50 flex flex-col items-center justify-center">
+            <FylosLogo fontSize="32px" textColor="#111" className="mb-3" />
+            <p className="text-[14px] text-[#A09A94] animate-pulse">Loading...</p>
           </div>
         ) : (
           <>
             <main className={`absolute inset-0 transition-opacity duration-200 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
-              <div className="absolute inset-0 overflow-y-auto bg-[#FFFFFF] custom-scrollbar">
+              <div className="absolute inset-0 overflow-y-auto bg-[#F7F5F2] custom-scrollbar" style={{ scrollbarWidth: 'none' }}>
                 <div className="min-h-full pt-[110px] pb-[120px] flex flex-col items-center justify-center px-6 text-center">
-                   <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
+                   <div className="w-20 h-20 rounded-full bg-[#F3EFEB] flex items-center justify-center mb-6">
                      <Sliders size={32} color="#CFCFD4" strokeWidth={1.5} />
                    </div>
-                   <h2 className="text-[20px] font-bold text-[#111111] mb-2">Step 30: Settings</h2>
-                   <p className="text-[15px] text-[#6E6E73] max-w-[260px] leading-relaxed mb-8">
+                   <h2 className="text-[20px] font-bold text-[#111] mb-2">Step 30: Settings</h2>
+                   <p className="text-[15px] text-[#6E6058] max-w-[260px] leading-relaxed mb-8">
                      Tap the profile picture in the top right corner to open the comprehensive Settings Hub.
                    </p>
                    <Button onClick={() => setSettingsView('home')} icon={Settings} fullWidth={false}>Open Settings</Button>
@@ -720,16 +720,16 @@ export default function App() {
             </main>
             
             {/* Standard Header with Avatar opening Settings */}
-            <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-white/95 via-white/70 to-transparent">
+            <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
               <div className="flex justify-between items-center w-full pointer-events-auto">
-                <h1 className="font-bold tracking-tight text-[#111111] ml-1 flex items-center">
-                  <FylosLogo fontSize="22px" textColor="#111111" />
+                <h1 className="font-bold tracking-tight text-[#111] ml-1 flex items-center">
+                  <FylosLogo fontSize="22px" textColor="#111" />
                 </h1>
-                <div className="flex items-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] p-1 h-[52px]">
-                  <button className="w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[#F7F7F8] transition-all"><Search size={20} color="#111111" /></button>
-                  <div className="w-[1px] h-[20px] bg-black/[0.06]" />
-                  <button className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[#F7F7F8]"><Bell size={20} color="#111111" /><span className="absolute top-[12px] right-[12px] w-[8px] h-[8px] bg-[#FF6B35] rounded-full border-[1.5px] border-white" /></button>
-                  <div className="w-[1px] h-[20px] bg-black/[0.06]" />
+                <div className="flex items-center border border-[#EDE8E2] rounded-[9999px] p-1 h-[52px]" style={{ background: '#F3EFEB' }}>
+                  <button className="w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[#F7F5F2] transition-all"><Search size={20} color="#111" /></button>
+                  <div className="w-[1px] h-[20px] bg-[#EDE8E2]" />
+                  <button className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[#F7F5F2]"><Bell size={20} color="#111" /><span className="absolute top-[12px] right-[12px] w-[8px] h-[8px] bg-[#E85D2A] rounded-full border-[1.5px] border-[#F3EFEB]" /></button>
+                  <div className="w-[1px] h-[20px] bg-[#EDE8E2]" />
                   <button onClick={() => setSettingsView('home')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full hover:opacity-80 transition-opacity">
                     <img src={MOCK_USER.avatar} className="w-[32px] h-[32px] rounded-full object-cover" alt="Profile" />
                   </button>

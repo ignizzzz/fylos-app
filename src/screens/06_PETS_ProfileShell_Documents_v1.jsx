@@ -164,9 +164,9 @@ const MOCK_USER = {
 const TABS = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'pets', label: 'Pets', icon: PawPrint },
+  { id: '_fab', label: '', icon: null },
   { id: 'services', label: 'Services', icon: Calendar },
   { id: 'activity', label: 'Activity', icon: Activity },
-  { id: 'vault', label: 'Vault', icon: Folder },
 ];
 
 const INITIAL_MOCK_PETS = [
@@ -1220,12 +1220,12 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
     {illustration ? (
       <div className="mb-6">{illustration}</div>
     ) : (
-      <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+      <div className="w-20 h-20 rounded-full bg-[#F3EFEB] flex items-center justify-center mb-6">
+        <Icon size={32} color="#A09A94" strokeWidth={1.5} />
       </div>
     )}
-    <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
-    <p className="text-[15px] text-[#6E6E73] max-w-[260px] leading-relaxed mb-8">
+    <h2 className="text-[20px] font-semibold text-[#111] mb-2">{title}</h2>
+    <p className="text-[15px] text-[#6E6058] max-w-[260px] leading-relaxed mb-8">
       {description}
     </p>
     {actionLabel && onAction && (
@@ -1284,26 +1284,120 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
   );
 };
 
-const TabBar = ({ activeTab, onTabChange, visible = true }) => (
-  <nav className={`absolute bottom-[22px] left-0 w-full px-5 z-40 pointer-events-none transition-all duration-250 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} role="tablist">
-    <div className="pointer-events-auto bg-white/70 backdrop-blur-xl shadow-[var(--shadow-level-2)] shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] rounded-[var(--radius-full)] h-[55px] flex justify-between items-center px-0.5">
-      {TABS.map((tab) => {
-        const Icon = tab.icon;
-        const isActive = activeTab === tab.id;
-        return (
-          <button key={tab.id} role="tab" aria-selected={isActive} onClick={() => onTabChange(tab.id)} className="relative flex-1 h-full flex flex-col items-center justify-center gap-[3px] group transition-all duration-[var(--motion-fast)] active:scale-[0.95]">
-            <div className={`relative z-10 flex items-center justify-center transition-all duration-[var(--motion-normal)] ease-[var(--ease-default)] ${isActive ? 'text-[var(--color-accent)] scale-110' : 'text-[var(--color-tertiary-text)] opacity-60'}`}>
-              <Icon size={18} strokeWidth={isActive ? 2 : 1.5} />
-            </div>
-            <span className={`text-[10px] font-medium leading-none transition-all duration-[var(--motion-normal)] ease-[var(--ease-default)] ${isActive ? 'text-[var(--color-accent)] opacity-100' : 'text-[var(--color-tertiary-text)] opacity-0'}`}>
-              {tab.label}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  </nav>
-);
+const FAB_ACTIONS = [
+  { id: 'book-walk', label: 'Book a walk', icon: Calendar },
+  { id: 'log-med', label: 'Log medication', icon: Pill },
+  { id: 'add-photo', label: 'Add photo', icon: Camera },
+  { id: 'add-pet', label: 'Add pet', icon: PawPrint },
+  { id: 'upload-doc', label: 'Upload file', icon: FileText },
+];
+
+const TabBar = ({ activeTab, onTabChange, visible = true }) => {
+  const [fabOpen, setFabOpen] = useState(false);
+
+  const handleFabAction = (actionId) => {
+    setFabOpen(false);
+    if (actionId === 'book-walk') onTabChange('services');
+    if (actionId === 'add-pet') window.location.href = '/add-pet';
+    if (actionId === 'add-photo') window.location.href = '/photo-gallery';
+    if (actionId === 'log-med') window.location.href = '/feeding-tracker';
+    if (actionId === 'upload-doc') window.location.href = '/help';
+  };
+
+  return (
+    <>
+      {/* ═══ FAB OVERLAY — full screen dim + blur ═══ */}
+      {fabOpen && (
+        <div className="absolute inset-0 z-[80] fab-overlay-enter" onClick={() => setFabOpen(false)}>
+          <div className="absolute inset-0 bg-[#F7F5F2]/85 backdrop-blur-[8px]" />
+        </div>
+      )}
+
+      {/* ═══ FAB MENU — centered grid above tab bar ═══ */}
+      {fabOpen && (
+        <div className="absolute bottom-[100px] left-0 right-0 z-[85] px-8">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-5">
+            {FAB_ACTIONS.map((action, i) => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.id}
+                  onClick={(e) => { e.stopPropagation(); handleFabAction(action.id); }}
+                  className="flex flex-col items-center gap-2 w-[72px] active:scale-[0.92] transition-transform"
+                  style={{ animation: `fabReveal 0.35s ${i * 0.05}s cubic-bezier(0.22, 1, 0.36, 1) both` }}
+                >
+                  <div className="w-[56px] h-[56px] rounded-[18px] bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+                    <Icon size={24} className="text-[#111]" strokeWidth={1.5} />
+                  </div>
+                  <span className="text-[11px] font-medium text-[#111] text-center leading-tight">{action.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ═══ TAB BAR ═══ */}
+      <nav className={`absolute bottom-[22px] left-0 w-full px-5 z-[90] pointer-events-none transition-all duration-250 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} role="tablist">
+        <div className="pointer-events-auto bg-white/75 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-white/60 rounded-[28px] h-[58px] flex items-center relative">
+          {TABS.map((tab) => {
+            if (tab.id === '_fab') {
+              return (
+                <div key="_fab" className="relative flex-[0.8] h-full flex items-center justify-center">
+                  <button
+                    onClick={() => setFabOpen(!fabOpen)}
+                    className="w-[48px] h-[48px] rounded-full flex items-center justify-center active:scale-[0.9] transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                    style={{
+                      background: fabOpen ? '#111' : '#E85D2A',
+                      boxShadow: fabOpen ? '0 4px 20px rgba(0,0,0,0.25)' : '0 4px 16px rgba(232,93,42,0.35)',
+                      transform: fabOpen ? 'rotate(45deg)' : 'rotate(0deg)',
+                    }}
+                  >
+                    <Plus size={24} color="#FFF" strokeWidth={2} />
+                  </button>
+                </div>
+              );
+            }
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => { setFabOpen(false); onTabChange(tab.id); }}
+                className="relative flex-1 h-full flex flex-col items-center justify-center gap-1 active:scale-[0.93] transition-all duration-200"
+              >
+                <Icon
+                  size={20}
+                  strokeWidth={isActive ? 2 : 1.5}
+                  className={`transition-all duration-200 ${isActive ? 'text-[#E85D2A]' : 'text-[#A09A94]'}`}
+                />
+                <span className={`text-[9px] font-semibold tracking-wide transition-all duration-200 ${isActive ? 'text-[#E85D2A] opacity-100' : 'text-[#A09A94] opacity-0 translate-y-1'}`}>
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fabReveal {
+          0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .fab-overlay-enter {
+          animation: fabOverlayIn 0.25s ease-out both;
+        }
+        @keyframes fabOverlayIn {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+      `}} />
+    </>
+  );
+};
 
 const ScreenContainer = ({ children, isLocked, hidePadding = false, onScroll }) => {
   const handleContainerScroll = (e) => {
@@ -1609,6 +1703,20 @@ const AboutTab = ({
             <span className="text-[10px] font-semibold text-[#C4B5A6]">Add</span>
           </div>
         </div>
+      </section>
+
+      {/* 5. Training */}
+      <section>
+        <button onClick={() => showToast('Opening training guides...')} className="w-full flex items-center justify-between py-3.5 active:opacity-70">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-[#E85D2A]/10 flex items-center justify-center"><Star size={16} className="text-[#E85D2A]" /></div>
+            <div>
+              <span className="text-[14px] font-medium text-[#111] block">Training guides</span>
+              <span className="text-[12px] text-[#A09A94]">3 of 12 completed</span>
+            </div>
+          </div>
+          <ChevronRight size={16} className="text-[#A09A94]" />
+        </button>
       </section>
     </div>
   );
@@ -2612,6 +2720,18 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
           </div>
           <button onClick={() => setShareSheet(true)} className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
             <Share2 size={13} className="text-[#A09A94]" /> <span className="text-[12px] font-semibold text-[#6E6058]">Share emergency info</span>
+          </button>
+
+          {/* Lost pet action */}
+          <button onClick={() => showToast('Opening lost pet alert...')} className="w-full flex items-center justify-between py-3.5 active:opacity-70">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#FF3B30]/10 flex items-center justify-center"><MapPin size={16} className="text-[#FF3B30]" /></div>
+              <div>
+                <span className="text-[14px] font-medium text-[#111] block">Report lost pet</span>
+                <span className="text-[12px] text-[#A09A94]">Alert nearby users</span>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-[#A09A94]" />
           </button>
         </div>
       </div>
@@ -3955,6 +4075,20 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
+          {/* Safety alert — nearby danger reports */}
+          <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#FFEBEA', border: '1px solid #FFCCC9', animation: 'homeReveal 0.4s 0.12s cubic-bezier(0.22,1,0.36,1) both' }} onClick={() => onNavigate('danger-reports')}>
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#FF3B30]/15 flex items-center justify-center shrink-0">
+                <AlertTriangle size={18} className="text-[#FF3B30]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[16px] font-bold text-[#111]">Safety alert nearby</h3>
+                <p className="text-[13px] text-[#A09A94] mt-1">Poison bait reported · Seefeld</p>
+              </div>
+              <span className="text-[13px] font-semibold text-[#FF3B30] flex items-center gap-1 shrink-0 mt-1">View <ArrowRight size={13} /></span>
+            </div>
+          </div>
+
           {/* Next up card — the ONE thing to focus on */}
           {nextBooking && (
             <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}>
@@ -4345,6 +4479,25 @@ const ServicesScreen = ({ onNavigate }) => {
               </div>
             ))}
           </div>
+
+          {/* Quick actions */}
+          <div className="mt-5 space-y-0">
+            <button onClick={() => onNavigate('map-providers')} className="w-full flex items-center justify-between py-3.5 active:opacity-70">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#E85D2A]/10 flex items-center justify-center"><Navigation size={16} className="text-[#E85D2A]" /></div>
+                <span className="text-[14px] font-medium text-[#111]">Explore on map</span>
+              </div>
+              <ChevronRight size={16} className="text-[#A09A94]" />
+            </button>
+            <div className="border-t border-dashed border-[#CFCFD4]" />
+            <button onClick={() => onNavigate('vet-telehealth')} className="w-full flex items-center justify-between py-3.5 active:opacity-70">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-[#E85D2A]/10 flex items-center justify-center"><Stethoscope size={16} className="text-[#E85D2A]" /></div>
+                <span className="text-[14px] font-medium text-[#111]">Vet telehealth</span>
+              </div>
+              <ChevronRight size={16} className="text-[#A09A94]" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -4400,21 +4553,21 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F7F5F2] z-[70] overflow-hidden flex flex-col">
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[70] overflow-hidden">
       {/* Header */}
-      <header className="bg-[#F7F5F2] pt-14 pb-3 px-5 z-40">
-        <div className="flex items-center gap-3">
-          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
-            <ChevronLeft size={20} color="#111" />
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
           </button>
-          <span className="text-[17px] font-bold text-[#111] flex-1">Book</span>
-          <button onClick={() => setShowCloseDialog(true)} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
-            <X size={18} color="#111" />
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Book</h2>
+          <button onClick={() => setShowCloseDialog(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <X size={18} color="#111" strokeWidth={1.75} />
           </button>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-[160px] bg-[#F7F5F2]">
+      <div className="absolute inset-0 overflow-y-auto bg-[#F7F5F2] pt-[110px] pb-[140px] px-5" style={{ scrollbarWidth: 'none' }}>
         {showValidation && !isValid && (
           <div className="mb-4 text-center">
             <span className="text-[13px] font-medium text-[#FF3B30]">Please complete all required fields</span>
@@ -4436,7 +4589,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                   className="flex items-center justify-between py-3 cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0 ${isSelected ? 'border-[#E85D2A]' : 'border-[#CFCFD4]'}`}>
+                    <div className={`w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0 ${isSelected ? 'border-[#E85D2A]' : 'border-[#A09A94]'}`}>
                       {isSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
                     </div>
                     <div className="flex flex-col">
@@ -4485,7 +4638,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                       key={idx}
                       disabled={!slot.available}
                       onClick={() => { setSelectedTime(slot.time); if(errors.date) setErrors(prev => ({...prev, date: false})); }}
-                      className={`px-4 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all ${!slot.available ? 'text-[#CFCFD4] cursor-not-allowed' : isSlotSelected ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] border border-[#EDE8E2] text-[#111]'}`}
+                      className={`px-4 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all ${!slot.available ? 'text-[#A09A94] cursor-not-allowed' : isSlotSelected ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] border border-[#EDE8E2] text-[#111]'}`}
                     >
                       {slot.time}
                     </button>
@@ -4548,7 +4701,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-[13px] font-medium text-[#A09A94]">+CHF {addon.price}</span>
-                    <div className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex shrink-0 items-center justify-center transition-colors ${isAddonSelected ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#CFCFD4]'}`}>
+                    <div className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex shrink-0 items-center justify-center transition-colors ${isAddonSelected ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#A09A94]'}`}>
                       {isAddonSelected && <Check size={12} color="#FFF" strokeWidth={3} />}
                     </div>
                   </div>
@@ -4600,11 +4753,8 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
       </div>
 
       {/* Bottom Button */}
-      <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40">
-        <button
-          className={`w-full py-3.5 rounded-[12px] text-[15px] font-semibold transition-all ${!isValid ? 'bg-[#EDE8E2] text-[#A09A94]' : 'bg-[#E85D2A] text-white active:scale-[0.98]'}`}
-          onClick={handleContinue}
-        >
+      <div className="absolute bottom-6 left-5 right-5 z-30">
+        <button onClick={handleContinue} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
           Continue
         </button>
       </div>
@@ -4628,7 +4778,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
               const isDateSelected = tempDate === dateStr;
               return (
                 <button key={day} disabled={!isSelectable} onClick={() => setTempDate(dateStr)} className="flex flex-col items-center justify-center gap-1">
-                  <div className={`w-9 h-9 flex items-center justify-center rounded-full text-[14px] font-medium transition-all ${isDateSelected ? 'bg-[#E85D2A] text-white' : isSelectable ? 'text-[#111] hover:bg-[#F3EFEB]' : 'text-[#CFCFD4] cursor-not-allowed'}`}>
+                  <div className={`w-9 h-9 flex items-center justify-center rounded-full text-[14px] font-medium transition-all ${isDateSelected ? 'bg-[#E85D2A] text-white' : isSelectable ? 'text-[#111] hover:bg-[#F3EFEB]' : 'text-[#A09A94] cursor-not-allowed'}`}>
                     {day}
                   </div>
                   {isSelectable && isAvailable && <div className="w-1 h-1 rounded-full bg-[#E85D2A]" />}
@@ -4707,120 +4857,175 @@ const PaymentScreen = ({ onBack, onComplete }) => {
 
   const canSubmit = selectedCardId && termsAccepted && !isAuthorizing;
 
+  const addOnsTotal = paymentData.addOns.reduce((sum, a) => sum + a.price, 0);
+  const totalInt = Math.floor(paymentData.total);
+  const totalFrac = (paymentData.total - totalInt).toFixed(2).substring(2);
+
   return (
-    <div className="absolute inset-0 bg-[#F7F5F2] z-[80] overflow-hidden flex flex-col animate-in slide-in-from-right duration-300">
-      {/* Header */}
-      <header className="bg-[#F7F5F2] pt-14 pb-3 px-5 z-40">
-        <div className="flex items-center gap-3">
-          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
-            <ChevronLeft size={20} color="#111" />
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[80] overflow-hidden animate-in slide-in-from-right duration-300">
+      {/* Header — matches ProviderProfile motif (44×44 rounded pills + centered title) */}
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
           </button>
-          <span className="text-[17px] font-bold text-[#111] flex-1">Payment</span>
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Checkout</h2>
+          <div className="w-[44px] h-[44px] flex items-center justify-center rounded-full" style={{ background: '#F3EFEB' }}>
+            <Lock size={15} color="#111" strokeWidth={1.75} />
+          </div>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-[160px] bg-[#F7F5F2]">
-        {/* Booking Summary */}
-        <section className="mb-6">
-          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Booking summary</h3>
-
-          <div className="flex items-center gap-3 mb-4">
-            <Avatar src={paymentData.providerAvatar} size={32} />
-            <span className="text-[14px] font-semibold text-[#111]">{paymentData.providerName}</span>
+      <div className="absolute inset-0 overflow-y-auto bg-[#F7F5F2] pt-[110px] pb-[140px] px-5" style={{ scrollbarWidth: 'none' }}>
+        {/* ═══ NARRATIVE BLOCK — avatar + provider + service + when ═══ */}
+        <div className="flex items-start gap-3.5 mb-1">
+          <Avatar src={paymentData.providerAvatar} size={48} />
+          <div className="flex-1 min-w-0 pt-0.5">
+            <span className="text-[11px] text-[#A09A94] block leading-none tracking-wide">with</span>
+            <span className="text-[20px] font-bold text-[#111] block leading-tight mt-1 tracking-[-0.02em]">{paymentData.providerName}</span>
+            <p className="text-[13px] text-[#6E6058] leading-[1.5] mt-1.5">
+              {paymentData.service} <span className="text-[#CFCFD4]">/</span> for {paymentData.pet.split(' · ')[0]}
+            </p>
+            <p className="text-[12px] text-[#A09A94] leading-[1.5]">
+              {paymentData.datetime}
+            </p>
           </div>
+        </div>
 
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Service</span>
-              <span className="text-[14px] font-semibold text-[#111]">{paymentData.service}</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Date & time</span>
-              <span className="text-[14px] font-semibold text-[#111]">{paymentData.datetime}</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Pet</span>
-              <span className="text-[14px] font-semibold text-[#111]">{paymentData.pet}</span>
-            </div>
-            {paymentData.addOns.length > 0 && (
-              <>
-                <div className="h-[1px] bg-[#EDE8E2]" />
-                <div className="flex justify-between">
-                  <span className="text-[12px] text-[#A09A94]">Add-ons</span>
-                  <span className="text-[14px] font-semibold text-[#111]">{paymentData.addOns.map(a => a.label).join(', ')}</span>
-                </div>
-              </>
-            )}
-          </div>
+        {/* ═══ DOTTED PERFORATION — receipt tear ═══ */}
+        <div className="relative my-6">
+          <div className="border-t border-dashed border-[#CFCFD4]" />
+        </div>
 
-          {/* Price breakdown */}
-          <div className="h-[1px] bg-[#EDE8E2] my-4" />
-          <div className="space-y-2">
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#A09A94]">Service</span>
-              <span className="font-medium text-[#111]">CHF {paymentData.servicePrice.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#A09A94]">Add-ons</span>
-              <span className="font-medium text-[#111]">CHF {paymentData.addOns.reduce((sum, a) => sum + a.price, 0).toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between text-[13px]">
-              <button className="text-[#A09A94] flex items-center gap-1 active:opacity-70" onClick={() => setActiveSheet('service_fee')}>
-                Service fee <Info size={12} className="text-[#A09A94]" />
-              </button>
-              <span className="font-medium text-[#111]">CHF {paymentData.platformFee.toFixed(2)}</span>
-            </div>
+        {/* ═══ ITEMIZED LIST ═══ */}
+        <div className="space-y-3.5 mb-2" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          <div className="flex justify-between items-baseline text-[14px]">
+            <span className="text-[#111]">{paymentData.service}</span>
+            <span className="text-[#111]">CHF {paymentData.servicePrice.toFixed(2)}</span>
           </div>
-          <div className="h-[1px] bg-[#EDE8E2] my-3" />
-          <div className="flex justify-between items-center">
-            <span className="text-[15px] font-semibold text-[#111]">Total</span>
-            <span className="text-[20px] font-bold text-[#111]">CHF {paymentData.total.toFixed(2)}</span>
-          </div>
-        </section>
-
-        {/* Payment Method */}
-        <section className="mb-6">
-          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Payment method</h3>
-          {paymentData.savedCards.map((card, idx) => {
-            const isSelected = selectedCardId === card.id;
-            return (
-              <div key={card.id}>
-                <div onClick={() => setSelectedCardId(card.id)} className="flex items-center justify-between py-3 cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0 ${isSelected ? 'border-[#E85D2A]' : 'border-[#CFCFD4]'}`}>
-                      {isSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
-                    </div>
-                    <div>
-                      <span className="text-[14px] font-semibold text-[#111]">{card.brand} ending {card.last4}</span>
-                      <span className="text-[12px] text-[#A09A94] block mt-0.5">Exp {card.exp}</span>
-                    </div>
-                  </div>
-                  <button onClick={(e) => { e.stopPropagation(); setMenuCardId(card.id); setActiveSheet('card_menu'); }} className="p-1 text-[#A09A94]">
-                    <MoreHorizontal size={16} />
-                  </button>
-                </div>
-                {idx < paymentData.savedCards.length - 1 && <div className="h-[1px] bg-[#EDE8E2]" />}
+          {paymentData.addOns.length > 0 && (
+            <div>
+              <div className="flex justify-between items-baseline text-[14px]">
+                <span className="text-[#111]">Add-ons</span>
+                <span className="text-[#111]">CHF {addOnsTotal.toFixed(2)}</span>
               </div>
-            );
-          })}
-          <div className="h-[1px] bg-[#EDE8E2]" />
-          <button onClick={() => setActiveSheet('add_card')} className="flex items-center gap-2 py-3 text-[#E85D2A] active:opacity-70">
-            <Plus size={16} />
-            <span className="text-[14px] font-medium">Add new card</span>
+              <div className="mt-1.5 space-y-1">
+                {paymentData.addOns.map((a, i) => (
+                  <div key={i} className="flex items-baseline text-[12px] text-[#A09A94]">
+                    <span className="mr-2 text-[#CFCFD4]">—</span>
+                    <span className="flex-1">{a.label}</span>
+                    <span className="tracking-tight">+{a.price.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <button className="w-full flex justify-between items-baseline text-[14px] active:opacity-70" onClick={() => setActiveSheet('service_fee')}>
+            <span className="text-[#111] flex items-center gap-1.5">
+              Service fee <Info size={11} className="text-[#A09A94]" />
+            </span>
+            <span className="text-[#111]">CHF {paymentData.platformFee.toFixed(2)}</span>
           </button>
-        </section>
+        </div>
+
+        {/* ═══ DOTTED PERFORATION ═══ */}
+        <div className="relative my-5">
+          <div className="border-t border-dashed border-[#CFCFD4]" />
+        </div>
+
+        {/* ═══ TOTAL — modest, inline, not a hero ═══ */}
+        <div className="flex justify-between items-baseline mb-8">
+          <span className="text-[15px] font-semibold text-[#111] tracking-tight">Total</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[11px] font-semibold text-[#A09A94] tracking-wide">CHF</span>
+            <span className="text-[26px] font-bold text-[#111] leading-none tracking-[-0.02em]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {paymentData.total.toFixed(2)}
+            </span>
+          </div>
+        </div>
+
+        {/* ═══ HORIZONTAL CARD PILLS ═══ */}
+        <div className="mb-5">
+          <span className="text-[13px] font-semibold text-[#111] mb-2.5 block">Paying with</span>
+          <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1" style={{ scrollbarWidth: 'none' }}>
+            {paymentData.savedCards.map((card) => {
+              const isSelected = selectedCardId === card.id;
+              const brandColor = card.brand === 'Visa' ? '#1A1F71' : '#EB001B';
+              const brandShort = card.brand === 'Visa' ? 'VISA' : 'MC';
+              return (
+                <button
+                  key={card.id}
+                  onClick={() => setSelectedCardId(card.id)}
+                  className={`shrink-0 flex items-center gap-2.5 pl-1.5 pr-4 py-1.5 rounded-full border-[1.5px] transition-all active:scale-[0.97] ${
+                    isSelected
+                      ? 'border-[#111] bg-[#111]'
+                      : 'border-[#EDE8E2] bg-transparent'
+                  }`}
+                >
+                  <div className="w-[30px] h-[22px] rounded-[4px] flex items-center justify-center shrink-0" style={{ background: brandColor }}>
+                    <span className="text-[8px] font-bold text-white tracking-[0.02em]">{brandShort}</span>
+                  </div>
+                  <span className={`text-[13px] font-medium ${isSelected ? 'text-white' : 'text-[#111]'}`} style={{ fontVariantNumeric: 'tabular-nums' }}>
+                    •••• {card.last4}
+                  </span>
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setActiveSheet('add_card')}
+              className="shrink-0 flex items-center gap-1.5 pl-3 pr-4 py-1.5 rounded-full border-[1.5px] border-dashed border-[#CFCFD4] text-[#6E6058] active:scale-[0.97] transition-transform"
+            >
+              <Plus size={14} strokeWidth={2} />
+              <span className="text-[13px] font-medium">Add card</span>
+            </button>
+          </div>
+        </div>
+
+        {/* ═══ HOLD NOTE ═══ */}
+        <p className="text-[11px] text-[#A09A94] leading-[1.6] mb-5 pl-3 border-l-2 border-[#EDE8E2]">
+          Hold placed now. Released instantly if {paymentData.providerName.split(' ')[0]} declines.
+        </p>
+
+        {/* ═══ INLINE TERMS ═══ */}
+        <div
+          onClick={() => setTermsAccepted(!termsAccepted)}
+          className="flex items-start gap-3 cursor-pointer active:opacity-80"
+        >
+          <div className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex items-center justify-center shrink-0 mt-[1px] transition-all ${termsAccepted ? 'bg-[#111] border-[#111]' : 'border-[#CFCFD4] bg-transparent'}`}>
+            {termsAccepted && <Check size={11} color="#FFF" strokeWidth={3} />}
+          </div>
+          <p className="text-[12px] text-[#6E6058] leading-[1.55] flex-1">
+            I agree to the{' '}
+            <button onClick={(e) => { e.stopPropagation(); setActiveSheet('terms'); }} className="text-[#E85D2A] font-medium active:opacity-70">
+              terms & cancellation policy
+            </button>
+            .
+          </p>
+        </div>
       </div>
 
-      {/* Bottom Button */}
-      <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40">
+      {/* ═══ BOTTOM CTA — matches ProviderProfile motif (black #111, rounded-[14px], split composition) ═══ */}
+      <div className="absolute bottom-6 left-5 right-5 z-30">
         <button
           disabled={!canSubmit}
           onClick={handleAuthorize}
-          className={`w-full py-3.5 rounded-[12px] text-[15px] font-semibold transition-all flex items-center justify-center ${!canSubmit ? 'bg-[#EDE8E2] text-[#A09A94]' : 'bg-[#E85D2A] text-white active:scale-[0.98]'}`}
+          className={`w-full py-3.5 rounded-[14px] text-[14px] font-semibold transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)] ${
+            !canSubmit
+              ? 'bg-[#EDE8E2] text-[#A09A94] cursor-not-allowed shadow-none'
+              : 'bg-[#111] text-white active:scale-[0.97]'
+          }`}
         >
-          {isAuthorizing ? <Loader2 size={18} className="animate-spin text-white" /> : <span>Authorize CHF {paymentData.total.toFixed(2)}</span>}
+          {isAuthorizing ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : (
+            <>
+              <span>Authorize</span>
+              <span className={canSubmit ? 'text-white/40' : 'text-[#A09A94]'}>·</span>
+              <span className={`font-normal ${canSubmit ? 'text-white/70' : 'text-[#A09A94]'}`} style={{ fontVariantNumeric: 'tabular-nums' }}>
+                CHF {paymentData.total.toFixed(2)}
+              </span>
+            </>
+          )}
         </button>
       </div>
 
@@ -4927,62 +5132,103 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F7F5F2] z-[90] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-400">
-      <div className="flex-1 overflow-y-auto px-5 pb-[160px] flex flex-col items-center justify-center">
-        {/* Success Icon + Title */}
-        <div className="flex flex-col items-center text-center w-full max-w-[280px] mb-8">
-          <div className="w-[72px] h-[72px] bg-[#E85D2A]/10 rounded-full flex items-center justify-center mb-5 pop-animation">
-            <Check size={36} color="#E85D2A" strokeWidth={3} className="check-animation" />
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[90] overflow-hidden animate-in fade-in zoom-in-[0.98] duration-400">
+      {/* Header — matches motif (close button top-right only; no back on confirmation) */}
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <div className="w-[44px] h-[44px]" />
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Sent</h2>
+          <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <X size={18} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
+      </header>
+
+      <div className="absolute inset-0 overflow-y-auto bg-[#F7F5F2] pt-[110px] pb-[140px] px-5" style={{ scrollbarWidth: 'none' }}>
+        {/* ═══ STATUS MARK — pulse ring + orange check ═══ */}
+        <div className="flex items-center gap-3 mb-1">
+          <div className="relative w-[48px] h-[48px] flex items-center justify-center shrink-0">
+            <span className="absolute inset-0 rounded-full bg-[#E85D2A]/12 pulse-ring" />
+            <div className="w-[48px] h-[48px] rounded-full bg-[#E85D2A] flex items-center justify-center pop-animation shadow-[0_4px_14px_rgba(232,93,42,0.25)]">
+              <Check size={22} color="#FFF" strokeWidth={3} className="check-animation" />
+            </div>
           </div>
-          <h2 className="text-[22px] font-bold text-[#111] tracking-tight mb-2">Request sent</h2>
-          <p className="text-[14px] text-[#A09A94] leading-relaxed">
-            We notified {mockRequestSentData.providerName}. You'll hear back usually within 1h.
-          </p>
+          <div className="flex-1 min-w-0 pt-0.5">
+            <span className="text-[11px] text-[#A09A94] block leading-none tracking-wide">Request sent to</span>
+            <span className="text-[20px] font-bold text-[#111] block leading-tight mt-1 tracking-[-0.02em]">{mockRequestSentData.providerName}</span>
+          </div>
         </div>
 
-        {/* Flat Info Rows */}
-        <div className="w-full max-w-[340px]">
-          <div className="flex items-center gap-3 mb-5">
-            <Avatar src={mockRequestSentData.providerAvatar} size={36} />
-            <div>
-              <span className="text-[14px] font-semibold text-[#111] block leading-tight">{mockRequestSentData.providerName}</span>
-              <div className="flex items-center gap-1 mt-0.5">
-                <Star size={11} className="text-[#111] fill-[#111]" />
-                <span className="text-[12px] text-[#A09A94]">{mockRequestSentData.providerRating}</span>
-              </div>
-            </div>
-          </div>
+        <p className="text-[13px] text-[#6E6058] leading-[1.55] mt-4 pl-[60px]">
+          We notified {mockRequestSentData.providerName.split(' ')[0]}. You'll usually hear back within <span className="text-[#111] font-semibold">1 hour</span>.
+        </p>
 
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Service</span>
-              <span className="text-[14px] font-semibold text-[#111]">{mockRequestSentData.service}</span>
+        {/* ═══ DOTTED PERFORATION ═══ */}
+        <div className="my-6 border-t border-dashed border-[#CFCFD4]" />
+
+        {/* ═══ ITEMIZED LIST — what was requested ═══ */}
+        <div className="space-y-3.5 mb-2" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          <div className="flex justify-between items-baseline text-[14px]">
+            <span className="text-[#A09A94]">Service</span>
+            <span className="text-[#111] font-medium">{mockRequestSentData.service}</span>
+          </div>
+          <div className="flex justify-between items-baseline text-[14px]">
+            <span className="text-[#A09A94]">When</span>
+            <span className="text-[#111] font-medium">{mockRequestSentData.datetime}</span>
+          </div>
+          <div className="flex justify-between items-baseline text-[14px]">
+            <span className="text-[#A09A94]">Pet</span>
+            <span className="text-[#111] font-medium">{mockRequestSentData.pet.split(' · ')[0]}</span>
+          </div>
+          {mockRequestSentData.addOns.map((a, i) => (
+            <div key={i} className="flex items-baseline text-[14px]">
+              <span className="text-[#CFCFD4] w-[16px] shrink-0 text-[13px]">+</span>
+              <span className="text-[#111] font-medium">{a}</span>
             </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Date</span>
-              <span className="text-[14px] font-semibold text-[#111]">{mockRequestSentData.datetime}</span>
+          ))}
+        </div>
+
+        {/* ═══ DOTTED PERFORATION ═══ */}
+        <div className="my-5 border-t border-dashed border-[#CFCFD4]" />
+
+        {/* ═══ TOTAL ═══ */}
+        <div className="flex justify-between items-baseline mb-6">
+          <span className="text-[15px] font-semibold text-[#111] tracking-tight">Authorized</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[11px] font-semibold text-[#A09A94] tracking-wide">CHF</span>
+            <span className="text-[26px] font-bold text-[#111] leading-none tracking-[-0.02em]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {mockRequestSentData.total.toFixed(2)}
+            </span>
+          </div>
+        </div>
+
+        {/* ═══ HOLD STATUS — left-border accent ═══ */}
+        <div className="flex items-start gap-2.5 pl-3 border-l-2 border-[#E85D2A]/40">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="relative flex h-[7px] w-[7px]">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E85D2A] opacity-60" />
+                <span className="relative inline-flex rounded-full h-[7px] w-[7px] bg-[#E85D2A]" />
+              </span>
+              <span className="text-[12px] font-semibold text-[#111] uppercase tracking-wide">Hold active</span>
             </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Pet</span>
-              <span className="text-[14px] font-semibold text-[#111]">{mockRequestSentData.pet}</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Total</span>
-              <span className="text-[15px] font-bold text-[#111]">CHF {mockRequestSentData.total.toFixed(2)}</span>
-            </div>
+            <p className="text-[11px] text-[#A09A94] leading-[1.5]">
+              Released instantly if {mockRequestSentData.providerName.split(' ')[0]} declines or doesn't respond within 24h.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Bottom Actions */}
-      <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40 flex flex-col items-center gap-3">
-        <button onClick={onViewBooking} className="w-full py-3.5 rounded-[12px] text-[15px] font-semibold bg-[#E85D2A] text-white active:scale-[0.98] transition-transform">
+      {/* ═══ BOTTOM ACTIONS — matches motif ═══ */}
+      <div className="absolute bottom-6 left-5 right-5 z-30 flex flex-col items-center gap-1">
+        <button
+          onClick={onViewBooking}
+          className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
+        >
           View booking
+          <ArrowRight size={15} strokeWidth={2} className="text-white/60" />
         </button>
-        <button onClick={onClose} className="text-[14px] font-medium text-[#A09A94] active:opacity-70 transition-opacity py-1">
+        <button onClick={onClose} className="text-[13px] font-medium text-[#A09A94] active:opacity-70 transition-opacity py-2.5">
           Back to home
         </button>
       </div>
@@ -4990,8 +5236,10 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes drawCheck { 0% { stroke-dasharray: 100; stroke-dashoffset: 100; } 100% { stroke-dasharray: 100; stroke-dashoffset: 0; } }
+        @keyframes pulseRing { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.2); opacity: 0; } }
         .pop-animation { animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .check-animation { stroke-dasharray: 100; stroke-dashoffset: 100; animation: drawCheck 0.4s ease-out 0.2s forwards; }
+        .pulse-ring { animation: pulseRing 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
       `}} />
     </div>
   );
@@ -5059,23 +5307,40 @@ const ChatScreen = ({ onBack, status }) => {
   };
 
   return (
-    <div className="absolute inset-0 bg-[#F7F7F8] z-[95] flex flex-col animate-in slide-in-from-right duration-300">
-      <div className="absolute top-[48px] left-[16px] right-[16px] z-50 flex items-center justify-between bg-white/80 backdrop-blur-md rounded-full px-2 py-2 shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-white">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors"><ChevronLeft size={24} color="#111111" /></button>
-        <div className="flex items-center justify-center gap-2.5 flex-1">
-          <Avatar src="https://i.pravatar.cc/150?img=12" size={32} />
-          <div className="flex flex-col items-start justify-center">
-            <span className="text-[15px] font-bold text-[#111111] leading-tight">Lukas F.</span>
-            <span className="text-[12px] font-medium text-[#8E8E93] leading-tight mt-[1px]">Online now</span>
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[95] overflow-hidden animate-in slide-in-from-right duration-300">
+      {/* Header — matches motif (44×44 pills + compact centered provider) */}
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-4 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/95 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+          </button>
+          <div className="flex items-center gap-2.5">
+            <div className="relative">
+              <Avatar src="https://i.pravatar.cc/150?img=12" size={30} />
+              <span className="absolute -bottom-0.5 -right-0.5 w-[9px] h-[9px] bg-[#34C759] rounded-full border-[2px] border-[#F7F5F2]" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-[14px] font-semibold text-[#111] leading-tight tracking-tight">Lukas F.</span>
+              <span className="text-[10px] text-[#A09A94] leading-tight mt-0.5">Online</span>
+            </div>
           </div>
+          <button onClick={() => setIsMenuOpen(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <MoreHorizontal size={18} color="#111" strokeWidth={1.75} />
+          </button>
         </div>
-        <button onClick={() => setIsMenuOpen(true)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors"><MoreVertical size={20} color="#111111" /></button>
-      </div>
+      </header>
 
-      <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto custom-scrollbar pt-[116px] pb-[150px] px-4 flex flex-col">
+      {/* Messages */}
+      <div ref={scrollRef} onScroll={handleScroll} className="absolute inset-0 overflow-y-auto pt-[96px] pb-[130px] px-4 flex flex-col" style={{ scrollbarWidth: 'none' }}>
         {messages.map((msg, idx) => {
-          if (msg.type === 'date') return <div key={msg.id} className="text-center text-[12px] font-bold text-[#8E8E93] uppercase tracking-wider my-4">{msg.text}</div>;
-          if (msg.type === 'system') return <div key={msg.id} className="text-center text-[13px] font-medium text-[#8E8E93] my-2">{msg.text}</div>;
+          if (msg.type === 'date') return <div key={msg.id} className="text-center text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.2em] my-5">{msg.text}</div>;
+          if (msg.type === 'system') return (
+            <div key={msg.id} className="flex items-center justify-center gap-2 my-3">
+              <span className="h-[1px] flex-1 max-w-[60px] bg-[#EDE8E2]" />
+              <span className="text-[11px] font-medium text-[#A09A94]">{msg.text}</span>
+              <span className="h-[1px] flex-1 max-w-[60px] bg-[#EDE8E2]" />
+            </div>
+          );
           const isUser = msg.sender === 'user';
           const prevMsg = messages[idx - 1];
           const nextMsg = messages[idx + 1];
@@ -5083,28 +5348,28 @@ const ChatScreen = ({ onBack, status }) => {
           const isSameNext = nextMsg && nextMsg.sender === msg.sender && !nextMsg.type;
           let brClass = '';
           if (isUser) {
-            if (!isSamePrev && !isSameNext) brClass = 'rounded-[20px] rounded-br-[4px]';
-            else if (!isSamePrev && isSameNext) brClass = 'rounded-[20px] rounded-br-[8px]';
-            else if (isSamePrev && isSameNext) brClass = 'rounded-[20px] rounded-tr-[8px] rounded-br-[8px]';
-            else if (isSamePrev && !isSameNext) brClass = 'rounded-[20px] rounded-tr-[8px] rounded-br-[4px]';
+            if (!isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-br-[5px]';
+            else if (!isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-br-[8px]';
+            else if (isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-tr-[8px] rounded-br-[8px]';
+            else if (isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-tr-[8px] rounded-br-[5px]';
           } else {
-            if (!isSamePrev && !isSameNext) brClass = 'rounded-[20px] rounded-bl-[4px]';
-            else if (!isSamePrev && isSameNext) brClass = 'rounded-[20px] rounded-bl-[8px]';
-            else if (isSamePrev && isSameNext) brClass = 'rounded-[20px] rounded-tl-[8px] rounded-bl-[8px]';
-            else if (isSamePrev && !isSameNext) brClass = 'rounded-[20px] rounded-tl-[8px] rounded-bl-[4px]';
+            if (!isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-bl-[5px]';
+            else if (!isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-bl-[8px]';
+            else if (isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-tl-[8px] rounded-bl-[8px]';
+            else if (isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-tl-[8px] rounded-bl-[5px]';
           }
-          const mbClass = isSameNext ? 'mb-[2px]' : 'mb-5';
+          const mbClass = isSameNext ? 'mb-[2px]' : 'mb-4';
           const showTime = !isSameNext;
           return (
             <div key={msg.id} className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} ${mbClass} w-full msg-animate`}>
-              <div className={`max-w-[75%] px-4 py-2.5 text-[15px] leading-[1.4] shadow-[0_1px_4px_rgba(0,0,0,0.02)] ${isUser ? 'bg-[#FF6B35] text-white' : 'bg-[#EAEAEA] text-[#111111]'} ${brClass}`}>
+              <div className={`max-w-[75%] px-3.5 py-2.5 text-[14px] leading-[1.45] ${isUser ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] text-[#111]'} ${brClass}`}>
                 {msg.photo && <img src={msg.photo} alt="Attachment" className={`w-full max-w-[240px] rounded-[12px] object-cover ${msg.text ? 'mb-1.5' : ''}`} />}
                 {msg.text && <span>{msg.text}</span>}
               </div>
               {showTime && (
                 <div className={`flex items-center gap-1 mt-1 px-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
-                  <span className="text-[11px] text-[#8E8E93] font-medium">{msg.time}</span>
-                  {isUser && <CheckCheck size={14} className={msg.readStatus === 'read' ? 'text-[#007AFF]' : 'text-[#8E8E93]'} strokeWidth={2.5} />}
+                  <span className="text-[10px] text-[#A09A94] font-medium" style={{ fontVariantNumeric: 'tabular-nums' }}>{msg.time}</span>
+                  {isUser && <CheckCheck size={12} className={msg.readStatus === 'read' ? 'text-[#E85D2A]' : 'text-[#A09A94]'} strokeWidth={2.5} />}
                 </div>
               )}
             </div>
@@ -5112,7 +5377,7 @@ const ChatScreen = ({ onBack, status }) => {
         })}
         {isTyping && (
           <div className="flex flex-col items-start mb-4 w-full animate-in fade-in duration-300">
-            <div className="bg-[#EAEAEA] px-4 py-3.5 rounded-[20px] rounded-tl-[4px] flex items-center gap-1 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
+            <div className="bg-[#F3EFEB] px-4 py-3.5 rounded-[18px] rounded-bl-[5px] flex items-center gap-1">
               <span className="typing-dot"></span><span className="typing-dot"></span><span className="typing-dot"></span>
             </div>
           </div>
@@ -5120,67 +5385,97 @@ const ChatScreen = ({ onBack, status }) => {
       </div>
 
       {showScroll && (
-        <div className="absolute bottom-[150px] right-[16px] z-40 animate-in zoom-in fade-in duration-200">
-          <button onClick={scrollToBottom} className="h-9 px-3 bg-white/80 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-white/50 rounded-full flex items-center justify-center gap-1.5 text-[#111111] transition-transform active:scale-95">
-            <ArrowDown size={16} />
-            <div className="w-5 h-5 bg-[#FF6B35] rounded-full flex items-center justify-center text-[11px] font-bold text-white shadow-sm">1</div>
+        <div className="absolute bottom-[130px] right-[16px] z-40 animate-in zoom-in fade-in duration-200">
+          <button onClick={scrollToBottom} className="h-9 px-3 bg-[#F3EFEB] border border-[#EDE8E2] rounded-full flex items-center justify-center gap-1.5 text-[#111] active:scale-[0.95] transition-transform">
+            <ArrowDown size={14} />
+            <div className="w-[18px] h-[18px] bg-[#E85D2A] rounded-full flex items-center justify-center text-[10px] font-bold text-white">1</div>
           </button>
         </div>
       )}
 
-      <div className="absolute bottom-0 left-0 right-0 pt-[80px] pb-[32px] bg-gradient-to-t from-[#F7F7F8] via-[#F7F7F8]/95 to-transparent z-50 pointer-events-none flex flex-col justify-end">
+      <div className="absolute bottom-0 left-0 right-0 pt-[60px] pb-[28px] bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2]/95 to-transparent z-50 pointer-events-none flex flex-col justify-end">
         {status === 'pending' ? (
           <div className="px-4 py-2 pointer-events-auto">
-            <div className="w-full bg-[#EAEAEA]/80 backdrop-blur-md rounded-[20px] py-3.5 px-4 flex items-center justify-center text-[14px] text-[#6E6E73] font-medium gap-2 border border-white/40 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
-              <Lock size={16} /> Messaging opens after acceptance
+            <div className="w-full bg-[#F3EFEB] border border-[#EDE8E2] rounded-full py-3 px-4 flex items-center justify-center text-[13px] text-[#A09A94] font-medium gap-2">
+              <Lock size={13} /> Messaging opens after acceptance
             </div>
           </div>
         ) : (
           <>
             {currentReplies.length > 0 && (
-              <div className={`flex overflow-x-auto gap-2 px-4 custom-scrollbar pointer-events-auto transition-all duration-300 origin-bottom ${isFocused ? 'max-h-0 opacity-0 mb-0 scale-y-90' : 'max-h-[50px] opacity-100 mb-3 scale-y-100'}`}>
+              <div className={`flex overflow-x-auto gap-2 px-4 pointer-events-auto transition-all duration-300 origin-bottom ${isFocused ? 'max-h-0 opacity-0 mb-0 scale-y-90' : 'max-h-[44px] opacity-100 mb-2.5 scale-y-100'}`} style={{ scrollbarWidth: 'none' }}>
                 {currentReplies.map((chip, idx) => (
-                  <button key={idx} onClick={() => handleSend(chip)} className="whitespace-nowrap px-4 py-1.5 bg-[#FFFFFF] border border-[#EAEAEA] rounded-[20px] text-[14px] text-[#111111] font-medium active:bg-[#F0F0F2] transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.02)]">{chip}</button>
+                  <button key={idx} onClick={() => handleSend(chip)} className="whitespace-nowrap px-3.5 py-1.5 bg-[#F3EFEB] border border-[#EDE8E2] rounded-full text-[13px] text-[#111] font-medium active:scale-[0.97] transition-transform">{chip}</button>
                 ))}
               </div>
             )}
             <div className="pointer-events-auto flex items-end gap-2 px-4">
-              <button onClick={() => setIsAttachMenuOpen(true)} className="w-10 h-10 mb-[2px] flex-shrink-0 bg-[#EAEAEA]/90 backdrop-blur-sm border border-white/50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] rounded-full flex items-center justify-center text-[#111111] active:bg-[#D4D4D4] transition-colors"><Plus size={22} /></button>
-              <div className="flex-1 bg-white/95 backdrop-blur-md shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-white/80 rounded-[24px] min-h-[44px] max-h-[120px] flex items-center px-4 py-2 mb-[2px] overflow-hidden transition-all duration-300">
-                <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(inputText); } }} placeholder="Message..." className="w-full bg-transparent outline-none text-[15px] text-[#111111] placeholder-[#8E8E93] resize-none overflow-y-auto custom-scrollbar" rows={1} style={{ minHeight: '24px' }} />
+              <button onClick={() => setIsAttachMenuOpen(true)} className="w-[40px] h-[40px] shrink-0 bg-[#F3EFEB] rounded-full flex items-center justify-center text-[#111] active:scale-[0.95] transition-transform">
+                <Plus size={18} strokeWidth={2} />
+              </button>
+              <div className="flex-1 bg-white border border-[#EDE8E2] rounded-[22px] min-h-[40px] max-h-[120px] flex items-center px-4 py-2 overflow-hidden transition-all duration-300">
+                <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(inputText); } }} placeholder="Message Lukas…" className="w-full bg-transparent outline-none text-[14px] text-[#111] placeholder-[#A09A94] resize-none" rows={1} style={{ minHeight: '22px', scrollbarWidth: 'none' }} />
               </div>
               {inputText.trim() ? (
-                <button onClick={() => handleSend(inputText)} className="w-10 h-10 mb-[2px] flex-shrink-0 bg-[#FF6B35] text-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(255,107,53,0.25)] active:scale-95 transition-all animate-in zoom-in duration-200"><Send size={18} className="ml-0.5" /></button>
+                <button onClick={() => handleSend(inputText)} className="w-[40px] h-[40px] shrink-0 bg-[#111] text-white rounded-full flex items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.15)] active:scale-[0.95] transition-all animate-in zoom-in duration-200">
+                  <Send size={16} className="ml-0.5" strokeWidth={2} />
+                </button>
               ) : (
-                <button className="w-10 h-10 mb-[2px] flex-shrink-0 bg-white/95 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-white/80 text-[#8E8E93] rounded-full flex items-center justify-center transition-colors active:bg-[#F0F0F2]"><Mic size={22} /></button>
+                <button className="w-[40px] h-[40px] shrink-0 bg-[#F3EFEB] text-[#111] rounded-full flex items-center justify-center active:scale-[0.95] transition-transform">
+                  <Mic size={18} strokeWidth={2} />
+                </button>
               )}
             </div>
           </>
         )}
       </div>
 
-      <CardModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
-        <div className="flex flex-col gap-1 mt-2">
-          <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><User size={20} className="text-[#8E8E93]" /> View profile</button>
-          <button onClick={() => { setIsMenuOpen(false); onBack(); }} className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><Info size={20} className="text-[#8E8E93]" /> View booking</button>
-          <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><MapPin size={20} className="text-[#8E8E93]" /> Share location</button>
-          <div className="w-full h-[1px] bg-[#EAEAEA] my-2" />
-          <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><Bell size={20} className="text-[#8E8E93]" /> Mute notifications</button>
-          <button className="w-full text-left px-4 py-3.5 text-[16px] font-bold text-[#FF3B30] active:bg-[#FFF5F5] rounded-[12px] flex items-center gap-3"><AlertTriangle size={20} className="text-[#FF3B30]" /> Report user</button>
-        </div>
-      </CardModal>
+      {/* ═══ TOP ⋯ DROPDOWN — opens downward from button ═══ */}
+      {isMenuOpen && (
+        <>
+          <div className="absolute inset-0 z-[60]" onClick={() => setIsMenuOpen(false)} />
+          <div className="absolute top-[100px] right-5 z-[70] w-[220px] bg-[#F7F5F2] border border-[#EDE8E2] rounded-[16px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+            <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <User size={16} className="text-[#A09A94]" /> View profile
+            </button>
+            <button onClick={() => { setIsMenuOpen(false); onBack(); }} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <Info size={16} className="text-[#A09A94]" /> View booking
+            </button>
+            <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <MapPin size={16} className="text-[#A09A94]" /> Share location
+            </button>
+            <div className="h-[1px] bg-[#EDE8E2] mx-3" />
+            <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <Bell size={16} className="text-[#A09A94]" /> Mute notifications
+            </button>
+            <button className="w-full text-left px-4 py-3 text-[14px] font-semibold text-[#FF3B30] active:bg-[#FFF0F0] flex items-center gap-3 transition-colors">
+              <AlertTriangle size={16} className="text-[#FF3B30]" /> Report user
+            </button>
+          </div>
+        </>
+      )}
 
-      <CardModal isOpen={isAttachMenuOpen} onClose={() => setIsAttachMenuOpen(false)}>
-        <div className="flex flex-col gap-1 mt-2">
-          <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><Camera size={20} className="text-[#8E8E93]" /> Take photo</button>
-          <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><ImageIcon size={20} className="text-[#8E8E93]" /> Choose from library</button>
-          <button className="w-full text-left px-4 py-3.5 text-[16px] font-medium text-[#111111] active:bg-[#F7F7F8] rounded-[12px] flex items-center gap-3"><MapPin size={20} className="text-[#8E8E93]" /> Share location</button>
-        </div>
-      </CardModal>
+      {/* ═══ BOTTOM + POPOVER — opens upward from button ═══ */}
+      {isAttachMenuOpen && (
+        <>
+          <div className="absolute inset-0 z-[60]" onClick={() => setIsAttachMenuOpen(false)} />
+          <div className="absolute bottom-[110px] left-4 z-[70] w-[220px] bg-[#F7F5F2] border border-[#EDE8E2] rounded-[16px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-150">
+            <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <Camera size={16} className="text-[#A09A94]" /> Take photo
+            </button>
+            <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <ImageIcon size={16} className="text-[#A09A94]" /> Choose from library
+            </button>
+            <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <MapPin size={16} className="text-[#A09A94]" /> Share location
+            </button>
+          </div>
+        </>
+      )}
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes typing { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }
-        .typing-dot { animation: typing 1s infinite; width: 5px; height: 5px; background-color: #8E8E93; border-radius: 50%; display: inline-block; margin: 0 2px; }
+        .typing-dot { animation: typing 1s infinite; width: 5px; height: 5px; background-color: #A09A94; border-radius: 50%; display: inline-block; margin: 0 2px; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes messageEnter { 0% { opacity: 0; transform: translateY(4px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
@@ -5192,223 +5487,130 @@ const ChatScreen = ({ onBack, status }) => {
 
 const BookingConfirmedScreen = ({ onClose, onMessage }) => {
   return (
-    <div className="absolute inset-0 bg-[#FFFFFF] z-[95] overflow-y-auto overflow-x-hidden custom-scrollbar">
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[95] overflow-hidden animate-in fade-in">
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes floatDown { 0% { transform: translateY(-20px) rotate(0deg) scale(0.8); opacity: 0; } 15% { opacity: 1; transform: translateY(10px) rotate(45deg) scale(1); } 80% { opacity: 1; } 100% { transform: translateY(120px) rotate(180deg) scale(0.5); opacity: 0; } }
-        .confetti-piece { animation: floatDown 3s ease-out forwards; }
-        @keyframes subtleScaleIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .animate-subtle-scale { animation: subtleScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes confirmPulse { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.15); opacity: 1; } 70% { transform: scale(0.95); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes confirmRing { 0% { transform: scale(0.8); opacity: 0; } 40% { opacity: 0.4; } 100% { transform: scale(2.2); opacity: 0; } }
+        @keyframes checkDraw { 0% { stroke-dashoffset: 24; opacity: 0; } 40% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+        @keyframes sparkleIn { 0% { transform: scale(0) rotate(0deg); opacity: 0; } 50% { transform: scale(1.2) rotate(180deg); opacity: 1; } 100% { transform: scale(1) rotate(360deg); opacity: 0.7; } }
+        @keyframes sparkleFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
+        @keyframes textSlideUp { 0% { transform: translateY(12px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes detailsFadeIn { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+        .confirm-icon { animation: confirmPulse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .confirm-ring { animation: confirmRing 1s ease-out 0.2s forwards; opacity: 0; }
+        .confirm-ring-2 { animation: confirmRing 1.2s ease-out 0.4s forwards; opacity: 0; }
+        .sparkle-1 { animation: sparkleIn 0.5s ease-out 0.6s forwards, sparkleFloat 2s ease-in-out 1.1s infinite; opacity: 0; }
+        .sparkle-2 { animation: sparkleIn 0.5s ease-out 0.75s forwards, sparkleFloat 2.4s ease-in-out 1.25s infinite; opacity: 0; }
+        .sparkle-3 { animation: sparkleIn 0.5s ease-out 0.9s forwards, sparkleFloat 1.8s ease-in-out 1.4s infinite; opacity: 0; }
+        .sparkle-4 { animation: sparkleIn 0.5s ease-out 1.05s forwards, sparkleFloat 2.2s ease-in-out 1.55s infinite; opacity: 0; }
+        .text-slide-1 { animation: textSlideUp 0.5s ease-out 0.5s forwards; opacity: 0; }
+        .text-slide-2 { animation: textSlideUp 0.5s ease-out 0.65s forwards; opacity: 0; }
+        .details-fade { animation: detailsFadeIn 0.5s ease-out 0.85s forwards; opacity: 0; }
       `}} />
 
-      <div className="absolute inset-0 pointer-events-none overflow-hidden flex justify-center z-0">
-        {[...Array(8)].map((_, i) => (
-          <div key={`confetti-${i}`} className="confetti-piece absolute w-2 h-2 rounded-[2px]"
-            style={{ backgroundColor: ['#FF6B35', '#00C060', '#007AFF', '#FF9500'][i % 4], left: `${20 + (i * 8)}%`, animationDelay: `${i * 0.1}s`, top: `${5 + (i % 3) * 2}%` }}
-          />
-        ))}
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <div className="w-[44px] h-[44px]" />
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Confirmed</h2>
+          <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <X size={18} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
+      </header>
+
+      <div className="absolute inset-0 overflow-y-auto px-5 pt-[110px] pb-[160px] flex flex-col items-center" style={{ scrollbarWidth: 'none' }}>
+        <div className="relative w-[88px] h-[88px] aspect-square mb-7">
+          <div className="absolute inset-0 rounded-full border-2 border-[#E85D2A]/30 confirm-ring" />
+          <div className="absolute inset-0 rounded-full border border-[#E85D2A]/15 confirm-ring-2" />
+          <div className="relative w-full h-full rounded-full bg-[#E85D2A] flex items-center justify-center confirm-icon shadow-[0_4px_24px_rgba(232,93,42,0.3)]">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" style={{ strokeDasharray: 24, strokeDashoffset: 24, animation: 'checkDraw 0.5s ease-out 0.5s forwards' }} />
+            </svg>
+          </div>
+          <div className="absolute -top-3 -right-2 sparkle-1"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3" fill="#E85D2A" opacity="0.6" /></svg></div>
+          <div className="absolute -top-1 -left-4 sparkle-2"><svg width="8" height="8" viewBox="0 0 8 8"><path d="M4 0L4.8 3.2L8 4L4.8 4.8L4 8L3.2 4.8L0 4L3.2 3.2Z" fill="#E85D2A" opacity="0.5" /></svg></div>
+          <div className="absolute -bottom-2 -right-4 sparkle-3"><svg width="7" height="7" viewBox="0 0 7 7"><circle cx="3.5" cy="3.5" r="2.5" fill="#E85D2A" opacity="0.45" /></svg></div>
+          <div className="absolute bottom-1 -left-3 sparkle-4"><svg width="6" height="6" viewBox="0 0 6 6"><path d="M3 0L3.6 2.4L6 3L3.6 3.6L3 6L2.4 3.6L0 3L2.4 2.4Z" fill="#E85D2A" opacity="0.4" /></svg></div>
+        </div>
+
+        <h1 className="text-[22px] font-semibold text-[#111] tracking-tight text-center mb-2 text-slide-1">Booking confirmed</h1>
+        <p className="text-[15px] text-[#A09A94] text-center max-w-[260px] leading-relaxed text-slide-2">Lukas accepted your request for Monday, Feb 24</p>
+
+        <div className="w-full my-7 details-fade"><div className="border-t border-dashed border-[#CFCFD4]" /></div>
+
+        <div className="w-full space-y-5 details-fade">
+          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Service</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Dog Walking</span><span className="text-[12px] text-[#A09A94] ml-2">90 min</span></div></div>
+          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">When</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Mon, Feb 24</span><span className="text-[12px] text-[#A09A94] ml-2">14:00 - 15:30</span></div></div>
+          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Pet</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Luna</span><span className="text-[12px] text-[#A09A94] ml-2">Golden Retriever</span></div></div>
+          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Walker</span><div className="flex-1 flex items-center gap-2.5"><Avatar src="https://i.pravatar.cc/150?img=12" size={28} /><div><span className="text-[14px] text-[#111] font-medium">Lukas F.</span><span className="flex items-center gap-0.5 mt-0.5"><Star size={10} className="fill-[#111] text-[#111]" /><span className="text-[12px] font-medium text-[#111]">4.9</span></span></div></div></div>
+          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Total</span><span className="text-[14px] text-[#111] font-medium">CHF 95.00</span></div>
+        </div>
+
+        <div className="w-full my-7 details-fade"><div className="border-t border-dashed border-[#CFCFD4]" /></div>
+
+        <div className="w-full details-fade">
+          <p className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-4">What happens next</p>
+          <div className="space-y-3.5">
+            <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] shrink-0" /><span className="text-[13px] text-[#111]">Payment of CHF 95.00 is being processed</span></div>
+            <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] shrink-0" /><span className="text-[13px] text-[#111]">You can message Lukas directly</span></div>
+            <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] shrink-0" /><span className="text-[13px] text-[#111]">Reminder set for 1 day before</span></div>
+          </div>
+        </div>
       </div>
 
-      <div className="sticky top-0 right-0 w-full flex justify-end px-5 pt-14 pb-4 z-50 bg-gradient-to-b from-white via-white/90 to-transparent">
-        <button onClick={onClose} className="w-[40px] h-[40px] flex items-center justify-center bg-[#F7F7F8] hover:bg-[#F0F0F2] rounded-full transition-colors active:scale-95" aria-label="Close">
-          <X size={20} color="#111111" strokeWidth={2.5} />
-        </button>
-      </div>
-
-      <div className="px-5 pt-4 flex flex-col items-center relative z-10 min-h-full pb-4">
-        <div className="relative w-[80px] h-[80px] mb-6 animate-subtle-scale">
-          <div className="absolute inset-0 bg-[#FF6B35] opacity-10 blur-xl rounded-full" />
-          <div className="relative w-full h-full bg-[#FFF4EF] rounded-full flex items-center justify-center text-[#FF6B35] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-white">
-            <CheckCircle2 size={36} strokeWidth={3} />
-          </div>
-        </div>
-
-        <Text variant="title" className="mb-2 text-center tracking-tight">Booking Confirmed!</Text>
-        <p className="text-[16px] text-[#777777] text-center max-w-[280px] mb-8 leading-relaxed">Lukas accepted your booking for Monday, Feb 24.</p>
-
-        <Card variant="grey" className="w-full mb-10 !p-4 !rounded-[16px]">
-          <div className="flex items-center gap-3 mb-4">
-            <Avatar src="https://i.pravatar.cc/150?img=12" size={48} />
-            <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-[#111111] text-[16px] truncate">Lukas F.</h4>
-              <div className="flex items-center gap-1 mt-0.5">
-                <Star size={12} className="fill-[#111111] text-[#111111]" />
-                <span className="text-[13px] font-bold text-[#111111]">4.9</span>
-              </div>
-            </div>
-            <div className="text-right shrink-0">
-              <span className="text-[15px] font-semibold text-[#111111]">CHF 95.00</span>
-            </div>
-          </div>
-          <div className="w-full h-[1px] bg-[#EEEEEE] my-4" />
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#FFFFFF] flex items-center justify-center shrink-0 border border-black/[0.04]"><Activity size={16} color="#FF6B35" /></div>
-              <span className="text-[14px] font-medium text-[#111111]">Dog Walking</span>
-              <span className="ml-auto text-[14px] text-[#6E6E73]">90 min</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#FFFFFF] flex items-center justify-center shrink-0 border border-black/[0.04]"><Calendar size={16} className="text-[#111111]" /></div>
-              <span className="text-[14px] font-medium text-[#111111]">Mon, Feb 24</span>
-              <span className="ml-auto text-[14px] text-[#6E6E73]">14:00 – 15:30</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#FFFFFF] flex items-center justify-center shrink-0 border border-black/[0.04]"><PawPrint size={16} className="text-[#111111]" /></div>
-              <span className="text-[14px] font-medium text-[#111111]">Luna</span>
-              <span className="ml-auto text-[14px] text-[#6E6E73]">Golden Retriever</span>
-            </div>
-          </div>
-        </Card>
-
-        <div className="w-full mb-0">
-          <Text variant="label" className="mb-3 ml-1 text-[#8E8E93]">What's Next</Text>
-          <div className="space-y-2">
-            <div className="bg-[#FFFFFF] border border-[#EAEAEA] rounded-[12px] p-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#F7F7F8] flex items-center justify-center shrink-0"><CreditCard size={16} className="text-[#111111]" /></div>
-              <span className="text-[14px] font-medium text-[#111111]">Payment processing</span>
-              <span className="ml-auto text-[14px] text-[#6E6E73]">CHF 95.00</span>
-            </div>
-            <div className="bg-[#FFFFFF] border border-[#EAEAEA] rounded-[12px] p-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#F7F7F8] flex items-center justify-center shrink-0"><Calendar size={16} className="text-[#111111]" /></div>
-              <span className="text-[14px] font-medium text-[#111111]">Walk confirmed</span>
-              <span className="ml-auto text-[14px] text-[#6E6E73]">Mon, 14:00</span>
-            </div>
-            <div className="bg-[#FFFFFF] border border-[#EAEAEA] rounded-[12px] p-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#F7F7F8] flex items-center justify-center shrink-0"><MessageCircle size={16} className="text-[#111111]" /></div>
-              <span className="text-[14px] font-medium text-[#111111]">You can now message Lukas</span>
-            </div>
-            <div className="bg-[#FFFFFF] border border-[#EAEAEA] rounded-[12px] p-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#F7F7F8] flex items-center justify-center shrink-0"><Bell size={16} className="text-[#111111]" /></div>
-              <span className="text-[14px] font-medium text-[#111111]">Reminders enabled</span>
-              <span className="ml-auto text-[14px] text-[#6E6E73]">1 day before</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="sticky bottom-0 w-[calc(100%+40px)] -mx-5 mt-auto pt-12 pb-8 px-5 bg-gradient-to-t from-white via-white/95 to-transparent z-20">
-          <div className="flex flex-col gap-3">
-            <Button variant="primary" onClick={onMessage}>Message Lukas</Button>
-            <Button variant="secondary" onClick={onClose}>Done</Button>
-          </div>
-        </div>
+      <div className="absolute bottom-6 left-5 right-5 z-30 flex flex-col items-center gap-1">
+        <button onClick={onMessage} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">Message Lukas</button>
+        <button onClick={onClose} className="text-[13px] font-medium text-[#A09A94] active:opacity-70 transition-opacity py-2.5">Back to home</button>
       </div>
     </div>
   );
 };
 
 const BookingDeclinedScreen = ({ onClose, onBrowse, onMessage }) => {
-  const declineReason = "So sorry, I just got booked for another dog across town at that exact time. I'd love to walk Luna another day!";
-
   return (
-    <div className="absolute inset-0 z-[95] overflow-y-auto overflow-x-hidden custom-scrollbar bg-gradient-to-b from-[#F9F9FA] to-[#F4F4F5]">
-      <div className="sticky top-0 right-0 w-full flex justify-end px-5 pt-14 pb-4 z-50 bg-gradient-to-b from-[#F9F9FA] via-[#F9F9FA]/90 to-transparent">
-        <button onClick={onClose} className="w-[40px] h-[40px] flex items-center justify-center bg-[#FFFFFF] border border-[#EAEAEA] shadow-sm hover:bg-[#F0F0F2] rounded-full transition-colors active:scale-95" aria-label="Close">
-          <X size={20} color="#111111" strokeWidth={2.5} />
-        </button>
+    <div className="absolute inset-0 z-[95] bg-[#F7F5F2] flex flex-col animate-in fade-in duration-300">
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <div className="w-[44px] h-[44px]" />
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Declined</h2>
+          <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <X size={18} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
+      </header>
+
+      <div className="flex-1 overflow-y-auto pt-[120px] pb-[160px] px-5" style={{ scrollbarWidth: 'none' }}>
+        <div className="flex flex-col items-center mb-7">
+          <div className="w-[64px] h-[64px] rounded-full flex items-center justify-center mb-5" style={{ background: '#FFEBEA' }}>
+            <XCircle size={30} color="#FF3B30" strokeWidth={1.5} />
+          </div>
+          <h3 className="text-[20px] font-semibold text-[#111] tracking-tight text-center mb-1.5">Request declined</h3>
+          <p className="text-[15px] text-[#A09A94] text-center leading-relaxed max-w-[260px]">Lukas was unavailable for this time</p>
+        </div>
+
+        <div className="border-t border-dashed border-[#CFCFD4] my-5" />
+
+        <div className="flex flex-col gap-3.5 mb-5">
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Service</span><span className="text-[14px] text-[#111] font-medium">90 min Walk</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">When</span><span className="text-[14px] text-[#111] font-medium">Mon, Feb 24 at 14:00</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Pet</span><span className="text-[14px] text-[#111] font-medium">Luna</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Walker</span><span className="text-[14px] text-[#111] font-medium">Lukas F.</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Amount</span><span className="text-[14px] text-[#111] font-medium">CHF 95.00</span></div>
+        </div>
+
+        <div className="border-t border-dashed border-[#CFCFD4] my-5" />
+
+        <div className="rounded-[12px] border-l-[3px] border-l-[#CFCFD4] bg-[#F3EFEB] border border-[#EDE8E2] px-4 py-3.5 mb-5">
+          <p className="text-[14px] text-[#111] font-medium leading-snug mb-0.5">Your hold has been released</p>
+          <p className="text-[13px] text-[#A09A94] leading-relaxed">CHF 95.00 returned to Visa •••• 4242. No charge was made.</p>
+        </div>
+
+        <p className="text-[14px] text-[#A09A94] text-center leading-relaxed px-4">We can help you find another walker available at the same time.</p>
       </div>
 
-      <div className="px-5 pt-2 flex flex-col items-center relative z-10 min-h-full pb-4">
-        <div className="w-[72px] h-[72px] mb-6 bg-[#FFF6E8] rounded-full flex items-center justify-center text-[#F5A524] shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)]">
-          <AlertCircle size={36} strokeWidth={2} />
-        </div>
-
-        <Text variant="title" className="mb-3 text-center tracking-tight">Booking Declined</Text>
-        <p className="text-[16px] text-[#6B6B6B] text-center max-w-[300px] mb-8 leading-relaxed">Unfortunately, Lukas isn't available at that time. Your payment hold has been released.</p>
-
-        <Card variant="default" className="w-full mb-5 !p-4 !rounded-[16px]">
-          <div className="flex items-center gap-3">
-            <Avatar src="https://i.pravatar.cc/150?img=12" size={44} />
-            <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-[#111111] text-[16px] truncate">Lukas F.</h4>
-              <div className="flex items-center gap-1 mt-0.5">
-                <Star size={12} className="fill-[#111111] text-[#111111]" />
-                <span className="text-[13px] font-bold text-[#111111]">4.9</span>
-              </div>
-            </div>
-            <div className="text-right shrink-0 flex flex-col items-end">
-              <span className="text-[15px] font-semibold text-[#111111]">90 min Walk</span>
-              <span className="text-[13px] text-[#6E6E73] mt-0.5">CHF 95.00</span>
-            </div>
-          </div>
-          <div className="w-full h-[1px] bg-[#EEEEEE] my-4" />
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Calendar size={14} className="text-[#8E8E93]" />
-              <span className="text-[14px] font-medium text-[#111111]">Mon, Feb 24, 14:00</span>
-            </div>
-            <span className="text-[12px] font-medium text-[#C27A00] bg-[#FFF8F0] px-2.5 py-0.5 rounded-full">Declined</span>
-          </div>
-        </Card>
-
-        <div className="w-full mb-6 bg-[#FFFFFF] border border-[#F0F0F0] rounded-[16px] p-4 shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
-          <Text variant="label" className="mb-2 text-[#8E8E93]">Reason</Text>
-          <p className="text-[15px] text-[#444444] leading-relaxed opacity-90">"{declineReason}"</p>
-        </div>
-
-        <div className="w-full mb-8 bg-[#FFFFFF] relative overflow-hidden rounded-[16px] shadow-[0_2px_12px_rgba(0,0,0,0.02)] border border-[#EAEAEA]">
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-[#FF6B35]/20" />
-          <div className="p-4 flex items-start gap-3">
-            <CheckCircle2 size={20} className="text-[#FF6B35] shrink-0 mt-0.5" strokeWidth={2.5} />
-            <div>
-              <h4 className="text-[15px] font-semibold text-[#111111] mb-0.5">Hold Released</h4>
-              <p className="text-[13px] text-[#6E6E73] leading-relaxed">CHF 95.00 released back to Visa •••• 4242. No charge was made.</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full">
-          <div className="mb-4 pl-1">
-            <Text variant="subtitle" className="mb-0.5">Find another walker</Text>
-            <Text variant="caption">Available at the same time</Text>
-          </div>
-          <div className="space-y-3">
-            <div className="bg-[#FFFFFF] border border-[#EAEAEA] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[16px] p-3 flex items-center gap-3">
-              <Avatar src="https://i.pravatar.cc/150?u=sarah" size={44} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[15px] font-semibold text-[#111111] truncate">Sarah K.</span>
-                  <div className="flex items-center gap-0.5 bg-[#F7F7F8] px-1.5 py-0.5 rounded-[6px]">
-                    <Star size={10} className="fill-[#111111] text-[#111111]" />
-                    <span className="text-[11px] font-bold text-[#111111]">5.0</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold text-[#FF6B35] bg-[#FFF4EF] px-2 py-0.5 rounded-md tracking-wide">Available</span>
-                  <span className="text-[13px] text-[#6E6E73]">CHF 85.00</span>
-                </div>
-              </div>
-              <button className="px-4 py-1.5 bg-[#FFFFFF] border border-[#EAEAEA] rounded-xl text-[13px] font-medium text-[#111111] hover:bg-[#F7F7F8] transition-colors" onClick={onBrowse}>Book</button>
-            </div>
-
-            <div className="bg-[#FFFFFF] border border-[#EAEAEA] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-[16px] p-3 flex items-center gap-3">
-              <Avatar src="https://i.pravatar.cc/150?u=marc" size={44} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[15px] font-semibold text-[#111111] truncate">Marc T.</span>
-                  <div className="flex items-center gap-0.5 bg-[#F7F7F8] px-1.5 py-0.5 rounded-[6px]">
-                    <Star size={10} className="fill-[#111111] text-[#111111]" />
-                    <span className="text-[11px] font-bold text-[#111111]">4.8</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-semibold text-[#FF6B35] bg-[#FFF4EF] px-2 py-0.5 rounded-md tracking-wide">Available</span>
-                  <span className="text-[13px] text-[#6E6E73]">CHF 90.00</span>
-                </div>
-              </div>
-              <button className="px-4 py-1.5 bg-[#FFFFFF] border border-[#EAEAEA] rounded-xl text-[13px] font-medium text-[#111111] hover:bg-[#F7F7F8] transition-colors" onClick={onBrowse}>Book</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="sticky bottom-0 w-[calc(100%+40px)] -mx-5 mt-auto pt-20 pb-8 px-5 bg-gradient-to-t from-[#F4F4F5] via-[#F4F4F5]/90 to-transparent z-20 pointer-events-none">
-          <div className="pointer-events-auto flex flex-col gap-3">
-            <Button variant="primary" onClick={onBrowse}>Browse alternatives</Button>
-            <Button variant="secondary" onClick={onClose}>Try another date with Lukas</Button>
-          </div>
-          <div className="pointer-events-auto mt-6 flex justify-center gap-8 w-full opacity-60">
-            <button onClick={onMessage} className="text-[14px] font-medium text-[#111111] hover:text-[#000000] transition-colors">Message Lukas</button>
-            <button onClick={onClose} className="text-[14px] font-medium text-[#111111] hover:text-[#000000] transition-colors">Done</button>
-          </div>
-        </div>
+      <div className="absolute bottom-6 left-5 right-5 z-30 flex flex-col items-center gap-1">
+        <button onClick={onBrowse} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">Browse other walkers</button>
+        <button onClick={onMessage} className="text-[13px] font-medium text-[#E85D2A] active:opacity-70 transition-opacity py-2.5">Message Lukas</button>
       </div>
     </div>
   );
@@ -5457,174 +5659,191 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
     setTimeout(() => setBdToast(''), 2000);
   };
 
+  const addOns = ['Photo updates', 'Feed'];
+  const isActive = status === 'pending' || status === 'confirmed' || status === 'in-progress';
+  const isTerminal = status === 'cancelled' || status === 'declined';
+  const holdLabel = isActive ? 'Hold active' : status === 'completed' ? 'Charged' : 'Released';
+  const holdColor = isActive ? '#E85D2A' : status === 'completed' ? '#111' : '#A09A94';
+
   return (
-    <div className="absolute inset-0 bg-[#F7F5F2] z-[90] flex flex-col animate-in slide-in-from-right duration-300">
-      {/* Header */}
-      <header className="bg-[#F7F5F2] pt-14 pb-3 px-5 z-40">
-        <div className="flex items-center gap-3">
-          <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
-            <ChevronLeft size={20} color="#111" />
+    <div className="absolute inset-0 bg-[#F7F5F2] z-[90] overflow-hidden animate-in slide-in-from-right duration-300">
+      {/* Header — matches motif (44×44 pill buttons + centered title) */}
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
           </button>
-          <span className="text-[17px] font-bold text-[#111] flex-1">Booking</span>
-          <button onClick={() => setIsMenuOpen(true)} className="w-9 h-9 flex items-center justify-center rounded-full border border-[#EDE8E2] bg-[#F3EFEB] active:scale-[0.96] transition-transform">
-            <MoreVertical size={16} color="#111" />
+          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Booking</h2>
+          <button onClick={() => setIsMenuOpen(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <MoreHorizontal size={18} color="#111" strokeWidth={1.75} />
           </button>
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-[140px] bg-[#F7F5F2]">
-        {/* Status Pill */}
-        <div className="mb-5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ backgroundColor: currentConfig.bg }}>
-            <currentConfig.icon size={14} color={currentConfig.color} strokeWidth={2.5} />
-            <span className="text-[12px] font-bold uppercase tracking-wide" style={{ color: currentConfig.color }}>{currentConfig.label}</span>
+      <div className="absolute inset-0 overflow-y-auto bg-[#F7F5F2] pt-[110px] pb-[140px] px-5" style={{ scrollbarWidth: 'none' }}>
+        {/* ═══ NARRATIVE BLOCK — provider + status ═══ */}
+        <div className="flex items-start gap-3.5 mb-1">
+          <Avatar src="https://i.pravatar.cc/150?img=12" size={48} />
+          <div className="flex-1 min-w-0 pt-0.5">
+            <span className="text-[11px] text-[#A09A94] block leading-none tracking-wide">with</span>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-[20px] font-bold text-[#111] leading-tight tracking-[-0.02em]">Lukas F.</span>
+              <button onClick={() => onNavigateToProvider && onNavigateToProvider()} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">Profile ›</button>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Star size={11} className="text-[#111] fill-[#111]" />
+              <span className="text-[12px] font-medium text-[#111]">4.9</span>
+              <span className="text-[11px] text-[#A09A94]">· 128 reviews</span>
+            </div>
           </div>
-          <p className="text-[13px] text-[#A09A94] mt-1.5">{currentConfig.subtext}</p>
         </div>
 
-        {/* Provider Row */}
-        <section className="mb-6">
-          <div className="flex items-center gap-3">
-            <Avatar src="https://i.pravatar.cc/150?img=12" size={44} />
-            <div className="flex-1">
-              <span className="text-[15px] font-semibold text-[#111] block leading-tight">Lukas F.</span>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <Star size={12} className="text-[#111] fill-[#111]" />
-                <span className="text-[13px] font-medium text-[#111]">4.9</span>
-                <span className="text-[12px] text-[#A09A94]">(128)</span>
-              </div>
-            </div>
-            <button onClick={() => onNavigateToProvider && onNavigateToProvider()} className="text-[13px] font-medium text-[#E85D2A] active:opacity-70">Profile</button>
-          </div>
-        </section>
-
-        {/* Service Details - Flat Rows */}
-        <section className="mb-6">
-          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Details</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Service</span>
-              <span className="text-[14px] font-semibold text-[#111]">90 min Dog Walk</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Date & time</span>
-              <span className="text-[14px] font-semibold text-[#111]">Mon, Feb 24 · 14:00–15:30</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Location</span>
-              <span className="text-[14px] font-semibold text-[#111]">Bahnhofstrasse 12, Zurich</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Pet</span>
-              <span className="text-[14px] font-semibold text-[#111]">Luna (Golden Retriever)</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[12px] text-[#A09A94]">Add-ons</span>
-              <span className="text-[14px] font-semibold text-[#111]">Photo updates, Feed</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between items-start">
-              <span className="text-[12px] text-[#A09A94] pt-0.5">Instructions</span>
-              <div className="flex flex-col items-end">
-                <span className="text-[14px] text-[#111] text-right line-clamp-1 max-w-[200px]">Keys under the doormat...</span>
-                <button onClick={() => setIsInstructionsOpen(true)} className="text-[12px] font-medium text-[#E85D2A] mt-0.5">Read more</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Payment */}
-        <section className="mb-6">
-          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Payment</h3>
-          <div className="space-y-2.5">
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#A09A94]">Subtotal</span>
-              <span className="font-medium text-[#111]">CHF 85.00</span>
-            </div>
-            <div className="flex justify-between text-[13px]">
-              <span className="text-[#A09A94]">Add-ons</span>
-              <span className="font-medium text-[#111]">CHF 10.00</span>
-            </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between">
-              <span className="text-[15px] font-semibold text-[#111]">Total</span>
-              <span className="text-[15px] font-bold text-[#111]">CHF 95.00</span>
-            </div>
-            <div className="flex items-center justify-between mt-1">
-              <div className="flex items-center gap-2">
-                <CreditCard size={14} className="text-[#A09A94]" />
-                <span className="text-[13px] text-[#A09A94]">Visa •••• 4242</span>
-              </div>
-              {(status === 'pending' || status === 'confirmed' || status === 'in-progress') ? (
-                <span className="text-[11px] font-bold text-[#E85D2A]">Hold active</span>
-              ) : status === 'completed' ? (
-                <span className="text-[11px] font-bold text-[#E85D2A]">Charged</span>
+        {/* ═══ STATUS — left-border accent ═══ */}
+        <div className="flex items-start gap-2.5 pl-3 border-l-2 mt-5" style={{ borderColor: `${currentConfig.color}66` }}>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              {isActive ? (
+                <span className="relative flex h-[7px] w-[7px]">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60" style={{ background: currentConfig.color }} />
+                  <span className="relative inline-flex rounded-full h-[7px] w-[7px]" style={{ background: currentConfig.color }} />
+                </span>
               ) : (
-                <span className="text-[11px] font-bold text-[#A09A94]">Released</span>
+                <currentConfig.icon size={12} color={currentConfig.color} strokeWidth={2.5} />
               )}
+              <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: currentConfig.color }}>{currentConfig.label}</span>
+            </div>
+            <p className="text-[11px] text-[#A09A94] leading-[1.5]">{currentConfig.subtext}</p>
+          </div>
+        </div>
+
+        {/* ═══ DOTTED PERFORATION ═══ */}
+        <div className="my-6 border-t border-dashed border-[#CFCFD4]" />
+
+        {/* ═══ DETAILS — aligned label column, consistent rhythm ═══ */}
+        <div className="space-y-3">
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Service</span>
+            <span className="text-[#111] font-medium">90 min Dog Walk</span>
+          </div>
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">When</span>
+            <span className="text-[#111] font-medium">Mon, Feb 24 · 14:00–15:30</span>
+          </div>
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Where</span>
+            <span className="text-[#111] font-medium">Bahnhofstrasse 12, Zurich</span>
+          </div>
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Pet</span>
+            <span className="text-[#111] font-medium">Luna · Golden Retriever</span>
+          </div>
+          <div className="flex items-start text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px] pt-[1px]">Add-ons</span>
+            <div className="flex flex-col gap-1.5 flex-1">
+              {addOns.map((a, i) => (
+                <span key={i} className="text-[#111] font-medium leading-tight">{a}</span>
+              ))}
             </div>
           </div>
-        </section>
+          <button onClick={() => setIsInstructionsOpen(true)} className="w-full flex items-baseline text-[14px] active:opacity-70 text-left">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Notes</span>
+            <span className="text-[#111] font-medium flex-1 line-clamp-1">Keys under the doormat…</span>
+            <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+          </button>
+        </div>
 
-        {/* Updates */}
-        <section className="mb-6">
-          <h3 className="text-[15px] font-semibold text-[#111] mb-3">Notifications</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-[14px] text-[#111]">Push notifications</span>
+        {/* ═══ DOTTED PERFORATION ═══ */}
+        <div className="my-6 border-t border-dashed border-[#CFCFD4]" />
+
+        {/* ═══ PAYMENT BREAKDOWN ═══ */}
+        <div className="space-y-3" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Subtotal</span>
+            <span className="text-[#111] font-medium flex-1">CHF 85.00</span>
+          </div>
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Add-ons</span>
+            <span className="text-[#111] font-medium flex-1">CHF 10.00</span>
+          </div>
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Card</span>
+            <span className="text-[#111] font-medium flex-1 flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-[26px] h-[17px] rounded-[3px] bg-[#1A1F71]">
+                <span className="text-[7px] font-bold text-white tracking-[0.02em]">VISA</span>
+              </span>
+              <span>•••• 4242</span>
+            </span>
+          </div>
+          <div className="flex items-baseline text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Status</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.1em] flex-1" style={{ color: holdColor }}>{holdLabel}</span>
+          </div>
+        </div>
+
+        {/* Total — distinct emphasis row */}
+        <div className="flex items-baseline justify-between mt-5 mb-2">
+          <span className="text-[15px] font-semibold text-[#111] tracking-tight">Total</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[11px] font-semibold text-[#A09A94] tracking-wide">CHF</span>
+            <span className="text-[24px] font-bold text-[#111] leading-none tracking-[-0.02em]" style={{ fontVariantNumeric: 'tabular-nums' }}>95.00</span>
+          </div>
+        </div>
+
+        {/* ═══ DOTTED PERFORATION ═══ */}
+        <div className="my-6 border-t border-dashed border-[#CFCFD4]" />
+
+        {/* ═══ NOTIFICATIONS — aligned to details rhythm ═══ */}
+        <div className="space-y-3">
+          <div className="flex items-center text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Push</span>
+            <div className="flex-1 flex justify-between items-center">
+              <span className="text-[#111]">Get push alerts</span>
               <Toggle checked={notifications.push} onChange={() => handleTogglePref('push')} />
             </div>
-            <div className="h-[1px] bg-[#EDE8E2]" />
-            <div className="flex justify-between items-center">
-              <span className="text-[14px] text-[#111]">SMS updates</span>
+          </div>
+          <div className="flex items-center text-[14px]">
+            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">SMS</span>
+            <div className="flex-1 flex justify-between items-center">
+              <span className="text-[#111]">Text message updates</span>
               <Toggle checked={notifications.sms} onChange={() => handleTogglePref('sms')} />
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* Actions */}
-        <section className="mb-8">
-          <div className="flex gap-4 justify-center">
-            <button
-              disabled={status === 'cancelled' || status === 'declined'}
-              onClick={onOpenChat}
-              className={`text-[14px] font-medium transition-opacity ${status === 'cancelled' || status === 'declined' ? 'text-[#CFCFD4] cursor-not-allowed' : 'text-[#E85D2A] active:opacity-70'}`}
-            >
-              Message
+        {/* ═══ INLINE TEXT ACTIONS ═══ */}
+        <div className="flex gap-5 mt-7">
+          <button
+            disabled={isTerminal}
+            onClick={onOpenChat}
+            className={`text-[13px] font-medium transition-opacity ${isTerminal ? 'text-[#CFCFD4] cursor-not-allowed' : 'text-[#E85D2A] active:opacity-70'}`}
+          >
+            Message Lukas
+          </button>
+          {(status === 'pending' || status === 'confirmed') && (
+            <button onClick={() => setStatus('cancelled')} className="text-[13px] font-medium text-[#FF3B30] active:opacity-70 transition-opacity">
+              Cancel booking
             </button>
-            {(status === 'pending' || status === 'confirmed') && (
-              <button
-                onClick={() => setStatus('cancelled')}
-                className="text-[14px] font-medium text-[#FF3B30] active:opacity-70 transition-opacity"
-              >
-                Cancel booking
-              </button>
-            )}
-          </div>
-        </section>
+          )}
+        </div>
       </div>
 
-      {/* Bottom status-specific actions */}
+      {/* ═══ BOTTOM CTA — status-specific, matches motif ═══ */}
       {status === 'in-progress' && (
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40 flex gap-3">
-          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#F3EFEB] border border-[#EDE8E2] text-[#6E6058] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
-            <Navigation2 size={16} /> Track
+        <div className="absolute bottom-6 left-5 right-5 z-30 flex gap-3">
+          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#F3EFEB] text-[#111] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
+            <Navigation2 size={15} strokeWidth={2} /> Track
           </button>
-          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#E85D2A] text-white flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
-            <Camera size={16} /> Photos
+          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
+            <Camera size={15} strokeWidth={2} /> Photos
           </button>
         </div>
       )}
       {status === 'completed' && (
-        <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2] to-transparent z-40 flex gap-3">
-          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#F3EFEB] border border-[#EDE8E2] text-[#6E6058] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
-            <Star size={16} /> Review
+        <div className="absolute bottom-6 left-5 right-5 z-30 flex gap-3">
+          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#F3EFEB] text-[#111] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
+            <Star size={15} strokeWidth={2} /> Review
           </button>
-          <button className="flex-1 py-3 rounded-[12px] text-[14px] font-semibold bg-[#E85D2A] text-white flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
             Book again
           </button>
         </div>
@@ -5682,123 +5901,129 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
   );
 
   return (
-    <div className="absolute inset-0 bg-[var(--color-background)] z-50 overflow-hidden flex flex-col">
-       {/* Header — same as detail variant across app */}
-       <header className="shrink-0 pt-14 pb-3 px-5 flex justify-between items-center z-40" style={{ background: 'var(--color-background)' }}>
-          <button onClick={onBack} className="w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <ChevronLeft size={18} color="#111" />
-          </button>
-          <h2 className="text-[15px] font-semibold text-[#111] tracking-tight">{provider.name}</h2>
-          <button onClick={() => setMenuSheet(true)} className="w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <MoreHorizontal size={16} color="#111" />
-          </button>
+    <div className="absolute inset-0 z-50 overflow-hidden">
+       {/* Header — identical to global detail variant */}
+       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[var(--color-background)] to-transparent">
+          <div className="flex justify-between items-center w-full pointer-events-auto">
+            <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+              <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+            </button>
+            <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">{provider.name}</h2>
+            <button onClick={() => setMenuSheet(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+              <MoreHorizontal size={20} color="#111" strokeWidth={1.5} />
+            </button>
+          </div>
        </header>
 
-       <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+       <div className="absolute inset-0 overflow-y-auto bg-[var(--color-background)] pt-[110px] pb-[140px] px-5" style={{ scrollbarWidth: 'none' }}>
 
-            {/* ═══ EDITORIAL HERO ═══ */}
-            <div className="px-5 pt-2 pb-6">
-              {/* Big name first — editorial style */}
-              <h1 className="text-[36px] font-bold text-[#111] tracking-[-1.5px] leading-[0.95] mb-4">{provider.name.split('.')[0]}.</h1>
-
-              {/* Photo + quick facts side by side */}
-              <div className="flex gap-4">
-                <img src={provider.photo} alt="" className="w-[100px] h-[120px] rounded-[14px] object-cover shrink-0" />
-                <div className="flex-1 flex flex-col justify-between py-1">
-                  <div>
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Star size={11} className="fill-[#E85D2A] text-[#E85D2A]" />
-                      <span className="text-[15px] font-bold text-[#111]">{provider.rating}</span>
-                      <span className="text-[11px] text-[#A09A94]">{provider.reviewCount} reviews</span>
-                    </div>
-                    <p className="text-[12px] text-[#A09A94] leading-snug">{provider.location}<br />{provider.languages.join(' · ')}</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-[10px] text-[#A09A94]">
-                    <span className="font-semibold text-[#111]">{provider.yearsExperience}y</span>exp
-                    <span className="text-[#EDE8E2]">|</span>
-                    <span className="font-semibold text-[#111]">{provider.totalWalks}</span>walks
-                    <span className="text-[#EDE8E2]">|</span>
-                    <span className="font-semibold text-[#111]">{provider.distance}km</span>
-                  </div>
+            {/* ═══ IDENTITY: photo + name + rating ═══ */}
+            <div className="flex gap-4 mb-5">
+              <img src={provider.photo} alt="" className="w-[90px] h-[90px] rounded-[18px] object-cover shrink-0" />
+              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <h1 className="text-[24px] font-bold text-[#111] tracking-[-0.5px] leading-tight">{provider.name}</h1>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Star size={12} className="fill-[#E85D2A] text-[#E85D2A]" />
+                  <span className="text-[14px] font-bold text-[#111]">{provider.rating}</span>
+                  <span className="text-[11px] text-[#A09A94]">· {provider.reviewCount} reviews</span>
                 </div>
+                <p className="text-[11px] text-[#A09A94] mt-1">{provider.location} · {provider.languages.join(', ')}</p>
               </div>
             </div>
 
-            <div className="px-5 pb-[120px]">
-
-              {/* Trust — simple green line */}
-              <div className="flex items-center gap-3 mb-5 text-[10px] font-semibold text-[#3F8D63]">
-                {provider.certifications.filter(c => c.verified).map((c, i) => (
-                  <span key={i} className="flex items-center gap-0.5"><Check size={8} />{c.label.replace('Identity ', '').replace(' Certified', '')}</span>
-                ))}
+            {/* ═══ STATS ═══ */}
+            <div className="grid grid-cols-3 gap-2 mb-5">
+              <div className="text-center py-2.5 rounded-[12px]" style={{ background: '#F3EFEB' }}>
+                <span className="text-[16px] font-bold text-[#111] block">{provider.yearsExperience}y</span>
+                <span className="text-[9px] text-[#A09A94]">Experience</span>
               </div>
-
-              {/* Bio — pull quote style */}
-              <div className="mb-6 pl-4" style={{ borderLeft: '2px solid #E85D2A' }}>
-                <p className="text-[14px] text-[#6E6058] leading-[1.7] italic">{provider.bio.substring(0, 120)}...</p>
+              <div className="text-center py-2.5 rounded-[12px]" style={{ background: '#F3EFEB' }}>
+                <span className="text-[16px] font-bold text-[#111] block">{provider.totalWalks}</span>
+                <span className="text-[9px] text-[#A09A94]">Walks</span>
               </div>
+              <div className="text-center py-2.5 rounded-[12px]" style={{ background: '#F3EFEB' }}>
+                <span className="text-[16px] font-bold text-[#111] block">{provider.distance}km</span>
+                <span className="text-[9px] text-[#A09A94]">Away</span>
+              </div>
+            </div>
 
-              {/* Services — clean, no card wrapper */}
-              <h3 className="text-[11px] font-bold text-[#A09A94] uppercase tracking-[0.08em] mb-3">Services & pricing</h3>
-              {provider.services.map((svc, i) => (
-                <div key={svc.id} className={`flex items-baseline justify-between py-3 ${i < provider.services.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
-                  <div>
-                    <span className="text-[15px] font-semibold text-[#111]">{svc.label}</span>
-                    {svc.popular && <span className="ml-2 text-[8px] font-bold text-[#E85D2A] uppercase">Popular</span>}
-                    <span className="text-[11px] text-[#A09A94] block">{svc.description}</span>
-                  </div>
-                  <span className="text-[16px] font-bold text-[#111] tabular-nums shrink-0 ml-4">{svc.price}</span>
-                </div>
+            {/* ═══ TRUST ═══ */}
+            <div className="flex items-center gap-2.5 mb-5 text-[10px] font-semibold text-[#3F8D63]">
+              {provider.certifications.filter(c => c.verified).map((c, i) => (
+                <span key={i} className="flex items-center gap-0.5"><Check size={8} />{c.label.replace('Identity ', '').replace(' Certified', '')}</span>
               ))}
+            </div>
 
-              {/* Availability — minimal dots */}
-              <div className="mt-6 mb-6">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-[11px] font-bold text-[#A09A94] uppercase tracking-[0.08em]">Availability</h3>
-                  <button onClick={() => setCalendarSheet(true)} className="text-[11px] font-medium text-[#E85D2A] active:opacity-70">Schedule</button>
+            {/* ═══ ABOUT ═══ */}
+            <p className="text-[13px] text-[#A09A94] leading-[1.65] mb-5">{provider.bio}</p>
+
+            {/* ═══ SERVICES ═══ */}
+            <h3 className="text-[15px] font-semibold text-[#111] mb-2">Services</h3>
+            {provider.services.map((svc, i) => (
+              <div key={svc.id} className={`flex items-center justify-between py-3 ${i < provider.services.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[14px] font-semibold text-[#111]">{svc.label}</span>
+                    {svc.popular && <span className="text-[8px] font-bold text-[#E85D2A] uppercase">Popular</span>}
+                  </div>
+                  <span className="text-[11px] text-[#A09A94]">{svc.description}</span>
                 </div>
-                <div className="flex">
-                  {Object.entries(provider.availability).slice(0, 7).map(([date, info]) => {
-                    const d = new Date(date);
-                    return (
-                      <div key={date} className="flex-1 text-center">
-                        <span className="text-[10px] text-[#A09A94] block mb-1">{d.toLocaleDateString('en', { weekday: 'narrow' })}</span>
-                        <span className={`text-[13px] font-bold block ${info.available ? 'text-[#111]' : 'text-[#DDD8D2]'}`}>{d.getDate()}</span>
-                        {info.available && <div className="w-1 h-1 rounded-full bg-[#E85D2A] mx-auto mt-1" />}
-                      </div>
-                    );
-                  })}
-                </div>
+                <span className="text-[15px] font-bold text-[#111] shrink-0 ml-3">CHF {svc.price}</span>
               </div>
+            ))}
 
-              {/* Reviews — editorial quote style */}
-              <div className="mb-6">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-[11px] font-bold text-[#A09A94] uppercase tracking-[0.08em]">What people say</h3>
-                  <button onClick={() => onNavigate && onNavigate('reviews')} className="text-[11px] font-medium text-[#E85D2A] active:opacity-70">{provider.reviewCount} reviews</button>
-                </div>
-                {provider.reviews.slice(0, 2).map((rev, i) => (
-                  <div key={rev.id} className={`py-3 ${i < 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
-                    <p className="text-[13px] text-[#6E6058] leading-relaxed italic line-clamp-2">"{rev.text}"</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <img src={rev.authorPhoto} alt="" className="w-5 h-5 rounded-full object-cover" />
-                      <span className="text-[11px] font-semibold text-[#111]">{rev.author}</span>
+            {/* ═══ AVAILABILITY ═══ */}
+            <div className="mt-5 mb-5">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-[15px] font-semibold text-[#111]">This week</h3>
+                <button onClick={() => setCalendarSheet(true)} className="text-[11px] font-medium text-[#E85D2A] active:opacity-70">Full schedule</button>
+              </div>
+              <div className="flex">
+                {Object.entries(provider.availability).slice(0, 7).map(([date, info]) => {
+                  const d = new Date(date);
+                  return (
+                    <div key={date} className="flex-1 text-center">
+                      <span className="text-[9px] text-[#A09A94] block mb-1">{d.toLocaleDateString('en', { weekday: 'narrow' })}</span>
+                      <span className={`text-[13px] font-bold block ${info.available ? 'text-[#111]' : 'text-[#DDD8D2]'}`}>{d.getDate()}</span>
+                      {info.available && <div className="w-1 h-1 rounded-full bg-[#E85D2A] mx-auto mt-1" />}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ═══ REVIEWS ═══ */}
+            <div className="mb-5">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-[15px] font-semibold text-[#111]">Reviews</h3>
+                <button onClick={() => onNavigate && onNavigate('reviews')} className="text-[11px] font-medium text-[#E85D2A] active:opacity-70">All {provider.reviewCount}</button>
+              </div>
+              {provider.reviews.slice(0, 2).map((rev, i) => (
+                <div key={rev.id} className={`py-3 ${i < 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <img src={rev.authorPhoto} alt="" className="w-7 h-7 rounded-full object-cover" />
+                    <div className="flex-1">
+                      <span className="text-[12px] font-semibold text-[#111]">{rev.author}</span>
                       <div className="flex gap-0.5">{Array.from({length: rev.rating}).map((_, j) => <Star key={j} size={7} className="fill-[#E85D2A] text-[#E85D2A]" />)}</div>
                     </div>
+                    <span className="text-[9px] text-[#C4BBB3]">{rev.date}</span>
                   </div>
-                ))}
-              </div>
+                  <p className="text-[12px] text-[#A09A94] leading-relaxed line-clamp-2">{rev.text}</p>
+                </div>
+              ))}
+            </div>
 
-              {/* Gallery — asymmetric grid */}
-              {provider.gallery.length > 0 && (
-                <div className="grid grid-cols-3 gap-1.5" style={{ gridTemplateRows: 'auto auto' }}>
-                  <img src={provider.gallery[0]} alt="" onClick={() => setGalleryViewer(0)} className="col-span-2 row-span-2 w-full h-full rounded-[12px] object-cover cursor-pointer active:scale-[0.98] transition-transform" style={{ minHeight: '140px' }} />
-                  {provider.gallery.slice(1, 3).map((img, i) => (
-                    <img key={i} src={img} alt="" onClick={() => setGalleryViewer(i + 1)} className="w-full aspect-square rounded-[12px] object-cover cursor-pointer active:scale-[0.98] transition-transform" />
+            {/* ═══ GALLERY ═══ */}
+            {provider.gallery.length > 0 && (
+              <div className="mb-5">
+                <h3 className="text-[15px] font-semibold text-[#111] mb-2">Photos</h3>
+                <div className="flex gap-2 overflow-x-auto -mx-5 px-5" style={{ scrollbarWidth: 'none' }}>
+                  {provider.gallery.map((img, i) => (
+                    <img key={i} src={img} alt="" onClick={() => setGalleryViewer(i)} className="w-[72px] h-[72px] rounded-[12px] object-cover shrink-0 cursor-pointer active:scale-[0.96] transition-transform" />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
        </div>
 
        {/* Floating CTA */}
@@ -6264,9 +6489,9 @@ const BookingFilterTabs = ({ filters, activeFilter, onChange }) => (
           <button
             key={f.id}
             onClick={() => onChange(f.id)}
-            className={`h-[34px] px-3.5 rounded-full inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-[12px] font-semibold active:scale-[0.96] transition-all duration-[180ms] border ${isActive ? 'bg-[#111111] text-white border-transparent' : 'bg-white/90 backdrop-blur-md text-[#6E6E73] border-black/[0.05] hover:bg-white hover:text-[#111111]'}`}
+            className={`h-[34px] px-3.5 rounded-full inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-[12px] font-semibold active:scale-[0.96] transition-all duration-[180ms] ${isActive ? 'bg-[#111] text-white' : 'bg-[#F3EFEB] text-[#A09A94]'}`}
           >
-            {Icon ? <Icon size={13} className={isActive ? 'text-white' : 'text-[#8E8E93]'} /> : null}
+            {Icon ? <Icon size={13} className={isActive ? 'text-white' : 'text-[#A09A94]'} /> : null}
             <span>{f.label}</span>
           </button>
         );
@@ -6277,16 +6502,16 @@ const BookingFilterTabs = ({ filters, activeFilter, onChange }) => (
 
 const BookingStatusBadge = ({ status }) => {
   const configs = {
-    'pending': { className: 'bg-[#F7F4EF] text-[#B07A3A] border-[#ECDDC8]', label: 'Pending' },
-    'confirmed': { className: 'bg-[#EEF7F1] text-[#3F8D63] border-[#D7EBDD]', label: 'Confirmed' },
-    'in-progress': { className: 'bg-[#FFF4EF] text-[#C26436] border-[#F3D8C9]', label: 'In Progress' },
-    'completed': { className: 'bg-[#F3F3F5] text-[#6E6E73] border-black/[0.06]', label: 'Completed' },
-    'cancelled': { className: 'bg-[#F3F3F5] text-[#8E8E93] border-black/[0.06]', label: 'Cancelled' },
-    'declined': { className: 'bg-[#F3F3F5] text-[#8E8E93] border-black/[0.06]', label: 'Declined' }
+    'pending': { className: 'bg-[#E85D2A]/10 text-[#E85D2A]', label: 'Pending' },
+    'confirmed': { className: 'bg-[#E85D2A]/10 text-[#E85D2A]', label: 'Confirmed' },
+    'in-progress': { className: 'bg-[#E85D2A]/10 text-[#E85D2A]', label: 'In Progress' },
+    'completed': { className: 'bg-[#F3EFEB] text-[#A09A94]', label: 'Completed' },
+    'cancelled': { className: 'bg-[#F3EFEB] text-[#A09A94]', label: 'Cancelled' },
+    'declined': { className: 'bg-[#F3EFEB] text-[#A09A94]', label: 'Declined' }
   };
   const config = configs[status] || configs['completed'];
   return (
-    <span className={`h-[20px] px-2.5 rounded-full text-[10px] font-semibold tracking-[0.02em] border inline-flex items-center leading-none ${config.className}`}>{config.label}</span>
+    <span className={`h-[20px] px-2.5 rounded-full text-[10px] font-semibold tracking-[0.02em] inline-flex items-center leading-none ${config.className}`}>{config.label}</span>
   );
 };
 
@@ -6372,14 +6597,14 @@ const BookingCard = ({ booking, onCancel, onOpenDetails }) => {
       case 'completed':
         return (<>
           <Button variant="primary" size="small" fullWidth className="!h-[36px] !rounded-[10px]">Review</Button>
-          <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F7F7F8] text-[14px] font-semibold text-[#111111] active:opacity-70">Details</button>
+          <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F3EFEB] text-[14px] font-semibold text-[#111] active:opacity-70">Details</button>
         </>);
       case 'cancelled':
       case 'declined':
         return (
           <>
             <Button variant="secondary" size="small" fullWidth className="!h-[36px] !rounded-[10px]" icon={RotateCcw}>Rebook</Button>
-            <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F7F7F8] text-[14px] font-semibold text-[#111111] active:opacity-70">Details</button>
+            <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F3EFEB] text-[14px] font-semibold text-[#111] active:opacity-70">Details</button>
           </>
         );
       default: return null;
@@ -6387,24 +6612,24 @@ const BookingCard = ({ booking, onCancel, onOpenDetails }) => {
   };
 
   return (
-    <Card clickable className="!px-4 !py-3.5 border border-black/[0.03] shadow-[0_6px_20px_rgba(0,0,0,0.03)] active:scale-[0.98] transition-transform duration-200">
+    <div className="py-4 active:opacity-70 transition-opacity duration-150">
       <div className="flex flex-col gap-3">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-[#F3F3F5] border border-black/[0.05] flex items-center justify-center shrink-0 self-center">
-            <ServiceIcon size={14} className="text-[#6E6E73]" strokeWidth={2.2} />
+          <div className="w-8 h-8 rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0 self-center">
+            <ServiceIcon size={14} className="text-[#6E6058]" strokeWidth={2.2} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 min-w-0">
-              <h4 className="font-semibold text-[14px] text-[#111111] truncate">{booking.provider.name}</h4>
+              <h4 className="font-semibold text-[14px] text-[#111] truncate">{booking.provider.name}</h4>
               <span className="text-[#CFCFD4]">·</span>
               <span className="flex items-center gap-0.5 shrink-0">
-                <span className="text-[13px] font-semibold text-[#111111]">{booking.provider.rating}</span>
-                <Star size={11} className="fill-[#FF6B35] text-[#FF6B35]" />
+                <span className="text-[13px] font-semibold text-[#111]">{booking.provider.rating}</span>
+                <Star size={11} className="fill-[#E85D2A] text-[#E85D2A]" />
               </span>
             </div>
-            <p className="text-[14px] font-medium text-[#111111] mt-0.5 leading-tight truncate">{getBaseServiceLabel(booking.service.label)} with {getProviderFirstName(booking.provider.name)}</p>
-            <p className="text-[11px] text-[#8E8E93] mt-1 flex items-center gap-1.5 leading-none whitespace-nowrap">
-              <Calendar size={12} className="text-[#A1A1A6]" />
+            <p className="text-[13px] font-medium text-[#6E6058] mt-0.5 leading-tight truncate">{getBaseServiceLabel(booking.service.label)} with {getProviderFirstName(booking.provider.name)}</p>
+            <p className="text-[11px] text-[#A09A94] mt-1 flex items-center gap-1.5 leading-none whitespace-nowrap">
+              <Calendar size={12} className="text-[#A09A94]" />
               <span className="whitespace-nowrap">{formatBookingDateLine(booking.dateTime)}</span>
             </p>
           </div>
@@ -6413,26 +6638,26 @@ const BookingCard = ({ booking, onCancel, onOpenDetails }) => {
           </div>
         </div>
         {getHelperText() && (
-          <p className="text-[12px] text-[#6E6E73] flex items-center gap-1.5 pl-[44px] -mt-1">
-            {booking.status === 'in-progress' && <span className="w-2 h-2 rounded-full bg-[#007AFF] animate-pulse" />}
+          <p className="text-[12px] text-[#6E6058] flex items-center gap-1.5 pl-[44px] -mt-1">
+            {booking.status === 'in-progress' && <span className="w-2 h-2 rounded-full bg-[#E85D2A] animate-pulse" />}
             {getHelperText()}
           </p>
         )}
-        <div className="mt-0 pt-1.5 border-t border-black/[0.04]">
+        <div className="mt-0 pt-1.5 border-t border-dashed border-[#CFCFD4]">
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 pl-0 pr-[12px]">
             {renderActions()}
-            <span className="text-[14px] font-semibold text-[#111111] whitespace-nowrap">CHF {Math.round(booking.total)}</span>
+            <span className="text-[14px] font-semibold text-[#111] whitespace-nowrap">CHF {Math.round(booking.total)}</span>
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
 const BookingSectionHeader = ({ title, count }) => (
   <div className="mt-4 mb-2 px-1 flex items-center justify-between">
-    <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em]">{title}</h3>
-    <span className="text-[12px] font-semibold text-[#A1A1A6]">{count}</span>
+    <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">{title}</h3>
+    <span className="text-[12px] font-semibold text-[#A09A94]">{count}</span>
   </div>
 );
 
@@ -6559,16 +6784,16 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
       const c = sortBookings(completedBookings, 'completed');
       const x = sortBookings(cancelledBookings, 'cancelled');
       return (
-        <div className="space-y-2">
-          {u.length > 0 && (<section><BookingSectionHeader title="UPCOMING" count={u.length} /><div className="space-y-4">{u.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div></section>)}
-          {c.length > 0 && (<section><BookingSectionHeader title="COMPLETED" count={c.length} /><div className="space-y-4">{c.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div>{c.length > 2 && <div className="pt-6 flex justify-center pb-2"><button onClick={() => setActiveFilter('completed')} className="flex items-center gap-1.5 text-[14px] font-semibold text-[#111111] active:opacity-70 transition-opacity">View All Completed →</button></div>}</section>)}
-          {x.length > 0 && (<section><BookingSectionHeader title="CANCELLED" count={x.length} /><div className="space-y-4">{x.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div></section>)}
+        <div>
+          {u.length > 0 && (<section><BookingSectionHeader title="UPCOMING" count={u.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{u.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div></section>)}
+          {c.length > 0 && (<section><BookingSectionHeader title="COMPLETED" count={c.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{c.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div>{c.length > 2 && <div className="pt-6 flex justify-center pb-2"><button onClick={() => setActiveFilter('completed')} className="flex items-center gap-1.5 text-[14px] font-semibold text-[#111] active:opacity-70 transition-opacity">View All Completed →</button></div>}</section>)}
+          {x.length > 0 && (<section><BookingSectionHeader title="CANCELLED" count={x.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{x.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div></section>)}
         </div>
       );
     }
 
     return (
-      <div className="space-y-4 pt-0.5">
+      <div className="divide-y divide-dashed divide-[#CFCFD4]">
         {bookingsToRender.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}
       </div>
     );
@@ -6576,31 +6801,31 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
 
   return (
     <>
-      <ScreenContainer hidePadding onScroll={handleBookingsScroll}>
+      <div className="absolute inset-0 bg-[#F7F5F2] flex flex-col">
         {onBack && (
-          <header className="sticky top-0 z-40 pt-14 pb-4 px-5 bg-gradient-to-b from-white/95 via-white/70 to-transparent pointer-events-none">
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
             <div className="flex justify-between items-center w-full pointer-events-auto">
-              <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-full active:scale-[0.98] transition-all">
-                <ChevronLeft size={22} color="#111111" />
+              <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
               </button>
-              <h2 className="text-[17px] font-semibold text-[#111111]">My Bookings</h2>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Bookings</h2>
               <button
                 type="button"
                 aria-label="Calendar"
                 onClick={() => setCalendarOpen(true)}
-                className="w-[44px] h-[44px] rounded-full border border-black/[0.04] bg-white/85 backdrop-blur-md text-[#6E6E73] flex items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.035)] active:scale-[0.97] transition-all duration-200"
+                className="w-[44px] h-[44px] rounded-full flex items-center justify-center active:scale-[0.97] transition-all duration-200" style={{ background: '#F3EFEB' }}
               >
-                <CalendarDays size={17} strokeWidth={2.1} />
+                <CalendarDays size={17} strokeWidth={1.5} color="#111" />
               </button>
             </div>
           </header>
         )}
-        <div className="px-5 pb-8 flex flex-col h-full" style={{ paddingTop: `${bookingsTopPadding}px` }}>
+        <div className="absolute inset-0 overflow-y-auto pt-[110px] pb-[40px] px-5" style={{ scrollbarWidth: 'none' }} onScroll={handleBookingsScroll}>
           {renderBookings()}
         </div>
         <CardModal isOpen={cancelSheetOpen} onClose={() => setCancelSheetOpen(false)} title="Cancel request?">
           <div className="space-y-6 pt-2">
-            <Text variant="body" className="text-[#6E6E73]">The walker will be notified. No charge will be made. Your hold will be released.</Text>
+            <Text variant="body" className="text-[#6E6058]">The walker will be notified. No charge will be made. Your hold will be released.</Text>
             <div className="flex flex-col gap-3 pt-2">
               <Button variant="destructive" size="large" onClick={executeCancel}>Cancel Request</Button>
               <Button variant="secondary" size="large" onClick={() => setCancelSheetOpen(false)}>Keep Request</Button>
@@ -6612,15 +6837,15 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
             <div className="flex items-center justify-between">
               <button
                 onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1))}
-                className="w-9 h-9 rounded-full bg-[#F7F7F8] border border-black/[0.04] text-[#6E6E73] flex items-center justify-center active:scale-[0.97] transition-all"
+                className="w-9 h-9 rounded-full bg-[#F3EFEB] text-[#6E6058] flex items-center justify-center active:scale-[0.97] transition-all"
                 aria-label="Previous month"
               >
                 <ChevronLeft size={16} />
               </button>
-              <h4 className="text-[15px] font-semibold text-[#111111]">{monthYearLabel}</h4>
+              <h4 className="text-[15px] font-semibold text-[#111]">{monthYearLabel}</h4>
               <button
                 onClick={() => setCalendarMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1))}
-                className="w-9 h-9 rounded-full bg-[#F7F7F8] border border-black/[0.04] text-[#6E6E73] flex items-center justify-center active:scale-[0.97] transition-all"
+                className="w-9 h-9 rounded-full bg-[#F3EFEB] text-[#6E6058] flex items-center justify-center active:scale-[0.97] transition-all"
                 aria-label="Next month"
               >
                 <ChevronRight size={16} />
@@ -6628,7 +6853,7 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
             </div>
             <div className="grid grid-cols-7 gap-y-2 text-center">
               {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, idx) => (
-                <div key={`${d}-${idx}`} className="text-[11px] font-semibold text-[#A1A1A6]">{d}</div>
+                <div key={`${d}-${idx}`} className="text-[11px] font-semibold text-[#A09A94]">{d}</div>
               ))}
               {calendarCells.map((cell, idx) => {
                 if (!cell) return <div key={`empty-${idx}`} />;
@@ -6639,18 +6864,18 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
                   <button
                     key={cell.key}
                     onClick={() => setSelectedCalendarDate(cell.key)}
-                    className={`relative w-9 h-9 mx-auto rounded-full text-[13px] font-semibold transition-all active:scale-[0.97] ${isSelected ? 'bg-[#111111] text-white' : isToday ? 'bg-[#F3F3F5] text-[#111111]' : 'text-[#6E6E73] hover:bg-[#F7F7F8]'}`}
+                    className={`relative w-9 h-9 mx-auto rounded-full text-[13px] font-semibold transition-all active:scale-[0.97] ${isSelected ? 'bg-[#111] text-white' : isToday ? 'bg-[#F3EFEB] text-[#111]' : 'text-[#6E6058] hover:bg-[#F3EFEB]'}`}
                   >
                     {cell.day}
                     {hasBooking && (
-                      <span className={`absolute left-1/2 -translate-x-1/2 bottom-1 w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-[#FF6A3D]'}`} />
+                      <span className={`absolute left-1/2 -translate-x-1/2 bottom-1 w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-white' : 'bg-[#E85D2A]'}`} />
                     )}
                   </button>
                 );
               })}
             </div>
-            <div className="pt-2 mt-2 border-t border-black/[0.05] flex-1 min-h-0 flex flex-col">
-              <div className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] mb-2">Bookings</div>
+            <div className="pt-2 mt-2 border-t border-dashed border-[#CFCFD4] flex-1 min-h-0 flex flex-col">
+              <div className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-2">Bookings</div>
               {selectedDayBookings.length > 0 ? (
                 <div className="space-y-1.5 overflow-y-auto custom-scrollbar pr-1 flex-1 min-h-0">
                   {selectedDayBookings.map((booking) => (
@@ -6660,22 +6885,22 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
                         setCalendarOpen(false);
                         onOpenDetails?.(booking);
                       }}
-                      className="w-full rounded-[12px] bg-[#F7F7F8] border border-black/[0.04] px-3.5 py-2.5 text-left active:scale-[0.99] transition-all"
+                      className="w-full rounded-[12px] bg-[#F3EFEB] px-3.5 py-2.5 text-left active:scale-[0.99] transition-all"
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-[13px] font-semibold text-[#111111] truncate">{getCompactBookingTitle(booking)}</span>
-                        <span className="text-[12px] font-medium text-[#8E8E93] shrink-0">{formatCalendarListTime(booking)}</span>
+                        <span className="text-[13px] font-semibold text-[#111] truncate">{getCompactBookingTitle(booking)}</span>
+                        <span className="text-[12px] font-medium text-[#A09A94] shrink-0">{formatCalendarListTime(booking)}</span>
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <p className="text-[13px] text-[#8E8E93] text-center py-3 flex-1 flex items-center justify-center">No bookings for this day.</p>
+                <p className="text-[13px] text-[#A09A94] text-center py-3 flex-1 flex items-center justify-center">No bookings for this day.</p>
               )}
             </div>
           </div>
         </CardModal>
-      </ScreenContainer>
+      </div>
       {onBack && (
         <div
           className="absolute top-[108px] left-0 w-full z-30 px-5 transition-[opacity,transform] duration-200"
@@ -8076,97 +8301,55 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
 const ActivityCommunityPlaceholder = ({ isVisible }) => {
   const nav = (path) => { window.location.href = path; };
   return (
-    <div className={`${isVisible ? 'block' : 'hidden'} bg-[#F7F7F8] pb-24`}>
-      <div className="px-5 pt-4 space-y-3">
-        {/* Safety Alerts */}
-        <button onClick={() => nav('/danger-reports')} className="w-full bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.03] text-left active:scale-[0.98] transition-transform">
+    <div className={`${isVisible ? 'block' : 'hidden'} bg-[#F7F5F2] pb-24`}>
+      <div className="px-5 pt-4 space-y-4">
+        {/* Hero — Playdate intro */}
+        <div className="text-center pt-2 pb-4">
+          <div className="w-16 h-16 rounded-full bg-[#E85D2A]/10 flex items-center justify-center mx-auto mb-3">
+            <Heart size={28} className="text-[#E85D2A]" />
+          </div>
+          <h3 className="text-[18px] font-bold text-[#111] tracking-tight mb-1">Find playmates</h3>
+          <p className="text-[13px] text-[#A09A94] leading-relaxed max-w-[240px] mx-auto">
+            Match with dogs nearby for walks, park time, and socializing.
+          </p>
+        </div>
+
+        {/* Active matches */}
+        <div className="rounded-[16px] p-4 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }} onClick={() => nav('/playdate-matching')}>
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-[#FF3B30]/10 flex items-center justify-center"><AlertTriangle size={20} className="text-[#FF3B30]" /></div>
-              <div>
-                <div className="text-[15px] font-semibold text-[#111111]">Safety Reports</div>
-                <div className="text-[12px] text-[#6E6E73]">3 alerts near you</div>
-              </div>
+            <span className="text-[13px] font-semibold text-[#111]">New matches</span>
+            <span className="px-2.5 py-1 bg-[#E85D2A] text-white rounded-full text-[11px] font-bold">4 matches</span>
+          </div>
+          <div className="flex -space-x-2">
+            {['https://i.pravatar.cc/80?u=pd1', 'https://i.pravatar.cc/80?u=pd2', 'https://i.pravatar.cc/80?u=pd3', 'https://i.pravatar.cc/80?u=pd4'].map((url, i) => (
+              <img key={i} src={url} alt="" className="w-10 h-10 rounded-full border-2 border-[#F7F5F2] object-cover" />
+            ))}
+            <div className="w-10 h-10 rounded-full border-2 border-[#F7F5F2] bg-[#EDE8E2] flex items-center justify-center">
+              <ChevronRight size={14} className="text-[#A09A94]" />
             </div>
-            <ChevronRight size={18} className="text-[#C7C7CC]" />
           </div>
-          <div className="flex gap-2">
-            <span className="px-2.5 py-1 bg-[#FF3B30]/8 text-[#FF3B30] rounded-full text-[11px] font-semibold">Poison bait · Seefeld</span>
-            <span className="px-2.5 py-1 bg-[#FF9500]/10 text-[#FF9500] rounded-full text-[11px] font-semibold">Glass · Bellevue</span>
-          </div>
-        </button>
+        </div>
 
-        {/* Playdate Matching */}
-        <button onClick={() => nav('/playdate-matching')} className="w-full bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.03] text-left active:scale-[0.98] transition-transform">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-[#FF6B35]/10 flex items-center justify-center"><Heart size={20} className="text-[#FF6B35]" /></div>
-              <div>
-                <div className="text-[15px] font-semibold text-[#111111]">Playdate Matching</div>
-                <div className="text-[12px] text-[#6E6E73]">Find playmates nearby</div>
+        {/* Upcoming playdates */}
+        <div>
+          <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-2">Upcoming</span>
+          <div className="rounded-[16px] p-4" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#E85D2A]/10 flex items-center justify-center shrink-0">
+                <Calendar size={18} className="text-[#E85D2A]" />
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 bg-[#FF6B35] text-white rounded-full text-[11px] font-bold">4 matches</span>
-              <ChevronRight size={18} className="text-[#C7C7CC]" />
+              <div className="flex-1 min-w-0">
+                <span className="text-[14px] font-semibold text-[#111] block leading-tight">Zurichhorn Park</span>
+                <span className="text-[12px] text-[#A09A94]">Saturday, 10:00 AM · 3 dogs</span>
+              </div>
+              <ChevronRight size={16} className="text-[#A09A94] shrink-0" />
             </div>
           </div>
-        </button>
+        </div>
 
-        {/* Lost Pet Alert */}
-        <button onClick={() => nav('/lost-pet')} className="w-full bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.03] text-left active:scale-[0.98] transition-transform">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-[#FF9500]/10 flex items-center justify-center"><MapPin size={20} className="text-[#FF9500]" /></div>
-              <div>
-                <div className="text-[15px] font-semibold text-[#111111]">Lost Pet Alert</div>
-                <div className="text-[12px] text-[#6E6E73]">Report or help find</div>
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-[#C7C7CC]" />
-          </div>
-        </button>
-
-        {/* Training Tips */}
-        <button onClick={() => nav('/training-tips')} className="w-full bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.03] text-left active:scale-[0.98] transition-transform">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-[#007AFF]/10 flex items-center justify-center"><Star size={20} className="text-[#007AFF]" /></div>
-              <div>
-                <div className="text-[15px] font-semibold text-[#111111]">Training Guides</div>
-                <div className="text-[12px] text-[#6E6E73]">3 of 12 completed</div>
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-[#C7C7CC]" />
-          </div>
-        </button>
-
-        {/* Find Providers */}
-        <button onClick={() => nav('/map-providers')} className="w-full bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.03] text-left active:scale-[0.98] transition-transform">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-[#00C060]/10 flex items-center justify-center"><Navigation size={20} className="text-[#00C060]" /></div>
-              <div>
-                <div className="text-[15px] font-semibold text-[#111111]">Explore Providers</div>
-                <div className="text-[12px] text-[#6E6E73]">Walkers, groomers near you</div>
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-[#C7C7CC]" />
-          </div>
-        </button>
-
-        {/* Vet Telehealth */}
-        <button onClick={() => nav('/vet-telehealth')} className="w-full bg-white rounded-[20px] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.03] text-left active:scale-[0.98] transition-transform">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-[#5856D6]/10 flex items-center justify-center"><Stethoscope size={20} className="text-[#5856D6]" /></div>
-              <div>
-                <div className="text-[15px] font-semibold text-[#111111]">Vet Telehealth</div>
-                <div className="text-[12px] text-[#6E6E73]">Video call a vet</div>
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-[#C7C7CC]" />
-          </div>
+        {/* Browse all CTA */}
+        <button onClick={() => nav('/playdate-matching')} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
+          Browse all playdates
         </button>
       </div>
     </div>
@@ -8194,7 +8377,7 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
   const [fylosPlaydateEvents, setFylosPlaydateEvents] = useState([]);
   const { progress: activityScrollY, handleScroll: handleActivityScroll, reset: resetActivityCollapse } = useDirectionalCollapseProgress(168, { showFactor: 2.25 });
   const totalUnreadNotifications = notifications.reduce((acc, group) => acc + group.items.filter((item) => !item.read).length, 0);
-  const modes = [{ id: 'my', label: 'My' }, { id: 'friends', label: 'Network', badge: hasNewFriendRequests || totalUnreadNotifications > 0 }, { id: 'community', label: 'Community' }];
+  const modes = [{ id: 'my', label: 'My' }, { id: 'friends', label: 'Network', badge: hasNewFriendRequests || totalUnreadNotifications > 0 }, { id: 'community', label: 'Playdates' }];
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
   const p1 = clamp01(activityScrollY / 56); // pets
   const p2 = clamp01((activityScrollY - 56) / 56); // pills
@@ -8516,172 +8699,207 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
   );
 };
 const VaultSectionHeader = ({ title }) => (
-  <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-[0.05em] mb-2.5 ml-1">{title}</h3>
+  <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-3">{title}</div>
 );
 
 const PetSelectorPill = ({ pet }) => (
-  <button className="flex items-center gap-2.5 bg-white/85 backdrop-blur-md border border-black/[0.05] pl-1.5 pr-4 py-1.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.03)] active:scale-[0.98] transition-all mb-5">
-    <div className="w-7 h-7 rounded-full bg-black/5 flex items-center justify-center"><PawPrint size={14} className="text-[#6E6E73]" /></div>
-    <span className="text-[15px] font-semibold text-[#111111]">{pet.name} <span className="text-[#8E8E93] font-normal">· {pet.breed}</span></span>
-    <ChevronDown size={14} className="text-[#8E8E93] ml-1" />
+  <button className="flex items-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] pl-2 pr-3.5 py-1.5 rounded-full active:scale-[0.97] transition-all mb-4">
+    <div className="w-6 h-6 rounded-full bg-[#EDE8E2] flex items-center justify-center"><PawPrint size={12} className="text-[#6E6058]" /></div>
+    <span className="text-[13px] font-semibold text-[#111]">{pet.name}</span>
+    <span className="text-[13px] text-[#A09A94]">{pet.breed}</span>
+    <ChevronDown size={12} className="text-[#A09A94] ml-0.5" />
   </button>
 );
 
 const EmergencyBundleCard = ({ petName, onShare, onDownload, isDownloading }) => (
-  <div className="bg-[#FFF8F5] border border-[#FFE5DA] rounded-[22px] p-5 relative overflow-hidden mb-6 shadow-[0_3px_14px_rgba(0,0,0,0.03)]">
-    <div className="flex items-start justify-between mb-4">
-      <div>
-        <div className="flex items-center gap-2 mb-1.5">
-          <ShieldAlert size={17} className="text-[#D92D20]" />
-          <h2 className="text-[13px] font-bold text-[#111111] tracking-[0.05em] uppercase">Emergency Bundle</h2>
-        </div>
-        <p className="text-[13px] text-[#C35D37] font-medium opacity-90 leading-relaxed max-w-[250px]">Quick access to all critical information for {petName}.</p>
+  <div className="mb-8">
+    <div className="flex items-start gap-3.5">
+      <div className="w-11 h-11 rounded-full bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center shrink-0 mt-0.5">
+        <PawPrint size={18} className="text-[#111]" />
       </div>
-    </div>
-    <div className="flex flex-col gap-3">
-      <Button variant="primary" icon={Share2} onClick={onShare}>Share Emergency Info</Button>
-      <Button variant="secondary" icon={FileDown} className="!border-[#FFDCCD] !text-[#C35D37] hover:!bg-white/60 !bg-white" isLoading={isDownloading} onClick={onDownload}>Download PDF</Button>
+      <div className="flex-1 min-w-0">
+        <h2 className="text-[20px] font-bold text-[#111] leading-tight">{petName}</h2>
+        <p className="text-[13px] text-[#A09A94] mt-0.5 leading-snug">Golden Retriever · 3 years</p>
+        <div className="mt-1.5 inline-flex items-center gap-1.5 bg-[#F3EFEB] border border-[#EDE8E2] rounded-md px-2 py-0.5">
+          <Fingerprint size={11} className="text-[#A09A94]" />
+          <span className="text-[11px] font-mono text-[#6E6058] tracking-wide">981 020 000 394 857</span>
+        </div>
+        <div className="flex items-center gap-4 mt-3.5">
+          <button onClick={onShare} className="text-[13px] font-medium text-[#E85D2A] active:opacity-70 transition-opacity flex items-center gap-1.5">
+            <Share2 size={13} />
+            Share emergency info
+          </button>
+          <button onClick={onDownload} className="text-[13px] font-medium text-[#6E6058] bg-[#F3EFEB] border border-[#EDE8E2] rounded-[10px] px-3 py-1.5 active:scale-[0.97] transition-all flex items-center gap-1.5">
+            {isDownloading ? <Loader2 size={13} className="animate-spin" /> : <FileDown size={13} />}
+            PDF
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 );
 
 const QuickAccessGrid = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onOpenPlaces }) => (
-  <div className="mb-6">
-    <VaultSectionHeader title="Quick Access" />
-    <div className="grid grid-cols-2 gap-3">
+  <div className="mb-8">
+    <div className="flex items-center justify-around px-2">
       {[
-        { icon: Stethoscope, label: 'Health Records', onClick: onOpenHealthRecords },
+        { icon: Stethoscope, label: 'Health', onClick: onOpenHealthRecords },
         { icon: FileText, label: 'Documents', onClick: onOpenDocuments },
-        { icon: Phone, label: 'Emergency Contacts', onClick: onOpenContacts },
+        { icon: Phone, label: 'Contacts', onClick: onOpenContacts },
         { icon: MapPin, label: 'Places', onClick: onOpenPlaces }
       ].map((item, i) => (
-        <Card key={i} clickable onClick={() => item.onClick && item.onClick()} className="p-4 flex flex-col items-center justify-center gap-2.5 !rounded-[18px] !shadow-[0_2px_8px_rgba(0,0,0,0.02)] border-black/[0.04]">
-          <div className="w-[40px] h-[40px] rounded-full bg-[#F6F6F6] text-[#111111] flex items-center justify-center"><item.icon size={18} strokeWidth={1.9} /></div>
-          <span className="text-[13px] font-semibold text-[#111111] text-center leading-tight">{item.label}</span>
-        </Card>
+        <button key={i} onClick={() => item.onClick && item.onClick()} className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform">
+          <div className="w-12 h-12 rounded-full bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center">
+            <item.icon size={19} className="text-[#111]" strokeWidth={1.8} />
+          </div>
+          <span className="text-[11px] font-medium text-[#6E6058]">{item.label}</span>
+        </button>
       ))}
     </div>
   </div>
 );
 
 const CriticalInfoCard = ({ data, onCopyMicrochip }) => (
-  <div className="mb-6">
+  <div className="mb-8">
     <VaultSectionHeader title="Critical Information" />
-    <Card className="!p-0 overflow-hidden">
-      <div className="p-4 active:bg-black/[0.02] cursor-pointer transition-colors">
-        <div className="flex items-center gap-2 mb-3"><Pill size={18} className="text-[#111111]" /><span className="font-semibold text-[15px] text-[#111111]">Medications ({data.medications.length})</span></div>
-        <ul className="pl-7 space-y-1.5">
-          {data.medications.map(med => (
-            <li key={med.id} className="text-[14px] text-[#6E6E73] flex items-start gap-2"><span className="text-black/20 mt-0.5">•</span><span><strong className="text-[#111111] font-medium">{med.name}</strong> ({med.dosage})</span></li>
-          ))}
-        </ul>
-      </div>
-      <Divider spacing="small" className="ml-11" />
-      <div className="p-4 active:bg-black/[0.02] cursor-pointer transition-colors">
-        <div className="flex items-center gap-2 mb-3"><ShieldAlert size={18} className="text-[#111111]" /><span className="font-semibold text-[15px] text-[#111111]">Allergies ({data.allergies.length})</span></div>
-        <ul className="pl-7 space-y-2.5">
-          {data.allergies.map(alg => (
-            <li key={alg.id} className="flex items-center justify-between">
-              <span className="text-[14px] text-[#111111] font-medium flex items-center gap-2"><span className="text-black/20">•</span>{alg.allergen}</span>
-              <Badge variant={alg.severity === 'SEVERE' ? 'error' : 'warning'}>{alg.severity}</Badge>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <Divider spacing="small" className="ml-11" />
-      <div className="p-4 active:bg-black/[0.02] cursor-pointer transition-colors">
-        <div className="flex items-center gap-2 mb-3"><Syringe size={18} className="text-[#111111]" /><span className="font-semibold text-[15px] text-[#111111]">Vaccinations</span></div>
-        <ul className="pl-7 space-y-2">
-          {data.vaccinations.length > 0 ? data.vaccinations.map(vac => (
-            <li key={vac.id} className="text-[14px] text-[#6E6E73] flex items-start gap-2">
-              <span className="text-black/20 mt-0.5">•</span>
-              <span><strong className="text-[#111111] font-medium">{vac.name}:</strong> <span className={vac.isWarning ? 'text-[#FF3B30] font-medium' : ''}>{vac.statusText}</span>{vac.isWarning && <AlertTriangle size={14} className="inline ml-1 text-[#FF3B30] -mt-0.5" />}</span>
-            </li>
-          )) : <li className="text-[14px] text-[#6E6E73] italic">All up to date.</li>}
-        </ul>
-      </div>
-      <Divider spacing="small" className="ml-11" />
-      <div className="p-4 flex items-center justify-between bg-black/[0.01]">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-white shadow-sm border border-black/[0.04] flex items-center justify-center"><Fingerprint size={18} className="text-[#111111]" /></div>
-          <div>
-            <div className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-[0.05em]">Microchip ID</div>
-            <div className="text-[14px] font-mono font-medium text-[#111111] mt-0.5">{data.microchipId}</div>
+    <div className="space-y-0">
+      {/* Medications */}
+      <div className="py-3">
+        <div className="flex gap-0">
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94] pt-0.5">Medications</div>
+          <div className="flex-1 space-y-1">
+            {data.medications.map(med => (
+              <div key={med.id} className="text-[14px] text-[#111] leading-snug">
+                <span className="font-medium">{med.name}</span> <span className="text-[#6E6058]">({med.dosage})</span>
+              </div>
+            ))}
           </div>
         </div>
-      <button onClick={onCopyMicrochip} className="w-10 h-10 flex items-center justify-center bg-white border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)] rounded-full active:scale-95 transition-transform text-[#6E6E73]"><Copy size={16} /></button>
       </div>
-    </Card>
+      <div className="border-t border-dashed border-[#CFCFD4]" />
+
+      {/* Allergies */}
+      <div className="py-3">
+        <div className="flex gap-0">
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94] pt-0.5">Allergies</div>
+          <div className="flex-1 space-y-1">
+            {data.allergies.map(alg => (
+              <div key={alg.id} className="text-[14px] text-[#111] leading-snug flex items-center gap-2">
+                <span className="font-medium">{alg.allergen}</span>
+                <span className={`text-[11px] font-semibold ${alg.severity === 'SEVERE' ? 'text-[#D92D20]' : 'text-[#E85D2A]'}`}>
+                  {alg.severity === 'SEVERE' ? 'Severe' : 'Moderate'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="border-t border-dashed border-[#CFCFD4]" />
+
+      {/* Vaccinations */}
+      <div className="py-3">
+        <div className="flex gap-0">
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94] pt-0.5">Vaccinations</div>
+          <div className="flex-1 space-y-1">
+            {data.vaccinations.length > 0 ? data.vaccinations.map(vac => (
+              <div key={vac.id} className="text-[14px] text-[#111] leading-snug">
+                <span className="font-medium">{vac.name}</span>
+                <span className="text-[#6E6058]"> — </span>
+                <span className={vac.isWarning ? 'text-[#D92D20] font-medium' : 'text-[#6E6058]'}>
+                  {vac.statusText}
+                </span>
+                {vac.isWarning && <AlertTriangle size={12} className="inline ml-1 text-[#D92D20] -mt-0.5" />}
+              </div>
+            )) : <div className="text-[14px] text-[#A09A94] italic">All up to date.</div>}
+          </div>
+        </div>
+      </div>
+      <div className="border-t border-dashed border-[#CFCFD4]" />
+
+      {/* Microchip */}
+      <div className="py-3">
+        <div className="flex gap-0 items-center">
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94]">Microchip</div>
+          <div className="flex-1 flex items-center justify-between">
+            <span className="text-[14px] font-mono font-medium text-[#111] tracking-wide">
+              {data.microchipId?.replace(/(\d{3})(?=\d)/g, '$1 ')}
+            </span>
+            <button onClick={onCopyMicrochip} className="w-8 h-8 flex items-center justify-center rounded-full bg-[#F3EFEB] border border-[#EDE8E2] active:scale-90 transition-transform text-[#6E6058]">
+              <Copy size={13} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 );
 
 const VaultContactsPreview = ({ contacts, onCall, onOpenContacts }) => (
-  <div className="mb-6">
+  <div className="mb-8">
     <VaultSectionHeader title="Emergency Contacts" />
-    <Card className="!p-0 overflow-hidden">
+    <div className="space-y-0">
       {contacts.map((contact, index) => (
         <React.Fragment key={contact.id}>
-          <div className="p-4 flex items-center justify-between active:bg-black/[0.02] transition-colors cursor-pointer">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#F6F6F6] flex items-center justify-center shrink-0">
-                {contact.type === 'PRIMARY' ? <User size={16} className="text-[#6E6E73]" /> : contact.type.includes('EMERGENCY') ? <ShieldAlert size={16} className="text-[#6E6E73]" /> : <Stethoscope size={16} className="text-[#6E6E73]" />}
-              </div>
-              <div>
-                <div className="text-[15px] font-semibold text-[#111111] mb-0.5">{contact.name}</div>
-                <Badge variant="default">{contact.type}</Badge>
-              </div>
+          <div className="py-3 flex items-center justify-between">
+            <div className="flex-1 min-w-0">
+              <div className="text-[14px] font-semibold text-[#111] leading-snug">{contact.name}</div>
+              <div className="text-[12px] text-[#A09A94] mt-0.5">{contact.type === 'PRIMARY' ? 'Owner' : contact.type.includes('EMERGENCY') ? 'Emergency Vet' : 'Primary Vet'}</div>
             </div>
-            <button onClick={(e) => { e.stopPropagation(); onCall(contact.phone); }} className="w-10 h-10 rounded-full bg-[#F6F6F6] text-[#111111] border border-black/[0.04] flex items-center justify-center shrink-0 active:scale-90 transition-transform"><Phone size={16} /></button>
+            <button onClick={(e) => { e.stopPropagation(); onCall(contact.phone); }} className="w-9 h-9 rounded-full bg-[#F3EFEB] border border-[#EDE8E2] text-[#111] flex items-center justify-center shrink-0 active:scale-90 transition-transform">
+              <Phone size={14} />
+            </button>
           </div>
-          {index < contacts.length - 1 && <Divider spacing="small" className="ml-[68px]" />}
+          {index < contacts.length - 1 && <div className="border-t border-dashed border-[#CFCFD4]" />}
         </React.Fragment>
       ))}
-      <button onClick={() => onOpenContacts && onOpenContacts()} className="w-full py-4 text-[14px] font-medium text-[#FF6B35] bg-black/[0.01] hover:bg-black/[0.03] transition-colors border-t border-black/[0.04]">View all contacts →</button>
-    </Card>
+      <div className="border-t border-dashed border-[#CFCFD4]" />
+      <button onClick={() => onOpenContacts && onOpenContacts()} className="w-full pt-3 text-[13px] font-medium text-[#E85D2A] text-left active:opacity-70 transition-opacity">
+        View all contacts →
+      </button>
+    </div>
   </div>
 );
 
 const RecentDocumentsCard = ({ documents }) => (
-  <div className="mb-6">
+  <div className="mb-8">
     <VaultSectionHeader title="Recent Documents" />
-    <Card className="!p-0 overflow-hidden">
+    <div className="space-y-0">
       {documents.map((doc, index) => (
         <React.Fragment key={doc.id}>
-          <div className="p-4 flex items-center gap-4 active:bg-black/[0.02] cursor-pointer transition-colors">
-            <div className="w-10 h-10 rounded-[12px] bg-[#F6F6F6] text-[#111111] flex items-center justify-center shrink-0"><doc.icon size={20} strokeWidth={2} /></div>
+          <div className="py-3 flex items-center justify-between active:bg-[#F3EFEB]/50 -mx-1 px-1 rounded-lg cursor-pointer transition-colors">
             <div className="flex-1 min-w-0">
-              <div className="text-[15px] font-semibold text-[#111111] truncate mb-0.5">{doc.title}</div>
-              <div className="text-[13px] text-[#8E8E93]">{doc.type} · {formatBytes(doc.size)} · {doc.date}</div>
+              <div className="text-[14px] font-medium text-[#111] leading-snug">{doc.title}</div>
+              <div className="text-[12px] text-[#A09A94] mt-0.5">{doc.type} · {formatBytes(doc.size)} · {doc.date}</div>
             </div>
-            <ChevronRight size={18} className="text-black/20" />
+            <ChevronRight size={16} className="text-[#A09A94] shrink-0 ml-2" />
           </div>
-          {index < documents.length - 1 && <Divider spacing="small" className="ml-[72px]" />}
+          {index < documents.length - 1 && <div className="border-t border-dashed border-[#CFCFD4]" />}
         </React.Fragment>
       ))}
-      <button className="w-full py-4 text-[14px] font-medium text-[#FF6B35] bg-black/[0.01] hover:bg-black/[0.03] transition-colors border-t border-black/[0.04]">View all documents →</button>
-    </Card>
+      <div className="border-t border-dashed border-[#CFCFD4]" />
+      <button className="w-full pt-3 text-[13px] font-medium text-[#E85D2A] text-left active:opacity-70 transition-opacity">
+        View all documents →
+      </button>
+    </div>
   </div>
 );
 
 const DataManagementCard = () => (
   <div className="mb-6">
-    <VaultSectionHeader title="Data Management" />
-    <Card className="!p-0 overflow-hidden">
-      {[
-        { icon: DownloadCloud, label: 'Export all data' },
-        { icon: Cloud, label: 'Backup to cloud' },
-        { icon: Lock, label: 'Privacy settings' }
-      ].map((item, index) => (
-        <React.Fragment key={index}>
-          <button className="w-full flex items-center gap-3 p-4 hover:bg-black/[0.02] transition-colors text-left active:scale-[0.99]">
-            <item.icon size={20} className="text-[#111111]" strokeWidth={1.5} />
-            <span className="text-[15px] font-medium text-[#111111] flex-1">{item.label}</span>
-            <ChevronRight size={18} className="text-black/20" />
-          </button>
-          {index < 2 && <Divider spacing="small" className="ml-12" />}
-        </React.Fragment>
-      ))}
-    </Card>
+    <div className="border-t border-dashed border-[#CFCFD4] mb-0" />
+    {[
+      { icon: DownloadCloud, label: 'Export all data' },
+      { icon: Cloud, label: 'Backup to cloud' },
+      { icon: Lock, label: 'Privacy settings' }
+    ].map((item, index) => (
+      <React.Fragment key={index}>
+        <button className="w-full flex items-center justify-between py-3.5 active:opacity-70 transition-opacity text-left">
+          <span className="text-[14px] font-medium text-[#6E6058]">{item.label}</span>
+          <ChevronRight size={16} className="text-[#A09A94]" />
+        </button>
+        {index < 2 && <div className="border-t border-dashed border-[#CFCFD4]" />}
+      </React.Fragment>
+    ))}
   </div>
 );
 
@@ -9411,22 +9629,152 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
 
   return (
     <ScreenContainer>
-      <div className="px-5 pb-[20px] relative z-0">
-        <PetSelectorPill pet={previewData.pet} />
-        <EmergencyBundleCard petName={previewData.pet.name} onShare={() => setShareSheetOpen(true)} onDownload={handleDownloadPDF} isDownloading={isDownloading} />
-        <QuickAccessGrid onOpenHealthRecords={onOpenHealthRecords} onOpenDocuments={onOpenDocuments} onOpenContacts={onOpenContacts} onOpenPlaces={onOpenPlaces} />
-        <CriticalInfoCard data={{ ...previewData.criticalInfo, microchipId: previewData.pet.microchipId }} onCopyMicrochip={handleCopyMicrochip} />
-        <VaultContactsPreview contacts={previewData.emergencyContacts} onCall={handleCall} onOpenContacts={onOpenContacts} />
-        <RecentDocumentsCard documents={previewData.recentDocuments} />
-        <DataManagementCard />
+      <div className="px-5 pb-[20px]">
+
+        {/* 1. Pet name + breed row */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-[40px] h-[40px] rounded-full bg-[#F3EFEB] border border-[#EDE8E2] flex items-center justify-center shrink-0">
+            <PawPrint size={18} className="text-[#6E6058]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="text-[20px] font-bold text-[#111] block leading-tight tracking-[-0.02em]">{previewData.pet.name}</span>
+            <span className="text-[13px] text-[#A09A94]">{previewData.pet.breed} · {previewData.pet.age}</span>
+          </div>
+          <ChevronDown size={16} className="text-[#A09A94]" />
+        </div>
+
+        <div className="space-y-4">
+
+          {/* 2. Quick Access card */}
+          <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] p-5">
+            <div className="grid grid-cols-4 gap-3">
+              {[
+                { icon: Stethoscope, label: 'Health', onClick: onOpenHealthRecords },
+                { icon: FileText, label: 'Documents', onClick: onOpenDocuments },
+                { icon: Phone, label: 'Contacts', onClick: onOpenContacts },
+                { icon: MapPin, label: 'Places', onClick: onOpenPlaces },
+              ].map((item, i) => (
+                <button key={i} onClick={item.onClick} className="flex flex-col items-center gap-2 active:scale-[0.95] transition-transform">
+                  <div className="w-[44px] h-[44px] rounded-full bg-white/70 flex items-center justify-center">
+                    <item.icon size={20} className="text-[#111]" strokeWidth={1.75} />
+                  </div>
+                  <span className="text-[11px] font-medium text-[#6E6058]">{item.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. Health Overview card */}
+          <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] p-5">
+            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-4">Health Overview</span>
+
+            {/* Medications */}
+            <div className="space-y-1.5 mb-5">
+              {previewData.criticalInfo.medications.map(med => (
+                <div key={med.id} className="text-[14px] text-[#111]">
+                  <span className="font-medium">{med.name}</span>
+                  <span className="text-[#6E6058]"> — {med.dosage}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Allergies */}
+            <div className="space-y-1.5 mb-5">
+              {previewData.criticalInfo.allergies.map(alg => (
+                <div key={alg.id} className="flex items-center gap-2 text-[14px]">
+                  <AlertTriangle size={13} className={alg.severity === 'SEVERE' ? 'text-[#FF3B30]' : 'text-[#E85D2A]'} />
+                  <span className="font-medium text-[#111]">{alg.allergen}</span>
+                  <span className={`text-[11px] font-semibold ${alg.severity === 'SEVERE' ? 'text-[#FF3B30]' : 'text-[#E85D2A]'}`}>({alg.severity})</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Vaccinations */}
+            <div className="space-y-1.5 mb-5">
+              {previewData.criticalInfo.vaccinations.length > 0 ? previewData.criticalInfo.vaccinations.map(vac => (
+                <div key={vac.id} className="text-[14px] text-[#111] flex items-center gap-1.5">
+                  <span className="font-medium">{vac.name}</span>
+                  <span className={`text-[12px] ${vac.isWarning ? 'text-[#FF3B30] font-semibold' : 'text-[#A09A94]'}`}>
+                    — {vac.statusText}
+                  </span>
+                  {vac.isWarning && <AlertTriangle size={11} className="text-[#FF3B30]" />}
+                </div>
+              )) : <div className="text-[14px] text-[#A09A94]">All vaccinations up to date</div>}
+            </div>
+
+            {/* Microchip */}
+            <div className="flex items-center gap-3">
+              <span className="text-[12px] text-[#A09A94]">Microchip</span>
+              <span className="text-[14px] font-mono font-medium text-[#111] flex-1 tracking-wide">{previewData.pet.microchipId}</span>
+              <button onClick={handleCopyMicrochip} className="w-[30px] h-[30px] rounded-full bg-white/70 flex items-center justify-center active:scale-[0.95] transition-transform">
+                <Copy size={13} className="text-[#A09A94]" />
+              </button>
+            </div>
+          </div>
+
+          {/* 4. Emergency Contacts card */}
+          <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] p-5">
+            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-4">Emergency Contacts</span>
+            <div className="space-y-3">
+              {previewData.emergencyContacts.map((contact, i) => (
+                <div key={contact.id || i} className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[14px] font-medium text-[#111] block leading-tight">{contact.name}</span>
+                    <span className="text-[12px] text-[#A09A94]">{contact.type || contact.role || contact.relation}</span>
+                  </div>
+                  <button onClick={() => handleCall(contact.phone)} className="w-[34px] h-[34px] rounded-full bg-white/70 flex items-center justify-center active:scale-[0.95] transition-transform">
+                    <Phone size={15} className="text-[#111]" strokeWidth={1.75} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button onClick={onOpenContacts} className="text-[13px] font-medium text-[#E85D2A] active:opacity-70 mt-4 block">
+              View all contacts →
+            </button>
+          </div>
+
+          {/* 5. Recent Documents card */}
+          <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] p-5">
+            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-4">Recent Documents</span>
+            <div className="space-y-3">
+              {previewData.recentDocuments.map((doc, i) => (
+                <button key={doc.id || i} className="w-full flex items-center justify-between active:opacity-70">
+                  <div className="text-left">
+                    <span className="text-[14px] font-medium text-[#111] block leading-tight">{doc.title}</span>
+                    <span className="text-[12px] text-[#A09A94]">{doc.type} · {typeof doc.size === 'number' ? formatBytes(doc.size) : doc.size} · {doc.date}</span>
+                  </div>
+                  <ChevronRight size={16} className="text-[#A09A94] shrink-0" />
+                </button>
+              ))}
+            </div>
+            <button onClick={onOpenDocuments} className="text-[13px] font-medium text-[#E85D2A] active:opacity-70 mt-4 block">
+              View all documents →
+            </button>
+          </div>
+
+          {/* 6. Actions row */}
+          <div className="flex gap-3">
+            <button onClick={() => setShareSheetOpen(true)} className="flex-1 flex items-center justify-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[14px] py-3.5 active:scale-[0.97] transition-transform">
+              <Share2 size={16} className="text-[#E85D2A]" />
+              <span className="text-[13px] font-semibold text-[#111]">Share info</span>
+            </button>
+            <button onClick={handleDownloadPDF} className="flex-1 flex items-center justify-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[14px] py-3.5 active:scale-[0.97] transition-transform">
+              {isDownloading
+                ? <Loader2 size={16} className="text-[#A09A94] animate-spin" />
+                : <FileDown size={16} className="text-[#6E6058]" />}
+              <span className="text-[13px] font-semibold text-[#111]">{isDownloading ? 'Downloading...' : 'Download PDF'}</span>
+            </button>
+          </div>
+
+        </div>
       </div>
 
       <EmergencyShareSheet isOpen={shareSheetOpen} onClose={() => setShareSheetOpen(false)} data={previewData} onCopy={() => { showVaultToast('Link copied'); setShareSheetOpen(false); }} />
       <VaultOptionsSheet isOpen={menuSheetOpen} onClose={() => setMenuSheetOpen(false)} />
       {vaultToast && (
-        <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 bg-[#111111]/90 backdrop-blur-md text-white px-5 py-3.5 rounded-full flex items-center gap-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-[120] animate-in fade-in slide-in-from-bottom-4 duration-300">
-          <CheckCircle2 size={18} className="text-[#00C060]" />
-          <span className="text-[14px] font-medium whitespace-nowrap">{vaultToast}</span>
+        <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 bg-[#111]/90 backdrop-blur-md text-white px-5 py-3 rounded-[14px] flex items-center gap-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-[120] animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <CheckCircle2 size={16} className="text-[#34C759]" />
+          <span className="text-[13px] font-medium whitespace-nowrap">{vaultToast}</span>
         </div>
       )}
     </ScreenContainer>

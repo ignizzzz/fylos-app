@@ -1,85 +1,12 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Check, Globe } from 'lucide-react';
+import { ChevronLeft, Check, Search, Globe } from 'lucide-react';
 
 /**
  * 48_LANGUAGE_SETTINGS_v1.jsx
  * Language selection settings screen for the Fylos pet care app.
+ * Warm minimal design system.
  */
 
-// ─── THEME ────────────────────────────────────────────────────────────────────
-const THEME = {
-  colors: {
-    accent: '#E85D2A',
-    accentHover: '#D04A1C',
-    primaryText: '#111111',
-    secondaryText: '#6E6E73',
-    tertiaryText: '#8E8E93',
-    background: '#F9F9FB',
-    surface: '#FFFFFF',
-    surfaceAlt: '#F2F2F7',
-    divider: '#E5E5E5',
-  },
-  radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
-  shadows: {
-    soft: '0 4px 20px rgba(0,0,0,0.03)',
-  },
-  motion: {
-    tap: '120ms',
-    fade: '200ms',
-    spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-  },
-};
-
-// ─── GLOBAL STYLES ────────────────────────────────────────────────────────────
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap');
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    .lang-screen {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      background: ${THEME.colors.background};
-      color: ${THEME.colors.primaryText};
-      overflow: hidden;
-    }
-
-    .lang-scroll {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .lang-scroll::-webkit-scrollbar { display: none; }
-
-    .lang-tap {
-      transition: opacity ${THEME.motion.tap} ease, transform ${THEME.motion.tap} ease;
-      cursor: pointer;
-    }
-    .lang-tap:active { opacity: 0.7; transform: scale(0.97); }
-
-    .lang-row {
-      transition: background ${THEME.motion.tap} ease;
-      cursor: pointer;
-    }
-    .lang-row:active { background: ${THEME.colors.surfaceAlt}; }
-
-    @keyframes lang-check-pop {
-      0%   { transform: scale(0); opacity: 0; }
-      60%  { transform: scale(1.15); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .lang-check-pop { animation: lang-check-pop 200ms ${THEME.motion.spring} forwards; }
-
-    @keyframes lang-fade-in {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .lang-fade-in { animation: lang-fade-in ${THEME.motion.fade} ease forwards; }
-  `}</style>
-);
-
-// ─── DATA ─────────────────────────────────────────────────────────────────────
 const LANGUAGES = [
   { id: 'de', flag: '\u{1F1E9}\u{1F1EA}', name: 'German', nativeName: 'Deutsch' },
   { id: 'en', flag: '\u{1F1EC}\u{1F1E7}', name: 'English', nativeName: 'English' },
@@ -88,222 +15,326 @@ const LANGUAGES = [
   { id: 'el', flag: '\u{1F1EC}\u{1F1F7}', name: 'Greek', nativeName: '\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC' },
 ];
 
-// ─── MAIN SCREEN ──────────────────────────────────────────────────────────────
 const LanguageSettingsScreen = () => {
   const [selectedLang, setSelectedLang] = useState('en');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSelect = (id) => {
-    if (id !== selectedLang) setSelectedLang(id);
-  };
+  const filteredLanguages = LANGUAGES.filter(
+    (l) =>
+      l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      l.nativeName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const currentLang = LANGUAGES.find((l) => l.id === selectedLang);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#E5E5E5',
-      padding: '20px',
-      fontFamily: '"Inter", sans-serif',
-    }}>
-      <GlobalStyles />
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#E5E5E5',
+        padding: 20,
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        .lang-scroll::-webkit-scrollbar { display: none; }
+        .lang-scroll { scrollbar-width: none; }
+        @keyframes langCheckPop {
+          0%   { transform: scale(0); opacity: 0; }
+          60%  { transform: scale(1.15); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .lang-check-pop { animation: langCheckPop 200ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+      `}</style>
 
       {/* iPhone Frame */}
-      <div className="relative lang-screen" style={{
-        width: 390,
-        height: 844,
-        borderRadius: 50,
-        border: '8px solid #000',
-        overflow: 'hidden',
-        backgroundColor: '#F9F9FB',
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-      }}>
-
+      <div
+        className="relative"
+        style={{
+          width: 390,
+          height: 844,
+          borderRadius: 50,
+          border: '8px solid #000',
+          overflow: 'hidden',
+          backgroundColor: '#F7F5F2',
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+          WebkitFontSmoothing: 'antialiased',
+        }}
+      >
         {/* Notch */}
-        <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+        <div
+          className="absolute left-1/2 -translate-x-1/2 z-[100]"
+          style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }}
+        />
 
         {/* Home indicator */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
+        <div
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
+          style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }}
+        />
 
         {/* Status bar */}
-        <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
+        <div
+          className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8"
+          style={{ height: 54 }}
+        >
           <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
           <div className="flex items-center gap-1">
-            <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
-              <rect x="0" y="6" width="3" height="6" rx="1" fill="#111" />
-              <rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111" />
-              <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" />
-              <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111" />
-            </svg>
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-              <path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111" />
-              <path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
-              <rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35" />
-              <rect x="2" y="2" width="16" height="9" rx="2" fill="#111" />
-              <path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4" />
-            </svg>
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#111"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111"/><path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/><path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35"/><rect x="2" y="2" width="16" height="9" rx="2" fill="#111"/><path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4"/></svg>
           </div>
         </div>
 
         {/* Floating Header */}
-        <header className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-white/95 via-white/70 to-transparent" style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}>
+        <header
+          className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent"
+          style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}
+        >
           <div className="flex justify-between items-center w-full pointer-events-auto">
             <button
-              onClick={() => { window.history.back(); }}
-              className="w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
+              onClick={() => window.history.back()}
+              className="w-[44px] h-[44px] flex items-center justify-center rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
+              style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
             >
-              <ChevronLeft size={22} color="#111111" />
+              <ChevronLeft size={22} color="#111" />
             </button>
-            <h2 className="text-[17px] font-semibold text-[#111111]">Language</h2>
+            <h2 className="text-[17px] font-semibold text-[#111]">Language</h2>
             <div className="w-[44px]" />
           </div>
         </header>
 
-        {/* Scrollable Content */}
-        <div className="absolute inset-0 overflow-y-auto lang-scroll" style={{ paddingTop: 54, paddingBottom: 40 }}>
+        {/* Scroll Content */}
+        <div className="absolute inset-0 overflow-y-auto pt-[110px] pb-[140px] px-5 lang-scroll">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-          {/* Current Language Indicator */}
-          <div style={{ padding: '0 20px 8px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '12px 16px',
-              background: `${THEME.colors.accent}0A`,
-              borderRadius: THEME.radius.small,
-            }}>
-              <Globe size={16} color={THEME.colors.accent} strokeWidth={2} />
-              <span style={{
-                fontSize: 13,
-                fontWeight: 500,
-                color: THEME.colors.secondaryText,
-              }}>
-                Current:
-              </span>
-              <span style={{
-                fontSize: 13,
-                fontWeight: 700,
-                color: THEME.colors.accent,
-              }}>
-                {LANGUAGES.find(l => l.id === selectedLang)?.name}
-              </span>
-              <div style={{ marginLeft: 'auto' }}>
-                <Check size={16} color={THEME.colors.accent} strokeWidth={2.5} />
+            {/* Current Language Card */}
+            <div style={{ background: '#F3EFEB', borderRadius: 20, padding: 20, border: '1px solid #EDE8E2' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div
+                  style={{
+                    width: 44, height: 44, borderRadius: 9999,
+                    background: '#E85D2A',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}
+                >
+                  <Globe size={20} color="#FFFFFF" strokeWidth={2} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: '#A09A94', display: 'block', lineHeight: 1.3 }}>
+                    Current language
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 3 }}>
+                    <span style={{ fontSize: 28, lineHeight: 1 }}>{currentLang?.flag}</span>
+                    <span style={{ fontSize: 17, fontWeight: 600, color: '#111' }}>
+                      {currentLang?.name}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: 28, height: 28, borderRadius: 9999,
+                    background: '#E85D2A',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}
+                >
+                  <Check size={14} color="#FFFFFF" strokeWidth={3} />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Language List Card */}
-          <div style={{ padding: '12px 20px 16px' }}>
-            <div style={{
-              background: THEME.colors.surface,
-              borderRadius: 20,
-              padding: '4px 0',
-              boxShadow: THEME.shadows.soft,
-              border: '1px solid rgba(0,0,0,0.03)',
-              overflow: 'hidden',
-            }}>
-              {LANGUAGES.map((lang, idx) => {
+            {/* Search Filter */}
+            <div
+              style={{
+                background: '#F3EFEB',
+                borderRadius: 16,
+                border: '1px solid #EDE8E2',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                height: 52,
+                padding: '0 16px',
+              }}
+            >
+              <Search size={18} color="#A09A94" />
+              <input
+                type="text"
+                placeholder="Search languages..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  outline: 'none',
+                  background: 'transparent',
+                  fontSize: 16,
+                  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                  color: '#111',
+                }}
+              />
+            </div>
+
+            {/* Section Label */}
+            <div>
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: '#A09A94',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  paddingLeft: 4,
+                }}
+              >
+                Select language
+              </span>
+            </div>
+
+            {/* Language List Card */}
+            <div
+              style={{
+                background: '#F3EFEB',
+                borderRadius: 20,
+                border: '1px solid #EDE8E2',
+                overflow: 'hidden',
+                marginTop: -12,
+              }}
+            >
+              {filteredLanguages.length === 0 && (
+                <div style={{ padding: '24px 20px', textAlign: 'center' }}>
+                  <span style={{ fontSize: 14, color: '#A09A94' }}>No languages found</span>
+                </div>
+              )}
+              {filteredLanguages.map((lang, idx) => {
                 const isSelected = selectedLang === lang.id;
-                const isLast = idx === LANGUAGES.length - 1;
+                const isLast = idx === filteredLanguages.length - 1;
 
                 return (
                   <div key={lang.id}>
                     <div
-                      className="lang-row"
-                      onClick={() => handleSelect(lang.id)}
+                      onClick={() => setSelectedLang(lang.id)}
+                      className="active:scale-[0.97] transition-all duration-[120ms]"
                       style={{
                         display: 'flex',
                         alignItems: 'center',
                         gap: 14,
                         padding: '15px 20px',
-                        background: isSelected ? `${THEME.colors.accent}08` : 'transparent',
-                        position: 'relative',
+                        background: isSelected ? 'rgba(232,93,42,0.06)' : 'transparent',
+                        cursor: 'pointer',
                       }}
                     >
-                      {/* Flag */}
-                      <span style={{ fontSize: 26, lineHeight: 1, flexShrink: 0 }}>
-                        {lang.flag}
-                      </span>
+                      {/* Flag in circle */}
+                      <div
+                        style={{
+                          width: 40, height: 40, borderRadius: 9999,
+                          background: isSelected ? 'rgba(232,93,42,0.10)' : '#EDE8E2',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                          transition: 'background 200ms ease',
+                        }}
+                      >
+                        <span style={{ fontSize: 22, lineHeight: 1 }}>{lang.flag}</span>
+                      </div>
 
                       {/* Names */}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{
-                          fontSize: 15,
-                          fontWeight: isSelected ? 700 : 500,
-                          color: isSelected ? THEME.colors.primaryText : THEME.colors.primaryText,
-                          lineHeight: 1.3,
-                          marginBottom: 1,
-                        }}>
+                        <p
+                          style={{
+                            fontSize: 15,
+                            fontWeight: isSelected ? 600 : 500,
+                            color: '#111',
+                            lineHeight: 1.3,
+                            marginBottom: 2,
+                          }}
+                        >
                           {lang.name}
                         </p>
-                        <p style={{
-                          fontSize: 13,
-                          fontWeight: 400,
-                          color: THEME.colors.tertiaryText,
-                          lineHeight: 1.3,
-                        }}>
+                        <p style={{ fontSize: 13, fontWeight: 400, color: '#A09A94', lineHeight: 1.3 }}>
                           {lang.nativeName}
                         </p>
                       </div>
 
-                      {/* Check / Radio Indicator */}
-                      <div style={{ flexShrink: 0, width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {/* Radio button */}
+                      <div
+                        style={{
+                          flexShrink: 0,
+                          width: 24, height: 24,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        }}
+                      >
                         {isSelected ? (
-                          <div className="lang-check-pop" style={{
-                            width: 24,
-                            height: 24,
-                            borderRadius: THEME.radius.full,
-                            background: THEME.colors.accent,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}>
+                          <div
+                            className="lang-check-pop"
+                            style={{
+                              width: 24, height: 24, borderRadius: 9999,
+                              background: '#E85D2A',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}
+                          >
                             <Check size={14} color="#FFFFFF" strokeWidth={3} />
                           </div>
                         ) : (
-                          <div style={{
-                            width: 22,
-                            height: 22,
-                            borderRadius: THEME.radius.full,
-                            border: `2px solid ${THEME.colors.divider}`,
-                          }} />
+                          <div
+                            style={{
+                              width: 22, height: 22, borderRadius: 9999,
+                              border: '2px solid #A09A94',
+                            }}
+                          />
                         )}
                       </div>
                     </div>
 
                     {/* Divider */}
                     {!isLast && (
-                      <div style={{
-                        height: 1,
-                        background: THEME.colors.divider,
-                        marginLeft: 60,
-                        marginRight: 20,
-                        opacity: 0.6,
-                      }} />
+                      <div
+                        className="border-t border-dashed border-[#CFCFD4]"
+                        style={{ marginLeft: 74, marginRight: 20 }}
+                      />
                     )}
                   </div>
                 );
               })}
             </div>
-          </div>
 
-          {/* Caption */}
-          <div style={{ padding: '4px 20px 32px' }}>
-            <p style={{
-              fontSize: 13,
-              fontWeight: 400,
-              color: THEME.colors.tertiaryText,
-              textAlign: 'center',
-              lineHeight: 1.5,
-            }}>
+            {/* Caption */}
+            <p
+              style={{
+                fontSize: 13,
+                fontWeight: 400,
+                color: '#A09A94',
+                textAlign: 'center',
+                lineHeight: 1.5,
+              }}
+            >
               App will restart to apply changes
             </p>
           </div>
+        </div>
 
+        {/* Bottom CTA */}
+        <div className="absolute bottom-6 left-5 right-5 z-30">
+          <button
+            className="active:scale-[0.97] transition-all duration-[120ms]"
+            style={{
+              width: '100%',
+              padding: '14px 0',
+              borderRadius: 14,
+              background: '#111',
+              border: 'none',
+              color: '#FFFFFF',
+              fontSize: 16,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+              fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+            }}
+          >
+            Save Changes
+          </button>
         </div>
       </div>
     </div>

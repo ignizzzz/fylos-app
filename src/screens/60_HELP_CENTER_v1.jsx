@@ -6,79 +6,20 @@ import {
   Phone,
   Mail,
   ChevronDown,
-  ChevronUp,
   ChevronRight,
   AlertTriangle,
   ArrowRight,
+  HelpCircle,
+  FileText,
   Shield,
 } from 'lucide-react';
 
-// ---------------------------------------------------------------------------
-// THEME
-// ---------------------------------------------------------------------------
-const THEME = {
-  colors: {
-    accent: '#E85D2A',
-    accentHover: '#D04A1C',
-    primaryText: '#111111',
-    secondaryText: '#6E6E73',
-    tertiaryText: '#8E8E93',
-    background: '#F9F9FB',
-    surface: '#FFFFFF',
-    surfaceAlt: '#F2F2F7',
-    divider: '#E5E5E5',
-  },
-  radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
-  shadows: {
-    soft: '0 4px 20px rgba(0,0,0,0.03)',
-  },
-};
+/**
+ * 60_HELP_CENTER_v1.jsx
+ * Help center screen for the Fylos pet care app.
+ * Search, quick actions, FAQ accordion, report issue, contact info.
+ */
 
-// ---------------------------------------------------------------------------
-// GLOBAL STYLES
-// ---------------------------------------------------------------------------
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    .help-screen {
-      font-family: 'Inter', 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      background: ${THEME.colors.background};
-      color: ${THEME.colors.primaryText};
-      overflow: hidden;
-    }
-
-    .help-scroll {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .help-scroll::-webkit-scrollbar { display: none; }
-
-    .help-tap {
-      transition: opacity 120ms ease, transform 120ms cubic-bezier(0.34,1.56,0.64,1);
-      cursor: pointer;
-    }
-    .help-tap:active { opacity: 0.7; transform: scale(0.97); }
-
-    .help-fade {
-      animation: helpFadeIn 200ms ease both;
-    }
-    @keyframes helpFadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  `}</style>
-);
-
-// StatusBar and HomeIndicator are now inline in the frame
-
-// ---------------------------------------------------------------------------
-// FAQ DATA
-// ---------------------------------------------------------------------------
 const FAQ_ITEMS = [
   {
     q: 'How do I book a walker?',
@@ -102,320 +43,387 @@ const FAQ_ITEMS = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// FAQ ACCORDION ITEM
-// ---------------------------------------------------------------------------
-const FaqItem = ({ item, isOpen, onToggle, isLast }) => (
-  <div>
-    <div
-      className="help-tap"
-      onClick={onToggle}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        padding: '15px 0',
-        borderBottom: isLast && !isOpen ? 'none' : `1px solid ${THEME.colors.divider}`,
-      }}
-    >
-      <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: THEME.colors.primaryText, lineHeight: 1.4 }}>
-        {item.q}
-      </span>
-      {isOpen
-        ? <ChevronUp size={18} color={THEME.colors.tertiaryText} strokeWidth={2} />
-        : <ChevronDown size={18} color={THEME.colors.tertiaryText} strokeWidth={2} />
-      }
-    </div>
-    {isOpen && (
-      <div className="help-fade" style={{
-        paddingBottom: 14,
-        fontSize: 13.5,
-        lineHeight: 1.6,
-        color: THEME.colors.secondaryText,
-        borderBottom: isLast ? 'none' : `1px solid ${THEME.colors.divider}`,
-      }}>
-        {item.a}
-      </div>
-    )}
-  </div>
-);
+const QUICK_ACTIONS = [
+  { Icon: MessageCircle, label: 'Chat', sub: 'Usually instant', color: '#E85D2A', bg: 'rgba(232,93,42,0.08)' },
+  { Icon: Phone, label: 'Call', sub: 'Mon-Fri 9-18', color: '#007AFF', bg: 'rgba(0,122,255,0.08)' },
+  { Icon: Mail, label: 'Email', sub: '24h response', color: '#34C759', bg: 'rgba(52,199,89,0.08)' },
+];
 
-// ---------------------------------------------------------------------------
-// QUICK ACTION CARD
-// ---------------------------------------------------------------------------
-const QuickAction = ({ icon: Icon, label, sub, bgColor }) => (
-  <div
-    className="help-tap"
-    style={{
-      flex: 1,
-      background: THEME.colors.surface,
-      borderRadius: 20,
-      padding: '18px 10px 14px',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: 8,
-      boxShadow: THEME.shadows.soft,
-    }}
-  >
-    <div style={{
-      width: 46,
-      height: 46,
-      borderRadius: 14,
-      background: bgColor,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <Icon size={22} color={THEME.colors.accent} />
-    </div>
-    <span style={{ fontSize: 13, fontWeight: 600, color: THEME.colors.primaryText, textAlign: 'center' }}>{label}</span>
-    <span style={{ fontSize: 11, color: THEME.colors.tertiaryText, textAlign: 'center' }}>{sub}</span>
-  </div>
-);
-
-// ---------------------------------------------------------------------------
-// MAIN SCREEN
-// ---------------------------------------------------------------------------
 const HelpCenterScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
 
+  const filteredFaq = searchQuery.trim()
+    ? FAQ_ITEMS.filter(
+        (item) =>
+          item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.a.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : FAQ_ITEMS;
+
   return (
-    <>
-      <GlobalStyles />
-      <div style={{
+    <div
+      style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        backgroundColor: '#E5E5E5',
-        padding: '20px',
-        fontFamily: 'Inter, sans-serif',
-      }}>
-        {/* iPhone Frame */}
-        <div className="relative" style={{
+        backgroundColor: '#EDE8E2',
+        padding: 20,
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        .help-scroll::-webkit-scrollbar { display: none; }
+        .help-scroll { scrollbar-width: none; }
+        @keyframes helpFadeIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .help-fade { animation: helpFadeIn 200ms ease both; }
+      `}</style>
+
+      {/* iPhone Frame */}
+      <div
+        className="relative"
+        style={{
           width: 390,
           height: 844,
           borderRadius: 50,
           border: '8px solid #000',
           overflow: 'hidden',
-          backgroundColor: '#F9F9FB',
-          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-        }}>
+          backgroundColor: '#F7F5F2',
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+          WebkitFontSmoothing: 'antialiased',
+        }}
+      >
+        {/* Notch */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 z-[100]"
+          style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }}
+        />
 
-          {/* Notch */}
-          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+        {/* Home indicator */}
+        <div
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
+          style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }}
+        />
 
-          {/* Home indicator */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
-
-          {/* Status bar */}
-          <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
-            <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
-            <div className="flex items-center gap-1">
-              <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
-                <rect x="0" y="6" width="3" height="6" rx="1" fill="#111" />
-                <rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111" />
-                <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" />
-                <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111" />
-              </svg>
-              <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-                <path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111" />
-                <path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
-                <rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35" />
-                <rect x="2" y="2" width="16" height="9" rx="2" fill="#111" />
-                <path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4" />
-              </svg>
-            </div>
+        {/* Status bar */}
+        <div
+          className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8"
+          style={{ height: 54 }}
+        >
+          <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
+          <div className="flex items-center gap-1">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#111"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111"/><path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/><path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/></svg>
+            <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35"/><rect x="2" y="2" width="16" height="9" rx="2" fill="#111"/><path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4"/></svg>
           </div>
+        </div>
 
-          {/* Floating Header */}
-          <header className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-white/95 via-white/70 to-transparent" style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}>
-            <div className="flex justify-between items-center w-full pointer-events-auto">
-              {/* Left: Back button */}
-              <button
-                onClick={() => { window.history.back(); }}
-                className="w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
-              >
-                <ChevronLeft size={22} color="#111111" />
-              </button>
-              {/* Center: Title */}
-              <h2 className="text-[17px] font-semibold text-[#111111]">Help</h2>
-              {/* Right: Invisible spacer */}
-              <div className="w-[44px]" />
-            </div>
-          </header>
-
-          {/* Scrollable body */}
-          <div className="absolute inset-0 overflow-y-auto help-scroll" style={{ paddingTop: 54, paddingBottom: 40 }}>
-
-          {/* Search bar */}
-          <div style={{ padding: '0 20px 16px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              height: 48,
-              background: THEME.colors.surfaceAlt,
-              borderRadius: THEME.radius.medium,
-              padding: '0 16px',
-            }}>
-              <Search size={18} color={THEME.colors.tertiaryText} />
-              <input
-                type="text"
-                placeholder="Search for help..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  outline: 'none',
-                  background: 'transparent',
-                  fontSize: 15,
-                  fontFamily: 'Inter, sans-serif',
-                  color: THEME.colors.primaryText,
-                }}
-              />
-            </div>
+        {/* Floating Header */}
+        <header
+          className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent"
+          style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}
+        >
+          <div className="flex justify-between items-center w-full pointer-events-auto">
+            <button
+              onClick={() => window.history.back()}
+              className="w-[44px] h-[44px] flex items-center justify-center rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
+              style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+            >
+              <ChevronLeft size={22} color="#111111" />
+            </button>
+            <h2 className="text-[17px] font-semibold text-[#111111]">Help</h2>
+            <div className="w-[44px]" />
           </div>
+        </header>
 
-          <div style={{ padding: '0 20px 24px' }}>
+        {/* Scroll Content */}
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
+          <div
+            className="help-scroll absolute inset-0 overflow-y-auto pt-[110px] pb-[140px] px-5"
+            style={{ scrollbarWidth: 'none' }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24, paddingBottom: 32 }}>
 
-            {/* Quick Actions */}
-            <div style={{ marginBottom: 24 }}>
-              <div style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: THEME.colors.tertiaryText,
-                letterSpacing: 0.5,
-                textTransform: 'uppercase',
-                marginBottom: 12,
-              }}>
-                Quick Actions
-              </div>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <QuickAction
-                  icon={MessageCircle}
-                  label="Chat"
-                  sub="Usually instant"
-                  bgColor="rgba(232,93,42,0.10)"
-                />
-                <QuickAction
-                  icon={Phone}
-                  label="Call"
-                  sub="Mon-Fri 9-18"
-                  bgColor="rgba(232,93,42,0.10)"
-                />
-                <QuickAction
-                  icon={Mail}
-                  label="Email"
-                  sub="24h response"
-                  bgColor="rgba(232,93,42,0.10)"
-                />
-              </div>
-            </div>
-
-            {/* FAQ Section */}
-            <div style={{ marginBottom: 24 }}>
-              <div style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: THEME.colors.tertiaryText,
-                letterSpacing: 0.5,
-                textTransform: 'uppercase',
-                marginBottom: 12,
-              }}>
-                Frequently Asked Questions
-              </div>
-              <div style={{
-                background: THEME.colors.surface,
-                borderRadius: 20,
-                padding: '2px 20px',
-                boxShadow: THEME.shadows.soft,
-              }}>
-                {FAQ_ITEMS.map((item, idx) => (
-                  <FaqItem
-                    key={idx}
-                    item={item}
-                    isOpen={openFaq === idx}
-                    onToggle={() => setOpenFaq(openFaq === idx ? null : idx)}
-                    isLast={idx === FAQ_ITEMS.length - 1}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Report an Issue Card */}
-            <div style={{ marginBottom: 24 }}>
-              <div style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: THEME.colors.tertiaryText,
-                letterSpacing: 0.5,
-                textTransform: 'uppercase',
-                marginBottom: 12,
-              }}>
-                Need more help?
-              </div>
+              {/* Search Bar */}
               <div
-                className="help-tap"
+                className="rounded-[16px]"
                 style={{
-                  background: THEME.colors.surface,
-                  borderRadius: 20,
-                  padding: 20,
-                  boxShadow: THEME.shadows.soft,
+                  background: '#F3EFEB',
+                  border: '1px solid #EDE8E2',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 14,
+                  gap: 10,
+                  height: 52,
+                  padding: '0 16px',
                 }}
               >
-                <div style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 14,
-                  background: 'rgba(232,93,42,0.10)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <AlertTriangle size={20} color={THEME.colors.accent} />
+                <Search size={18} color="#A09A94" />
+                <input
+                  type="text"
+                  placeholder="Search for help..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{
+                    flex: 1,
+                    border: 'none',
+                    outline: 'none',
+                    background: 'transparent',
+                    fontSize: 16,
+                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+                    color: '#111111',
+                  }}
+                />
+              </div>
+
+              {/* Quick Actions */}
+              <div>
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: '#A09A94',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    display: 'block',
+                    marginBottom: 12,
+                    paddingLeft: 4,
+                  }}
+                >
+                  Quick Actions
+                </span>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  {QUICK_ACTIONS.map((action) => (
+                    <div
+                      key={action.label}
+                      className="active:scale-[0.97] transition-all duration-[120ms]"
+                      style={{
+                        flex: 1,
+                        background: '#F3EFEB',
+                        border: '1px solid #EDE8E2',
+                        borderRadius: 20,
+                        padding: '18px 10px 14px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 8,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <div
+                        className="rounded-full flex items-center justify-center"
+                        style={{
+                          width: 44,
+                          height: 44,
+                          background: action.bg,
+                        }}
+                      >
+                        <action.Icon size={20} color={action.color} />
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 13,
+                          fontWeight: 600,
+                          color: '#111111',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {action.label}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: 12,
+                          color: '#A09A94',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {action.sub}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: THEME.colors.primaryText, marginBottom: 2 }}>
-                    Report an Issue
-                  </div>
-                  <div style={{ fontSize: 13, color: THEME.colors.secondaryText }}>
-                    Something not working? Let us know.
-                  </div>
+              </div>
+
+              {/* FAQ Section */}
+              <div>
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: '#A09A94',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    display: 'block',
+                    marginBottom: 12,
+                    paddingLeft: 4,
+                  }}
+                >
+                  Frequently Asked Questions
+                </span>
+                <div
+                  className="rounded-[20px]"
+                  style={{ padding: '2px 20px', background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+                >
+                  {filteredFaq.length === 0 && (
+                    <div style={{ padding: '20px 0', textAlign: 'center' }}>
+                      <span style={{ fontSize: 14, color: '#A09A94' }}>No results found</span>
+                    </div>
+                  )}
+                  {filteredFaq.map((item, idx) => {
+                    const isOpen = openFaq === idx;
+                    const isLast = idx === filteredFaq.length - 1;
+
+                    return (
+                      <div key={idx}>
+                        {/* Question row */}
+                        <div
+                          onClick={() => setOpenFaq(isOpen ? null : idx)}
+                          className="active:scale-[0.97] transition-all duration-[120ms]"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                            padding: '15px 0',
+                            borderBottom: isLast && !isOpen ? 'none' : '1px dashed #CFCFD4',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <div
+                            className="rounded-full flex items-center justify-center"
+                            style={{
+                              width: 32,
+                              height: 32,
+                              background: isOpen ? 'rgba(232,93,42,0.08)' : '#EDE8E2',
+                              flexShrink: 0,
+                              transition: 'background 200ms ease',
+                            }}
+                          >
+                            <HelpCircle
+                              size={15}
+                              color={isOpen ? '#E85D2A' : '#A09A94'}
+                            />
+                          </div>
+                          <span
+                            style={{
+                              flex: 1,
+                              fontSize: 15,
+                              fontWeight: 600,
+                              color: '#111111',
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            {item.q}
+                          </span>
+                          <ChevronDown
+                            size={18}
+                            color={isOpen ? '#E85D2A' : '#A09A94'}
+                            strokeWidth={2}
+                            style={{
+                              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                              flexShrink: 0,
+                            }}
+                          />
+                        </div>
+
+                        {/* Answer */}
+                        <div
+                          style={{
+                            overflow: 'hidden',
+                            maxHeight: isOpen ? 200 : 0,
+                            opacity: isOpen ? 1 : 0,
+                            transition: 'max-height 250ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease',
+                          }}
+                        >
+                          <div
+                            style={{
+                              paddingBottom: 14,
+                              paddingLeft: 42,
+                              fontSize: 13,
+                              lineHeight: 1.6,
+                              color: '#6E6058',
+                              borderBottom: isLast ? 'none' : '1px dashed #CFCFD4',
+                            }}
+                          >
+                            {item.a}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <ArrowRight size={18} color={THEME.colors.tertiaryText} />
+              </div>
+
+              {/* Report an Issue */}
+              <div>
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: '#A09A94',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    display: 'block',
+                    marginBottom: 12,
+                    paddingLeft: 4,
+                  }}
+                >
+                  Need more help?
+                </span>
+                <div
+                  className="rounded-[20px] p-5 active:scale-[0.97] transition-all duration-[120ms]"
+                  style={{
+                    background: '#F3EFEB',
+                    border: '1px solid #EDE8E2',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 14,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 44,
+                      height: 44,
+                      borderRadius: 14,
+                      background: 'rgba(232,93,42,0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <AlertTriangle size={20} color="#E85D2A" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: '#111111', marginBottom: 2 }}>
+                      Report an Issue
+                    </div>
+                    <div style={{ fontSize: 13, color: '#6E6058' }}>
+                      Something not working? Let us know.
+                    </div>
+                  </div>
+                  <ArrowRight size={18} color="#A09A94" />
+                </div>
+              </div>
+
+              {/* Contact footer */}
+              <div style={{ textAlign: 'center', paddingTop: 4 }}>
+                <span style={{ fontSize: 13, color: '#6E6058' }}>Contact us at </span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#E85D2A' }}>
+                  support@fylos.com
+                </span>
               </div>
             </div>
-
-            {/* Contact Us footer */}
-            <div style={{
-              textAlign: 'center',
-              paddingTop: 8,
-              paddingBottom: 12,
-            }}>
-              <span style={{ fontSize: 13, color: THEME.colors.secondaryText }}>
-                Contact us at{' '}
-              </span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: THEME.colors.accent }}>
-                support@fylos.com
-              </span>
-            </div>
-
-          </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

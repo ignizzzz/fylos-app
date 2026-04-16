@@ -25,11 +25,11 @@ const THEME = {
     accent: '#E85D2A',
     accentHover: '#D04A1C',
     primaryText: '#111111',
-    secondaryText: '#6E6E73',
-    tertiaryText: '#8E8E93',
-    background: '#F9F9FB',
+    secondaryText: '#6E6058',
+    tertiaryText: '#A09A94',
+    background: '#F7F5F2',
     surface: '#FFFFFF',
-    surfaceAlt: '#F2F2F7',
+    surfaceAlt: '#F3EFEB',
     danger: '#FF3B30',
     success: '#00C060',
     warning: '#FF9500',
@@ -336,7 +336,7 @@ const OnboardingFlow = () => {
             borderRadius: 50,
             border: '8px solid #000',
             overflow: 'hidden',
-            backgroundColor: '#F9F9FB',
+            backgroundColor: '#F7F5F2',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)'
           }}
         >
@@ -400,7 +400,7 @@ const OnboardingFlow = () => {
                         width: i === current ? 24 : 8,
                         height: 8,
                         borderRadius: 4,
-                        background: i === current ? THEME.colors.accent : THEME.colors.divider,
+                        background: i === current ? '#E85D2A' : '#EDE8E2',
                         transitionDuration: THEME.motion.tab,
                         border: 'none',
                         cursor: 'pointer',
@@ -416,15 +416,15 @@ const OnboardingFlow = () => {
                     onClick={handleNext}
                     className="onb-btn-primary w-full flex items-center justify-center gap-2 transition-transform"
                     style={{
-                      background: 'linear-gradient(135deg, #FF7240, #E85D2A)',
+                      background: '#111',
                       color: 'white',
                       fontSize: 15,
                       fontWeight: 700,
-                      borderRadius: THEME.radius.medium,
+                      borderRadius: 14,
                       padding: '16px 0',
                       border: 'none',
                       cursor: 'pointer',
-                      boxShadow: `0 8px 24px ${THEME.colors.accent}30`,
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
                       transitionDuration: THEME.motion.tap
                     }}
                   >
@@ -436,15 +436,15 @@ const OnboardingFlow = () => {
                     onClick={handleNext}
                     className="onb-btn-primary w-full flex items-center justify-center gap-2 transition-transform"
                     style={{
-                      background: 'linear-gradient(135deg, #FF7240, #E85D2A)',
+                      background: '#111',
                       color: 'white',
                       fontSize: 15,
                       fontWeight: 700,
-                      borderRadius: THEME.radius.medium,
+                      borderRadius: 14,
                       padding: '16px 0',
                       border: 'none',
                       cursor: 'pointer',
-                      boxShadow: `0 8px 24px ${THEME.colors.accent}30`,
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
                       transitionDuration: THEME.motion.tap
                     }}
                   >
@@ -476,7 +476,7 @@ const OnboardingFlow = () => {
               {/* Left: Back button (hidden on first slide) */}
               <button
                 onClick={() => { if (current > 0) goTo(current - 1); }}
-                className="w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
+                className="w-[44px] h-[44px] flex items-center justify-center bg-[#F3EFEB] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
                 style={{ opacity: isFirst ? 0 : 1, pointerEvents: isFirst ? 'none' : 'auto' }}
               >
                 <ChevronLeft size={22} color="#111111" />

@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "fylos-dev",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "5173"],
+      "runtimeExecutable": "/usr/local/bin/node",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js", "--port", "5173"],
       "port": 5173
     }
   ]

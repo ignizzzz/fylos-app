@@ -4,83 +4,17 @@ import {
   ChevronRight,
   CreditCard,
   Plus,
-  Clock,
   TrendingUp,
-  TrendingDown,
   Shield,
-  Smartphone,
-  Circle,
   Check,
-  Star,
 } from 'lucide-react';
 
-// ---------------------------------------------------------------------------
-// THEME — Fylos Design System
-// ---------------------------------------------------------------------------
-const THEME = {
-  colors: {
-    accent: '#E85D2A',
-    accentHover: '#D04A1C',
-    primaryText: '#111111',
-    secondaryText: '#6E6E73',
-    tertiaryText: '#8E8E93',
-    background: '#F9F9FB',
-    surface: '#FFFFFF',
-    surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30',
-    success: '#00C060',
-    warning: '#FF9500',
-    info: '#007AFF',
-    divider: '#E5E5E5',
-  },
-  radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
-  shadows: {
-    soft: '0 4px 20px rgba(0,0,0,0.03)',
-    floating: '0 8px 24px rgba(0,0,0,0.08)',
-  },
-  motion: {
-    tap: '120ms',
-    fade: '200ms',
-    tab: '240ms',
-    spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-  },
-};
+/**
+ * 57_PAYMENT_WALLET_v1.jsx
+ * Payment wallet screen for the Fylos pet care app.
+ * Warm minimal design system.
+ */
 
-// ---------------------------------------------------------------------------
-// GLOBAL STYLES
-// ---------------------------------------------------------------------------
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    .wallet-screen {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      background: ${THEME.colors.background};
-      color: ${THEME.colors.primaryText};
-      overflow: hidden;
-    }
-
-    .wallet-scroll {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .wallet-scroll::-webkit-scrollbar { display: none; }
-
-    .wallet-tap {
-      transition: opacity ${THEME.motion.tap} ease, transform ${THEME.motion.tap} ease;
-      cursor: pointer;
-    }
-    .wallet-tap:active { opacity: 0.7; transform: scale(0.97); }
-  `}</style>
-);
-
-// ---------------------------------------------------------------------------
-// DATA
-// ---------------------------------------------------------------------------
 const PAYMENT_METHODS = [
   { id: 'visa', label: 'Visa', last4: '4242', isDefault: true },
   { id: 'mc', label: 'Mastercard', last4: '8523', isDefault: false },
@@ -88,279 +22,11 @@ const PAYMENT_METHODS = [
 ];
 
 const TRANSACTIONS = [
-  {
-    id: 'tx1',
-    title: 'Dog Walking',
-    subtitle: 'Sarah M.',
-    date: 'Today',
-    amount: -35,
-  },
-  {
-    id: 'tx2',
-    title: 'Refund',
-    subtitle: 'Cancelled booking',
-    date: 'Yesterday',
-    amount: 32,
-  },
-  {
-    id: 'tx3',
-    title: 'Grooming',
-    subtitle: 'Pet Salon Züri',
-    date: 'Mar 12',
-    amount: -65,
-  },
-  {
-    id: 'tx4',
-    title: 'Subscription',
-    subtitle: null,
-    date: 'Mar 10',
-    amount: -9.90,
-  },
+  { id: 'tx1', title: 'Dog Walking', subtitle: 'Sarah M.', date: 'Today', amount: -35 },
+  { id: 'tx2', title: 'Refund', subtitle: 'Cancelled booking', date: 'Yesterday', amount: 32 },
+  { id: 'tx3', title: 'Grooming', subtitle: 'Pet Salon Zuri', date: 'Mar 12', amount: -65 },
+  { id: 'tx4', title: 'Subscription', subtitle: null, date: 'Mar 10', amount: -9.9 },
 ];
-
-// ---------------------------------------------------------------------------
-// BALANCE CARD
-// ---------------------------------------------------------------------------
-const BalanceCard = () => (
-  <div
-    style={{
-      background: 'linear-gradient(135deg, #FF7240 0%, #E85D2A 100%)',
-      borderRadius: 20,
-      padding: 20,
-      position: 'relative',
-      overflow: 'hidden',
-      boxShadow: THEME.shadows.soft,
-      border: '1px solid rgba(0,0,0,0.03)',
-    }}
-  >
-    <div style={{ position: 'relative', zIndex: 1 }}>
-      <div
-        style={{
-          fontSize: 13,
-          fontWeight: 500,
-          color: 'rgba(255,255,255,0.75)',
-          marginBottom: 8,
-          opacity: 0.8,
-        }}
-      >
-        Available Balance
-      </div>
-      <div
-        style={{
-          fontSize: 34,
-          fontWeight: 700,
-          color: '#FFFFFF',
-          letterSpacing: '-1px',
-          lineHeight: 1.1,
-          marginBottom: 4,
-        }}
-      >
-        CHF 45.00
-      </div>
-      <div
-        style={{
-          fontSize: 13,
-          color: 'rgba(255,255,255,0.65)',
-          marginBottom: 20,
-          opacity: 0.8,
-        }}
-      >
-        From credits & refunds
-      </div>
-      <button
-        className="wallet-tap"
-        style={{
-          background: 'rgba(255,255,255,0.2)',
-          border: '1px solid rgba(255,255,255,0.3)',
-          borderRadius: 9999,
-          color: '#FFFFFF',
-          fontSize: 14,
-          fontWeight: 600,
-          padding: '8px 20px',
-          fontFamily: 'Inter, sans-serif',
-          backdropFilter: 'blur(4px)',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 4,
-        }}
-      >
-        <Plus size={14} color="#FFFFFF" strokeWidth={2.5} />
-        Top Up
-      </button>
-    </div>
-  </div>
-);
-
-// ---------------------------------------------------------------------------
-// PAYMENT METHODS
-// ---------------------------------------------------------------------------
-const PaymentMethodIcon = ({ method }) => {
-  if (method.id === 'applepay') {
-    return <Smartphone size={18} color={THEME.colors.secondaryText} />;
-  }
-  return <CreditCard size={18} color={THEME.colors.secondaryText} />;
-};
-
-const PaymentMethods = () => (
-  <div>
-    <div
-      style={{
-        fontSize: 16,
-        fontWeight: 500,
-        color: THEME.colors.primaryText,
-        letterSpacing: '-0.3px',
-        marginBottom: 12,
-      }}
-    >
-      Payment Methods
-    </div>
-    <div
-      style={{
-        background: THEME.colors.surface,
-        borderRadius: 20,
-        boxShadow: THEME.shadows.soft,
-        border: '1px solid rgba(0,0,0,0.03)',
-        overflow: 'hidden',
-      }}
-    >
-      {PAYMENT_METHODS.map((method, i) => (
-        <div
-          key={method.id}
-          className="wallet-tap"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 14,
-            padding: '14px 20px',
-            borderBottom:
-              i < PAYMENT_METHODS.length
-                ? `1px solid ${THEME.colors.divider}`
-                : 'none',
-          }}
-        >
-          <div
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: 10,
-              background: THEME.colors.surfaceAlt,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <PaymentMethodIcon method={method} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span
-                style={{
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: THEME.colors.primaryText,
-                }}
-              >
-                {method.label}
-                {method.last4 && (
-                  <span
-                    style={{
-                      fontWeight: 400,
-                      color: THEME.colors.secondaryText,
-                    }}
-                  >
-                    {' '}
-                    •••• {method.last4}
-                  </span>
-                )}
-              </span>
-              {method.isDefault && (
-                <span
-                  style={{
-                    background: THEME.colors.accent,
-                    color: '#FFFFFF',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    padding: '2px 8px',
-                    borderRadius: 9999,
-                  }}
-                >
-                  Default
-                </span>
-              )}
-            </div>
-          </div>
-          <ChevronRight size={16} color={THEME.colors.tertiaryText} />
-        </div>
-      ))}
-      {/* Add Payment Method */}
-      <div
-        className="wallet-tap"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 14,
-          padding: '14px 20px',
-        }}
-      >
-        <div
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 10,
-            background: 'rgba(232,93,42,0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <Plus size={18} color={THEME.colors.accent} />
-        </div>
-        <span
-          style={{
-            fontSize: 15,
-            fontWeight: 500,
-            color: THEME.colors.accent,
-            flex: 1,
-          }}
-        >
-          Add Payment Method
-        </span>
-        <ChevronRight size={16} color={THEME.colors.accent} />
-      </div>
-    </div>
-  </div>
-);
-
-// ---------------------------------------------------------------------------
-// TRANSACTION HISTORY
-// ---------------------------------------------------------------------------
-const TransactionIcon = ({ amount }) => {
-  const isPositive = amount > 0;
-  return (
-    <div
-      style={{
-        width: 38,
-        height: 38,
-        borderRadius: 10,
-        background: isPositive
-          ? 'rgba(0,192,96,0.08)'
-          : THEME.colors.surfaceAlt,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexShrink: 0,
-      }}
-    >
-      {isPositive ? (
-        <TrendingUp size={17} color={THEME.colors.success} />
-      ) : (
-        <TrendingDown size={17} color={THEME.colors.secondaryText} />
-      )}
-    </div>
-  );
-};
 
 const formatAmount = (amount) => {
   const abs = Math.abs(amount);
@@ -368,132 +34,39 @@ const formatAmount = (amount) => {
   return amount > 0 ? `+CHF ${formatted}` : `-CHF ${formatted}`;
 };
 
-const TransactionList = () => (
-  <div>
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 12,
-      }}
-    >
-      <span
-        style={{
-          fontSize: 16,
-          fontWeight: 500,
-          color: THEME.colors.primaryText,
-          letterSpacing: '-0.3px',
-        }}
-      >
-        Transaction History
-      </span>
-      <span
-        style={{
-          fontSize: 13,
-          fontWeight: 500,
-          color: THEME.colors.secondaryText,
-          opacity: 0.8,
-        }}
-      >
-        This Month
-      </span>
+/* Brand tile for card networks */
+const CardBrandTile = ({ brand }) => {
+  if (brand === 'Visa') {
+    return (
+      <div className="w-[30px] h-[20px] rounded-[4px] bg-[#1A1F71] flex items-center justify-center">
+        <span className="text-[8px] font-extrabold text-white tracking-wide italic">VISA</span>
+      </div>
+    );
+  }
+  if (brand === 'Mastercard') {
+    return (
+      <div className="w-[30px] h-[20px] rounded-[4px] bg-[#111] flex items-center justify-center relative overflow-hidden">
+        <div className="absolute left-[4px] w-[10px] h-[10px] rounded-full bg-[#EB001B] opacity-90" />
+        <div className="absolute right-[4px] w-[10px] h-[10px] rounded-full bg-[#F79E1B] opacity-90" />
+      </div>
+    );
+  }
+  /* Apple Pay fallback */
+  return (
+    <div className="w-[30px] h-[20px] rounded-[4px] bg-[#111] flex items-center justify-center">
+      <span className="text-[7px] font-bold text-white"></span>
     </div>
-    <div
-      style={{
-        background: THEME.colors.surface,
-        borderRadius: 20,
-        boxShadow: THEME.shadows.soft,
-        border: '1px solid rgba(0,0,0,0.03)',
-        overflow: 'hidden',
-      }}
-    >
-      {TRANSACTIONS.map((tx, i) => {
-        const isPositive = tx.amount > 0;
-        return (
-          <div
-            key={tx.id}
-            className="wallet-tap"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: '14px 20px',
-              borderBottom:
-                i < TRANSACTIONS.length - 1
-                  ? `1px solid ${THEME.colors.divider}`
-                  : 'none',
-            }}
-          >
-            <TransactionIcon amount={tx.amount} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: THEME.colors.primaryText,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  opacity: 0.9,
-                }}
-              >
-                {tx.title}
-                {tx.subtitle && (
-                  <span style={{ color: THEME.colors.secondaryText, fontWeight: 400 }}>
-                    {' — '}
-                    {tx.subtitle}
-                  </span>
-                )}
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  color: THEME.colors.tertiaryText,
-                  marginTop: 2,
-                  opacity: 0.8,
-                }}
-              >
-                {tx.date}
-              </div>
-            </div>
-            <span
-              style={{
-                fontSize: 15,
-                fontWeight: 600,
-                color: isPositive
-                  ? THEME.colors.success
-                  : THEME.colors.primaryText,
-                fontVariantNumeric: 'tabular-nums',
-                flexShrink: 0,
-              }}
-            >
-              {formatAmount(tx.amount)}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-);
+  );
+};
 
-// ---------------------------------------------------------------------------
-// MAIN SCREEN
-// ---------------------------------------------------------------------------
-const PaymentWalletScreen = () => (
-  <>
-    <GlobalStyles />
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#E5E5E5',
-        padding: '20px',
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      }}
-    >
+const PaymentWalletScreen = () => {
+  return (
+    <div className="min-h-screen bg-[#F7F5F2] flex items-center justify-center font-sans antialiased" style={{ padding: 20 }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      `}</style>
+
       {/* iPhone Frame */}
       <div
         className="relative"
@@ -503,79 +76,208 @@ const PaymentWalletScreen = () => (
           borderRadius: 50,
           border: '8px solid #000',
           overflow: 'hidden',
-          backgroundColor: '#F9F9FB',
-          boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+          backgroundColor: '#F7F5F2',
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+          WebkitFontSmoothing: 'antialiased',
         }}
       >
         {/* Notch */}
-        <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+        <div
+          className="absolute left-1/2 -translate-x-1/2 z-[100]"
+          style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }}
+        />
 
         {/* Home indicator */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
-
-        {/* Status bar */}
-        <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
-          <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
-          <div className="flex items-center gap-1">
-            <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
-              <rect x="0" y="6" width="3" height="6" rx="1" fill="#111" />
-              <rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111" />
-              <rect x="9" y="2" width="3" height="10" rx="1" fill="#111" />
-              <rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111" />
-            </svg>
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
-              <path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111" />
-              <path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
-              <path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
-              <rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35" />
-              <rect x="2" y="2" width="16" height="9" rx="2" fill="#111" />
-              <path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4" />
-            </svg>
-          </div>
-        </div>
+        <div
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
+          style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }}
+        />
 
         {/* Floating Header */}
-        <header className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-white/95 via-white/70 to-transparent" style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}>
+        <header className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent pt-14 pb-6 px-5">
           <div className="flex justify-between items-center w-full pointer-events-auto">
-            {/* Left: Back button */}
             <button
-              onClick={() => { window.history.back(); }}
-              className="w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
+              onClick={() => window.history.back()}
+              className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.98] transition-all duration-[120ms]"
+              style={{ background: '#F3EFEB' }}
             >
-              <ChevronLeft size={22} color="#111111" />
+              <ChevronLeft size={22} color="#111" />
             </button>
-            {/* Center: Title */}
-            <h2 className="text-[17px] font-semibold text-[#111111]">Wallet</h2>
-            {/* Right: Invisible spacer */}
+            <h2 className="text-[17px] font-semibold text-[#111]">Wallet</h2>
             <div className="w-[44px]" />
           </div>
         </header>
 
-        {/* Scrollable Content */}
-        <div
-          className="absolute inset-0 overflow-y-auto wallet-scroll"
-          style={{ paddingTop: 54, paddingBottom: 40 }}
-        >
-        {/* Header spacer */}
-        <div style={{ height: 54 }} />
+        {/* Scroll Content */}
+        <div className="absolute inset-0 overflow-y-auto pt-[110px] pb-[140px] px-5" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex flex-col gap-6">
 
-        <div style={{ padding: '0 20px 32px' }}>
-          <div style={{ marginBottom: 24 }}>
-            <BalanceCard />
+            {/* Balance Card */}
+            <div
+              className="rounded-[20px] p-6 relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #FF7240 0%, #E85D2A 100%)' }}
+            >
+              {/* Decorative circles */}
+              <div className="absolute -top-[30px] -right-[30px] w-[120px] h-[120px] rounded-full" style={{ background: 'rgba(255,255,255,0.08)' }} />
+              <div className="absolute -bottom-[20px] right-[40px] w-[80px] h-[80px] rounded-full" style={{ background: 'rgba(255,255,255,0.05)' }} />
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-1.5 mb-2.5">
+                  <Shield size={14} color="rgba(255,255,255,0.7)" strokeWidth={2} />
+                  <span className="text-[12px] font-semibold uppercase tracking-[0.1em]" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Available Balance
+                  </span>
+                </div>
+
+                <div className="text-[36px] font-extrabold text-white tracking-tight leading-none mb-1" style={{ letterSpacing: '-1px' }}>
+                  CHF 45.00
+                </div>
+
+                <div className="text-[13px] mb-5" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  From credits &amp; refunds
+                </div>
+
+                <button
+                  className="active:scale-[0.97] transition-all duration-[120ms] inline-flex items-center gap-1.5 rounded-full text-white text-[14px] font-semibold py-2.5 px-5"
+                  style={{
+                    background: 'rgba(255,255,255,0.2)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    backdropFilter: 'blur(4px)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Plus size={14} color="#FFFFFF" strokeWidth={2.5} />
+                  Top Up
+                </button>
+              </div>
+            </div>
+
+            {/* Payment Methods */}
+            <div>
+              <span className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-wider block mb-2.5 ml-1">
+                Payment Methods
+              </span>
+
+              <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] overflow-hidden">
+                {PAYMENT_METHODS.map((method, i) => (
+                  <div key={method.id} className="relative">
+                    <div
+                      className="flex items-center gap-3.5 px-4 py-3.5 cursor-pointer active:bg-black/5 transition-colors"
+                    >
+                      <CardBrandTile brand={method.label} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[15px] font-semibold text-[#111]">
+                            {method.label}
+                            {method.last4 && (
+                              <span className="font-normal text-[#6E6058]">
+                                {' '}{method.last4}
+                              </span>
+                            )}
+                          </span>
+                          {method.isDefault && (
+                            <span className="bg-[#111] text-white text-[11px] font-semibold px-2 py-0.5 rounded-full">
+                              Default
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <ChevronRight size={16} color="#A09A94" />
+                    </div>
+                    {i < PAYMENT_METHODS.length - 1 && (
+                      <div className="absolute bottom-0 left-[52px] right-4 border-t border-dashed border-[#CFCFD4]" />
+                    )}
+                  </div>
+                ))}
+
+                {/* Add Payment Method */}
+                <div className="border-t border-dashed border-[#CFCFD4]">
+                  <div
+                    className="flex items-center gap-3.5 px-4 py-3.5 cursor-pointer active:bg-black/5 transition-colors"
+                  >
+                    <div className="w-[30px] h-[20px] rounded-[4px] flex items-center justify-center" style={{ background: 'rgba(232,93,42,0.1)' }}>
+                      <Plus size={14} color="#E85D2A" strokeWidth={2.5} />
+                    </div>
+                    <span className="text-[15px] font-semibold text-[#E85D2A] flex-1">
+                      Add Payment Method
+                    </span>
+                    <ChevronRight size={16} color="#E85D2A" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Transaction History */}
+            <div>
+              <div className="flex items-center justify-between mb-2.5 mx-1">
+                <span className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-wider">
+                  Transaction History
+                </span>
+                <span className="text-[13px] font-medium text-[#6E6058]">
+                  This Month
+                </span>
+              </div>
+
+              <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] overflow-hidden">
+                {TRANSACTIONS.map((tx, i) => {
+                  const isPositive = tx.amount > 0;
+                  return (
+                    <div key={tx.id} className="relative">
+                      <div
+                        className="flex items-center gap-3 px-4 py-3.5 cursor-pointer active:bg-black/5 transition-colors"
+                      >
+                        {/* Icon */}
+                        <div
+                          className="w-[38px] h-[38px] rounded-full flex items-center justify-center shrink-0"
+                          style={{ background: isPositive ? '#E5F9ED' : '#F7F5F2' }}
+                        >
+                          <TrendingUp
+                            size={17}
+                            color={isPositive ? '#34C759' : '#6E6058'}
+                            style={{ transform: isPositive ? 'none' : 'rotate(180deg)' }}
+                          />
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[15px] font-semibold text-[#111] truncate">
+                            {tx.title}
+                            {tx.subtitle && (
+                              <span className="font-normal text-[#6E6058]">
+                                {' -- '}{tx.subtitle}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[13px] text-[#A09A94] mt-0.5">
+                            {tx.date}
+                          </div>
+                        </div>
+
+                        {/* Amount */}
+                        <span
+                          className="text-[15px] font-semibold shrink-0"
+                          style={{
+                            color: isPositive ? '#34C759' : '#111',
+                            fontVariantNumeric: 'tabular-nums',
+                          }}
+                        >
+                          {formatAmount(tx.amount)}
+                        </span>
+                      </div>
+                      {i < TRANSACTIONS.length - 1 && (
+                        <div className="absolute bottom-0 left-[62px] right-4 border-t border-dashed border-[#CFCFD4]" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
           </div>
-          <div style={{ marginBottom: 24 }}>
-            <PaymentMethods />
-          </div>
-          <div style={{ marginBottom: 24 }}>
-            <TransactionList />
-          </div>
-        </div>
         </div>
       </div>
     </div>
-  </>
-);
+  );
+};
 
 export default PaymentWalletScreen;
