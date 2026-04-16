@@ -626,23 +626,24 @@ export default function DangerReportsScreen() {
         </div>
       </header>
 
-      {/* Segmented control */}
-      <div className="absolute top-[110px] left-0 w-full z-30 px-5">
-        <div
-          className="flex items-center p-1 rounded-full w-full"
-          style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-        >
+      {/* Segmented control — matches Activity tab pattern */}
+      <div className="absolute top-[112px] left-0 w-full z-30 px-5">
+        <div className="flex bg-white/80 backdrop-blur-xl p-1.5 rounded-full border border-black/[0.04] relative">
+          <div
+            className="absolute top-1.5 bottom-1.5 bg-[#111] rounded-full transition-all duration-[300ms]"
+            style={{
+              width: `calc(50% - 12px)`,
+              left: `calc(${viewMode === 'map' ? 0 : 50}% + 6px)`,
+              transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)',
+            }}
+          />
           {['map', 'feed'].map((mode) => {
             const active = viewMode === mode;
             return (
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className="flex-1 h-[36px] rounded-full text-[13px] font-medium tracking-tight capitalize transition-all ease-soft"
-                style={{
-                  background: active ? '#111' : 'transparent',
-                  color: active ? '#FFF' : '#6E6058',
-                }}
+                className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold capitalize transition-colors duration-[200ms] ${active ? 'text-white' : 'text-[#A09A94]'}`}
               >
                 {mode}
               </button>
@@ -729,21 +730,17 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
         <MapCanvas />
 
         {/* Filter chips overlay */}
-        <div className="absolute top-[160px] left-0 right-0 px-5 z-30">
-          <div className="flex gap-1.5 overflow-x-auto hide-scroll">
+        <div className="absolute top-[170px] left-0 right-0 px-5 z-30">
+          <div className="flex gap-2 overflow-x-auto hide-scroll">
             {FILTER_CHIPS.map((chip) => {
               const active = activeFilter === chip.id;
               return (
                 <button
                   key={chip.id}
                   onClick={() => setActiveFilter(chip.id)}
-                  className="shrink-0 px-3 h-[30px] rounded-full text-[12px] font-medium tracking-tight ease-soft transition-all"
-                  style={{
-                    background: active ? '#111' : 'rgba(255,255,255,0.9)',
-                    color: active ? '#FFF' : '#6E6058',
-                    border: '1px solid #EDE8E2',
-                    backdropFilter: 'blur(6px)',
-                  }}
+                  className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
+                    active ? 'bg-[#111] text-white' : 'bg-white/90 backdrop-blur-md text-[#6E6058] border border-[#EDE8E2]'
+                  }`}
                 >
                   {chip.label}
                 </button>
@@ -781,7 +778,7 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
         )}
 
         {/* Legend */}
-        <div className="absolute bottom-[100px] left-3 right-[80px] z-30">
+        <div className="absolute bottom-7 left-3 right-[80px] z-40">
           <div
             className="flex items-center gap-2 px-3 py-2 rounded-full overflow-x-auto hide-scroll"
             style={{
@@ -813,21 +810,18 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
 function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, openReportForm }) {
   return (
     <div className="w-full h-full overflow-y-auto hide-scroll">
-      <div className="px-5">
-        {/* Filter row */}
-        <div className="flex gap-1.5 overflow-x-auto hide-scroll pb-3">
+      <div className="px-5 pt-3">
+        {/* Filter row — Activity-style pills */}
+        <div className="flex gap-2 overflow-x-auto hide-scroll pb-4">
           {FILTER_CHIPS.map((chip) => {
             const active = activeFilter === chip.id;
             return (
               <button
                 key={chip.id}
                 onClick={() => setActiveFilter(chip.id)}
-                className="shrink-0 px-3 h-[32px] rounded-full text-[12px] font-medium tracking-tight ease-soft transition-all"
-                style={{
-                  background: active ? '#111' : '#F3EFEB',
-                  color: active ? '#FFF' : '#6E6058',
-                  border: '1px solid #EDE8E2',
-                }}
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
+                  active ? 'bg-[#111] text-white' : 'bg-[#F3EFEB] text-[#A09A94]'
+                }`}
               >
                 {chip.label}
               </button>
