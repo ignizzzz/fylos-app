@@ -1,4 +1,24 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
+
+// Directional scroll collapse — same as Activity tab pattern
+function useDirectionalCollapse(maxProgress, opts = {}) {
+  const { hideFactor = 1, showFactor = 2.2, topReset = 8 } = opts;
+  const [progress, setProgress] = useState(0);
+  const lastY = useRef(0);
+  const handleScroll = useCallback((e) => {
+    const y = e?.currentTarget?.scrollTop ?? 0;
+    const rawDelta = y - lastY.current;
+    const delta = Math.max(-36, Math.min(36, rawDelta));
+    lastY.current = y;
+    if (y <= topReset) { setProgress(0); return; }
+    setProgress((prev) => {
+      if (delta > 0) return Math.min(maxProgress, prev + delta * hideFactor);
+      if (delta < 0) return Math.max(0, prev + delta * showFactor);
+      return prev;
+    });
+  }, [maxProgress, hideFactor, showFactor, topReset]);
+  return { progress, handleScroll };
+}
 import {
   ChevronLeft,
   ChevronRight,
@@ -515,6 +535,10 @@ function FeedCard({ report, onTap }) {
 // ---------------- Main component ----------------
 export default function DangerReportsScreen() {
   const [viewMode, setViewMode] = useState('map'); // map | feed
+  const { progress: collapseProgress, handleScroll: handleScrollCollapse } = useDirectionalCollapse(96, { showFactor: 2.5 });
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const tabsHidden = clamp01(collapseProgress / 48);
+  const chipsHidden = clamp01((collapseProgress - 48) / 48);
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedReport, setSelectedReport] = useState(null);
   const [reportFormOpen, setReportFormOpen] = useState(false);
@@ -628,7 +652,14 @@ export default function DangerReportsScreen() {
       </header>
 
       {/* Segmented control — matches Activity tab pattern */}
-      <div className="absolute top-[112px] left-0 w-full z-30 px-5">
+      <div
+        className="absolute top-[112px] left-0 w-full z-30 px-5 transition-all duration-150 ease-out"
+        style={{
+          transform: `translateY(${-tabsHidden * 48}px)`,
+          opacity: 1 - tabsHidden,
+          pointerEvents: tabsHidden > 0.9 ? 'none' : 'auto',
+        }}
+      >
         <div className="flex bg-white/80 backdrop-blur-xl p-1.5 rounded-full border border-black/[0.04] relative">
           <div
             className="absolute top-1.5 bottom-1.5 bg-[#111] rounded-full transition-all duration-[300ms]"
@@ -654,7 +685,13 @@ export default function DangerReportsScreen() {
       </div>
 
       {/* Floating filter chips — shared between map and feed */}
-      <div className="absolute top-[170px] left-0 right-0 px-5 z-30 pointer-events-none">
+      <div
+        className="absolute top-[170px] left-0 right-0 px-5 z-30 pointer-events-none transition-all duration-150 ease-out"
+        style={{
+          transform: `translateY(${-collapseProgress}px)`,
+          opacity: 1 - chipsHidden,
+        }}
+      >
         <div className="flex gap-2 overflow-x-auto hide-scroll pointer-events-auto">
           {FILTER_CHIPS.map((chip) => {
             const active = activeFilter === chip.id;
@@ -693,6 +730,7 @@ export default function DangerReportsScreen() {
             onSelect={(r) => setSelectedReport(r)}
             isEmpty={isEmpty}
             openReportForm={openReportForm}
+            onScroll={handleScrollCollapse}
           />
         )}
       </div>
@@ -808,9 +846,13 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
 }
 
 // ---------------- Feed View ----------------
-function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, openReportForm }) {
+function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, openReportForm, onScroll }) {
   return (
-    <div className="w-full h-full overflow-y-auto hide-scroll" style={{ paddingTop: 210, paddingBottom: 100 }}>
+    <div
+      className="w-full h-full overflow-y-auto hide-scroll"
+      style={{ paddingTop: 210, paddingBottom: 100 }}
+      onScroll={onScroll}
+    >
       <div className="px-5">
         {/* Heading strip */}
         <div className="flex items-center justify-between mb-3">
