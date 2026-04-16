@@ -555,7 +555,10 @@ const MOCK_HEALTH_DATA = {
 
 const MOCK_DASHBOARD_PETS = [
   { id: 'p1', name: 'Leo', type: 'Dog', breed: 'Golden Retriever', age: 3, weight: 28, avatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop' },
-  { id: 'p2', name: 'Zyon', type: 'Cat', breed: 'Domestic Shorthair', age: 5, weight: 5.2, avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=300&h=300&fit=crop' }
+  { id: 'p2', name: 'Zyon', type: 'Cat', breed: 'Domestic Shorthair', age: 5, weight: 5.2, avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=300&h=300&fit=crop' },
+  { id: 'p3', name: 'Bella', type: 'Dog', breed: 'French Bulldog', age: 2, weight: 12, avatar: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop' },
+  { id: 'p4', name: 'Milo', type: 'Dog', breed: 'Beagle', age: 4, weight: 14, avatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=300&h=300&fit=crop' },
+  { id: 'p5', name: 'Luna', type: 'Cat', breed: 'Persian', age: 6, weight: 4.5, avatar: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop' }
 ];
 const MOCK_BOOKINGS = [
   { id: 'b1', petId: 'p1', walkerName: 'Sofia L.', walkerRating: '4.9', walkerAvatar: null, service: '90 min Walk', date: '2026-02-16T09:00:00Z', status: 'Confirmed' },
@@ -4069,28 +4072,50 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             <div className="flex-1 min-w-0">
               <h2 className="text-[24px] font-bold text-[#111] tracking-[-0.4px] leading-[1.15]">{calmGreeting}, {MOCK_USER.name}.</h2>
               <div className="flex items-center gap-2 mt-2">
-                {/* Pet avatars inline */}
-                {MOCK_DASHBOARD_PETS.length > 1 ? (
-                  <div className="flex items-center gap-0.5 mr-1">
-                    {MOCK_DASHBOARD_PETS.map((pet) => { const isSelected = selectedPetId === pet.id; return (
-                      <button
-                        key={pet.id}
-                        onClick={() => handlePetSelect(pet.id)}
-                        className="active:scale-[0.9] transition-all duration-200"
-                      >
-                        <img
-                          src={pet.avatar}
-                          alt={pet.name}
-                          className={`rounded-full object-cover transition-all duration-300 ${
-                            isSelected
-                              ? 'w-[26px] h-[26px] ring-[1.5px] ring-[#E85D2A] ring-offset-1 ring-offset-[#F7F5F2]'
-                              : 'w-[22px] h-[22px] opacity-35 -ml-1'
-                          }`}
-                        />
-                      </button>
-                    ); })}
-                  </div>
-                ) : null}
+                {/* Pet avatars — circular carousel, max 3 visible */}
+                {MOCK_DASHBOARD_PETS.length > 1 ? (() => {
+                  const pets = MOCK_DASHBOARD_PETS;
+                  const currentIdx = pets.findIndex(p => p.id === selectedPetId);
+                  const idx = currentIdx >= 0 ? currentIdx : 0;
+                  // Get 3 visible: previous, current, next (wrapping)
+                  const getWrapped = (i) => pets[((i % pets.length) + pets.length) % pets.length];
+                  const visible = pets.length <= 3
+                    ? pets.map((p, i) => ({ pet: p, pos: i === idx ? 'center' : 'side' }))
+                    : [
+                        { pet: getWrapped(idx - 1), pos: 'left' },
+                        { pet: getWrapped(idx), pos: 'center' },
+                        { pet: getWrapped(idx + 1), pos: 'right' },
+                      ];
+                  const handleNav = (dir) => {
+                    const nextIdx = ((idx + dir) % pets.length + pets.length) % pets.length;
+                    handlePetSelect(pets[nextIdx].id);
+                  };
+                  return (
+                    <div className="flex items-center gap-0 mr-1.5">
+                      {visible.map(({ pet, pos }) => {
+                        const isCenter = pos === 'center';
+                        return (
+                          <button
+                            key={pet.id}
+                            onClick={() => isCenter ? null : handleNav(pos === 'left' ? -1 : 1)}
+                            className="shrink-0 active:scale-[0.85] transition-all duration-300"
+                            style={{ marginLeft: isCenter ? '0' : '-4px', zIndex: isCenter ? 2 : 1 }}
+                          >
+                            <img
+                              src={pet.avatar}
+                              alt={pet.name}
+                              className={`rounded-full object-cover transition-all duration-300 ${
+                                isCenter
+                                  ? 'w-[30px] h-[30px] ring-[2px] ring-[#E85D2A] ring-offset-[1.5px] ring-offset-[#F7F5F2]'
+                                  : 'w-[22px] h-[22px] opacity-30'
+                              }`}
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  );
+                })() : null}
                 <p className="text-[13px] text-[#A09A94]">{selectedPet.name} · 18°C, great for walks</p>
               </div>
             </div>
