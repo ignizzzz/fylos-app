@@ -598,31 +598,42 @@ export default function DangerReportsScreen() {
         .hide-scroll { scrollbar-width: none; }
       `}</style>
 
-      {/* TOP GRADIENT FADE — covers header + tabs + chips zone */}
-      <div className="absolute top-0 left-0 w-full h-[200px] z-20 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2] via-50% to-transparent" />
+      {/* TOP GRADIENT FADE — only covers header zone, tabs/chips float over content */}
+      <div className="absolute top-0 left-0 w-full h-[100px] z-20 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/85 to-transparent" />
 
       {/* BOTTOM GRADIENT FADE — covers FAB zone */}
       <div className="absolute bottom-0 left-0 w-full h-[120px] z-20 pointer-events-none bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2]/85 to-transparent" />
 
-      {/* HEADER */}
+      {/* HEADER — matches Activity tab pattern */}
       <header
-        className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none"
+        className="absolute top-0 left-0 w-full z-40 pt-14 pb-4 px-5 pointer-events-none"
       >
         <div className="flex justify-between items-center w-full pointer-events-auto">
-          <button
-            onClick={() => window.history.back()}
-            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
-            style={{ background: '#F3EFEB' }}
-          >
-            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
-          </button>
-          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Safety</h2>
-          <button
-            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
-            style={{ background: '#F3EFEB' }}
-          >
-            <Filter size={18} color="#111" strokeWidth={1.75} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => window.history.back()}
+              className="w-[36px] h-[36px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all"
+              style={{ background: '#F3EFEB' }}
+            >
+              <ChevronLeft size={18} color="#111" strokeWidth={1.5} />
+            </button>
+            <h1 className="text-[22px] font-bold text-[#111] tracking-tight flex items-baseline gap-0.5">
+              Safety<span className="text-[#E85D2A]">•</span>
+            </h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              className="relative w-[40px] h-[40px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all"
+              style={{ background: '#FFEBEA' }}
+            >
+              <Filter size={16} color="#FF3B30" strokeWidth={2} />
+            </button>
+            <img
+              src="https://i.pravatar.cc/150?u=alex_fylos"
+              alt="Profile"
+              className="w-[40px] h-[40px] rounded-full object-cover border-2 border-[#EDE8E2]"
+            />
+          </div>
         </div>
       </header>
 
@@ -652,8 +663,28 @@ export default function DangerReportsScreen() {
         </div>
       </div>
 
+      {/* Floating filter chips — shared between map and feed */}
+      <div className="absolute top-[170px] left-0 right-0 px-5 z-30 pointer-events-none">
+        <div className="flex gap-2 overflow-x-auto hide-scroll pointer-events-auto">
+          {FILTER_CHIPS.map((chip) => {
+            const active = activeFilter === chip.id;
+            return (
+              <button
+                key={chip.id}
+                onClick={() => setActiveFilter(chip.id)}
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all backdrop-blur-md ${
+                  active ? 'bg-[#111] text-white' : 'bg-white/85 text-[#6E6058] border border-[#EDE8E2]'
+                }`}
+              >
+                {chip.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* CONTENT */}
-      <div className={`absolute inset-0 ${viewMode === 'map' ? '' : 'pt-[160px] pb-[40px]'}`}>
+      <div className="absolute inset-0">
         {viewMode === 'map' ? (
           <MapView
             reports={filteredReports}
@@ -729,26 +760,6 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
       <div className="absolute inset-0 overflow-hidden">
         <MapCanvas />
 
-        {/* Filter chips overlay */}
-        <div className="absolute top-[170px] left-0 right-0 px-5 z-30">
-          <div className="flex gap-2 overflow-x-auto hide-scroll">
-            {FILTER_CHIPS.map((chip) => {
-              const active = activeFilter === chip.id;
-              return (
-                <button
-                  key={chip.id}
-                  onClick={() => setActiveFilter(chip.id)}
-                  className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
-                    active ? 'bg-[#111] text-white' : 'bg-white/90 backdrop-blur-md text-[#6E6058] border border-[#EDE8E2]'
-                  }`}
-                >
-                  {chip.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         {/* Pins */}
         {reports.map((r) => (
           <DangerPin
@@ -809,26 +820,8 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
 // ---------------- Feed View ----------------
 function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, openReportForm }) {
   return (
-    <div className="w-full h-full overflow-y-auto hide-scroll">
-      <div className="px-5 pt-3">
-        {/* Filter row — Activity-style pills */}
-        <div className="flex gap-2 overflow-x-auto hide-scroll pb-4">
-          {FILTER_CHIPS.map((chip) => {
-            const active = activeFilter === chip.id;
-            return (
-              <button
-                key={chip.id}
-                onClick={() => setActiveFilter(chip.id)}
-                className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all ${
-                  active ? 'bg-[#111] text-white' : 'bg-[#F3EFEB] text-[#A09A94]'
-                }`}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
-        </div>
-
+    <div className="w-full h-full overflow-y-auto hide-scroll" style={{ paddingTop: 210, paddingBottom: 100 }}>
+      <div className="px-5">
         {/* Heading strip */}
         <div className="flex items-center justify-between mb-3">
           <div className="text-[12px] text-[#A09A94] tracking-wide uppercase">Nearby</div>
