@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Heart, MessageCircle, MapPin, MoreHorizontal, Sparkles, Calendar, Plus,
   Camera, ChevronRight, Search, Bookmark, BookmarkCheck, Send, X, Check,
-  Star, Clock, Compass, Coffee, Trees, Droplets,
+  Star, Clock, Compass, Coffee, Trees, Droplets, Globe, Users as UsersIcon,
+  Lock,
 } from 'lucide-react';
 import {
   ACTIVITY_FRIEND_DATA,
@@ -100,6 +101,16 @@ export default function NetworkMode({
     );
   };
 
+  const addComment = (postId, text) => {
+    if (!text.trim()) return;
+    const c = { id: `comment_${Date.now()}`, author: 'You', petName: 'Leo', avatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=150', text: text.trim(), timeAgo: 'Just now' };
+    setFeedPosts((prev) =>
+      prev.map((p) => p.id === postId ? { ...p, comments: [...(p.comments || []), c] } : p)
+    );
+    // Update activePost state too so the open sheet reflects immediately.
+    setActivePost((curr) => curr && curr.id === postId ? { ...curr, comments: [...(curr.comments || []), c] } : curr);
+  };
+
   const acceptRequest = (req) => {
     if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') navigator.vibrate(8);
     setReceivedReqs((prev) => prev.filter((r) => r.id !== req.id));
@@ -138,7 +149,7 @@ export default function NetworkMode({
     });
   };
 
-  const submitPost = (text) => {
+  const submitPost = ({ text, visibility }) => {
     const newPost = {
       id: `post_${Date.now()}`,
       ownerName: 'You',
@@ -153,11 +164,13 @@ export default function NetworkMode({
       likedByMe: false,
       likersPreview: '',
       likers: [],
+      comments: [],
+      visibility: visibility || 'friends',
       contextPetIds: selectedPetId ? [selectedPetId] : ['p1'],
     };
     setFeedPosts((prev) => [newPost, ...prev]);
     setCreatePostOpen(false);
-    showToast('Posted to your network');
+    showToast(`Posted · ${visibility || 'friends'}`);
   };
 
   const totalReceived = receivedReqs.length;
@@ -218,6 +231,7 @@ export default function NetworkMode({
           post={activePost}
           onClose={() => setActivePost(null)}
           onToggleLike={() => toggleLike(activePost.id)}
+          onComment={(text) => addComment(activePost.id, text)}
         />
       )}
       {activeProfile && (
@@ -347,6 +361,7 @@ function FeedView({ posts, filter, setFilter, onTapPost, onToggleLike, onCreate,
 
 function PostCard({ post, onTap, onToggleLike }) {
   const isSystem = post.type === 'friend-update' || post.type === 'playdate-event';
+  const commentCount = (post.comments || []).length;
   return (
     <div className="bg-white rounded-[20px] border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)] overflow-hidden">
       <button onClick={onTap} className="w-full text-left active:opacity-95">
@@ -354,8 +369,9 @@ function PostCard({ post, onTap, onToggleLike }) {
           <img src={post.avatar} alt="" className="w-10 h-10 rounded-full object-cover bg-[#F3F3F5] shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="text-[14px] font-semibold text-[#111111] truncate">{post.ownerName}</p>
-            <p className="text-[11.5px] text-[#8E8E93] mt-0.5 leading-none">
-              {post.petName !== 'System' ? `with ${post.petName} · ` : ''}{post.timeAgo}
+            <p className="text-[11.5px] text-[#8E8E93] mt-0.5 leading-none flex items-center gap-1.5">
+              <span>{post.petName !== 'System' ? `with ${post.petName} · ` : ''}{post.timeAgo}</span>
+              <VisibilityChip visibility={post.visibility} />
             </p>
           </div>
         </div>
@@ -386,7 +402,7 @@ function PostCard({ post, onTap, onToggleLike }) {
       </button>
       {!isSystem && (
         <div className="flex items-center justify-between px-4 py-3 mt-3 border-t border-black/[0.04]">
-          <div className="min-w-0">
+          <div className="min-w-0 flex flex-col gap-0.5">
             {post.likesCount > 0 ? (
               <p className="text-[12.5px] font-semibold text-[#111111] truncate">
                 {post.likesCount} {post.likesCount === 1 ? 'like' : 'likes'}
@@ -395,20 +411,49 @@ function PostCard({ post, onTap, onToggleLike }) {
             ) : (
               <p className="text-[12px] text-[#8E8E93]">Be the first to like</p>
             )}
+            {commentCount > 0 && (
+              <button onClick={onTap} className="text-[11.5px] text-[#6E6E73] text-left active:opacity-70">
+                View {commentCount === 1 ? '1 comment' : `${commentCount} comments`}
+              </button>
+            )}
           </div>
-          <button
-            onClick={onToggleLike}
-            aria-label={post.likedByMe ? 'Unlike' : 'Like'}
-            className={`h-9 px-3 rounded-[12px] flex items-center justify-center gap-1.5 text-[12.5px] font-semibold transition-colors active:scale-[0.97] ${
-              post.likedByMe ? 'bg-[#FFE9DD] text-[#E85D2A]' : 'bg-[#F3F3F6] text-[#6E6E73]'
-            }`}
-          >
-            <Heart size={15} strokeWidth={2.2} fill={post.likedByMe ? 'currentColor' : 'none'} />
-            {post.likedByMe ? 'Liked' : 'Like'}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={onTap}
+              aria-label="Comment"
+              className="h-9 px-2.5 rounded-[12px] flex items-center justify-center gap-1 text-[12px] font-semibold transition-colors active:scale-[0.97] bg-[#F3F3F6] text-[#6E6E73]"
+            >
+              <MessageCircle size={14} strokeWidth={2.2} />
+            </button>
+            <button
+              onClick={onToggleLike}
+              aria-label={post.likedByMe ? 'Unlike' : 'Like'}
+              className={`h-9 px-3 rounded-[12px] flex items-center justify-center gap-1.5 text-[12.5px] font-semibold transition-colors active:scale-[0.97] ${
+                post.likedByMe ? 'bg-[#FFE9DD] text-[#E85D2A]' : 'bg-[#F3F3F6] text-[#6E6E73]'
+              }`}
+            >
+              <Heart size={15} strokeWidth={2.2} fill={post.likedByMe ? 'currentColor' : 'none'} />
+              {post.likedByMe ? 'Liked' : 'Like'}
+            </button>
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+function VisibilityChip({ visibility }) {
+  const conf = {
+    public: { Icon: Globe, label: 'Public' },
+    friends: { Icon: UsersIcon, label: 'Friends' },
+    private: { Icon: Lock, label: 'Private' },
+  }[visibility || 'friends'] || null;
+  if (!conf) return null;
+  const { Icon, label } = conf;
+  return (
+    <span className="inline-flex items-center gap-0.5" aria-label={`Visibility: ${label}`}>
+      <Icon size={10} strokeWidth={2.2} className="text-[#A6A6AC]" />
+    </span>
   );
 }
 
@@ -701,7 +746,14 @@ function SheetShell({ children, title, onClose }) {
   );
 }
 
-function PostDetailSheet({ post, onClose, onToggleLike }) {
+function PostDetailSheet({ post, onClose, onToggleLike, onComment }) {
+  const [draft, setDraft] = useState('');
+  const comments = post.comments || [];
+  const submit = () => {
+    if (!draft.trim()) return;
+    onComment && onComment(draft);
+    setDraft('');
+  };
   return (
     <SheetShell onClose={onClose} title="Post">
       <div className="px-6 pb-6 flex flex-col gap-4">
@@ -709,8 +761,9 @@ function PostDetailSheet({ post, onClose, onToggleLike }) {
           <img src={post.avatar} className="w-11 h-11 rounded-full object-cover bg-[#F3F3F5]" alt="" />
           <div className="min-w-0">
             <p className="text-[14px] font-semibold text-[#111111] truncate">{post.ownerName}</p>
-            <p className="text-[12px] text-[#8E8E93] truncate">
-              {post.petName !== 'System' ? `with ${post.petName} · ` : ''}{post.timeAgo}
+            <p className="text-[12px] text-[#8E8E93] truncate flex items-center gap-1.5">
+              <span>{post.petName !== 'System' ? `with ${post.petName} · ` : ''}{post.timeAgo}</span>
+              <VisibilityChip visibility={post.visibility} />
             </p>
           </div>
         </div>
@@ -724,8 +777,60 @@ function PostDetailSheet({ post, onClose, onToggleLike }) {
           </p>
         )}
         {post.summary && <p className="text-[14px] text-[#111111] leading-snug">{post.summary}</p>}
+        <button
+          onClick={onToggleLike}
+          className={`h-11 rounded-[12px] flex items-center justify-center gap-1.5 text-[13px] font-semibold transition-colors active:scale-[0.98] ${
+            post.likedByMe ? 'bg-[#FFE9DD] text-[#E85D2A]' : 'bg-[#F3F3F6] text-[#6E6E73]'
+          }`}
+        >
+          <Heart size={15} strokeWidth={2.2} fill={post.likedByMe ? 'currentColor' : 'none'} />
+          {post.likedByMe ? 'Liked' : 'Like'}
+        </button>
+        {/* Comments thread */}
+        <div className="flex flex-col gap-3 pt-2 border-t border-black/[0.04]">
+          <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">
+            {comments.length === 0 ? 'No comments yet' : `${comments.length} comment${comments.length === 1 ? '' : 's'}`}
+          </p>
+          <div className="flex flex-col gap-3">
+            {comments.map((c) => (
+              <div key={c.id} className="flex items-start gap-3">
+                <img src={c.avatar} className="w-8 h-8 rounded-full object-cover bg-[#F3F3F5] shrink-0" alt="" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] text-[#111111] leading-snug">
+                    <span className="font-semibold">{c.author}</span> <span className="text-[#8E8E93] text-[11.5px]">· {c.timeAgo}</span>
+                  </p>
+                  <p className="text-[13px] text-[#111111] leading-snug mt-0.5">{c.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Composer */}
+          <div className="flex items-center gap-2 pt-1">
+            <input
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
+              placeholder="Add a comment…"
+              className="flex-1 h-10 rounded-full px-4 outline-none text-[13px]"
+              style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}
+            />
+            <button
+              onClick={submit}
+              disabled={!draft.trim()}
+              aria-label="Send"
+              className="w-10 h-10 rounded-full flex items-center justify-center active:scale-[0.94]"
+              style={{
+                background: draft.trim() ? 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' : '#EDE8E2',
+                color: draft.trim() ? '#FFF' : '#A09A94',
+              }}
+            >
+              <Send size={14} strokeWidth={2.4} />
+            </button>
+          </div>
+        </div>
+        {/* Likers */}
         {post.likers && post.likers.length > 0 && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 pt-3 border-t border-black/[0.04]">
             <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Liked by</p>
             <div className="flex flex-col gap-2">
               {post.likers.slice(0, 6).map((l) => (
@@ -740,15 +845,6 @@ function PostDetailSheet({ post, onClose, onToggleLike }) {
             </div>
           </div>
         )}
-        <button
-          onClick={onToggleLike}
-          className={`h-11 rounded-[12px] flex items-center justify-center gap-1.5 text-[13px] font-semibold transition-colors active:scale-[0.98] ${
-            post.likedByMe ? 'bg-[#FFE9DD] text-[#E85D2A]' : 'bg-[#F3F3F6] text-[#6E6E73]'
-          }`}
-        >
-          <Heart size={15} strokeWidth={2.2} fill={post.likedByMe ? 'currentColor' : 'none'} />
-          {post.likedByMe ? 'Liked' : 'Like'}
-        </button>
       </div>
     </SheetShell>
   );
@@ -841,8 +937,15 @@ function PlacePeekSheet({ place, saved, onClose, onToggleSave }) {
   );
 }
 
+const VISIBILITY_OPTIONS = [
+  { id: 'public',  label: 'Public',  Icon: Globe,     body: 'Anyone on Fylos.' },
+  { id: 'friends', label: 'Friends', Icon: UsersIcon, body: 'Just your Fylos.' },
+  { id: 'private', label: 'Private', Icon: Lock,      body: 'Only you.' },
+];
+
 function CreatePostSheet({ onClose, onSubmit }) {
   const [text, setText] = useState('');
+  const [visibility, setVisibility] = useState('friends');
   return (
     <SheetShell onClose={onClose} title="Share a moment">
       <div className="px-6 pb-6 flex flex-col gap-3">
@@ -855,8 +958,30 @@ function CreatePostSheet({ onClose, onSubmit }) {
           style={{ border: '1px solid #EDE8E2', background: '#F7F5F2', color: '#111' }}
           autoFocus
         />
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Visibility</span>
+          <div className="grid grid-cols-3 gap-2">
+            {VISIBILITY_OPTIONS.map((opt) => {
+              const active = visibility === opt.id;
+              const Icon = opt.Icon;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => setVisibility(opt.id)}
+                  className={`flex flex-col items-center gap-1 px-2 py-2.5 rounded-[12px] border transition-colors active:scale-[0.97] ${
+                    active ? 'bg-[#FFE9DD] border-[#FFD4CC] text-[#7A2F12]' : 'bg-white border-black/[0.06] text-[#6E6E73]'
+                  }`}
+                >
+                  <Icon size={14} strokeWidth={2.2} />
+                  <span className="text-[12px] font-semibold">{opt.label}</span>
+                  <span className="text-[10.5px] text-[#8E8E93] leading-tight text-center">{opt.body}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <button
-          onClick={() => text.trim() && onSubmit(text.trim())}
+          onClick={() => text.trim() && onSubmit({ text: text.trim(), visibility })}
           disabled={!text.trim()}
           className="h-11 rounded-[12px] text-white text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98]"
           style={{
