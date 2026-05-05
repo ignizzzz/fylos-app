@@ -822,115 +822,111 @@ function AboutTab({ archetype, traits, onTapArchetype, onTwinFinder }) {
 }
 
 // ---------------------------------------------------------------------------
-// MilestonesJourney — playful timeline that lives at the bottom of the profile
-// regardless of the active tab. Vertical zig-zag with paw-print path connecting
-// stamp-style badges. Most recent at the top, oldest at the bottom.
+// MilestonesJourney — playful timeline that lives at the bottom of the profile.
+// Single-column vertical with a continuous spine running THROUGH the icon
+// nodes (not behind them — fixes the visual cut-off). Each milestone is a
+// row: [glyph node] [stamp card] with the spine drawn as two segments per
+// row (above the node + below the node) so the line stays unbroken end to end.
+// Most recent at top, oldest at bottom, "Day one" terminator.
 // ---------------------------------------------------------------------------
 function MilestonesJourney({ petName, milestones, onAdd }) {
   const sorted = useMemo(() => [...milestones].sort((a, b) => b.dateMs - a.dateMs), [milestones]);
   return (
-    <section className="px-5 mt-4 flex flex-col gap-3">
+    <section className="px-5 mt-4 flex flex-col gap-2.5">
       <div className="flex items-end justify-between">
         <div>
-          <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Journey</p>
-          <h2 className="text-[18px] font-semibold text-[#111111] leading-tight mt-0.5">
+          <p className="text-[9.5px] font-semibold uppercase tracking-[0.16em] text-[#8E7A6B]">Journey</p>
+          <h2 className="text-[15px] font-semibold text-[#111111] leading-tight mt-0.5 tracking-tight">
             {petName}'s story · <span className="text-[#E85D2A]">{sorted.length}</span> moments
           </h2>
         </div>
         <button
           onClick={onAdd}
           aria-label="Add milestone"
-          className="h-9 px-3 rounded-full bg-[#111111] text-white text-[12px] font-semibold flex items-center gap-1.5 active:scale-[0.97]"
+          className="h-8 px-3 rounded-full bg-[#111111] text-white text-[11px] font-semibold flex items-center gap-1 active:scale-[0.97]"
         >
-          <Plus size={12} strokeWidth={2.6} />
+          <Plus size={11} strokeWidth={2.6} />
           Add
         </button>
       </div>
       <div
-        className="relative rounded-[20px] overflow-hidden"
+        className="rounded-[20px]"
         style={{
           background: 'linear-gradient(180deg, #FFF7F1 0%, #F7F5F2 100%)',
           border: '1px solid #EDE8E2',
-          padding: '20px 12px 24px',
+          padding: '14px 16px 18px',
         }}
       >
-        {/* Subtle dotted spine */}
-        <div
-          aria-hidden
-          className="absolute top-6 bottom-6 left-1/2 -translate-x-1/2 w-px"
-          style={{
-            background:
-              'repeating-linear-gradient(180deg, rgba(232,93,42,0.45) 0 6px, transparent 6px 12px)',
-          }}
-        />
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col">
           {sorted.map((m, i) => {
             const Icon = MILESTONE_ICON_MAP[m.icon] || MILESTONE_ICON_MAP.default;
-            const onLeft = i % 2 === 0;
+            const isFirst = i === 0;
+            const isLast = i === sorted.length - 1;
             return (
-              <div key={m.id} className="relative flex items-center gap-3" style={{ minHeight: 56 }}>
-                {/* Left side */}
-                <div className="flex-1 min-w-0 flex justify-end pr-3">
-                  {onLeft ? (
-                    <MilestoneStamp m={m} side="right" Icon={Icon} />
-                  ) : (
-                    <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#A09A94] tabular-nums">
-                      {m.dateStr}
-                    </span>
-                  )}
+              <div key={m.id} className="relative flex items-stretch gap-3" style={{ minHeight: 52 }}>
+                {/* Left rail: spine + node */}
+                <div className="relative shrink-0 flex flex-col items-center" style={{ width: 36 }}>
+                  {/* Top half spine */}
+                  <span
+                    aria-hidden
+                    className="w-px"
+                    style={{
+                      flex: '0 0 18px',
+                      background: isFirst
+                        ? 'transparent'
+                        : 'repeating-linear-gradient(180deg, rgba(232,93,42,0.45) 0 4px, transparent 4px 8px)',
+                    }}
+                  />
+                  {/* Node */}
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center"
+                    style={{
+                      background: '#FFFFFF',
+                      border: '2px solid #FFD4CC',
+                      boxShadow: '0 3px 8px rgba(232,93,42,0.16)',
+                      color: T.coral,
+                    }}
+                  >
+                    <Icon size={13} strokeWidth={2.2} />
+                  </div>
+                  {/* Bottom half spine */}
+                  <span
+                    aria-hidden
+                    className="w-px"
+                    style={{
+                      flex: '1 0 0',
+                      background: isLast
+                        ? 'transparent'
+                        : 'repeating-linear-gradient(180deg, rgba(232,93,42,0.45) 0 4px, transparent 4px 8px)',
+                    }}
+                  />
                 </div>
-                {/* Center node */}
-                <div
-                  className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center relative z-10"
-                  style={{
-                    background: '#FFFFFF',
-                    border: '2px solid #FFD4CC',
-                    boxShadow: '0 4px 10px rgba(232,93,42,0.18)',
-                    color: T.coral,
-                  }}
-                >
-                  <Icon size={16} strokeWidth={2.2} />
-                </div>
-                {/* Right side */}
-                <div className="flex-1 min-w-0 flex justify-start pl-3">
-                  {onLeft ? (
-                    <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#A09A94] tabular-nums">
-                      {m.dateStr}
-                    </span>
-                  ) : (
-                    <MilestoneStamp m={m} side="left" Icon={Icon} />
-                  )}
+                {/* Right side: stamp + date — full width, no truncation */}
+                <div className="flex-1 min-w-0 py-2.5 flex flex-col gap-0.5">
+                  <p className="text-[12.5px] font-semibold text-[#111111] leading-snug tracking-tight">
+                    {m.label}
+                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.12em] text-[#A09A94] tabular-nums">
+                    {m.dateStr}
+                  </p>
                 </div>
               </div>
             );
           })}
         </div>
-        {/* Start marker */}
-        <div className="flex items-center justify-center mt-4 gap-1.5 text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">
-          <span aria-hidden style={{ width: 24, height: 1, background: '#EDE8E2' }} />
-          Day one
-          <span aria-hidden style={{ width: 24, height: 1, background: '#EDE8E2' }} />
+        {/* Day one terminator */}
+        <div className="flex items-center gap-2 mt-1 pl-[18px]">
+          <span
+            aria-hidden
+            className="w-2 h-2 rounded-full"
+            style={{ background: '#FFD4CC', border: '1px solid #E85D2A' }}
+          />
+          <span className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-[#8E7A6B]">
+            Day one
+          </span>
         </div>
       </div>
     </section>
-  );
-}
-
-function MilestoneStamp({ m, side, Icon }) {
-  const arrowRight = side === 'right';
-  return (
-    <div
-      className="inline-flex items-center px-3 py-2 rounded-[14px] gap-2 max-w-[150px]"
-      style={{
-        background: '#FFFFFF',
-        border: `1px solid ${T.border}`,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
-      }}
-    >
-      {!arrowRight && <Icon size={12} strokeWidth={2.2} className="text-[#E85D2A] shrink-0" />}
-      <p className="text-[12.5px] font-semibold text-[#111111] leading-snug truncate">{m.label}</p>
-      {arrowRight && <Icon size={12} strokeWidth={2.2} className="text-[#E85D2A] shrink-0" />}
-    </div>
   );
 }
 

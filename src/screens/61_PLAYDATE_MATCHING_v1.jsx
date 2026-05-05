@@ -328,22 +328,26 @@ export default function PlaydateMatchingScreen({
 function Header({ tab, onBack, onOpenFilters }) {
   return (
     <header
-      className="relative z-30 bg-white/95 backdrop-blur-xl border-b border-black/[0.04]"
-      style={{ paddingTop: 56, paddingBottom: 12, paddingLeft: 20, paddingRight: 20 }}
+      className="relative z-30 bg-white/95 backdrop-blur-xl"
+      style={{ paddingTop: 52, paddingBottom: 8, paddingLeft: 16, paddingRight: 16 }}
     >
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="w-[40px] h-[40px] flex items-center justify-center bg-white border border-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)] rounded-full active:scale-[0.96] transition-transform"
+          aria-label="Back"
+          className="w-9 h-9 flex items-center justify-center bg-white border border-black/[0.05] rounded-full active:scale-[0.96] transition-transform"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.03)' }}
         >
-          <ChevronLeft size={20} color="#111111" />
+          <ChevronLeft size={16} color="#111111" strokeWidth={2.4} />
         </button>
-        <h1 className="text-[17px] font-semibold text-[#111111]">Playdates</h1>
+        <h1 className="text-[14px] font-semibold text-[#111111] tracking-tight">Playdates</h1>
         <button
           onClick={onOpenFilters}
-          className="w-[40px] h-[40px] flex items-center justify-center bg-white border border-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)] rounded-full active:scale-[0.96] transition-transform"
+          aria-label="Filters"
+          className="w-9 h-9 flex items-center justify-center bg-white border border-black/[0.05] rounded-full active:scale-[0.96] transition-transform"
+          style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.03)' }}
         >
-          <Filter size={17} color="#111111" />
+          <Filter size={14} color="#111111" strokeWidth={2.2} />
         </button>
       </div>
     </header>
@@ -353,14 +357,14 @@ function Header({ tab, onBack, onOpenFilters }) {
 function TabBar({ tab, setTab }) {
   const idx = TABS.findIndex((t) => t.id === tab);
   return (
-    <nav className="bg-white/95 backdrop-blur-xl border-b border-black/[0.04] px-5 pb-3">
-      <div className="relative bg-[#F2F2F7] rounded-full p-1 flex">
+    <nav className="bg-white/95 backdrop-blur-xl px-4 pb-2.5">
+      <div className="relative bg-[#F2F2F7] rounded-full p-0.5 flex">
         <div
           aria-hidden
-          className="absolute top-1 bottom-1 bg-white rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-[260ms]"
+          className="absolute top-0.5 bottom-0.5 bg-white rounded-full shadow-[0_1px_4px_rgba(0,0,0,0.06)] transition-all duration-[260ms]"
           style={{
-            width: `calc(${100 / TABS.length}% - 8px)`,
-            left: `calc(${(100 / TABS.length) * idx}% + 4px)`,
+            width: `calc(${100 / TABS.length}% - 4px)`,
+            left: `calc(${(100 / TABS.length) * idx}% + 2px)`,
             transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)',
           }}
         />
@@ -368,7 +372,7 @@ function TabBar({ tab, setTab }) {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`relative z-10 flex-1 h-9 text-[13px] font-semibold transition-colors ${
+            className={`relative z-10 flex-1 h-8 text-[11.5px] font-semibold transition-colors tracking-tight ${
               tab === t.id ? 'text-[#111111]' : 'text-[#8E8E93]'
             }`}
           >
@@ -391,11 +395,11 @@ function SwipeDeckTab({ deck, activeActivity, setActiveActivity, onPass, onLike,
     <div className="px-5 pt-4 flex flex-col gap-3 h-full">
       <ActivityChips active={activeActivity} onChange={setActiveActivity} />
       <div className="flex items-center justify-between -mt-1">
-        <p className="text-[11.5px] font-bold uppercase tracking-widest text-[#8E8E93]">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#A09A94]">
           Curated for {' '}
           <span className="text-[#E85D2A]">Leo</span>
         </p>
-        <p className="text-[11.5px] text-[#8E8E93] tabular-nums">{deck.length} left</p>
+        <p className="text-[10px] text-[#A09A94] tabular-nums uppercase tracking-wide">{deck.length} left</p>
       </div>
       {deck.length === 0 ? (
         <DeckEmpty onReset={onResetDeck} onClearFilter={() => setActiveActivity('all')} hasFilter={activeActivity !== 'all'} />
@@ -408,7 +412,7 @@ function SwipeDeckTab({ deck, activeActivity, setActiveActivity, onPass, onLike,
 
 function ActivityChips({ active, onChange }) {
   return (
-    <div className="flex gap-2 overflow-x-auto custom-scrollbar -mx-1 px-1 pb-1">
+    <div className="flex gap-1.5 overflow-x-auto custom-scrollbar -mx-1 px-1 pb-1">
       {ACTIVITIES.map((a) => {
         const isActive = active === a.id;
         const Icon = a.icon;
@@ -416,13 +420,13 @@ function ActivityChips({ active, onChange }) {
           <button
             key={a.id}
             onClick={() => onChange(a.id)}
-            className={`shrink-0 inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full text-[12.5px] font-semibold border transition-colors active:scale-[0.97] ${
+            className={`shrink-0 inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[11px] font-medium border transition-colors active:scale-[0.97] tracking-tight ${
               isActive
                 ? 'bg-[#111111] text-white border-transparent'
                 : 'bg-white text-[#6E6E73] border-black/[0.06] hover:text-[#111111]'
             }`}
           >
-            <Icon size={13} strokeWidth={2.2} />
+            <Icon size={11} strokeWidth={2} />
             {a.label}
           </button>
         );
@@ -593,8 +597,8 @@ function SwipeCardShell({
       >
         <div className="flex items-end justify-between gap-2">
           <div className="min-w-0">
-            <p className="text-[24px] font-semibold text-white leading-tight drop-shadow">
-              {candidate.petName} <span className="font-normal text-white/85 text-[18px]">· {candidate.age || '?'}</span>
+            <p className="text-[20px] font-semibold text-white leading-tight drop-shadow tracking-tight">
+              {candidate.petName} <span className="font-normal text-white/85 text-[15px]">· {candidate.age || '?'}</span>
             </p>
             <p className="text-[13px] text-white/85 mt-1">
               {candidate.petBreed} · {candidate.distance.toFixed(1)} km
@@ -701,15 +705,15 @@ function DeckEmpty({ onReset, onClearFilter, hasFilter }) {
 function PlaymatesTab({ playmates, onTapPet, onMessage, onSchedule, onSwitchToDiscover }) {
   if (!playmates.length) {
     return (
-      <div className="px-6 pt-12 flex flex-col items-center text-center gap-3">
-        <div className="w-14 h-14 rounded-full bg-[#FFE9DD] flex items-center justify-center text-[#E85D2A]">
-          <Heart size={20} strokeWidth={2.2} />
+      <div className="px-6 pt-10 flex flex-col items-center text-center gap-2.5">
+        <div className="w-12 h-12 rounded-full bg-[#FFE9DD] flex items-center justify-center text-[#E85D2A]">
+          <Heart size={16} strokeWidth={2.2} />
         </div>
-        <p className="text-[15px] font-semibold text-[#111111]">No playmates yet</p>
-        <p className="text-[13px] text-[#6E6E73] max-w-[280px]">Save pups from Discover to add them to your playmates.</p>
+        <p className="text-[13.5px] font-semibold text-[#111111]">No playmates yet</p>
+        <p className="text-[11.5px] text-[#6E6E73] max-w-[260px]">Save pups from Discover to add them to your circle.</p>
         <button
           onClick={onSwitchToDiscover}
-          className="mt-2 h-10 px-5 rounded-full text-white text-[13px] font-semibold active:scale-[0.97] transition-transform"
+          className="mt-1.5 h-9 px-4 rounded-full text-white text-[12px] font-semibold active:scale-[0.97] transition-transform"
           style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' }}
         >
           Discover pups nearby
@@ -717,56 +721,130 @@ function PlaymatesTab({ playmates, onTapPet, onMessage, onSchedule, onSwitchToDi
       </div>
     );
   }
+  const [closest, ...rest] = playmates;
   return (
-    <div className="px-5 pt-4 flex flex-col gap-3">
-      <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93]">{playmates.length} playmates</p>
-      {playmates.map((c) => (
-        <PlaymateCard
-          key={c.id}
-          candidate={c}
-          onTap={() => onTapPet(c)}
-          onMessage={onMessage}
-          onSchedule={() => onSchedule(c)}
-        />
-      ))}
+    <div className="px-4 pt-3 flex flex-col gap-3 pb-6">
+      {/* Hero — closest friend */}
+      <ClosestFriendHero
+        candidate={closest}
+        onTap={() => onTapPet(closest)}
+        onMessage={onMessage}
+        onSchedule={() => onSchedule(closest)}
+      />
+
+      {rest.length > 0 && (
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#A09A94]">Your circle</p>
+            <p className="text-[10px] text-[#A09A94] uppercase tracking-wide">{playmates.length} fylos</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {rest.map((c) => (
+              <PlaymateMiniCard
+                key={c.id}
+                candidate={c}
+                onTap={() => onTapPet(c)}
+                onSchedule={() => onSchedule(c)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <button
+        onClick={onSwitchToDiscover}
+        className="self-stretch h-10 rounded-[12px] bg-white border border-black/[0.06] text-[12px] font-semibold text-[#111111] flex items-center justify-center gap-1.5 active:scale-[0.98] mt-1"
+      >
+        <Sparkles size={12} strokeWidth={2.2} className="text-[#E85D2A]" />
+        Find new pups
+      </button>
     </div>
   );
 }
 
-function PlaymateCard({ candidate, onTap, onMessage, onSchedule }) {
+// Hero card highlighting the most-played-with friend.
+function ClosestFriendHero({ candidate, onTap, onMessage, onSchedule }) {
   return (
-    <div className="bg-white rounded-[16px] border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)] overflow-hidden">
-      <button onClick={onTap} className="flex items-center gap-3 p-3.5 w-full text-left active:opacity-90">
-        <img
-          src={candidate.petPhoto}
-          alt={candidate.petName}
-          className="w-[52px] h-[52px] rounded-full object-cover bg-[#F3F3F5] shrink-0"
-        />
-        <div className="flex-1 min-w-0">
-          <h4 className="text-[14px] font-semibold text-[#111111] truncate">{candidate.petName}</h4>
-          <p className="text-[12px] text-[#6E6E73] truncate">
-            {candidate.petBreed} · {candidate.ownerName}
+    <div
+      className="rounded-[18px] overflow-hidden relative"
+      style={{
+        background: 'linear-gradient(135deg, #FFE2D5 0%, #FFF4ED 60%, #FFFFFF 100%)',
+        border: '1px solid #FFD4CC',
+        boxShadow: '0 4px 14px rgba(232,93,42,0.08)',
+      }}
+    >
+      <button onClick={onTap} className="w-full text-left p-3.5 flex items-center gap-3 active:opacity-95">
+        {/* Avatars stacked — you + them */}
+        <div className="relative shrink-0">
+          <img
+            src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=200&h=200"
+            alt="Leo"
+            className="w-12 h-12 rounded-full object-cover"
+            style={{ border: '3px solid #FFFFFF', boxShadow: '0 2px 6px rgba(0,0,0,0.10)' }}
+          />
+          <img
+            src={candidate.petPhoto}
+            alt={candidate.petName}
+            className="absolute -right-3 -bottom-1 w-10 h-10 rounded-full object-cover"
+            style={{ border: '3px solid #FFFFFF', boxShadow: '0 2px 6px rgba(0,0,0,0.10)' }}
+          />
+        </div>
+        <div className="flex-1 min-w-0 ml-3">
+          <p className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-[#7A2F12]/80">Closest friend</p>
+          <p className="text-[15px] font-semibold text-[#111111] truncate mt-0.5 tracking-tight">
+            Leo & {candidate.petName}
+          </p>
+          <p className="text-[11px] text-[#6E6058] truncate mt-0.5">
+            {candidate.petBreed} · 4 playdates · last met 3d ago
           </p>
         </div>
-        <ChevronRight size={16} color="#B6B6BC" />
       </button>
-      <div className="grid grid-cols-2 gap-2 px-3.5 pb-3.5">
+      <div className="grid grid-cols-2 gap-1.5 px-3.5 pb-3.5">
         <button
           onClick={onMessage}
-          className="h-9 rounded-[10px] bg-[#F7F7F8] border border-black/[0.06] text-[12px] font-semibold text-[#111111] flex items-center justify-center gap-1.5 active:scale-[0.98]"
+          className="h-9 rounded-[10px] bg-white border border-black/[0.05] text-[11.5px] font-semibold text-[#111111] flex items-center justify-center gap-1 active:scale-[0.97]"
         >
-          <MessageCircle size={13} strokeWidth={2.2} />
+          <MessageCircle size={11} strokeWidth={2.2} />
           Message
         </button>
         <button
           onClick={onSchedule}
-          className="h-9 rounded-[10px] text-white text-[12px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98]"
+          className="h-9 rounded-[10px] text-white text-[11.5px] font-semibold flex items-center justify-center gap-1 active:scale-[0.97]"
           style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' }}
         >
-          <Calendar size={13} strokeWidth={2.2} />
-          Plan
+          <Calendar size={11} strokeWidth={2.2} />
+          Plan again
         </button>
       </div>
+    </div>
+  );
+}
+
+// Compact 2-column card for non-hero playmates.
+function PlaymateMiniCard({ candidate, onTap, onSchedule }) {
+  return (
+    <div className="bg-white rounded-[14px] border border-black/[0.05] p-3 flex flex-col gap-2"
+      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}
+    >
+      <button onClick={onTap} className="w-full text-left flex flex-col gap-2 active:opacity-90">
+        <img
+          src={candidate.petPhoto}
+          alt={candidate.petName}
+          className="w-12 h-12 rounded-full object-cover bg-[#F3F3F5]"
+        />
+        <div className="min-w-0">
+          <p className="text-[12.5px] font-semibold text-[#111111] truncate tracking-tight">{candidate.petName}</p>
+          <p className="text-[10.5px] text-[#8E8E93] truncate">{candidate.petBreed}</p>
+        </div>
+      </button>
+      <button
+        onClick={onSchedule}
+        className="h-7 rounded-full text-[10.5px] font-semibold flex items-center justify-center gap-1 active:scale-[0.97]"
+        style={{ background: '#FFE9DD', color: '#7A2F12' }}
+      >
+        <Calendar size={10} strokeWidth={2.2} />
+        Plan
+      </button>
     </div>
   );
 }
@@ -781,15 +859,15 @@ function ScheduledTab({ scheduled, pending, past, onTap, onAccept, onDecline, on
 
   if (!scheduled.length && !pending.length && !wrapUpQueue.length) {
     return (
-      <div className="px-6 pt-12 flex flex-col items-center text-center gap-3">
-        <div className="w-14 h-14 rounded-full bg-[#FFE9DD] flex items-center justify-center text-[#E85D2A]">
-          <Calendar size={20} strokeWidth={2.2} />
+      <div className="px-6 pt-10 flex flex-col items-center text-center gap-2.5">
+        <div className="w-12 h-12 rounded-full bg-[#FFE9DD] flex items-center justify-center text-[#E85D2A]">
+          <Calendar size={16} strokeWidth={2.2} />
         </div>
-        <p className="text-[15px] font-semibold text-[#111111]">No playdates scheduled</p>
-        <p className="text-[13px] text-[#6E6E73] max-w-[280px]">Plan a meet-up from Discover or your Playmates.</p>
+        <p className="text-[13.5px] font-semibold text-[#111111]">No playdates scheduled</p>
+        <p className="text-[11.5px] text-[#6E6E73] max-w-[260px]">Plan a meet-up from Discover or your Playmates.</p>
         <button
           onClick={onPlanFirst}
-          className="mt-2 h-10 px-5 rounded-full text-white text-[13px] font-semibold active:scale-[0.97] transition-transform"
+          className="mt-1.5 h-9 px-4 rounded-full text-white text-[12px] font-semibold active:scale-[0.97] transition-transform"
           style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' }}
         >
           Discover pups
@@ -798,22 +876,27 @@ function ScheduledTab({ scheduled, pending, past, onTap, onAccept, onDecline, on
     );
   }
 
+  // Build a 7-day strip starting from today (mock days populated where we have items).
+  const days = useMemo(() => buildWeekStrip(scheduled, pending), [scheduled, pending]);
+
   return (
-    <div className="px-5 pt-4 flex flex-col gap-5 pb-6">
+    <div className="px-4 pt-3 flex flex-col gap-4 pb-6">
+      {/* Week strip — visual rhythm */}
+      <WeekStrip days={days} />
+
+      {/* Today hero — only if there's an in-progress / today playdate */}
+      {todayItems.length > 0 && (
+        <TodayHero item={todayItems[0]} onTap={() => onTap(todayItems[0])} />
+      )}
+
       {wrapUpQueue.length > 0 && (
-        <ScheduledSection title="Wrap up">
+        <ScheduledSection title="Wrap up · save the memory">
           {wrapUpQueue.map((p) => (
             <WrapUpRow key={p.id} item={p} onWrapUp={() => onWrapUp(p)} />
           ))}
         </ScheduledSection>
       )}
-      {todayItems.length > 0 && (
-        <ScheduledSection title="Today">
-          {todayItems.map((s) => (
-            <ScheduledCard key={s.id} item={s} onTap={() => onTap(s)} live />
-          ))}
-        </ScheduledSection>
-      )}
+
       {restItems.length > 0 && (
         <ScheduledSection title="Upcoming">
           {restItems.map((s) => (
@@ -821,6 +904,7 @@ function ScheduledTab({ scheduled, pending, past, onTap, onAccept, onDecline, on
           ))}
         </ScheduledSection>
       )}
+
       {pending.length > 0 && (
         <ScheduledSection title="Awaiting reply">
           {pending.map((p) => (
@@ -832,45 +916,130 @@ function ScheduledTab({ scheduled, pending, past, onTap, onAccept, onDecline, on
   );
 }
 
-function ScheduledSection({ title, children }) {
+// Mini week ribbon — 7 day cells, today highlighted, dots if there's a playdate.
+function buildWeekStrip(scheduled, pending) {
+  const today = new Date();
+  const todayDow = today.getDay();
+  const labels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const events = new Set();
+  scheduled.forEach((s) => events.add((s.date || '').toLowerCase()));
+  pending.forEach((p) => events.add((p.date || '').toLowerCase()));
+  // Build today + next 6 days
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+    const dow = d.getDay();
+    const num = d.getDate();
+    const monthShort = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const isToday = i === 0;
+    const hasEvent =
+      (isToday && events.has('today')) ||
+      events.has(monthShort.toLowerCase());
+    return { id: i, label: labels[dow], num, isToday, hasEvent };
+  });
+}
+
+function WeekStrip({ days }) {
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93]">{title}</p>
-      <div className="flex flex-col gap-2">{children}</div>
+    <div className="flex items-center gap-1 px-1">
+      {days.map((d) => (
+        <div
+          key={d.id}
+          className="flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-[10px]"
+          style={{
+            background: d.isToday ? 'linear-gradient(180deg, #FFE2D5 0%, #FFF1E5 100%)' : 'transparent',
+            border: d.isToday ? '1px solid #FFD4CC' : '1px solid transparent',
+          }}
+        >
+          <span className={`text-[9px] font-semibold uppercase tracking-wide ${d.isToday ? 'text-[#7A2F12]' : 'text-[#A09A94]'}`}>
+            {d.label}
+          </span>
+          <span className={`text-[13px] font-semibold tabular-nums ${d.isToday ? 'text-[#111111]' : 'text-[#6E6E73]'}`}>
+            {d.num}
+          </span>
+          <span
+            className="w-1 h-1 rounded-full mt-0.5"
+            style={{
+              background: d.hasEvent ? '#E85D2A' : 'transparent',
+            }}
+          />
+        </div>
+      ))}
     </div>
   );
 }
 
-function ScheduledCard({ item, onTap, live = false }) {
+// Hero card for today's confirmed playdate.
+function TodayHero({ item, onTap }) {
   return (
     <button
       onClick={onTap}
-      className="bg-white rounded-[16px] border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-3.5 flex items-center gap-3 text-left active:opacity-90 active:scale-[0.99] transition-transform"
+      className="rounded-[18px] overflow-hidden text-left active:scale-[0.99] transition-transform"
+      style={{
+        background: 'linear-gradient(135deg, #FFE2D5 0%, #FFF4ED 60%, #FFFFFF 100%)',
+        border: '1px solid #FFD4CC',
+        boxShadow: '0 4px 14px rgba(232,93,42,0.10)',
+      }}
     >
-      <div className="shrink-0 w-[58px] flex flex-col items-center text-center">
-        <span className="text-[10px] font-bold uppercase tracking-widest text-[#8E8E93]">{item.date}</span>
-        <span className="text-[18px] font-semibold text-[#111111] tabular-nums">{item.time}</span>
-      </div>
-      <div className="flex-1 min-w-0 flex items-center gap-2.5">
-        <img src={item.petPhoto} alt="" className="w-9 h-9 rounded-full object-cover bg-[#F3F3F5]" />
-        <div className="min-w-0">
-          <p className="text-[14px] font-semibold text-[#111111] truncate">
-            {item.petName}{item.ownerName ? ` · ${item.ownerName}` : ''}
-          </p>
-          <p className="text-[12px] text-[#6E6E73] truncate flex items-center gap-1">
-            <MapPin size={11} strokeWidth={2} className="text-[#A6A6AC]" />
-            {item.placeName}
-          </p>
+      <div className="p-3.5 flex items-start gap-3">
+        <div className="shrink-0 flex flex-col items-start">
+          <span className="inline-flex items-center gap-1 h-5 px-1.5 rounded-full text-[9px] font-bold uppercase tracking-[0.14em] text-white" style={{ background: '#E85D2A' }}>
+            <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
+            {item.status === 'in-progress' ? 'Live' : 'Today'}
+          </span>
+          <span className="text-[24px] font-semibold leading-none text-[#1A1614] tabular-nums mt-1.5 tracking-tight">{item.time}</span>
+        </div>
+        <div className="flex-1 min-w-0 flex items-center gap-2 ml-2">
+          <img
+            src={item.petPhoto}
+            alt={item.petName}
+            className="w-11 h-11 rounded-full object-cover"
+            style={{ border: '2px solid #FFFFFF', boxShadow: '0 2px 6px rgba(0,0,0,0.10)' }}
+          />
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-[#111111] truncate tracking-tight">
+              {item.petName}{item.ownerName ? ` · ${item.ownerName}` : ''}
+            </p>
+            <p className="text-[10.5px] text-[#7A2F12]/85 truncate flex items-center gap-1 mt-0.5">
+              <MapPin size={9} strokeWidth={2.1} />
+              {item.placeName}
+            </p>
+          </div>
         </div>
       </div>
-      {live ? (
-        <span className="shrink-0 inline-flex items-center gap-1 h-[22px] px-2 rounded-full text-[10.5px] font-semibold bg-[#E5F9ED] text-[#34693E]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#34C759] animate-pulse" />
-          {item.status === 'in-progress' ? 'In progress' : 'Today'}
-        </span>
-      ) : (
-        <ChevronRight size={16} color="#B6B6BC" className="shrink-0" />
-      )}
+    </button>
+  );
+}
+
+function ScheduledSection({ title, children }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#A09A94]">{title}</p>
+      <div className="flex flex-col gap-1.5">{children}</div>
+    </div>
+  );
+}
+
+function ScheduledCard({ item, onTap }) {
+  return (
+    <button
+      onClick={onTap}
+      className="bg-white rounded-[14px] border border-black/[0.05] p-3 flex items-center gap-3 text-left active:opacity-90 active:scale-[0.99] transition-transform"
+    >
+      <div className="shrink-0 w-[46px] flex flex-col items-center text-center">
+        <span className="text-[9px] font-semibold uppercase tracking-wide text-[#A09A94]">{item.date}</span>
+        <span className="text-[14px] font-semibold text-[#111111] tabular-nums tracking-tight">{item.time}</span>
+      </div>
+      <img src={item.petPhoto} alt="" className="w-8 h-8 rounded-full object-cover bg-[#F3F3F5] shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-[12.5px] font-semibold text-[#111111] truncate tracking-tight">
+          {item.petName}{item.ownerName ? ` · ${item.ownerName}` : ''}
+        </p>
+        <p className="text-[10.5px] text-[#8E8E93] truncate flex items-center gap-1">
+          <MapPin size={9} strokeWidth={2} className="text-[#A6A6AC]" />
+          {item.placeName}
+        </p>
+      </div>
+      <ChevronRight size={14} color="#B6B6BC" className="shrink-0" />
     </button>
   );
 }
@@ -878,32 +1047,32 @@ function ScheduledCard({ item, onTap, live = false }) {
 function PendingCard({ item, onAccept, onDecline }) {
   const isReceived = item.direction === 'received' || !item.direction;
   return (
-    <div className="bg-white rounded-[16px] border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-3.5">
+    <div className="bg-white rounded-[14px] border border-black/[0.05] p-3">
       <div className="flex items-center gap-3">
-        <img src={item.petPhoto} alt="" className="w-9 h-9 rounded-full object-cover bg-[#F3F3F5]" />
+        <img src={item.petPhoto} alt="" className="w-8 h-8 rounded-full object-cover bg-[#F3F3F5]" />
         <div className="flex-1 min-w-0">
-          <p className="text-[14px] font-semibold text-[#111111] truncate">
+          <p className="text-[12.5px] font-semibold text-[#111111] truncate tracking-tight">
             {isReceived ? `${item.petName} invited ${item.hostPetName ? '' : 'you'}` : `Sent to ${item.petName}`}
           </p>
-          <p className="text-[12px] text-[#6E6E73] truncate">
+          <p className="text-[10.5px] text-[#8E8E93] truncate">
             {item.date} · {item.time} · {item.placeName}
           </p>
         </div>
       </div>
       {isReceived && (
-        <div className="grid grid-cols-2 gap-2 mt-3">
+        <div className="grid grid-cols-2 gap-1.5 mt-2.5">
           <button
             onClick={onDecline}
-            className="h-9 rounded-[10px] bg-[#F7F7F8] border border-black/[0.06] text-[12px] font-semibold text-[#111111] active:scale-[0.98]"
+            className="h-8 rounded-[10px] bg-[#F7F7F8] border border-black/[0.05] text-[11px] font-semibold text-[#111111] active:scale-[0.98]"
           >
             Decline
           </button>
           <button
             onClick={onAccept}
-            className="h-9 rounded-[10px] text-white text-[12px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98]"
+            className="h-8 rounded-[10px] text-white text-[11px] font-semibold flex items-center justify-center gap-1 active:scale-[0.98]"
             style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' }}
           >
-            <Check size={13} strokeWidth={2.4} />
+            <Check size={11} strokeWidth={2.4} />
             Accept
           </button>
         </div>
@@ -916,17 +1085,17 @@ function WrapUpRow({ item, onWrapUp }) {
   return (
     <button
       onClick={onWrapUp}
-      className="bg-[#FFE9DD] rounded-[16px] border border-[#FFD4CC] p-3.5 flex items-center gap-3 text-left active:scale-[0.99] transition-transform"
+      className="bg-[#FFE9DD] rounded-[14px] border border-[#FFD4CC] p-3 flex items-center gap-2.5 text-left active:scale-[0.99] transition-transform"
     >
-      <img src={item.petPhoto} alt="" className="w-9 h-9 rounded-full object-cover bg-[#F3F3F5]" />
+      <img src={item.petPhoto} alt="" className="w-8 h-8 rounded-full object-cover bg-[#F3F3F5]" />
       <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-semibold text-[#7A2F12]">How was it with {item.petName}?</p>
-        <p className="text-[12px] text-[#7A2F12]/75 truncate">
+        <p className="text-[12.5px] font-semibold text-[#7A2F12] tracking-tight">How was it with {item.petName}?</p>
+        <p className="text-[10.5px] text-[#7A2F12]/75 truncate">
           {item.date} · {item.placeName}
         </p>
       </div>
-      <span className="shrink-0 text-[12px] font-semibold text-[#E85D2A] flex items-center gap-1">
-        Wrap up <ArrowRight size={13} strokeWidth={2.2} />
+      <span className="shrink-0 text-[10.5px] font-semibold text-[#E85D2A] flex items-center gap-0.5">
+        Wrap up <ArrowRight size={11} strokeWidth={2.2} />
       </span>
     </button>
   );
