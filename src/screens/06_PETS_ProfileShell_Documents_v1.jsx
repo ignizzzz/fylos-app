@@ -7414,171 +7414,134 @@ const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [
   const [activeHotspot, setActiveHotspot] = useState(null);
   const [personalityPet, setPersonalityPet] = useState(null);
   const hotspots = [
-    { id: 'h1', name: 'Seefeld Park', pups: 8, distance: '0.5 km', photo: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=300&q=60' },
-    { id: 'h2', name: 'Limmat riverside', pups: 5, distance: '1.1 km', photo: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=300&q=60' },
-    { id: 'h3', name: 'Belvoirpark', pups: 4, distance: '1.8 km', photo: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&q=60' },
+    { id: 'h1', name: 'Seefeld Park', pups: 8, distance: '0.5 km', photo: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=60', vibe: 'Off-leash · Lakeside' },
+    { id: 'h2', name: 'Limmat riverside', pups: 5, distance: '1.1 km', photo: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=60', vibe: 'Walking · Scenic' },
+    { id: 'h3', name: 'Belvoirpark', pups: 4, distance: '1.8 km', photo: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=600&q=60', vibe: 'Quiet · Shaded' },
+  ];
+  const playmateAvatars = [
+    'https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60',
+    'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?auto=format&fit=crop&w=200&q=60',
+    'https://images.unsplash.com/photo-1582456891925-ed427bf17ef0?auto=format&fit=crop&w=200&q=60',
+    'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=200&q=60',
   ];
   return (
     <div className={`${isVisible ? 'block' : 'hidden'} bg-[#F7F5F2] pb-24`}>
-      <div className="px-5 pt-2 space-y-3">
-        {/* Playmates card (subset of Fylos you actually schedule playdates with) */}
+      <div className="px-5 pt-2 flex flex-col gap-4">
+        {/* HERO — next playdate as the centerpiece */}
         <button
-          onClick={() => open('playmates')}
-          className="w-full rounded-[16px] p-4 active:scale-[0.98] transition-transform text-left"
-          style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <PawPrint size={14} className="text-[#E85D2A]" strokeWidth={2.25} />
-              <span className="text-[13px] font-semibold text-[#111]">Your playmates</span>
-            </div>
-            <span
-              className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
-              style={{ background: '#FFE9E2', color: '#E85D2A' }}
-            >
-              4 playmates
-            </span>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex -space-x-2">
-              {[
-                'https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60',
-                'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?auto=format&fit=crop&w=200&q=60',
-                'https://images.unsplash.com/photo-1582456891925-ed427bf17ef0?auto=format&fit=crop&w=200&q=60',
-                'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=200&q=60',
-              ].map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt=""
-                  className="w-9 h-9 rounded-full object-cover"
-                  style={{ border: '2px solid #FFF' }}
-                />
-              ))}
-            </div>
-            <ChevronRight size={16} className="text-[#A09A94]" />
-          </div>
-        </button>
-
-        {/* Needs wrap-up alert */}
-        {hasPendingWrapUp && (
-        <button
-          onClick={() => setWrapUpSheet(true)}
-          className="w-full rounded-[16px] p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
+          onClick={() => open('scheduled')}
+          className="relative rounded-[20px] overflow-hidden text-left active:scale-[0.99] transition-transform"
           style={{
-            background: '#FFF5F1',
+            background: 'linear-gradient(135deg, #FFE2D5 0%, #FFF1E5 60%, #F7F5F2 100%)',
             border: '1px solid #FFD4CC',
+            boxShadow: '0 6px 18px rgba(232,93,42,0.10)',
           }}
         >
-          <div className="relative shrink-0">
-            <img
-              src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60"
-              alt=""
-              className="w-[44px] h-[44px] rounded-[12px] object-cover"
-              style={{ border: '1px solid #FFD4CC' }}
-            />
-            <span
-              className="absolute -top-0.5 -right-0.5 w-[10px] h-[10px] rounded-full animate-pulse"
-              style={{ background: '#E85D2A', border: '2px solid #FFF' }}
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[13px] font-semibold text-[#111] truncate">
-              How was it with Buddy?
+          <div className="p-4 flex flex-col gap-3">
+            {/* Top row — live status + photo */}
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-[10.5px] font-bold uppercase tracking-widest text-white" style={{ background: '#E85D2A' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                Next up
+              </span>
+              <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#7A2F12]">in 4h 12m</span>
             </div>
-            <div className="text-[11px] text-[#E85D2A] font-semibold mt-0.5 flex items-center gap-1">
-              Tap to wrap up
-              <ChevronRight size={11} strokeWidth={2.5} />
+            {/* Time + identity */}
+            <div className="flex items-center gap-3">
+              <div className="shrink-0 flex flex-col items-start">
+                <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#7A2F12]">Today</span>
+                <span className="text-[34px] font-semibold leading-none text-[#1A1614] tabular-nums">16:00</span>
+              </div>
+              <div className="ml-auto relative">
+                <img
+                  src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=70"
+                  alt="Buddy"
+                  className="w-14 h-14 rounded-full object-cover"
+                  style={{ border: '3px solid #FFFFFF', boxShadow: '0 4px 10px rgba(232,93,42,0.20)' }}
+                />
+              </div>
+            </div>
+            {/* Pet + place line */}
+            <div className="flex items-center gap-2 -mt-1">
+              <span className="text-[15px] font-semibold text-[#111111]">Buddy</span>
+              <span className="text-[12px] text-[#7A2F12]/70">·</span>
+              <span className="text-[12px] text-[#7A2F12]/85">Tom K.</span>
+              <span className="text-[12px] text-[#7A2F12]/70">·</span>
+              <span className="text-[12px] text-[#7A2F12]/85 inline-flex items-center gap-1 truncate">
+                <MapPin size={10} strokeWidth={2.1} />
+                Seefeld Park
+              </span>
+            </div>
+            {/* Match chips */}
+            <div className="flex items-center justify-between gap-2 pt-1">
+              <MatchChips fitScore={92} vouchedBy={3} vaccinated={true} recurring={true} />
             </div>
           </div>
         </button>
-        )}
 
-        {/* Next up — date block style */}
-        <div>
-          <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-2">
-            Next up
-          </span>
-          <div className="rounded-[16px]" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+        {/* Wrap-up nudge */}
+        {hasPendingWrapUp && (
           <button
-            onClick={() => open('scheduled')}
-            className="w-full p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
-            style={{ background: 'transparent', border: 'none' }}
+            onClick={() => setWrapUpSheet(true)}
+            className="w-full rounded-[16px] p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
+            style={{ background: '#FFFFFF', border: '1px dashed #FFD4CC' }}
           >
-            <div
-              className="shrink-0 w-[58px] h-[58px] rounded-[14px] flex flex-col items-center justify-center"
-              style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-            >
-              <div
-                className="text-[10px] font-bold uppercase tracking-wider"
-                style={{ color: '#E85D2A' }}
-              >
-                Today
-              </div>
-              <div
-                className="text-[15px] font-bold leading-none mt-0.5"
-                style={{ color: '#1A1614', fontVariantNumeric: 'tabular-nums' }}
-              >
-                16:00
-              </div>
-            </div>
-            <div className="flex-1 min-w-0 flex items-center gap-2.5">
+            <div className="relative shrink-0">
               <img
                 src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60"
-                alt="Buddy"
-                className="w-[36px] h-[36px] rounded-full object-cover shrink-0"
-                style={{ border: '1px solid #EDE8E2' }}
+                alt=""
+                className="w-10 h-10 rounded-full object-cover"
+                style={{ border: '2px solid #FFD4CC' }}
               />
-              <div className="flex-1 min-w-0">
-                <div className="text-[14px] font-semibold text-[#111] truncate">
-                  Buddy <span className="font-normal text-[#A09A94]">· Tom K.</span>
-                </div>
-                <div className="flex items-center gap-1 text-[11.5px] text-[#6E6058] truncate mt-0.5">
-                  <MapPin size={10} strokeWidth={1.75} />
-                  <span className="truncate">Seefeld Park</span>
-                </div>
-              </div>
+              <span
+                className="absolute -top-0.5 -right-0.5 w-[9px] h-[9px] rounded-full animate-pulse"
+                style={{ background: '#E85D2A', border: '2px solid #FFF' }}
+              />
             </div>
-            <span
-              className="w-[8px] h-[8px] rounded-full block shrink-0"
-              style={{ background: '#E85D2A', boxShadow: '0 0 0 3px rgba(232,93,42,0.15)' }}
-            />
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-[#111111] truncate">
+                How was it with Buddy?
+              </p>
+              <p className="text-[11.5px] text-[#7A2F12] mt-0.5">Tap to wrap up · save the memory.</p>
+            </div>
+            <ChevronRight size={14} className="text-[#E85D2A]" strokeWidth={2.4} />
           </button>
-            {/* Match meta chips on the next-up session */}
-            <div className="px-3 pb-3 pt-1" style={{ borderTop: '1px solid #F3EFEB' }}>
-              <div className="flex items-center justify-between gap-2 pt-2">
-                <MatchChips fitScore={92} vouchedBy={3} vaccinated={true} recurring={true} />
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
 
-        {/* CTAs */}
-        <div className="flex gap-2 pt-1">
-          <button
+        {/* Quick action grid — 2x2 */}
+        <div className="grid grid-cols-2 gap-2">
+          <ActivityActionTile
+            icon={Sparkles}
+            label="Discover pups"
+            sublabel="Curated for Leo"
+            primary
             onClick={() => open('discover')}
-            className="flex-1 h-[48px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
-            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
-          >
-            <Sparkles size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
-            Discover pups
-          </button>
-          <button
+          />
+          <ActivityActionTile
+            icon={Calendar}
+            label="All playdates"
+            sublabel="Upcoming · pending"
             onClick={() => open('scheduled')}
-            className="flex-1 h-[48px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
-            style={{ background: '#E85D2A' }}
-          >
-            All playdates
-            <ChevronRight size={14} strokeWidth={2.5} />
-          </button>
+          />
+          <ActivityActionTile
+            icon={Heart}
+            label="Past memories"
+            sublabel="Last 30 days"
+            onClick={() => open('scheduled', null)}
+          />
+          <ActivityActionTile
+            icon={Users}
+            label="Your playmates"
+            sublabel="4 connected"
+            onClick={() => open('playmates')}
+            avatars={playmateAvatars}
+          />
         </div>
 
-        {/* Hotspots */}
-        <div className="pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">
-              Hotspots this week
-            </span>
+        {/* Hotspots — horizontal scroll with bigger cards */}
+        <section className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Hotspots this week</p>
             <button
               onClick={() => open('discover')}
               className="text-[11px] font-semibold text-[#E85D2A] flex items-center gap-0.5 active:opacity-70"
@@ -7587,47 +7550,41 @@ const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [
               <ChevronRight size={11} strokeWidth={2.5} />
             </button>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex gap-2 overflow-x-auto custom-scrollbar -mx-1 px-1 pb-1">
             {hotspots.map((h) => (
               <button
                 key={h.id}
                 onClick={() => setActiveHotspot(h)}
-                className="w-full rounded-[14px] p-2.5 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
-                style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+                className="shrink-0 rounded-[16px] overflow-hidden text-left active:scale-[0.99] transition-transform"
+                style={{ width: 180, background: '#FFFFFF', border: '1px solid #EDE8E2' }}
               >
-                <img
-                  src={h.photo}
-                  alt={h.name}
-                  className="w-[46px] h-[46px] rounded-[12px] object-cover shrink-0"
-                  style={{ border: '1px solid #EDE8E2' }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="text-[13.5px] font-semibold text-[#111] truncate">{h.name}</div>
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#6E6058] mt-0.5">
-                    <span className="flex items-center gap-0.5 font-semibold text-[#E85D2A]">
-                      <span className="w-[6px] h-[6px] rounded-full bg-[#E85D2A]" />
-                      {h.pups} pups today
-                    </span>
-                    <span className="text-[#D4CEC6]">·</span>
-                    <span className="flex items-center gap-0.5">
-                      <MapPin size={9} strokeWidth={1.75} />
-                      {h.distance}
-                    </span>
-                  </div>
+                <div className="relative" style={{ height: 110 }}>
+                  <img src={h.photo} alt={h.name} className="w-full h-full object-cover" />
+                  <span
+                    className="absolute top-2 left-2 inline-flex items-center gap-1 h-6 px-2 rounded-full text-[10.5px] font-bold text-white"
+                    style={{ background: 'rgba(232,93,42,0.92)', backdropFilter: 'blur(6px)' }}
+                  >
+                    <span className="w-[6px] h-[6px] rounded-full bg-white" />
+                    {h.pups} pups
+                  </span>
                 </div>
-                <ChevronRight size={15} className="text-[#A09A94] shrink-0" />
+                <div className="px-3 py-2.5 flex flex-col gap-0.5">
+                  <p className="text-[13.5px] font-semibold text-[#111111] truncate">{h.name}</p>
+                  <p className="text-[11.5px] text-[#8E8E93] truncate flex items-center gap-1">
+                    <MapPin size={10} strokeWidth={2.1} className="text-[#A6A6AC]" />
+                    {h.distance} · {h.vibe}
+                  </p>
+                </div>
               </button>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Latest memory — most recent wrap-up surfaces here. */}
         {memories.length > 0 && (
-          <div className="pt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">
-                Latest memory
-              </span>
+          <section className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Latest memory</p>
               <button
                 onClick={() => open('scheduled')}
                 className="text-[11px] font-semibold text-[#E85D2A] flex items-center gap-0.5 active:opacity-70"
@@ -7653,36 +7610,8 @@ const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [
                 />
               );
             })()}
-          </div>
+          </section>
         )}
-
-        {/* Invite friends to Fylos */}
-        <button
-          onClick={() => { if (navigator.share) navigator.share({ title: 'Fylos', text: 'Join me on Fylos — the warm app for dog parents.', url: 'https://fylos.app' }).catch(() => {}); }}
-          className="w-full rounded-[16px] p-3.5 flex items-center gap-3 text-left active:scale-[0.99] transition-all mt-3"
-          style={{
-            background: '#FFF5F1',
-            border: '1px solid #FFD4CC',
-          }}
-        >
-          <div
-            className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center shrink-0"
-            style={{ background: '#FFF', border: '1px solid #FFD4CC' }}
-          >
-            <Gift size={18} className="text-[#E85D2A]" strokeWidth={2} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[13.5px] font-semibold text-[#111]">Invite friends to Fylos</div>
-            <div className="text-[11px] text-[#6E6058] mt-0.5 truncate">Grow your circle — share the app</div>
-          </div>
-          <span
-            className="shrink-0 px-3 py-1.5 rounded-full text-[11.5px] font-semibold text-white flex items-center gap-1"
-            style={{ background: '#E85D2A' }}
-          >
-            Share
-            <ChevronRight size={12} strokeWidth={2.5} />
-          </span>
-        </button>
       </div>
       {/* Wrap-up story sheet — opens from "How was it with Buddy?" prompt.
           On save, the wrap-up is converted into a MemoryCard and pushed up so
@@ -7735,6 +7664,43 @@ const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [
     </div>
   );
 };
+
+// Quick-action tile used in the Playdates dashboard 2x2 grid.
+const ActivityActionTile = ({ icon: Icon, label, sublabel, onClick, primary = false, avatars }) => (
+  <button
+    onClick={onClick}
+    className={`relative rounded-[16px] p-3.5 flex flex-col gap-2 text-left active:scale-[0.98] transition-transform ${
+      primary ? '' : ''
+    }`}
+    style={{
+      background: primary ? 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' : '#FFFFFF',
+      border: primary ? 'none' : '1px solid #EDE8E2',
+      boxShadow: primary ? '0 8px 22px rgba(232,93,42,0.20)' : '0 2px 8px rgba(0,0,0,0.02)',
+      minHeight: 96,
+    }}
+  >
+    <div
+      className="w-9 h-9 rounded-full flex items-center justify-center"
+      style={{
+        background: primary ? 'rgba(255,255,255,0.22)' : '#FFE9DD',
+        color: primary ? '#FFFFFF' : '#E85D2A',
+      }}
+    >
+      <Icon size={15} strokeWidth={2.2} />
+    </div>
+    <div className="min-w-0">
+      <p className={`text-[13.5px] font-semibold leading-tight truncate ${primary ? 'text-white' : 'text-[#111111]'}`}>{label}</p>
+      <p className={`text-[11px] leading-tight mt-0.5 truncate ${primary ? 'text-white/85' : 'text-[#8E8E93]'}`}>{sublabel}</p>
+    </div>
+    {avatars && (
+      <div className="flex -space-x-2 mt-auto">
+        {avatars.slice(0, 4).map((u, i) => (
+          <img key={i} src={u} alt="" className="w-6 h-6 rounded-full object-cover" style={{ border: '2px solid #FFFFFF' }} />
+        ))}
+      </div>
+    )}
+  </button>
+);
 
 const ActivityScreen = ({ isTabBarVisible = true, initialMode, pendingNetworkView, onOpenPlaydates }) => {
   const [activeMode, setActiveMode] = useState(initialMode === 'my' ? 'friends' : (initialMode || 'friends'));
@@ -10658,26 +10624,27 @@ export default function App() {
             )}
           </>
         )}
-      </div>
 
-      {/* Playdates overlay — renders on top of UnifiedApp without unmounting it */}
-      {playdatesOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'auto' }}>
-          <PlaydateMatchingScreen
-            onClose={() => setPlaydatesOpen(null)}
-            initialTab={playdatesOpen.tab}
-            initialWrapUpId={playdatesOpen.wrapUpId}
-            onOpenProfile={() => {
-              setPlaydatesOpen(null);
-              navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'friends' } });
-            }}
-            onOpenMessages={() => {
-              setPlaydatesOpen(null);
-              navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'messages' } });
-            }}
-          />
-        </div>
-      )}
+        {/* Playdates overlay — sits INSIDE the iPhone frame so the simulated phone
+            stays the visual boundary. Anchored to the fylos-phone-root container. */}
+        {playdatesOpen && (
+          <div style={{ position: 'absolute', inset: 0, zIndex: 9999, pointerEvents: 'auto', overflow: 'hidden' }}>
+            <PlaydateMatchingScreen
+              onClose={() => setPlaydatesOpen(null)}
+              initialTab={playdatesOpen.tab}
+              initialWrapUpId={playdatesOpen.wrapUpId}
+              onOpenProfile={() => {
+                setPlaydatesOpen(null);
+                navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'friends' } });
+              }}
+              onOpenMessages={() => {
+                setPlaydatesOpen(null);
+                navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'messages' } });
+              }}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -175,7 +175,7 @@ export default function ProfileMode({
     walks: 84,
     friends: friends.length || 8,
     photos: photos.length,
-    rating: 4.9,
+    playdates: 17,
   }), [friends.length, photos.length]);
 
   const handleSaveProfile = (updates) => {
@@ -224,11 +224,9 @@ export default function ProfileMode({
 
   return (
     <div className={`${isVisible ? 'block' : 'hidden'} bg-[${T.bg}] pb-32`} style={{ background: T.bg }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <CarouselHero
           photos={heroPhotos}
-          onSettings={() => setSettingsOpen(true)}
-          onShare={handleShare}
           onAddPhoto={() => setAddPhotoOpen(true)}
         />
 
@@ -238,6 +236,8 @@ export default function ProfileMode({
             archetype={archetype}
             onTapArchetype={() => setArchetypeOpen(true)}
             onTapEdit={() => setEditOpen(true)}
+            onTapShare={handleShare}
+            onTapSettings={() => setSettingsOpen(true)}
           />
 
           <StatsStrip stats={stats} onTapFriends={onOpenNetwork} />
@@ -269,13 +269,18 @@ export default function ProfileMode({
             <AboutTab
               archetype={archetype}
               traits={archetype.traits}
-              milestones={milestones}
-              onAddMilestone={() => setMilestoneSheetOpen(true)}
               onTapArchetype={() => setArchetypeOpen(true)}
               onTwinFinder={() => setTwinFinderOpen(true)}
             />
           )}
         </div>
+
+        {/* Dedicated milestones section — sits at the bottom regardless of active tab */}
+        <MilestonesJourney
+          petName={profile.name}
+          milestones={milestones}
+          onAdd={() => setMilestoneSheetOpen(true)}
+        />
       </div>
 
       {editOpen && <EditProfileSheet profile={profile} onClose={() => setEditOpen(false)} onSave={handleSaveProfile} />}
@@ -315,7 +320,7 @@ export default function ProfileMode({
 }
 
 // ---------------------------------------------------------------------------
-// Carousel hero — swipeable photos with pagination dots
+// Carousel hero — swipe + arrow buttons + pagination dots
 // ---------------------------------------------------------------------------
 function CarouselHero({ photos, onSettings, onShare, onAddPhoto }) {
   const [active, setActive] = useState(0);
@@ -325,6 +330,12 @@ function CarouselHero({ photos, onSettings, onShare, onAddPhoto }) {
     if (!el) return;
     const idx = Math.round(el.scrollLeft / el.clientWidth);
     if (idx !== active) setActive(idx);
+  };
+  const stepTo = (delta) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const next = Math.max(0, Math.min(photos.length - 1, active + delta));
+    el.scrollTo({ left: next * el.clientWidth, behavior: 'smooth' });
   };
   return (
     <div className="relative" style={{ background: T.bg }}>
@@ -340,29 +351,47 @@ function CarouselHero({ photos, onSettings, onShare, onAddPhoto }) {
             className="shrink-0 snap-center"
             style={{ width: '100%', aspectRatio: '4 / 3', position: 'relative' }}
           >
-            <img src={p.url || p} alt="" className="w-full h-full object-cover" />
+            <img src={p.url || p} alt="" className="w-full h-full object-cover" draggable={false} />
             <div
               className="absolute left-0 right-0 bottom-0 pointer-events-none"
-              style={{ height: 64, background: 'linear-gradient(180deg, rgba(247,245,242,0) 0%, rgba(247,245,242,0.95) 100%)' }}
+              style={{ height: 96, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%)' }}
             />
           </div>
         ))}
       </div>
 
-      {/* Top-right floating actions */}
-      <div className="absolute top-12 right-4 flex gap-2 z-10">
-        <FloatingIcon icon={Settings} onClick={onSettings} ariaLabel="Settings" />
-        <FloatingIcon icon={Share2} onClick={onShare} ariaLabel="Share" />
-      </div>
+      {/* Arrow buttons (only when more than 1 photo) */}
+      {photos.length > 1 && (
+        <>
+          <button
+            onClick={() => stepTo(-1)}
+            disabled={active === 0}
+            aria-label="Previous photo"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center bg-white/85 backdrop-blur text-[#111111] disabled:opacity-30 active:scale-[0.94] transition-all z-10"
+            style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}
+          >
+            <ChevronLeft size={16} strokeWidth={2.4} />
+          </button>
+          <button
+            onClick={() => stepTo(1)}
+            disabled={active === photos.length - 1}
+            aria-label="Next photo"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center bg-white/85 backdrop-blur text-[#111111] disabled:opacity-30 active:scale-[0.94] transition-all z-10"
+            style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}
+          >
+            <ChevronRight size={16} strokeWidth={2.4} />
+          </button>
+        </>
+      )}
 
-      {/* Bottom-right add photo */}
+      {/* Top-right add photo (subtle, glassy) */}
       <button
         onClick={onAddPhoto}
         aria-label="Add photo"
-        className="absolute right-4 bottom-3 w-11 h-11 rounded-full flex items-center justify-center text-white active:scale-[0.95] transition-transform z-10"
-        style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)', boxShadow: '0 6px 18px rgba(232,93,42,0.32)' }}
+        className="absolute right-3 top-12 w-9 h-9 rounded-full flex items-center justify-center bg-white/85 backdrop-blur text-[#111111] active:scale-[0.94] transition-transform z-10"
+        style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}
       >
-        <ImagePlus size={17} strokeWidth={2.2} />
+        <ImagePlus size={15} strokeWidth={2.2} />
       </button>
 
       {/* Pagination dots */}
@@ -375,8 +404,8 @@ function CarouselHero({ photos, onSettings, onShare, onAddPhoto }) {
               style={{
                 width: i === active ? 18 : 6,
                 height: 6,
-                background: i === active ? T.coral : 'rgba(255,255,255,0.7)',
-                boxShadow: i === active ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 3px rgba(0,0,0,0.18)',
+                background: i === active ? '#FFFFFF' : 'rgba(255,255,255,0.55)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.32)',
               }}
             />
           ))}
@@ -386,52 +415,67 @@ function CarouselHero({ photos, onSettings, onShare, onAddPhoto }) {
   );
 }
 
-function FloatingIcon({ icon: Icon, onClick, ariaLabel }) {
+// ---------------------------------------------------------------------------
+// Identity block — name, breed, age, archetype tag, since
+// ---------------------------------------------------------------------------
+function IdentityBlock({ profile, archetype, onTapArchetype, onTapEdit, onTapShare, onTapSettings }) {
+  return (
+    <section className="flex flex-col gap-3">
+      {/* Top row — name + actions row */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex items-baseline gap-2.5 flex-wrap">
+          <h1 className="text-[28px] font-semibold text-[#111111] leading-none tracking-tight">{profile.name}</h1>
+          <span className="text-[14px] text-[#8E8E93] leading-none">{profile.age} yrs</span>
+        </div>
+        <div className="shrink-0 flex items-center gap-1.5">
+          <IdentityIconButton icon={Share2} onClick={onTapShare} label="Share" />
+          <IdentityIconButton icon={Settings} onClick={onTapSettings} label="Settings" />
+          <IdentityIconButton icon={Pencil} onClick={onTapEdit} label="Edit profile" primary />
+        </div>
+      </div>
+      {/* Meta line — breed dominant, then small chips */}
+      <p className="text-[14px] text-[#1F1F22] -mt-1">{profile.breed}</p>
+      <div className="flex flex-wrap gap-1.5 -mt-1">
+        <MetaChip icon={MapPin} label={profile.location} />
+        <MetaChip icon={CalendarDays} label={`since ${profile.sinceLabel}`} />
+        <button
+          onClick={onTapArchetype}
+          className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full active:scale-[0.97] transition-transform"
+          style={{ background: archetype.color, border: '1px solid rgba(0,0,0,0.04)' }}
+        >
+          <span className="text-[12px]">{archetype.glyph}</span>
+          <span className="text-[11.5px] font-semibold" style={{ color: T.warmText }}>{archetype.label}</span>
+          <ChevronRight size={10} color={T.warmText} strokeWidth={2.4} />
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function IdentityIconButton({ icon: Icon, onClick, label, primary = false }) {
   return (
     <button
       onClick={onClick}
-      aria-label={ariaLabel}
-      className="w-10 h-10 rounded-full flex items-center justify-center bg-white/95 border border-black/[0.04] text-[#111111] active:scale-[0.94] transition-transform"
-      style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+      aria-label={label}
+      className={`w-9 h-9 rounded-full flex items-center justify-center transition-transform active:scale-[0.94] ${
+        primary ? 'bg-[#111111] text-white' : 'bg-white border border-black/[0.06] text-[#111111]'
+      }`}
+      style={{ boxShadow: primary ? '0 4px 12px rgba(0,0,0,0.16)' : '0 1px 4px rgba(0,0,0,0.04)' }}
     >
-      <Icon size={16} strokeWidth={2.2} />
+      <Icon size={14} strokeWidth={2.2} />
     </button>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Identity block — name, breed, age, archetype tag, since
-// ---------------------------------------------------------------------------
-function IdentityBlock({ profile, archetype, onTapArchetype, onTapEdit }) {
+function MetaChip({ icon: Icon, label }) {
   return (
-    <section className="flex items-start justify-between gap-3">
-      <div className="min-w-0 flex flex-col gap-1.5">
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <h1 className="text-[26px] font-semibold text-[#111111] leading-tight">{profile.name}</h1>
-          <span className="text-[14px] text-[#6E6E73]">{profile.age} yrs</span>
-        </div>
-        <p className="text-[13.5px] text-[#6E6E73]">
-          {profile.breed} · <MapPin size={11} className="inline -mt-0.5 text-[#A6A6AC]" strokeWidth={2.1} /> {profile.location} · since {profile.sinceLabel}
-        </p>
-        <button
-          onClick={onTapArchetype}
-          className="self-start inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full active:scale-[0.97] transition-transform"
-          style={{ background: archetype.color, border: `1px solid ${T.border}` }}
-        >
-          <span className="text-[13px]">{archetype.glyph}</span>
-          <span className="text-[12px] font-semibold" style={{ color: T.warmText }}>{archetype.label}</span>
-          <ChevronRight size={11} color={T.warmText} strokeWidth={2.4} />
-        </button>
-      </div>
-      <button
-        onClick={onTapEdit}
-        aria-label="Edit profile"
-        className="shrink-0 w-10 h-10 rounded-full bg-white border border-black/[0.06] flex items-center justify-center text-[#111111] active:scale-[0.94]"
-        style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
-      >
-        <Pencil size={15} strokeWidth={2.1} />
-      </button>
-    </section>
+    <span
+      className="inline-flex items-center gap-1 h-7 px-2.5 rounded-full text-[11.5px] font-medium text-[#5D5D64]"
+      style={{ background: '#F2F2F7' }}
+    >
+      <Icon size={11} strokeWidth={2.1} className="text-[#8E8E93]" />
+      {label}
+    </span>
   );
 }
 
@@ -442,8 +486,8 @@ function StatsStrip({ stats, onTapFriends }) {
   const items = [
     { label: 'walks', value: stats.walks, onClick: null },
     { label: 'friends', value: stats.friends, onClick: onTapFriends },
+    { label: 'playdates', value: stats.playdates, onClick: null },
     { label: 'photos', value: stats.photos, onClick: null },
-    { label: 'rating', value: stats.rating, onClick: null },
   ];
   return (
     <section
@@ -588,27 +632,27 @@ function PhotosTab({ photos, pinnedIds, onTapPhoto, onAdd }) {
     return Array.from(map.entries());
   }, [photos]);
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <SectionLabel>Highlights</SectionLabel>
+        <SectionLabel>Highlights · {photos.length}</SectionLabel>
         <button
           onClick={onAdd}
-          className="inline-flex items-center gap-1 h-8 px-3 rounded-full text-[12px] font-semibold text-white active:scale-[0.97]"
+          aria-label="Add photo"
+          className="w-7 h-7 rounded-full flex items-center justify-center text-white active:scale-[0.94] transition-transform"
           style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' }}
         >
-          <Plus size={12} strokeWidth={2.4} />
-          Add
+          <Plus size={13} strokeWidth={2.6} />
         </button>
       </div>
       {groups.map(([label, items]) => (
-        <div key={label} className="flex flex-col gap-2">
-          <p className="text-[11.5px] font-semibold text-[#8E8E93]">{label}</p>
-          <div className="grid grid-cols-3 gap-1.5">
+        <div key={label} className="flex flex-col gap-1.5">
+          <p className="text-[10.5px] font-semibold text-[#8E8E93] uppercase tracking-wider">{label}</p>
+          <div className="grid grid-cols-3 gap-1">
             {items.map((p) => (
               <button
                 key={p.id}
                 onClick={() => onTapPhoto(p)}
-                className="relative aspect-square rounded-[10px] overflow-hidden bg-[#F3F3F5] active:opacity-90 active:scale-[0.99] transition-transform"
+                className="relative aspect-square rounded-[8px] overflow-hidden bg-[#F3F3F5] active:opacity-90 active:scale-[0.99] transition-transform"
               >
                 <img src={p.url} alt="" className="w-full h-full object-cover" />
                 {pinnedIds.has(p.id) && (
@@ -732,12 +776,12 @@ function MemoriesTab({ memories, onOpen, onAdd }) {
 }
 
 // ---------------------------------------------------------------------------
-// About tab — archetype, milestones, traits
+// About tab — archetype + traits + Find-a-twin (milestones moved to a
+// dedicated journey section below the tabs)
 // ---------------------------------------------------------------------------
-function AboutTab({ archetype, traits, milestones, onAddMilestone, onTapArchetype, onTwinFinder }) {
+function AboutTab({ archetype, traits, onTapArchetype, onTwinFinder }) {
   return (
-    <section className="flex flex-col gap-4">
-      {/* Archetype card */}
+    <section className="flex flex-col gap-3">
       <Card className="p-4">
         <button onClick={onTapArchetype} className="w-full text-left active:opacity-90">
           <div className="flex items-start gap-3">
@@ -773,46 +817,120 @@ function AboutTab({ archetype, traits, milestones, onAddMilestone, onTapArchetyp
           </div>
         )}
       </Card>
+    </section>
+  );
+}
 
-      {/* Milestones */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <SectionLabel>Milestones</SectionLabel>
-          <button
-            onClick={onAddMilestone}
-            className="inline-flex items-center gap-1 h-8 px-3 rounded-full text-[12px] font-semibold text-white active:scale-[0.97]"
-            style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' }}
-          >
-            <Plus size={12} strokeWidth={2.4} />
-            Add
-          </button>
+// ---------------------------------------------------------------------------
+// MilestonesJourney — playful timeline that lives at the bottom of the profile
+// regardless of the active tab. Vertical zig-zag with paw-print path connecting
+// stamp-style badges. Most recent at the top, oldest at the bottom.
+// ---------------------------------------------------------------------------
+function MilestonesJourney({ petName, milestones, onAdd }) {
+  const sorted = useMemo(() => [...milestones].sort((a, b) => b.dateMs - a.dateMs), [milestones]);
+  return (
+    <section className="px-5 mt-4 flex flex-col gap-3">
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Journey</p>
+          <h2 className="text-[18px] font-semibold text-[#111111] leading-tight mt-0.5">
+            {petName}'s story · <span className="text-[#E85D2A]">{sorted.length}</span> moments
+          </h2>
         </div>
-        <Card className="overflow-hidden">
-          <div className="flex flex-col">
-            {milestones.map((m, i) => {
-              const Icon = MILESTONE_ICON_MAP[m.icon] || MILESTONE_ICON_MAP.default;
-              return (
-                <div
-                  key={m.id}
-                  className={`flex items-center gap-3 px-4 py-3 ${i < milestones.length - 1 ? 'border-b border-black/[0.04]' : ''}`}
-                >
-                  <div
-                    className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center"
-                    style={{ background: T.warmTint, color: T.coral }}
-                  >
-                    <Icon size={14} strokeWidth={2.2} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13.5px] font-semibold text-[#111111] truncate">{m.label}</p>
-                    <p className="text-[11.5px] text-[#8E8E93] truncate">{m.dateStr}</p>
-                  </div>
+        <button
+          onClick={onAdd}
+          aria-label="Add milestone"
+          className="h-9 px-3 rounded-full bg-[#111111] text-white text-[12px] font-semibold flex items-center gap-1.5 active:scale-[0.97]"
+        >
+          <Plus size={12} strokeWidth={2.6} />
+          Add
+        </button>
+      </div>
+      <div
+        className="relative rounded-[20px] overflow-hidden"
+        style={{
+          background: 'linear-gradient(180deg, #FFF7F1 0%, #F7F5F2 100%)',
+          border: '1px solid #EDE8E2',
+          padding: '20px 12px 24px',
+        }}
+      >
+        {/* Subtle dotted spine */}
+        <div
+          aria-hidden
+          className="absolute top-6 bottom-6 left-1/2 -translate-x-1/2 w-px"
+          style={{
+            background:
+              'repeating-linear-gradient(180deg, rgba(232,93,42,0.45) 0 6px, transparent 6px 12px)',
+          }}
+        />
+        <div className="flex flex-col gap-5">
+          {sorted.map((m, i) => {
+            const Icon = MILESTONE_ICON_MAP[m.icon] || MILESTONE_ICON_MAP.default;
+            const onLeft = i % 2 === 0;
+            return (
+              <div key={m.id} className="relative flex items-center gap-3" style={{ minHeight: 56 }}>
+                {/* Left side */}
+                <div className="flex-1 min-w-0 flex justify-end pr-3">
+                  {onLeft ? (
+                    <MilestoneStamp m={m} side="right" Icon={Icon} />
+                  ) : (
+                    <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#A09A94] tabular-nums">
+                      {m.dateStr}
+                    </span>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        </Card>
+                {/* Center node */}
+                <div
+                  className="shrink-0 w-11 h-11 rounded-full flex items-center justify-center relative z-10"
+                  style={{
+                    background: '#FFFFFF',
+                    border: '2px solid #FFD4CC',
+                    boxShadow: '0 4px 10px rgba(232,93,42,0.18)',
+                    color: T.coral,
+                  }}
+                >
+                  <Icon size={16} strokeWidth={2.2} />
+                </div>
+                {/* Right side */}
+                <div className="flex-1 min-w-0 flex justify-start pl-3">
+                  {onLeft ? (
+                    <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#A09A94] tabular-nums">
+                      {m.dateStr}
+                    </span>
+                  ) : (
+                    <MilestoneStamp m={m} side="left" Icon={Icon} />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {/* Start marker */}
+        <div className="flex items-center justify-center mt-4 gap-1.5 text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">
+          <span aria-hidden style={{ width: 24, height: 1, background: '#EDE8E2' }} />
+          Day one
+          <span aria-hidden style={{ width: 24, height: 1, background: '#EDE8E2' }} />
+        </div>
       </div>
     </section>
+  );
+}
+
+function MilestoneStamp({ m, side, Icon }) {
+  const arrowRight = side === 'right';
+  return (
+    <div
+      className="inline-flex items-center px-3 py-2 rounded-[14px] gap-2 max-w-[150px]"
+      style={{
+        background: '#FFFFFF',
+        border: `1px solid ${T.border}`,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+      }}
+    >
+      {!arrowRight && <Icon size={12} strokeWidth={2.2} className="text-[#E85D2A] shrink-0" />}
+      <p className="text-[12.5px] font-semibold text-[#111111] leading-snug truncate">{m.label}</p>
+      {arrowRight && <Icon size={12} strokeWidth={2.2} className="text-[#E85D2A] shrink-0" />}
+    </div>
   );
 }
 
