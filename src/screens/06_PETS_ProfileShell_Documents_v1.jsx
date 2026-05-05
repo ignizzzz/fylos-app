@@ -30,6 +30,7 @@ import {
 } from '../data/social';
 import useSocialData from '../features/social/useSocialData';
 import { AmenityTag, CategoryBadge, PlacesMapPreview } from '../features/social/network/PlacesPreview';
+import NetworkMode from '../features/social/network/NetworkMode';
 import {
   Home,
   PawPrint, 
@@ -12966,7 +12967,7 @@ const ActivityScreen = ({ isTabBarVisible = true, initialMode, pendingNetworkVie
         <div style={{ paddingTop: `${activityTopPadding}px` }}>
           <div className="relative">
             <ProfileMode isVisible={activeMode === 'profile'} pet={MOCK_DASHBOARD_PETS[0]} memories={memories} onAddMemory={handleAddMemory} friends={ACTIVITY_FRIEND_DATA.friends} onOpenNetwork={() => setActiveMode('friends')} />
-            <FriendsActivityContainer isVisible={activeMode === 'friends'} setGlobalBadge={setHasNewFriendRequests} selectedPetId={selectedActivityPetId} playdateEvents={fylosPlaydateEvents} onOpenPlaydates={onOpenPlaydates} pendingView={pendingNetworkView} />
+            <NetworkMode isVisible={activeMode === 'friends'} setGlobalBadge={setHasNewFriendRequests} selectedPetId={selectedActivityPetId} playdateEvents={fylosPlaydateEvents} onOpenPlaydates={onOpenPlaydates} pendingView={pendingNetworkView} />
             <ActivityCommunityPlaceholder isVisible={activeMode === 'community'} onOpenPlaydates={onOpenPlaydates} memories={memories} onAddMemory={handleAddMemory} />
           </div>
         </div>
