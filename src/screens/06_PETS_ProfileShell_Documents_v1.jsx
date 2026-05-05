@@ -1,5 +1,34 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AddPetMascot } from './37_ADD_PET_v1';
+import PlaydateMatchingScreen from './61_PLAYDATE_MATCHING_v1';
+import PackDiagram from '../components/PackDiagram';
+import ReasonStack from '../components/ReasonStack';
+import EarnedCounter from '../components/EarnedCounter';
+import MemoryCard from '../components/MemoryCard';
+import PersonalityCardSheet from '../components/PersonalityCardSheet';
+import StoryCardSheet from '../components/StoryCardSheet';
+import BondScoreSheet from '../components/BondScoreSheet';
+import PetOfTheDaySheet from '../components/PetOfTheDaySheet';
+import TwinFinderSheet from '../components/TwinFinderSheet';
+import PackPageSheet from '../components/PackPageSheet';
+import HotspotPlaceSheet from '../components/HotspotPlaceSheet';
+import MemoryOfTheWeekSheet from '../components/MemoryOfTheWeekSheet';
+import ProfileMode from '../features/social/profile/ProfileMode';
+import { TwinFinderCard, TribePacksRail, MatchChips } from '../components/PackInlines';
+import {
+  ACTIVITY_FRIEND_DATA,
+  ACTIVITY_PLAYDATE_DATA,
+  MOCK_PLACES,
+  PLACE_CATEGORIES,
+  AMENITY_META,
+  ACTIVITY_SOCIAL_FEED,
+  ACTIVITY_NOTIFICATIONS,
+  ACTIVITY_INSIGHTS_DATA,
+  INITIAL_MEMORIES,
+} from '../data/social';
+import useSocialData from '../features/social/useSocialData';
 import { 
   Home, 
   PawPrint, 
@@ -82,6 +111,11 @@ import {
   PersonStanding,
   FileDown,
   Fingerprint,
+  KeyRound,
+  Smartphone,
+  Eye,
+  Activity as ActivityIcon,
+  CalendarClock,
   DownloadCloud,
   Cloud,
   ArrowLeft,
@@ -107,7 +141,10 @@ import {
   Droplets,
   Flame,
   Rocket,
-  PartyPopper
+  PartyPopper,
+  Gift,
+  Bookmark,
+  VolumeX
 } from 'lucide-react';
 
 /**
@@ -166,7 +203,7 @@ const TABS = [
   { id: 'pets', label: 'Pets', icon: PawPrint },
   { id: '_fab', label: '', icon: null },
   { id: 'services', label: 'Services', icon: Calendar },
-  { id: 'activity', label: 'Activity', icon: Activity },
+  { id: 'activity', label: 'Social', icon: Activity },
 ];
 
 const INITIAL_MOCK_PETS = [
@@ -1201,14 +1238,17 @@ const SegmentedControl = ({ segments, activeIndex, onChange, className = '' }) =
   );
 };
 
-const ListRow = ({ icon: Icon, avatar, title, subtitle, rightAccessory, onClick, className = '' }) => (
-  <div 
+const ListRow = ({ icon: Icon, avatar, title, subtitle, rightAccessory, onClick, className = '', iconBg, iconColor }) => (
+  <div
     onClick={onClick}
     className={`flex items-center gap-4 py-3 ${onClick ? 'cursor-pointer active:scale-[0.98] transition-all duration-[var(--motion-fast)] hover:bg-[var(--color-surface-hover)] px-2 -mx-2 rounded-[var(--radius-sm)]' : ''} ${className}`}
   >
     {avatar ? <Avatar {...avatar} size={avatar.size || 40} /> : Icon && (
-      <div className="w-10 h-10 rounded-full bg-[var(--color-surface-hover)] flex items-center justify-center shrink-0">
-        <Icon size={18} color={THEME.colors.accent} strokeWidth={1.5} />
+      <div
+        className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+        style={{ backgroundColor: iconBg || 'var(--color-surface-hover)' }}
+      >
+        <Icon size={18} color={iconColor || THEME.colors.accent} strokeWidth={1.8} />
       </div>
     )}
     <div className="flex-1 flex flex-col justify-center min-w-0">
@@ -7137,281 +7177,13 @@ const FRIENDS_ACTIVITIES = [
   { id: 'f3', type: 'playdate', friendName: 'Charlie', breed: 'Beagle', ownerAvatar: 'https://i.pravatar.cc/120?u=fylos-friend-3', timestamp: activityDaysAgo(1).setHours(14, 0), dateStr: 'Saturday, 10:00 AM', placeName: 'Zurichhorn Park', attendees: 3 },
   { id: 'f4', type: 'milestone', friendName: 'Rocky', breed: 'Shiba Inu', ownerAvatar: 'https://i.pravatar.cc/120?u=fylos-friend-4', timestamp: activityDaysAgo(2).setHours(16, 30), title: 'Graduated Puppy School' }
 ];
-const ACTIVITY_FRIEND_DATA = {
-  friends: [
-    { id: 'friendship_001', userId: 'user_002', petId: 'pet_002', petName: 'Tao', petBreed: 'French Bulldog', petPhoto: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Tao's owner", distance: 1.2, friendsSince: 'Feb 2026', lastActive: '2h ago', age: 2, contextPetIds: ['p1', 'p2'] },
-    { id: 'friendship_002', userId: 'user_003', petId: 'pet_003', petName: 'Bella', petBreed: 'Labrador', petPhoto: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Bella's owner", distance: 2.3, friendsSince: 'Jan 2026', lastActive: '1d ago', age: 4, contextPetIds: ['p1'] },
-    { id: 'friendship_003', userId: 'user_004', petId: 'pet_004', petName: 'Charlie', petBreed: 'Beagle', petPhoto: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Charlie's owner", distance: 2.0, friendsSince: 'Jan 2026', lastActive: '5h ago', age: 3, contextPetIds: ['p2'] },
-    { id: 'friendship_004', userId: 'user_005', petId: 'pet_005', petName: 'Rocky', petBreed: 'Shiba Inu', petPhoto: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Rocky's owner", distance: 3.1, friendsSince: 'Dec 2025', lastActive: '2d ago', age: 4, contextPetIds: ['p1', 'p2'] },
-    { id: 'friendship_005', userId: 'user_006', petId: 'pet_006', petName: 'Daisy', petBreed: 'Golden Retriever', petPhoto: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Daisy's owner", distance: 1.8, friendsSince: 'Dec 2025', lastActive: '3h ago', age: 3, contextPetIds: ['p1'] },
-    { id: 'friendship_006', userId: 'user_007', petId: 'pet_007', petName: 'Milo', petBreed: 'Labrador', petPhoto: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Milo's owner", distance: 2.5, friendsSince: 'Nov 2025', lastActive: '1h ago', age: 5, contextPetIds: ['p2'] },
-    { id: 'friendship_008', userId: 'user_008', petId: 'pet_008', petName: 'Luna', petBreed: 'Cocker Spaniel', petPhoto: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Luna's owner", distance: 1.6, friendsSince: 'Nov 2025', lastActive: '4h ago', age: 2, contextPetIds: ['p1'] },
-    { id: 'friendship_009', userId: 'user_009', petId: 'pet_009', petName: 'Nori', petBreed: 'Pomeranian', petPhoto: 'https://images.unsplash.com/photo-1581888227599-779811939961?auto=format&fit=crop&q=80&w=150&h=150', ownerName: "Nori's owner", distance: 0.9, friendsSince: 'Oct 2025', lastActive: 'Just now', age: 2, contextPetIds: ['p2'] }
-  ],
-  receivedRequests: [
-    { id: 'request_001', fromUserId: 'user_010', fromPetId: 'pet_010', fromPetName: 'Charlie', fromPetBreed: 'Beagle', ownerName: "Charlie's owner", fromPetPhoto: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=150&h=150', timeAgo: '2h ago', distance: 2.0, contextPetIds: ['p1'] },
-    { id: 'request_002', fromUserId: 'user_011', fromPetId: 'pet_011', fromPetName: 'Kobe', fromPetBreed: 'Border Collie', ownerName: "Kobe's owner", fromPetPhoto: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=150&h=150', timeAgo: '5h ago', distance: 1.4, contextPetIds: ['p2'] },
-    { id: 'request_003', fromUserId: 'user_018', fromPetId: 'pet_018', fromPetName: 'Bruno', fromPetBreed: 'German Shepherd', ownerName: "Bruno's owner", fromPetPhoto: 'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&q=80&w=150&h=150', timeAgo: '1d ago', distance: 3.2, contextPetIds: ['p1'] }
-  ],
-  sentRequests: [
-    { id: 'request_002', toUserId: 'user_005', toPetId: 'pet_005', toPetName: 'Rocky', toPetBreed: 'Shiba Inu', ownerName: "Rocky's owner", toPetPhoto: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=150&h=150', timeAgo: '3 days ago' }
-  ],
-  suggestions: [
-    { id: 'suggestion_001', userId: 'user_012', petId: 'pet_012', petName: 'Daisy', petBreed: 'Golden Retriever', ownerName: "Daisy's owner", petPhoto: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=150&h=150', distance: 1.8, matchScore: 92, reasons: ['Similar routine nearby'], contextPetIds: ['p1'] },
-    { id: 'suggestion_002', userId: 'user_013', petId: 'pet_013', petName: 'Milo', petBreed: 'Labrador', ownerName: "Milo's owner", petPhoto: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&q=80&w=150&h=150', distance: 2.5, matchScore: 78, reasons: ['Shared walking route'], contextPetIds: ['p2'] },
-    { id: 'suggestion_003', userId: 'user_014', petId: 'pet_014', petName: 'Bruno', petBreed: 'German Shepherd', ownerName: "Bruno's owner", petPhoto: 'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&q=80&w=150&h=150', distance: 3.2, matchScore: 74, reasons: ['Evening activity match'], contextPetIds: ['p1', 'p2'] },
-    { id: 'suggestion_004', userId: 'user_015', petId: 'pet_015', petName: 'Loki', petBreed: 'Whippet', ownerName: "Loki's owner", petPhoto: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=150&h=150', distance: 1.1, matchScore: 88, reasons: ['Near your usual park'], contextPetIds: ['p2'] },
-    { id: 'suggestion_005', userId: 'user_016', petId: 'pet_016', petName: 'Nala', petBreed: 'Labradoodle', ownerName: "Nala's owner", petPhoto: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&q=80&w=150&h=150', distance: 2.0, matchScore: 83, reasons: ['Friendly social profile'], contextPetIds: ['p1'] },
-    { id: 'suggestion_006', userId: 'user_017', petId: 'pet_017', petName: 'Coco', petBreed: 'Corgi', ownerName: "Coco's owner", petPhoto: 'https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&q=80&w=150&h=150', distance: 2.9, matchScore: 76, reasons: ['Weekend playgroup overlap'], contextPetIds: ['p1', 'p2'] }
-  ]
-};
-const ACTIVITY_PLAYDATE_DATA = {
-  upcomingPlaydates: [
-    {
-      id: 'playdate_001',
-      hostId: 'user_001',
-      hostPetName: 'Leo',
-      date: '2026-03-02',
-      startTime: '10:00 AM',
-      duration: 60,
-      endTime: '11:00 AM',
-      place: { id: 'place_001', name: 'Zurichhorn Park', address: 'Seestrasse, 8008 Zurich' },
-      invitees: [
-        { userId: 'user_002', petName: 'Tao', petBreed: 'French Bulldog', petPhoto: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150', status: 'accepted' },
-        { userId: 'user_003', petName: 'Bella', petBreed: 'Labrador', petPhoto: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150', status: 'pending' }
-      ],
-      status: 'upcoming',
-      notes: 'Meet by the lake entrance!',
-      messages: [
-        { userId: 'user_001', message: "Can't wait!" },
-        { userId: 'user_002', message: 'See you there!' }
-      ]
-    },
-    {
-      id: 'playdate_live',
-      hostId: 'user_002',
-      hostPetName: 'Tao',
-      date: '2026-03-02',
-      startTime: '09:00 AM',
-      duration: 60,
-      endTime: '10:00 AM',
-      place: { id: 'place_002', name: 'Lindenhof', address: 'Lindenhof, 8001 Zurich' },
-      invitees: [
-        { userId: 'user_001', petName: 'Leo', petBreed: 'Golden Retriever', petPhoto: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=150&h=150', status: 'accepted' }
-      ],
-      status: 'in-progress',
-      notes: '',
-      messages: []
-    }
-  ],
-  pendingInvitations: [
-    {
-      id: 'playdate_002',
-      hostId: 'user_004',
-      hostPetName: 'Charlie',
-      date: '2026-03-01',
-      startTime: '4:00 PM',
-      duration: 90,
-      endTime: '5:30 PM',
-      place: { name: 'Rieterpark', address: 'Seestrasse 59, 8002 Zurich' },
-      invitees: [{ userId: 'user_001', petId: 'pet_001', status: 'pending' }],
-      status: 'upcoming'
-    }
-  ],
-  completedPlaydates: [
-    { id: 'playdate_003', date: '2026-02-15', place: { name: 'Zurichhorn Park' }, participants: ['Tao', 'Bella'], status: 'completed' }
-  ]
-};
+
+
+
 const formatActivityDateStr = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 };
-const ACTIVITY_SOCIAL_FEED = [
-  {
-    id: 'activity_001',
-    ownerName: "Tao's owner",
-    petName: 'Tao',
-    avatar: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '2 hours ago',
-    location: 'Zurichhorn Park',
-    type: 'photo',
-    photoUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=600&h=600',
-    likesCount: 3,
-    likedByMe: false,
-    likersPreview: 'Leo, Bella, +1',
-    contextPetIds: ['p1'],
-    likers: [
-      { id: 'l1', petName: 'Bella', breed: 'Labrador', timeAgo: '30m ago', avatar: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150' },
-      { id: 'l2', petName: 'Rocky', breed: 'Shiba Inu', timeAgo: '1h ago', avatar: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=150&h=150' },
-      { id: 'l3', petName: 'Daisy', breed: 'Golden Retriever', timeAgo: '1.5h ago', avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=150&h=150' }
-    ]
-  },
-  {
-    id: 'activity_002',
-    ownerName: "Bella's owner",
-    petName: 'Bella',
-    avatar: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '5 hours ago',
-    location: 'Lindenhof',
-    type: 'check-in',
-    photoUrl: null,
-    likesCount: 5,
-    likedByMe: true,
-    likersPreview: 'You, Tao, +3',
-    contextPetIds: ['p1', 'p2'],
-    likers: [
-      { id: 'l_me', petName: 'Leo (You)', breed: 'Golden Retriever', timeAgo: 'Just now', avatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=150&h=150' },
-      { id: 'l4', petName: 'Tao', breed: 'French Bulldog', timeAgo: '2h ago', avatar: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150' }
-    ]
-  },
-  {
-    id: 'activity_003',
-    ownerName: "Rocky's owner",
-    petName: 'Rocky',
-    avatar: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: 'Yesterday',
-    location: 'Limmat Riverside',
-    type: 'photo',
-    photoUrl: 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&q=80&w=600&h=600',
-    likesCount: 4,
-    likedByMe: false,
-    likersPreview: 'Zyon, Bella +2',
-    contextPetIds: ['p2'],
-    likers: [
-      { id: 'l5', petName: 'Zyon', breed: 'Belgian Malinois', timeAgo: '20m ago', avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=150&h=150' },
-      { id: 'l6', petName: 'Bella', breed: 'Labrador', timeAgo: '45m ago', avatar: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150' }
-    ]
-  },
-  {
-    id: 'activity_004',
-    ownerName: 'FYLOS',
-    petName: 'System',
-    avatar: 'https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: 'Yesterday',
-    location: null,
-    type: 'friend-update',
-    summary: 'Leo and Charlie became Fylos',
-    photoUrl: null,
-    likesCount: 0,
-    likedByMe: false,
-    likersPreview: '',
-    contextPetIds: ['p1'],
-    likers: []
-  },
-  {
-    id: 'activity_005',
-    ownerName: "Charlie's owner",
-    petName: 'Charlie',
-    avatar: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '2d ago',
-    location: 'Rieterpark',
-    type: 'walk-together',
-    summary: 'Walk together completed with Charlie',
-    photoUrl: null,
-    likesCount: 2,
-    likedByMe: false,
-    likersPreview: 'Leo, Tao',
-    contextPetIds: ['p1', 'p2'],
-    likers: [
-      { id: 'l7', petName: 'Leo', breed: 'Golden Retriever', timeAgo: '2d ago', avatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=150&h=150' }
-    ]
-  },
-  {
-    id: 'activity_006',
-    ownerName: "Daisy's owner",
-    petName: 'Daisy',
-    avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '3d ago',
-    location: 'Zurich West',
-    type: 'photo',
-    photoUrl: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&q=80&w=600&h=600',
-    likesCount: 6,
-    likedByMe: false,
-    likersPreview: 'Leo, Zyon +4',
-    contextPetIds: ['p1'],
-    likers: [
-      { id: 'l8', petName: 'Leo', breed: 'Golden Retriever', timeAgo: '3d ago', avatar: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=150&h=150' }
-    ]
-  },
-  {
-    id: 'activity_007',
-    ownerName: 'FYLOS',
-    petName: 'System',
-    avatar: 'https://images.unsplash.com/photo-1581888227599-779811939961?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '4d ago',
-    location: null,
-    type: 'friend-update',
-    summary: 'Bella and Milo became Fylos',
-    photoUrl: null,
-    likesCount: 0,
-    likedByMe: false,
-    likersPreview: '',
-    contextPetIds: ['p2'],
-    likers: []
-  },
-  {
-    id: 'activity_008',
-    ownerName: "Milo's owner",
-    petName: 'Milo',
-    avatar: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '5d ago',
-    location: 'Seefeld',
-    type: 'check-in',
-    photoUrl: null,
-    likesCount: 1,
-    likedByMe: false,
-    likersPreview: 'Zyon',
-    contextPetIds: ['p2'],
-    likers: [{ id: 'l9', petName: 'Zyon', breed: 'Belgian Malinois', timeAgo: '5d ago', avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=150&h=150' }]
-  },
-  {
-    id: 'activity_009',
-    ownerName: "Nala's owner",
-    petName: 'Nala',
-    avatar: 'https://images.unsplash.com/photo-1525253086316-d0c936c814f8?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '6d ago',
-    location: 'Letten Park',
-    type: 'photo',
-    photoUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=600&h=600',
-    likesCount: 2,
-    likedByMe: false,
-    likersPreview: 'Leo, Tao',
-    contextPetIds: ['p1'],
-    likers: [{ id: 'l10', petName: 'Tao', breed: 'French Bulldog', timeAgo: '6d ago', avatar: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150' }]
-  },
-  {
-    id: 'activity_010',
-    ownerName: "Luna's owner",
-    petName: 'Luna',
-    avatar: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=150&h=150',
-    timeAgo: '1w ago',
-    location: 'Sihl City',
-    type: 'walk-together',
-    summary: 'Walk together with Zyon completed',
-    photoUrl: null,
-    likesCount: 1,
-    likedByMe: false,
-    likersPreview: 'Zyon',
-    contextPetIds: ['p2'],
-    likers: [{ id: 'l11', petName: 'Zyon', breed: 'Belgian Malinois', timeAgo: '1w ago', avatar: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=150&h=150' }]
-  }
-];
-const ACTIVITY_NOTIFICATIONS = [
-  {
-    group: 'TODAY',
-    items: [
-      { id: 'n1', type: 'like', petName: 'Tao', petAvatar: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150', text: 'liked your photo', time: '2 hours ago', read: false, preview: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=150&h=150' },
-      { id: 'n2', type: 'friend-accepted', petName: 'Bella', petAvatar: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150', text: 'accepted your friend request', time: '5 hours ago', read: true }
-    ]
-  },
-  {
-    group: 'YESTERDAY',
-    items: [
-      { id: 'n3', type: 'check-in', petName: 'Tao', petAvatar: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150', text: 'checked in at Zurichhorn Park', time: 'Yesterday', read: true },
-      { id: 'n4', type: 'playdate', petName: 'Charlie', petAvatar: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=150&h=150', text: 'invited you to a playdate', time: 'Yesterday', read: true }
-    ]
-  }
-];
 
 const ActivityBottomSheet = ({ isOpen, onClose, title, children }) => (
   <CardModal isOpen={isOpen} onClose={onClose} title={title}>{children}</CardModal>
@@ -7422,13 +7194,27 @@ const ActivityModeControl = ({ modes, activeMode, onChange }) => {
   return (
     <div className="px-5 pt-0 pb-2 bg-transparent">
       <div className="flex bg-white/80 backdrop-blur-xl p-1.5 rounded-full border border-black/[0.04] relative">
-        <div className="absolute top-1.5 bottom-1.5 bg-[#111111] rounded-full transition-all duration-[300ms]" style={{ width: `calc(${100 / modes.length}% - 12px)`, left: `calc(${(100 / modes.length) * activeIndex}% + 6px)`, transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)' }} />
+        <div
+          className="absolute top-1.5 bottom-1.5 rounded-full transition-all duration-[300ms]"
+          style={{
+            width: `calc(${100 / modes.length}% - 12px)`,
+            left: `calc(${(100 / modes.length) * activeIndex}% + 6px)`,
+            background: '#FBE7DD',
+            border: '1px solid rgba(232,93,42,0.20)',
+            boxShadow: '0 1px 4px rgba(232,93,42,0.10)',
+            transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)'
+          }}
+        />
         {modes.map((mode) => {
           const isActive = activeMode === mode.id;
           return (
-            <button key={mode.id} onClick={() => onChange(mode.id)} className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold transition-colors duration-[200ms] flex items-center justify-center gap-1.5 ${isActive ? 'text-white' : 'text-[#8E8E93] hover:text-[#111111]'}`}>
+            <button
+              key={mode.id}
+              onClick={() => onChange(mode.id)}
+              className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold transition-colors duration-[200ms] flex items-center justify-center gap-1.5 ${isActive ? 'text-[#7A2F12]' : 'text-[#76767D] hover:text-[#111111]'}`}
+            >
               {mode.label}
-              {mode.badge && <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-white/80' : 'bg-[#FF6A3D]'}`} />}
+              {mode.badge && <span className="w-1.5 h-1.5 rounded-full bg-[#E85D2A]" />}
             </button>
           );
         })}
@@ -7437,7 +7223,7 @@ const ActivityModeControl = ({ modes, activeMode, onChange }) => {
   );
 };
 
-const ActivitySubScreenPortal = ({ isOpen, children }) => {
+const ActivitySubScreenPortal = ({ isOpen, children, fullScreen = false }) => {
   const [render, setRender] = useState(isOpen);
   const [visible, setVisible] = useState(false);
 
@@ -7454,75 +7240,2726 @@ const ActivitySubScreenPortal = ({ isOpen, children }) => {
 
   if (!render) return null;
 
-  return (
-    <div className={`absolute inset-0 bg-[#F7F7F8] z-[60] flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.1)] transition-transform duration-300 ${visible ? 'translate-x-0' : 'translate-x-full'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)' }}>
+  const markup = (
+    <div className={`absolute inset-0 bg-[#F7F5F2] z-[9998] flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.1)] transition-transform duration-300 ${visible ? 'translate-x-0' : 'translate-x-full'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)' }}>
       {children}
+    </div>
+  );
+
+  if (fullScreen && typeof document !== 'undefined') {
+    const mount = document.getElementById('fylos-phone-root');
+    if (mount) return createPortal(markup, mount);
+  }
+  return markup;
+};
+
+// Helper: portal target = phone mock, fallback to body
+const useFylosPortalTarget = () => (typeof document !== 'undefined' ? (document.getElementById('fylos-phone-root') || document.body) : null);
+
+// Owner-level handle — one @handle per userId, shared across all the owner's pets.
+// Seeded by userId so the same owner always gets the same handle across surfaces.
+const OWNER_HANDLES = [
+  'marinaz', 'leo.k', 'talita.m', 'theo_w', 'nico.p', 'alex.r',
+  'lena.zrh', 'sam_g', 'maya.k', 'dimi.m', 'nora.k', 'jonas.l',
+  'emma.w', 'marco.p', 'tina.r', 'paul.m', 'clara.f', 'finn.l',
+  'raph.z', 'lina.k',
+];
+const ownerHandle = (f) => {
+  if (!f) return '@fylos';
+  const key = ((f.userId || f.id || '') + '').replace(/\D/g, '');
+  const seed = parseInt(key, 10) || 3;
+  return '@' + OWNER_HANDLES[seed % OWNER_HANDLES.length];
+};
+
+// Rich Fylos profile view
+const FylosProfileView = ({ profile, activePetName, connectedViaName, onOpenPlaydates, onOpenPhoto, onOpenLocation, onOpenMessage, feedPosts = [], friends = [] }) => {
+  const [editOpen, setEditOpen] = useState(false);
+  const [shareToast, setShareToast] = useState(null);
+
+  const handleShare = async () => {
+    const url = `https://fylos.app/pet/${profile.petId || profile.id}`;
+    const data = {
+      title: `${profile.petName} on Fylos`,
+      text: `Meet ${profile.petName} (${profile.petBreed}) on Fylos`,
+      url,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(data);
+        return;
+      }
+    } catch (_) { /* cancelled or unsupported */ }
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        setShareToast('Link copied');
+        setTimeout(() => setShareToast(null), 1800);
+        return;
+      }
+    } catch (_) { /* noop */ }
+    setShareToast('Share link: ' + url);
+    setTimeout(() => setShareToast(null), 2400);
+  };
+
+  // Derive rich content from profile (stable per id)
+  const seed = parseInt((profile.id || '').replace(/\D/g, ''), 10) || 3;
+  const issueNum = String((seed % 24) + 1).padStart(2, '0');
+  const traitBank = ['Playful', 'Social', 'Early riser', 'Fetch fan', 'Cuddler', 'Calm', 'Explorer', 'Chatty', 'Gentle', 'Treat thief'];
+  const traits = [
+    traitBank[seed % traitBank.length],
+    traitBank[(seed * 3) % traitBank.length],
+    traitBank[(seed * 7 + 1) % traitBank.length],
+  ].filter((v, i, a) => a.indexOf(v) === i);
+  const bios = [
+    `Loves long morning walks and meeting new Fylos at the park.`,
+    `Chill in the city, loses their mind at the sight of a tennis ball.`,
+    `Never says no to a snack or a playdate.`,
+    `Half athlete, half potato. Always up for fresh air.`,
+    `Weekend hiker, weekday napper. Very good listener.`,
+  ];
+  const bio = bios[seed % bios.length];
+  const pastPlaydates = profile.pastPlaydates ?? Math.max(2, seed % 9);
+  const galleryFallback = [
+    'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?auto=format&fit=crop&q=70&w=400',
+    'https://images.unsplash.com/photo-1450778869180-41d0601e046e?auto=format&fit=crop&q=70&w=400',
+    'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=70&w=400',
+    'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=70&w=400',
+    'https://images.unsplash.com/photo-1601758064957-83f2cecea06b?auto=format&fit=crop&q=70&w=400',
+    'https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&q=70&w=400',
+  ];
+  const petPosts = feedPosts.filter((p) => p.petName === profile.petName && (p.photoUrl || (p.photoUrls && p.photoUrls.length)));
+  const petPhotos = petPosts.map((p) => p.photoUrl || p.photoUrls[0]).slice(0, 6);
+  const photos = petPhotos.length >= 3 ? petPhotos : [...petPhotos, ...galleryFallback].slice(0, 6);
+  const sharedParks = [
+    { name: 'Zurichhorn Park', visits: 4, coords: { lat: 47.355, lng: 8.551 } },
+    { name: 'Seefeld Park', visits: 2, coords: { lat: 47.362, lng: 8.548 } },
+    { name: 'Limmat riverside', visits: 1, coords: { lat: 47.378, lng: 8.541 } },
+  ];
+  const mutualFylos = friends.filter((f) => f.id !== profile.id).slice(0, 6);
+  const lastSeen = profile.lastActive || '2h ago';
+  const sinceShort = (profile.friendsSince || 'Feb 2026');
+  const myPack = MOCK_DASHBOARD_PETS;
+  const hasMultiplePets = myPack.length > 1;
+  const momentCaptions = ['Morning light', 'Fetch champ', 'After the swim', 'Snack break', 'Alert mode', 'Tail of the year'];
+  const momentLocs = ['Seefeld', 'Zurichhorn', 'Limmat', 'Backyard', 'Park bench', 'Sidewalk'];
+  // When this is the viewer's own pet, the social actions/context don't apply.
+  const isOwn = !!profile.isOwnPet;
+
+  // ─── Own pet layout — compact & info-dense (different from the social profile) ───
+  if (isOwn) {
+    const petWeight = profile.weight || (15 + (seed % 20));
+    return (
+      <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ background: '#F7F5F2' }}>
+        <div className="pt-[100px] pb-10 px-6">
+
+          {/* Centered hero — same motif as social profile */}
+          <div className="flex flex-col items-center text-center pb-7">
+            <button
+              onClick={() => onOpenPhoto && onOpenPhoto({ url: profile.petPhoto, caption: profile.petName })}
+              className="relative block active:opacity-95"
+            >
+              <img
+                src={profile.petPhoto}
+                alt={profile.petName}
+                className="w-[140px] h-[140px] rounded-full object-cover"
+                style={{ border: '1px solid #EDE8E2' }}
+              />
+            </button>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E85D2A] mt-4">Your pet</div>
+            <h1 className="text-[26px] font-bold text-[#111] mt-1 tracking-tight leading-tight">
+              {profile.petName}
+            </h1>
+            <div className="text-[13.5px] text-[#6E6058] mt-2.5">
+              {profile.petBreed} <span className="text-[#D4CEC6] mx-1">·</span> {profile.age} {profile.age === 1 ? 'yr' : 'yrs'} <span className="text-[#D4CEC6] mx-1">·</span> {petWeight} kg
+            </div>
+          </div>
+
+          <div className="space-y-3.5">
+
+          {/* About — tappable to edit */}
+          <button
+            onClick={() => setEditOpen(true)}
+            className="w-full rounded-[16px] p-4 text-left active:scale-[0.995] transition-transform"
+            style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">About</div>
+              <div className="flex items-center gap-1 text-[11px] font-semibold text-[#E85D2A]">
+                <Pencil size={12} strokeWidth={2.25} /> Edit
+              </div>
+            </div>
+            <p className="text-[14px] text-[#111] leading-relaxed">{bio}</p>
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {traits.map((t, i) => (
+                <span
+                  key={i}
+                  className="px-2.5 py-1 rounded-full text-[11.5px] font-semibold"
+                  style={{ background: '#FFF8F3', color: '#E85D2A', border: '1px solid #FFD4CC' }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </button>
+
+          {/* Stats — clean settings-style rows */}
+          <div className="rounded-[16px] overflow-hidden" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <div className="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center shrink-0" style={{ background: '#FFF8F3' }}>
+                <Calendar size={14} className="text-[#E85D2A]" strokeWidth={2} />
+              </div>
+              <span className="flex-1 text-[13.5px] font-medium text-[#111]">Playdates</span>
+              <span className="text-[15px] font-bold text-[#111]" style={{ fontVariantNumeric: 'tabular-nums' }}>{pastPlaydates}</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2] mx-4" />
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <div className="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center shrink-0" style={{ background: '#FFF8F3' }}>
+                <Camera size={14} className="text-[#E85D2A]" strokeWidth={2} />
+              </div>
+              <span className="flex-1 text-[13.5px] font-medium text-[#111]">Photos</span>
+              <span className="text-[15px] font-bold text-[#111]" style={{ fontVariantNumeric: 'tabular-nums' }}>{photos.length}</span>
+            </div>
+            <div className="h-[1px] bg-[#EDE8E2] mx-4" />
+            <div className="flex items-center gap-3 px-4 py-3.5">
+              <div className="w-[30px] h-[30px] rounded-[9px] flex items-center justify-center shrink-0" style={{ background: '#FFF8F3' }}>
+                <MapPin size={14} className="text-[#E85D2A]" strokeWidth={2} />
+              </div>
+              <span className="flex-1 text-[13.5px] font-medium text-[#111]">Favorite spots</span>
+              <span className="text-[15px] font-bold text-[#111]" style={{ fontVariantNumeric: 'tabular-nums' }}>{sharedParks.length}</span>
+            </div>
+          </div>
+
+          {/* Recent moments — tight grid 3x2 */}
+          <div>
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">Recent moments</span>
+              <button className="flex items-center gap-1 text-[11px] font-semibold text-[#E85D2A]">
+                See all <ChevronRight size={11} strokeWidth={2.5} />
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              {photos.slice(0, 6).map((url, i) => (
+                <button
+                  key={i}
+                  onClick={() => onOpenPhoto && onOpenPhoto({ url, caption: momentCaptions[i % momentCaptions.length] })}
+                  className="block aspect-square rounded-[10px] overflow-hidden active:scale-[0.98] transition-transform"
+                  style={{ border: '1px solid #EDE8E2' }}
+                >
+                  <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Favorite spots — list rows */}
+          <div>
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">Favorite spots</span>
+              <span className="text-[11px] text-[#A09A94]">{sharedParks.length}</span>
+            </div>
+            <div className="rounded-[16px] overflow-hidden" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+              {sharedParks.map((p, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <div className="h-[1px] bg-[#EDE8E2] mx-4" />}
+                  <button
+                    onClick={() => onOpenLocation && onOpenLocation({ name: p.name, coords: p.coords })}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-[#F7F5F2] transition-colors text-left"
+                  >
+                    <div className="w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0" style={{ background: '#FFF8F3' }}>
+                      <MapPin size={13} className="text-[#E85D2A]" strokeWidth={2} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13.5px] font-semibold text-[#111] truncate">{p.name}</div>
+                      <div className="text-[11px] text-[#A09A94] mt-[1px]">{p.visits} visit{p.visits === 1 ? '' : 's'}</div>
+                    </div>
+                    <ChevronRight size={15} className="text-[#A09A94] shrink-0" />
+                  </button>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          </div>{/* end space-y wrapper */}
+        </div>
+
+        {editOpen && (
+          <EditPetSheet pet={profile} onClose={() => setEditOpen(false)} />
+        )}
+      </div>
+    );
+  }
+
+  // ─── Social profile layout (viewing someone else's Fylos) ───
+  const connectionKinds = ['Playdate', 'First walk', 'Met', 'Morning stroll', 'Park meetup'];
+  const connectionKind = connectionKinds[seed % connectionKinds.length];
+  const firstPark = sharedParks[0]?.name || 'Seefeld Park';
+
+  return (
+    <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ background: '#F7F5F2' }}>
+      <div className="pb-12">
+
+        {/* Immersive hero — Airbnb-style full-bleed photo with overlaid name + trust badges */}
+        <div className="relative w-full" style={{ aspectRatio: '4 / 5', maxHeight: 560 }}>
+          <button
+            onClick={() => onOpenPhoto && onOpenPhoto({ url: profile.petPhoto, caption: profile.petName })}
+            className="absolute inset-0 block active:opacity-95"
+            aria-label={`View ${profile.petName}'s photo`}
+          >
+            <img
+              src={profile.petPhoto}
+              alt={profile.petName}
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
+            {/* Bottom gradient for legibility */}
+            <div
+              className="absolute inset-x-0 bottom-0 pointer-events-none"
+              style={{
+                height: '55%',
+                background:
+                  'linear-gradient(to top, rgba(15,10,5,0.75) 0%, rgba(15,10,5,0.35) 50%, rgba(15,10,5,0) 100%)',
+              }}
+            />
+          </button>
+
+          {/* Trust badges — top-right cluster */}
+          <div className="absolute top-[110px] right-4 flex flex-col gap-2 z-10">
+            {[
+              { label: 'Vaccinated', icon: Syringe },
+              { label: 'Sociable', icon: Heart },
+              ...(seed % 3 === 0 ? [{ label: 'Vouched · 2', icon: ShieldAlert }] : []),
+            ].map((b, i) => (
+              <div
+                key={i}
+                className="px-2.5 py-1 rounded-full flex items-center gap-1 backdrop-blur-md"
+                style={{
+                  background: 'rgba(255,255,255,0.78)',
+                  border: '1px solid rgba(255,255,255,0.9)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+                }}
+              >
+                <b.icon size={10} className="text-[#E85D2A]" strokeWidth={2.5} />
+                <span
+                  className="text-[#1A1614]"
+                  style={{ fontFamily: 'Inter, sans-serif', fontSize: 10, fontWeight: 700, letterSpacing: '0.04em' }}
+                >
+                  {b.label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Name + meta — bottom-left overlay */}
+          <div className="absolute inset-x-0 bottom-0 px-6 pb-6 text-white z-10">
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className="relative flex h-[8px] w-[8px]">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6BE29A] opacity-70" />
+                <span className="relative inline-flex rounded-full h-[8px] w-[8px] bg-[#6BE29A]" />
+              </span>
+              <span
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: 10.5,
+                  fontWeight: 700,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.9)',
+                }}
+              >
+                Active {lastSeen}
+              </span>
+            </div>
+            <h1
+              className="leading-[0.98]"
+              style={{
+                fontFamily: '"Inter Tight", Inter, sans-serif',
+                fontSize: 42,
+                fontWeight: 800,
+                letterSpacing: '-0.03em',
+                color: '#FFFFFF',
+                textShadow: '0 2px 16px rgba(0,0,0,0.35)',
+              }}
+            >
+              {profile.petName}
+            </h1>
+            <div
+              className="mt-2 flex items-center gap-2"
+              style={{ fontSize: 13.5, fontWeight: 500, color: 'rgba(255,255,255,0.92)' }}
+            >
+              <span>{profile.petBreed}</span>
+              <span style={{ color: 'rgba(255,255,255,0.45)' }}>·</span>
+              <span>{profile.age} {profile.age === 1 ? 'yr' : 'yrs'}</span>
+              <span style={{ color: 'rgba(255,255,255,0.45)' }}>·</span>
+              <span
+                className="inline-flex items-center gap-1"
+                style={{ fontVariantNumeric: 'tabular-nums' }}
+              >
+                <MapPin size={11} strokeWidth={2} className="opacity-75" />
+                {profile.distance} km
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Data strip — Revolut-style: 3 bold tabular numbers with small caps labels */}
+        <div
+          className="mx-6 -mt-7 relative z-20 rounded-[18px] bg-white px-4 py-4 grid grid-cols-3"
+          style={{ border: '1px solid #EDE8E2', boxShadow: '0 8px 20px rgba(30,20,10,0.08)' }}
+        >
+          {[
+            { label: 'Earned', value: pastPlaydates, unit: 'walks' },
+            { label: 'Together', value: `${Math.max(3, seed % 9)}`, unit: 'weeks' },
+            { label: 'Matches', value: `${85 + (seed % 12)}%`, unit: 'confirmed' },
+          ].map((s, i) => (
+            <div
+              key={i}
+              className={`flex flex-col items-start gap-1 ${i > 0 ? 'pl-3 border-l border-[#EDE8E2]' : ''}`}
+            >
+              <span
+                className="text-[#8E7A6B] uppercase"
+                style={{ fontFamily: 'Inter, sans-serif', fontSize: 9.5, fontWeight: 700, letterSpacing: '0.16em' }}
+              >
+                {s.label}
+              </span>
+              <div className="flex items-baseline gap-1">
+                <span
+                  style={{
+                    fontFamily: '"Inter Tight", Inter, sans-serif',
+                    fontSize: 22,
+                    fontWeight: 800,
+                    letterSpacing: '-0.02em',
+                    color: '#1A1614',
+                    fontVariantNumeric: 'tabular-nums',
+                    lineHeight: 1,
+                  }}
+                >
+                  {s.value}
+                </span>
+                <span
+                  className="text-[#6E6058]"
+                  style={{ fontSize: 11, fontWeight: 600 }}
+                >
+                  {s.unit}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Reason stack card — "Why this match" */}
+        <div className="mx-6 mt-3 rounded-[18px] bg-white p-4" style={{ border: '1px solid #EDE8E2' }}>
+          <ReasonStack
+            title={`Why ${activePetName || 'Leo'} & ${profile.petName}`}
+            reasons={[
+              'Same morning energy',
+              `${profile.petBreed} · similar size to ${activePetName || 'Leo'}`,
+              `${profile.distance} km away · both love ${firstPark}`,
+              ...(pastPlaydates >= 3 ? [`Great vibes · ${pastPlaydates} walks together`] : []),
+            ]}
+            footer={pastPlaydates >= 3 ? `CONFIRMED · ${pastPlaydates} PLAYDATES` : 'PREDICTED · NEW MATCH'}
+          />
+        </div>
+
+        <div className="pt-5 px-6">
+
+        {/* Actions — Message + Plan playdate + Share icon */}
+        <div className="flex gap-2 mb-5">
+          <button
+            onClick={() => onOpenMessage && onOpenMessage(profile)}
+            className="flex-1 h-[46px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+          >
+            <MessageCircle size={15} strokeWidth={2} /> Message
+          </button>
+          <button
+            onClick={() => onOpenPlaydates && onOpenPlaydates('scheduled')}
+            className="flex-[1.3] h-[46px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            style={{ background: '#E85D2A', boxShadow: '0 6px 14px rgba(232,93,42,0.28)' }}
+          >
+            <Calendar size={15} strokeWidth={2} /> Plan playdate
+          </button>
+          <button
+            onClick={handleShare}
+            aria-label="Share profile"
+            className="w-[46px] h-[46px] rounded-full flex items-center justify-center active:scale-[0.95] transition-transform shrink-0"
+            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+          >
+            <Share2 size={15} strokeWidth={2} />
+          </button>
+        </div>
+
+        <div className="space-y-3.5">
+
+          {/* Memory card — "Your first moment" */}
+          <div
+            className="rounded-[20px] overflow-hidden relative"
+            style={{ background: 'linear-gradient(135deg, #FFF 0%, #F3EFEB 100%)', border: '1px solid #EDE8E2' }}
+          >
+            <span
+              className="absolute font-serif text-[110px] text-[#E85D2A] select-none pointer-events-none"
+              style={{ lineHeight: 0.85, top: -14, right: 8, opacity: 0.08 }}
+            >
+              &amp;
+            </span>
+            <div className="p-4 flex items-center gap-3 relative">
+              <div
+                className="w-[52px] h-[52px] rounded-[14px] flex items-center justify-center shrink-0 relative"
+                style={{ background: '#FFF8F3', border: '1px solid #FFD4CC' }}
+              >
+                <MapPin size={20} className="text-[#E85D2A]" strokeWidth={2.25} />
+                <span
+                  className="absolute -top-1.5 -right-1.5 w-[20px] h-[20px] rounded-full flex items-center justify-center"
+                  style={{ background: '#E85D2A', border: '2px solid #FFF' }}
+                >
+                  <Sparkles size={10} className="text-white" strokeWidth={2.75} />
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E85D2A] mb-0.5">
+                  Your first moment
+                </div>
+                <div className="text-[14.5px] font-bold text-[#111] truncate leading-tight">
+                  {connectionKind} at {firstPark}
+                </div>
+                <div className="text-[11px] text-[#6E6058] mt-[3px]">
+                  {sinceShort} · {pastPlaydates} playdate{pastPlaydates === 1 ? '' : 's'} since
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* About card */}
+          <div
+            className="rounded-[16px] p-4"
+            style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+          >
+            <div className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94] mb-2">
+              About
+            </div>
+            <p className="text-[14px] text-[#111] leading-relaxed">{bio}</p>
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {traits.map((t, i) => (
+                <span
+                  key={i}
+                  className="px-2.5 py-1 rounded-full text-[11.5px] font-semibold"
+                  style={{ background: '#FFF8F3', color: '#E85D2A', border: '1px solid #FFD4CC' }}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Stats — 3 colored cards */}
+          <div className="grid grid-cols-3 gap-2">
+            <div
+              className="rounded-[16px] p-3 relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #FFF 0%, #FFF8F3 100%)', border: '1px solid #FFD4CC' }}
+            >
+              <div className="w-[28px] h-[28px] rounded-[9px] flex items-center justify-center mb-2" style={{ background: 'rgba(232,93,42,0.14)' }}>
+                <Calendar size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+              </div>
+              <div className="text-[22px] font-bold text-[#111] leading-none" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                {pastPlaydates}
+              </div>
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.12em] mt-1 leading-tight">
+                Playdates
+              </div>
+            </div>
+            <div
+              className="rounded-[16px] p-3 relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #FFF 0%, #F0F7F0 100%)', border: '1px solid rgba(46,125,50,0.18)' }}
+            >
+              <div className="w-[28px] h-[28px] rounded-[9px] flex items-center justify-center mb-2" style={{ background: 'rgba(46,125,50,0.14)' }}>
+                <MapPin size={13} className="text-[#2E7D32]" strokeWidth={2.25} />
+              </div>
+              <div className="text-[22px] font-bold text-[#111] leading-none" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                {sharedParks.length}
+              </div>
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.12em] mt-1 leading-tight">
+                Shared parks
+              </div>
+            </div>
+            <div
+              className="rounded-[16px] p-3 relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #FFF 0%, #F0F3FB 100%)', border: '1px solid rgba(46,111,221,0.18)' }}
+            >
+              <div className="w-[28px] h-[28px] rounded-[9px] flex items-center justify-center mb-2" style={{ background: 'rgba(46,111,221,0.14)' }}>
+                <Users size={13} className="text-[#2E6FDD]" strokeWidth={2.25} />
+              </div>
+              <div className="text-[22px] font-bold text-[#111] leading-none" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                {mutualFylos.length}
+              </div>
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.12em] mt-1 leading-tight">
+                Mutual Fylos
+              </div>
+            </div>
+          </div>
+
+          {/* Shared moments — featured photo + grid */}
+          <div>
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">Shared moments</span>
+              <button className="flex items-center gap-1 text-[11px] font-semibold text-[#E85D2A]">
+                See all <ChevronRight size={11} strokeWidth={2.5} />
+              </button>
+            </div>
+            <div className="space-y-1.5">
+              {photos[0] && (
+                <button
+                  onClick={() => onOpenPhoto && onOpenPhoto({ url: photos[0], caption: momentCaptions[0] })}
+                  className="relative block w-full rounded-[14px] overflow-hidden active:scale-[0.99] transition-transform"
+                  style={{ border: '1px solid #EDE8E2' }}
+                >
+                  <img src={photos[0]} alt="" className="w-full h-[180px] object-cover" loading="lazy" />
+                  <div
+                    className="absolute inset-x-0 bottom-0 px-3 py-2 flex items-center gap-2 text-white text-[11.5px] font-semibold"
+                    style={{ background: 'linear-gradient(0deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 100%)' }}
+                  >
+                    <MapPin size={11} strokeWidth={2.5} />
+                    <span className="truncate">{momentLocs[0]} · {momentCaptions[0]}</span>
+                  </div>
+                </button>
+              )}
+              <div className="grid grid-cols-4 gap-1.5">
+                {photos.slice(1, 5).map((url, i) => (
+                  <button
+                    key={i}
+                    onClick={() => onOpenPhoto && onOpenPhoto({ url, caption: momentCaptions[(i + 1) % momentCaptions.length] })}
+                    className="block aspect-square rounded-[10px] overflow-hidden active:scale-[0.98] transition-transform"
+                    style={{ border: '1px solid #EDE8E2' }}
+                  >
+                    <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Common spots — list in card */}
+          <div>
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">Common spots</span>
+              <span className="text-[11px] text-[#A09A94]">{sharedParks.length}</span>
+            </div>
+            <div
+              className="rounded-[16px] overflow-hidden"
+              style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+            >
+              {sharedParks.map((p, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <div className="h-[1px] bg-[#EDE8E2] mx-4" />}
+                  <button
+                    onClick={() => onOpenLocation && onOpenLocation({ name: p.name, coords: p.coords })}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-[#F7F5F2] transition-colors text-left"
+                  >
+                    <div
+                      className="w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: '#FFF8F3' }}
+                    >
+                      <MapPin size={13} className="text-[#E85D2A]" strokeWidth={2} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13.5px] font-semibold text-[#111] truncate">{p.name}</div>
+                      <div className="text-[11px] text-[#A09A94] mt-[1px]">
+                        {p.visits} visit{p.visits === 1 ? '' : 's'} together
+                      </div>
+                    </div>
+                    <ChevronRight size={15} className="text-[#A09A94] shrink-0" />
+                  </button>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* Mutual Fylos — avatar strip */}
+          {mutualFylos.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-2 px-1">
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">Mutual Fylos</span>
+                <span className="text-[11px] text-[#A09A94]">{mutualFylos.length}</span>
+              </div>
+              <div className="-mx-6 px-6 flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+                {mutualFylos.map((f) => (
+                  <div
+                    key={f.id}
+                    className="shrink-0 flex flex-col items-center"
+                    style={{ width: 66 }}
+                  >
+                    <img
+                      src={f.petPhoto}
+                      alt={f.petName}
+                      className="w-[54px] h-[54px] rounded-full object-cover"
+                      style={{ border: '1px solid #EDE8E2' }}
+                    />
+                    <div className="text-[11.5px] font-semibold text-[#111] mt-1.5 truncate w-full text-center">
+                      {f.petName}
+                    </div>
+                    <div className="text-[10px] text-[#A09A94] truncate w-full text-center">
+                      {(f.petBreed || '').split(' ')[0]}
+                    </div>
+                  </div>
+                ))}
+                <div className="shrink-0 w-2" />
+              </div>
+            </div>
+          )}
+        </div>
+        </div>
+      </div>
+
+      {/* Share toast */}
+      {shareToast && <ShareToast message={shareToast} />}
     </div>
   );
 };
 
-const ActivityFeedPostCard = ({ post, onLike, onViewLikes }) => {
+// Tiny toast portaled to the phone so it sits above the scroll/overlays
+const ShareToast = ({ message }) => {
+  const mount = useFylosPortalTarget();
+  if (!mount) return null;
+  const markup = (
+    <div
+      className="absolute left-1/2 bottom-[90px] -translate-x-1/2 z-[10000] px-4 py-2.5 rounded-full text-[13px] font-semibold text-white pointer-events-none animate-in fade-in slide-in-from-bottom-2 duration-200 whitespace-nowrap max-w-[340px] overflow-hidden"
+      style={{ background: 'rgba(17,17,17,0.92)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
+    >
+      {message}
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// ──────────────────────────────────────────────────────────────
+// PLACES — amenity icon helper
+const AMENITY_ICON_MAP = {
+  PawPrint, Droplets, Trees, User, Flame, AlertCircle, MapPin,
+  UserCheck, Heart, Compass,
+};
+const AmenityTag = ({ amenityKey }) => {
+  const meta = AMENITY_META[amenityKey];
+  if (!meta) return null;
+  const Icon = AMENITY_ICON_MAP[meta.icon] || MapPin;
+  return (
+    <div
+      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11.5px] font-medium text-[#6E6058]"
+      style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+    >
+      <Icon size={11} strokeWidth={2} />
+      {meta.label}
+    </div>
+  );
+};
+
+const CATEGORY_ICON_MAP = {
+  Trees, Coffee, Stethoscope, Scissors, Store, Compass,
+};
+const CategoryBadge = ({ category }) => {
+  const meta = PLACE_CATEGORIES.find((c) => c.id === category);
+  if (!meta || meta.id === 'all') return null;
+  const Icon = CATEGORY_ICON_MAP[meta.iconKey] || MapPin;
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-[3px] rounded-full text-[10.5px] font-semibold" style={{ background: '#FFF8F3', color: '#E85D2A', border: '1px solid #FFD4CC' }}>
+      <Icon size={10} strokeWidth={2.25} /> {meta.label}
+    </span>
+  );
+};
+
+// Inline map preview (fills its container, pins are positioned using viewBox percentages)
+const PlacesMapPreview = ({ places = [], activeId = null, onPinClick, height = 150, fill = false }) => {
+  if (!places.length) return null;
+  const box = { w: 350, h: fill ? 600 : height };
+  const lats = places.map((p) => p.coords.lat);
+  const lngs = places.map((p) => p.coords.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  const dLat = Math.max(0.001, maxLat - minLat);
+  const dLng = Math.max(0.001, maxLng - minLng);
+  const pad = 40;
+  const project = (lat, lng) => ({
+    xPct: (pad + ((lng - minLng) / dLng) * (box.w - pad * 2)) / box.w * 100,
+    yPct: (pad + (1 - (lat - minLat) / dLat) * (box.h - pad * 2)) / box.h * 100,
+  });
+  const rootStyle = fill
+    ? { width: '100%', height: '100%', background: 'linear-gradient(140deg, #E9EEF2 0%, #F0F2F5 100%)' }
+    : { height, background: 'linear-gradient(140deg, #E9EEF2 0%, #F0F2F5 100%)', border: '1px solid #EDE8E2' };
+  return (
+    <div className={`relative w-full overflow-hidden ${fill ? '' : 'rounded-[16px]'}`} style={rootStyle}>
+      {/* Grid + fake city geography */}
+      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox={`0 0 ${box.w} ${box.h}`}>
+        <defs>
+          <pattern id="grid-soft" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#D4DBE0" strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid-soft)" />
+        {/* Roads */}
+        <path d={`M 0 ${box.h * 0.55} Q ${box.w * 0.4} ${box.h * 0.35}, ${box.w} ${box.h * 0.6}`} fill="none" stroke="#C8D0D6" strokeWidth="8" strokeLinecap="round" />
+        <path d={`M ${box.w * 0.3} 0 L ${box.w * 0.35} ${box.h}`} fill="none" stroke="#C8D0D6" strokeWidth="5" strokeLinecap="round" />
+        <path d={`M 0 ${box.h * 0.75} L ${box.w * 0.7} ${box.h * 0.82} L ${box.w} ${box.h * 0.7}`} fill="none" stroke="#D8DEE3" strokeWidth="3" strokeLinecap="round" />
+        {/* Water/lake accent */}
+        <path d={`M ${box.w * 0.7} 0 Q ${box.w * 0.82} ${box.h * 0.5}, ${box.w} ${box.h}`} fill="rgba(159,196,225,0.45)" />
+        {/* Green spots */}
+        <circle cx={box.w * 0.15} cy={box.h * 0.25} r="35" fill="rgba(180,215,170,0.4)" />
+        <circle cx={box.w * 0.55} cy={box.h * 0.2} r="28" fill="rgba(180,215,170,0.35)" />
+      </svg>
+      {/* Pins */}
+      {places.map((p) => {
+        const { xPct, yPct } = project(p.coords.lat, p.coords.lng);
+        const active = p.id === activeId;
+        return (
+          <button
+            key={p.id}
+            onClick={(e) => { e.stopPropagation(); onPinClick && onPinClick(p); }}
+            className="absolute active:scale-[0.9] transition-transform"
+            style={{ left: `${xPct}%`, top: `${yPct}%`, transform: 'translate(-50%, -100%)' }}
+          >
+            <div
+              className="flex items-center justify-center"
+              style={{
+                width: active ? 36 : 26,
+                height: active ? 36 : 26,
+                borderRadius: '50%',
+                background: active ? '#E85D2A' : '#FFF',
+                border: active ? '3px solid #FFF' : '2px solid #E85D2A',
+                boxShadow: active ? '0 6px 14px rgba(232,93,42,0.45)' : '0 3px 8px rgba(0,0,0,0.2)',
+              }}
+            >
+              <MapPin size={active ? 16 : 11} color={active ? '#FFF' : '#E85D2A'} strokeWidth={2.5} fill={active ? 'none' : 'rgba(232,93,42,0.15)'} />
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+// Full-map browser — map fills screen, bottom sheet shows places (peek + expanded states)
+const PlacesView = ({
+  savedPlaces,
+  togglePlaceSave,
+  placesCategory,
+  setPlacesCategory,
+  placesSavedOnly,
+  setPlacesSavedOnly,
+  onOpenPlace,
+  onClose,
+}) => {
+  const [activePinId, setActivePinId] = useState(null);
+  const [expanded, setExpanded] = useState(false);
+  const peekStripRef = useRef(null);
+
+  const filtered = MOCK_PLACES.filter((p) => {
+    if (placesCategory !== 'all' && p.category !== placesCategory) return false;
+    if (placesSavedOnly && !savedPlaces.has(p.id)) return false;
+    return true;
+  }).sort((a, b) => a.distance - b.distance);
+
+  const handlePinClick = (place) => {
+    setActivePinId(place.id);
+    // Scroll the peek strip to that card
+    requestAnimationFrame(() => {
+      const el = peekStripRef.current?.querySelector(`[data-place-id="${place.id}"]`);
+      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+  };
+
+  return (
+    <div className="absolute inset-0 overflow-hidden" style={{ background: '#F7F5F2' }}>
+      {/* Full-screen map background */}
+      <div className="absolute inset-0">
+        <PlacesMapPreview
+          places={filtered}
+          activeId={activePinId}
+          onPinClick={handlePinClick}
+          fill
+        />
+      </div>
+
+      {/* Top floating chrome — back / title / saved-toggle + category chips */}
+      <div className="absolute top-0 left-0 w-full z-30 pt-14 pb-2 px-5 pointer-events-none">
+        <div className="flex justify-between items-center w-full mb-3 pointer-events-auto">
+          <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.75} />
+          </button>
+          <div className="px-4 py-2 rounded-full text-[14px] font-semibold text-[#111]" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+            Places
+          </div>
+          <button
+            onClick={() => setPlacesSavedOnly((v) => !v)}
+            aria-label="Saved only"
+            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]"
+            style={{ background: placesSavedOnly ? '#E85D2A' : 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+          >
+            <Bookmark size={17} color={placesSavedOnly ? '#FFF' : '#111'} strokeWidth={2} fill={placesSavedOnly ? '#FFF' : 'none'} />
+          </button>
+        </div>
+
+        {/* Category chips floating over map */}
+        <div className="-mx-5 pointer-events-auto">
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 px-5">
+            {PLACE_CATEGORIES.map((cat) => {
+              const Icon = cat.iconKey ? CATEGORY_ICON_MAP[cat.iconKey] : null;
+              const isActive = placesCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => { setPlacesCategory(cat.id); setActivePinId(null); }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full whitespace-nowrap text-[12px] font-semibold shrink-0 ${isActive ? 'text-white' : 'text-[#111]'}`}
+                  style={isActive
+                    ? { background: '#E85D2A', boxShadow: '0 4px 10px rgba(232,93,42,0.35)' }
+                    : { background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }
+                  }
+                >
+                  {Icon && <Icon size={13} strokeWidth={isActive ? 2.5 : 2} />}
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom sheet — peek (horizontal cards) or expanded (full list) */}
+      {!expanded ? (
+        <div className="absolute bottom-0 left-0 right-0 z-30 pb-6 pointer-events-none">
+          {/* Counter + Show all button */}
+          <div className="flex items-center justify-between px-5 pb-2 pointer-events-auto">
+            <div className="px-3 py-1.5 rounded-full text-[12px] font-semibold text-[#111]" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+              {filtered.length} {filtered.length === 1 ? 'place' : 'places'}
+            </div>
+            <button
+              onClick={() => setExpanded(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold text-[#111]"
+              style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+            >
+              <List size={13} strokeWidth={2.25} /> Show all
+            </button>
+          </div>
+          {/* Horizontal peek strip */}
+          {filtered.length === 0 ? (
+            <div className="mx-5 p-5 rounded-[20px] text-center pointer-events-auto" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)' }}>
+              <Bookmark size={22} className="text-[#A09A94] mx-auto mb-2" strokeWidth={2} />
+              <div className="text-[13px] font-semibold text-[#111]">No places here</div>
+              <div className="text-[11.5px] text-[#A09A94] mt-1">Try a different category.</div>
+            </div>
+          ) : (
+            <div ref={peekStripRef} className="flex gap-2.5 overflow-x-auto no-scrollbar px-5 snap-x snap-mandatory pointer-events-auto">
+              {filtered.map((p) => {
+                const active = p.id === activePinId;
+                return (
+                  <div
+                    key={p.id}
+                    data-place-id={p.id}
+                    onClick={() => { if (active) { onOpenPlace(p); } else { setActivePinId(p.id); } }}
+                    role="button"
+                    tabIndex={0}
+                    className={`shrink-0 snap-center rounded-[16px] overflow-hidden cursor-pointer transition-all active:scale-[0.98] ${active ? 'ring-2 ring-[#E85D2A]' : ''}`}
+                    style={{ width: 280, background: '#FFF', border: '1px solid #EDE8E2', boxShadow: '0 6px 20px rgba(0,0,0,0.1)' }}
+                  >
+                    <div className="flex gap-3 p-2.5 pr-3">
+                      <img src={p.photo} alt={p.name} className="w-[72px] h-[72px] rounded-[12px] object-cover shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="text-[13.5px] font-bold text-[#111] truncate leading-tight">{p.name}</div>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); togglePlaceSave(p.id); }}
+                            aria-label={savedPlaces.has(p.id) ? 'Unsave' : 'Save'}
+                            className="w-[26px] h-[26px] rounded-full flex items-center justify-center shrink-0 -mt-0.5 -mr-0.5 active:scale-[0.9]"
+                            style={{ background: savedPlaces.has(p.id) ? '#FFF8F3' : '#F7F5F2' }}
+                          >
+                            <Bookmark size={12} strokeWidth={2} className={savedPlaces.has(p.id) ? 'text-[#E85D2A]' : 'text-[#A09A94]'} fill={savedPlaces.has(p.id) ? '#E85D2A' : 'none'} />
+                          </button>
+                        </div>
+                        <div className="mt-[3px]">
+                          <CategoryBadge category={p.category} />
+                        </div>
+                        <div className="text-[10.5px] text-[#A09A94] mt-[4px] flex items-center gap-1.5">
+                          <span className="flex items-center gap-0.5">
+                            <Star size={9} strokeWidth={2} fill="#E85D2A" className="text-[#E85D2A]" /> {p.rating}
+                          </span>
+                          <span className="text-[#D4CEC6]">·</span>
+                          <span>{p.distance} km</span>
+                          {active && <><span className="text-[#D4CEC6]">·</span><span className="font-semibold text-[#E85D2A]">Tap again →</span></>}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="shrink-0 w-3" />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="absolute bottom-0 left-0 right-0 top-[150px] z-30 rounded-t-[24px] overflow-hidden flex flex-col" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', boxShadow: '0 -10px 30px rgba(0,0,0,0.12)' }}>
+          <button
+            onClick={() => setExpanded(false)}
+            className="pt-2 pb-3 flex flex-col items-center gap-1.5 active:opacity-80"
+          >
+            <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+            <span className="text-[11px] font-semibold text-[#A09A94] flex items-center gap-1">
+              <MapIcon size={11} strokeWidth={2.25} /> Back to map
+            </span>
+          </button>
+          <div className="flex items-center justify-between px-5 pb-2">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">
+              {placesSavedOnly ? 'Saved' : 'Nearby'}
+            </span>
+            <span className="text-[11px] text-[#A09A94]">{filtered.length} {filtered.length === 1 ? 'place' : 'places'}</span>
+          </div>
+          <div className="flex-1 overflow-y-auto no-scrollbar px-5 pb-6">
+            {filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center text-center pt-10">
+                <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}>
+                  <Bookmark size={20} className="text-[#A09A94]" strokeWidth={2} />
+                </div>
+                <div className="text-[14px] font-semibold text-[#111] mb-1">No places here yet</div>
+                <div className="text-[12px] text-[#A09A94]">Try a different category or save a place first.</div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filtered.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => onOpenPlace(p)}
+                    role="button"
+                    tabIndex={0}
+                    className="w-full flex items-center gap-3 p-2.5 pr-3 rounded-[16px] text-left active:scale-[0.99] transition-transform cursor-pointer"
+                    style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+                  >
+                    <img src={p.photo} alt={p.name} className="w-[68px] h-[68px] rounded-[12px] object-cover shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[14px] font-bold text-[#111] truncate">{p.name}</div>
+                      <div className="mt-[2px]">
+                        <CategoryBadge category={p.category} />
+                      </div>
+                      <div className="text-[11px] text-[#A09A94] mt-[3px] flex items-center gap-2">
+                        <span className="flex items-center gap-0.5">
+                          <Star size={10} strokeWidth={2} fill="#E85D2A" className="text-[#E85D2A]" /> {p.rating}
+                        </span>
+                        <span className="text-[#D4CEC6]">·</span>
+                        <span>{p.distance} km</span>
+                        {p.hours && <><span className="text-[#D4CEC6]">·</span><span className="truncate">{p.hours}</span></>}
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); togglePlaceSave(p.id); }}
+                      aria-label={savedPlaces.has(p.id) ? 'Unsave' : 'Save'}
+                      className="w-[32px] h-[32px] rounded-full flex items-center justify-center shrink-0 active:scale-[0.92]"
+                      style={{ background: savedPlaces.has(p.id) ? '#FFF8F3' : '#F7F5F2' }}
+                    >
+                      <Bookmark size={14} strokeWidth={2} className={savedPlaces.has(p.id) ? 'text-[#E85D2A]' : 'text-[#A09A94]'} fill={savedPlaces.has(p.id) ? '#E85D2A' : 'none'} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Full-screen place detail
+const PlaceDetailView = ({
+  place,
+  savedPlaces,
+  togglePlaceSave,
+  friends = [],
+  feedPosts = [],
+  onClose,
+  onOpenPlaydates,
+  onOpenPhoto,
+}) => {
+  if (!place) return null;
+  const saved = savedPlaces.has(place.id);
+  // Fylos who go here — derive from friends whose pastPlaydates or shared parks include this place
+  const whoGoesHere = friends.slice(0, 5);
+  const postsFromHere = (feedPosts || []).filter((p) => (p.locationName || '').toLowerCase().includes(place.name.toLowerCase().split(' ')[0])).slice(0, 4);
+  const openDirections = () => {
+    const q = encodeURIComponent(place.name);
+    window.open(`https://maps.google.com/?q=${q}`, '_blank');
+  };
+  const shareIt = async () => {
+    const data = { title: place.name, text: `${place.name} on Fylos`, url: `https://fylos.app/place/${place.id}` };
+    try { if (navigator.share) { await navigator.share(data); return; } } catch (_) {}
+    try { if (navigator.clipboard) { await navigator.clipboard.writeText(data.url); } } catch (_) {}
+  };
+  return (
+    <div className="absolute inset-0 overflow-hidden" style={{ background: '#F7F5F2' }}>
+      {/* Hero photo */}
+      <div className="absolute top-0 left-0 w-full h-[280px] overflow-hidden">
+        <img src={place.photo} alt={place.name} className="w-full h-full object-cover" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 40%, rgba(247,245,242,0) 75%, #F7F5F2 100%)' }} />
+      </div>
+
+      {/* Header — back + save + share floating over photo */}
+      <div className="absolute top-0 left-0 w-full z-30 pt-14 px-5 flex justify-between items-center">
+        <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+          <ChevronLeft size={20} color="#111" strokeWidth={1.75} />
+        </button>
+        <div className="flex gap-2">
+          <button onClick={shareIt} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+            <Share2 size={16} color="#111" strokeWidth={2} />
+          </button>
+          <button
+            onClick={() => togglePlaceSave(place.id)}
+            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]"
+            style={{ background: saved ? '#E85D2A' : 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+          >
+            <Bookmark size={16} color={saved ? '#FFF' : '#111'} strokeWidth={2} fill={saved ? '#FFF' : 'none'} />
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="absolute inset-0 overflow-y-auto no-scrollbar pt-[240px] pb-12 px-5">
+        {/* Title block */}
+        <div className="bg-[#F7F5F2] pb-2">
+          <CategoryBadge category={place.category} />
+          <h1 className="text-[26px] font-bold text-[#111] leading-tight mt-2 tracking-tight">
+            {place.name}
+          </h1>
+          <div className="text-[12.5px] text-[#6E6058] mt-1.5 flex items-center gap-2 flex-wrap">
+            <span className="flex items-center gap-0.5">
+              <Star size={11} strokeWidth={2} fill="#E85D2A" className="text-[#E85D2A]" /> {place.rating}
+            </span>
+            <span className="text-[#D4CEC6]">·</span>
+            <span>{place.distance} km away</span>
+            {place.vibe && <><span className="text-[#D4CEC6]">·</span><span>{place.vibe}</span></>}
+          </div>
+        </div>
+
+        {/* Description */}
+        {place.description && (
+          <p className="text-[14px] text-[#2B2420] leading-relaxed mt-3">{place.description}</p>
+        )}
+
+        {/* CTAs */}
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={openDirections}
+            className="flex-1 h-[46px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            style={{ background: '#111' }}
+          >
+            <Navigation size={14} strokeWidth={2.25} /> Directions
+          </button>
+          <button
+            onClick={() => onOpenPlaydates && onOpenPlaydates('scheduled')}
+            className="flex-[1.1] h-[46px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform"
+            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+          >
+            <Calendar size={14} strokeWidth={2.25} /> Plan playdate
+          </button>
+        </div>
+
+        {/* Info grid: hours / address */}
+        <div className="mt-4 rounded-[16px] overflow-hidden" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+          <div className="flex items-center gap-3 px-4 py-3">
+            <div className="w-[28px] h-[28px] rounded-[9px] flex items-center justify-center shrink-0" style={{ background: '#FFF8F3' }}>
+              <Clock size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10.5px] font-bold uppercase tracking-widest text-[#A09A94]">Hours</div>
+              <div className="text-[13.5px] font-medium text-[#111] truncate">{place.hours || '—'}</div>
+            </div>
+          </div>
+          <div className="h-[1px] bg-[#EDE8E2] mx-4" />
+          <div className="flex items-center gap-3 px-4 py-3">
+            <div className="w-[28px] h-[28px] rounded-[9px] flex items-center justify-center shrink-0" style={{ background: '#FFF8F3' }}>
+              <MapPin size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10.5px] font-bold uppercase tracking-widest text-[#A09A94]">Address</div>
+              <div className="text-[13.5px] font-medium text-[#111] truncate">{place.address}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Amenities */}
+        {place.amenities && place.amenities.length > 0 && (
+          <div className="mt-5">
+            <div className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94] mb-2">Amenities</div>
+            <div className="flex flex-wrap gap-1.5">
+              {place.amenities.map((a) => (
+                <AmenityTag key={a} amenityKey={a} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Who goes here */}
+        {whoGoesHere.length > 0 && (
+          <div className="mt-5">
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">Who goes here</span>
+              <span className="text-[11px] text-[#A09A94]">{whoGoesHere.length}</span>
+            </div>
+            <div className="-mx-5 px-5 flex gap-2.5 overflow-x-auto no-scrollbar">
+              {whoGoesHere.map((f) => (
+                <div key={f.id} className="shrink-0 flex flex-col items-center" style={{ width: 66 }}>
+                  <img src={f.petPhoto} alt={f.petName} className="w-[52px] h-[52px] rounded-full object-cover" style={{ border: '1px solid #EDE8E2' }} />
+                  <div className="text-[11.5px] font-semibold text-[#111] mt-1.5 truncate w-full text-center">{f.petName}</div>
+                  <div className="text-[10px] text-[#A09A94] truncate w-full text-center">{(f.petBreed || '').split(' ')[0]}</div>
+                </div>
+              ))}
+              <div className="shrink-0 w-2" />
+            </div>
+          </div>
+        )}
+
+        {/* Posts from here */}
+        {postsFromHere.length > 0 && (
+          <div className="mt-5">
+            <div className="flex items-center justify-between mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#A09A94]">Posts from here</span>
+              <span className="text-[11px] text-[#A09A94]">{postsFromHere.length}</span>
+            </div>
+            <div className="grid grid-cols-4 gap-1.5">
+              {postsFromHere.map((p, i) => {
+                const url = p.photoUrl || (p.photoUrls && p.photoUrls[0]);
+                if (!url) return null;
+                return (
+                  <button key={i} onClick={() => onOpenPhoto && onOpenPhoto({ url, caption: p.caption || place.name })} className="block aspect-square rounded-[10px] overflow-hidden active:scale-[0.98]" style={{ border: '1px solid #EDE8E2' }}>
+                    <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Edit About bottom sheet — only edits bio + traits (pet identity is authoritative elsewhere)
+const EditPetSheet = ({ pet, onClose }) => {
+  const mount = useFylosPortalTarget();
+  const TRAIT_POOL = ['Playful', 'Social', 'Early riser', 'Fetch fan', 'Cuddler', 'Calm', 'Explorer', 'Chatty', 'Gentle', 'Treat thief'];
+  const seed = parseInt(((pet.id || '') + '').replace(/\D/g, ''), 10) || 3;
+  const initialTraits = [
+    TRAIT_POOL[seed % TRAIT_POOL.length],
+    TRAIT_POOL[(seed * 3) % TRAIT_POOL.length],
+    TRAIT_POOL[(seed * 7 + 1) % TRAIT_POOL.length],
+  ].filter((v, i, a) => a.indexOf(v) === i);
+  const [bio, setBio] = useState('');
+  const [traits, setTraits] = useState(initialTraits);
+  const [saved, setSaved] = useState(false);
+
+  if (!mount) return null;
+
+  const toggleTrait = (t) => {
+    setTraits((prev) => prev.includes(t) ? prev.filter(x => x !== t) : (prev.length < 5 ? [...prev, t] : prev));
+  };
+  const handleSave = () => {
+    setSaved(true);
+    setTimeout(() => { onClose(); }, 700);
+  };
+
+  const bioMax = 160;
+  const bioLen = bio.length;
+  const bioPct = Math.min(1, bioLen / bioMax);
+  const remaining = Math.max(0, bioMax - bioLen);
+  const overBio = bioLen > bioMax;
+
+  const markup = (
+    <div
+      className="absolute inset-0 z-[9999] flex items-end transition-all duration-200"
+      style={{ background: 'rgba(20,15,10,0.45)' }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full rounded-t-[26px] pb-6 pt-2 animate-in slide-in-from-bottom duration-300 relative"
+        style={{ background: '#F7F5F2', maxHeight: '90%', overflowY: 'auto' }}
+      >
+        <div className="flex justify-center pt-1 pb-3">
+          <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+        </div>
+
+        {/* Close button floating top-right */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-4 w-[34px] h-[34px] rounded-full flex items-center justify-center active:scale-[0.95] z-10"
+          style={{ background: '#F3EFEB' }}
+        >
+          <X size={15} color="#111" strokeWidth={2.25} />
+        </button>
+
+        {/* Pet identity strip — read-only context */}
+        <div className="px-5 pb-5 flex items-center gap-3">
+          <img
+            src={pet.petPhoto}
+            alt={pet.petName}
+            className="w-[44px] h-[44px] rounded-full object-cover"
+            style={{ border: '2px solid #FFF', boxShadow: '0 2px 8px rgba(40,30,20,0.08)' }}
+          />
+          <div className="min-w-0">
+            <div className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#A09A94]">Editing about</div>
+            <div className="text-[15px] font-bold text-[#111] truncate leading-tight mt-0.5">
+              {pet.petName}
+              <span className="font-normal text-[#A09A94]"> · {pet.petBreed}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bio section */}
+        <div className="px-5 pb-5">
+          <div className="flex items-baseline justify-between mb-2">
+            <div className="text-[15px] font-bold text-[#111]">Their story</div>
+            <div className={`text-[11px] font-medium ${overBio ? 'text-[#E85D2A]' : 'text-[#A09A94]'}`} style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {remaining} left
+            </div>
+          </div>
+          <div
+            className="rounded-[16px] p-3.5 relative"
+            style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+          >
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              rows={4}
+              maxLength={bioMax + 20}
+              placeholder={`What makes ${pet.petName} special? Quirks, habits, favorite things…`}
+              className="w-full text-[14.5px] text-[#111] bg-transparent outline-none resize-none leading-[1.4] placeholder-[#C0BAB3]"
+            />
+            {/* Progress bar */}
+            <div className="mt-2 h-[3px] w-full rounded-full overflow-hidden" style={{ background: '#F3EFEB' }}>
+              <div
+                className="h-full rounded-full transition-all duration-150"
+                style={{
+                  width: `${bioPct * 100}%`,
+                  background: overBio ? '#E85D2A' : (bioPct > 0.85 ? '#E85D2A' : '#2E7D32'),
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Traits section */}
+        <div className="px-5 pb-5">
+          <div className="flex items-baseline justify-between mb-2">
+            <div className="text-[15px] font-bold text-[#111]">Personality</div>
+            <div className="text-[11px] font-medium text-[#A09A94]" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {traits.length} / 5 picked
+            </div>
+          </div>
+          <div className="text-[11.5px] text-[#6E6058] mb-2.5 leading-snug">
+            Tap to toggle — these show as chips on {pet.petName}'s profile.
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {TRAIT_POOL.map((t) => {
+              const active = traits.includes(t);
+              const disabled = !active && traits.length >= 5;
+              return (
+                <button
+                  key={t}
+                  onClick={() => !disabled && toggleTrait(t)}
+                  disabled={disabled}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[12.5px] font-semibold transition-all active:scale-[0.96] ${disabled ? 'opacity-40' : ''}`}
+                  style={active
+                    ? { background: '#E85D2A', color: '#FFF', border: '1px solid #E85D2A' }
+                    : { background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+                >
+                  {active && <Check size={11} strokeWidth={3} />}
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* CTA row */}
+        <div className="px-5 pt-2 flex gap-2">
+          <button
+            onClick={onClose}
+            className="flex-1 h-[48px] rounded-full text-[13.5px] font-semibold active:scale-[0.97] transition-transform"
+            style={{ background: 'transparent', color: '#6E6058' }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saved || overBio}
+            className="flex-[2] h-[48px] rounded-full text-[13.5px] font-bold text-white flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform disabled:opacity-60"
+            style={{ background: '#111', boxShadow: '0 8px 18px rgba(17,17,17,0.18)' }}
+          >
+            {saved ? (<><Check size={15} strokeWidth={2.5} /> Saved</>) : 'Save'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// Post action menu (3-dots)
+const PostMenuSheet = ({ post, onClose, onDelete }) => {
+  const mount = useFylosPortalTarget();
+  const isOwn = post && (post.ownerName === 'You' || post.petName === 'Leo' || post.id?.startsWith?.('post_'));
+  const actions = [
+    { id: 'save', label: 'Save post', icon: Bookmark, handler: () => { alert('Saved to your collection'); onClose(); } },
+    { id: 'copy', label: 'Copy link', icon: LinkIcon, handler: () => { if (navigator.clipboard) navigator.clipboard.writeText(`https://fylos.app/post/${post?.id}`); alert('Link copied'); onClose(); } },
+    { id: 'share', label: 'Share post', icon: Share2, handler: () => { if (navigator.share) navigator.share({ title: 'Fylos', url: `https://fylos.app/post/${post?.id}` }).catch(() => {}); onClose(); } },
+    { id: 'mute', label: `Mute ${post?.petName || 'this pet'}`, icon: VolumeX, handler: () => { alert(`${post?.petName} muted`); onClose(); } },
+    isOwn
+      ? { id: 'delete', label: 'Delete post', icon: Trash2, danger: true, handler: () => { onDelete && onDelete(post.id); onClose(); } }
+      : { id: 'report', label: 'Report post', icon: AlertTriangle, danger: true, handler: () => { alert('Report submitted'); onClose(); } },
+  ];
+  if (!mount || !post) return null;
+  const markup = (
+    <div
+      className="absolute inset-0 z-[9999] flex items-end transition-all duration-200"
+      style={{ background: 'rgba(20,15,10,0.45)' }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full rounded-t-[24px] pb-6 pt-2 animate-in slide-in-from-bottom duration-300"
+        style={{ background: '#F7F5F2' }}
+      >
+        <div className="flex justify-center pt-1 pb-3">
+          <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+        </div>
+        <div className="px-3">
+          {actions.map((a) => {
+            const Icon = a.icon;
+            return (
+              <button
+                key={a.id}
+                onClick={a.handler}
+                className="w-full flex items-center gap-3 px-3 py-3 rounded-[12px] active:bg-[#EDE8E2] text-left"
+              >
+                <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: a.danger ? '#FFEBEA' : '#FFF', border: '1px solid #EDE8E2' }}>
+                  <Icon size={16} className={a.danger ? 'text-[#E85D2A]' : 'text-[#111]'} strokeWidth={2} />
+                </div>
+                <span className={`text-[14px] font-semibold ${a.danger ? 'text-[#E85D2A]' : 'text-[#111]'}`}>{a.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// Location detail sheet — big map + directions
+const LocationSheet = ({ location, onClose }) => {
+  const mount = useFylosPortalTarget();
+  if (!mount || !location) return null;
+  const name = location.name || 'Location';
+  const coords = location.coords;
+  const openMaps = () => {
+    const q = encodeURIComponent(name);
+    window.open(`https://maps.google.com/?q=${q}`, '_blank');
+  };
+  const markup = (
+    <div
+      className="absolute inset-0 z-[9999] flex items-end"
+      style={{ background: 'rgba(20,15,10,0.5)' }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full rounded-t-[24px] pb-6 pt-2 animate-in slide-in-from-bottom duration-300 overflow-hidden"
+        style={{ background: '#F7F5F2' }}
+      >
+        <div className="flex justify-center pt-1 pb-2">
+          <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+        </div>
+        <div className="relative mx-4 h-[200px] rounded-[16px] overflow-hidden" style={{ border: '1px solid #EDE8E2' }}>
+          <MapPreview coords={coords} />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-[42px] h-[42px] rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.25)]" style={{ background: '#E85D2A' }}>
+              <MapPin size={20} className="text-white" strokeWidth={2.5} fill="white" />
+            </div>
+          </div>
+        </div>
+        <div className="px-5 pt-3 pb-1">
+          <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-1">Location</div>
+          <div className="text-[18px] font-bold text-[#111] leading-tight">{name}</div>
+          {coords && <div className="text-[11.5px] text-[#A09A94] mt-0.5 font-mono">{coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}</div>}
+        </div>
+        <div className="px-4 pt-3 flex gap-2">
+          <button onClick={onClose} className="flex-1 h-[46px] rounded-full text-[13px] font-semibold" style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}>
+            Close
+          </button>
+          <button onClick={openMaps} className="flex-1 h-[46px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5" style={{ background: '#111' }}>
+            <Navigation size={13} strokeWidth={2.25} /> Open in Maps
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// Full-screen photo viewer
+const PhotoViewer = ({ photo, onClose }) => {
+  const mount = useFylosPortalTarget();
+  if (!mount || !photo) return null;
+  const markup = (
+    <div
+      className="absolute inset-0 z-[9999] flex flex-col"
+      style={{ background: 'rgba(0,0,0,0.92)' }}
+      onClick={onClose}
+    >
+      <div className="flex justify-end p-3" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="w-10 h-10 rounded-full flex items-center justify-center text-white" style={{ background: 'rgba(255,255,255,0.14)', backdropFilter: 'blur(6px)' }}>
+          <X size={18} />
+        </button>
+      </div>
+      <div className="flex-1 flex items-center justify-center px-4">
+        <img src={photo.url} alt="" className="max-w-full max-h-full object-contain rounded-[12px]" />
+      </div>
+      {(photo.caption || photo.location) && (
+        <div className="px-5 py-5 text-white">
+          {photo.location && (
+            <div className="flex items-center gap-1 text-[11px] opacity-80 mb-1">
+              <MapPin size={10} strokeWidth={2} /> {photo.location}
+            </div>
+          )}
+          {photo.caption && <div className="text-[14px] leading-snug">{photo.caption}</div>}
+        </div>
+      )}
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// ──────────────────────────────────────────────────────────
+// Fylos chat — mirrors provider ChatScreen motif
+const FylosChatView = ({ fylos, onBack }) => {
+  const [inputText, setInputText] = useState('');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAttachMenuOpen, setIsAttachMenuOpen] = useState(false);
+  const [showScroll, setShowScroll] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const scrollRef = useRef(null);
+  const [isTyping, setIsTyping] = useState(false);
+
+  const [messages, setMessages] = useState([
+    { id: 'd1', type: 'date', text: 'Today' },
+    { id: 's1', type: 'system', text: `You became Fylos with ${fylos.petName}` },
+    { id: 'm1', sender: 'them', text: `Hey! Did ${fylos.petName} and Leo meet at Seefeld last weekend?`, time: '10:32' },
+    { id: 'm2', sender: 'me', text: 'Yes! They had a great time running around 🐾', time: '10:34', readStatus: 'read' },
+    { id: 'm3', sender: 'them', text: 'Fantastic. Want to plan the next one?', time: '10:34' },
+    { id: 'm4', sender: 'them', photo: fylos.petPhoto, time: '10:35' },
+    { id: 'd2', type: 'date', text: '14:00' },
+    { id: 'm5', sender: 'me', text: 'Saturday morning works — same spot?', time: '14:02', readStatus: 'read' },
+    { id: 'm6', sender: 'them', text: 'See you at the park tomorrow!', time: '14:12' },
+  ]);
+
+  const quickReplies = ['Sounds good', 'What time?', 'Send location', '🐾'];
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    setShowScroll(scrollHeight - scrollTop - clientHeight > 80);
+  };
+  const scrollToBottom = () => {
+    if (scrollRef.current) scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  };
+  useEffect(() => {
+    if (scrollRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+      if (scrollHeight - scrollTop - clientHeight < 150) scrollToBottom();
+    }
+  }, [messages, isTyping]);
+
+  const handleSend = (text) => {
+    if (!text.trim()) return;
+    const newMsg = { id: `m_${Date.now()}`, sender: 'me', text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), readStatus: 'sent' };
+    setMessages((prev) => [...prev, newMsg]);
+    setInputText('');
+    setIsFocused(false);
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      setMessages((prev) => [...prev, { id: `m_${Date.now()}_r`, sender: 'them', text: `${fylos.petName}'s owner is reading...`, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
+    }, 1800);
+  };
+
+  return (
+    <div className="absolute inset-0 bg-[#F7F5F2] overflow-hidden">
+      <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-4 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/95 to-transparent">
+        <div className="flex justify-between items-center w-full pointer-events-auto">
+          <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+          </button>
+          <div className="flex items-center gap-2.5">
+            <div className="relative">
+              <img src={fylos.petPhoto} alt={fylos.petName} className="w-[30px] h-[30px] rounded-full object-cover" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-[9px] h-[9px] bg-[#2E7D32] rounded-full border-[2px] border-[#F7F5F2]" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-[14px] font-semibold text-[#111] leading-tight tracking-tight">{fylos.petName}</span>
+              <span className="text-[10px] text-[#A09A94] leading-tight mt-0.5">Online</span>
+            </div>
+          </div>
+          <button onClick={() => setIsMenuOpen(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <MoreHorizontal size={18} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
+      </header>
+
+      <div ref={scrollRef} onScroll={handleScroll} className="absolute inset-0 overflow-y-auto pt-[96px] pb-[130px] px-4 flex flex-col" style={{ scrollbarWidth: 'none' }}>
+        {messages.map((msg, idx) => {
+          if (msg.type === 'date') return <div key={msg.id} className="text-center text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.2em] my-5">{msg.text}</div>;
+          if (msg.type === 'system') return (
+            <div key={msg.id} className="flex items-center justify-center gap-2 my-3">
+              <span className="h-[1px] flex-1 max-w-[60px] bg-[#EDE8E2]" />
+              <span className="text-[11px] font-medium text-[#A09A94]">{msg.text}</span>
+              <span className="h-[1px] flex-1 max-w-[60px] bg-[#EDE8E2]" />
+            </div>
+          );
+          const isUser = msg.sender === 'me';
+          const prevMsg = messages[idx - 1];
+          const nextMsg = messages[idx + 1];
+          const isSamePrev = prevMsg && prevMsg.sender === msg.sender && !prevMsg.type;
+          const isSameNext = nextMsg && nextMsg.sender === msg.sender && !nextMsg.type;
+          let brClass = '';
+          if (isUser) {
+            if (!isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-br-[5px]';
+            else if (!isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-br-[8px]';
+            else if (isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-tr-[8px] rounded-br-[8px]';
+            else if (isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-tr-[8px] rounded-br-[5px]';
+          } else {
+            if (!isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-bl-[5px]';
+            else if (!isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-bl-[8px]';
+            else if (isSamePrev && isSameNext) brClass = 'rounded-[18px] rounded-tl-[8px] rounded-bl-[8px]';
+            else if (isSamePrev && !isSameNext) brClass = 'rounded-[18px] rounded-tl-[8px] rounded-bl-[5px]';
+          }
+          const mbClass = isSameNext ? 'mb-[2px]' : 'mb-4';
+          const showTime = !isSameNext;
+          return (
+            <div key={msg.id} className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} ${mbClass} w-full msg-animate`}>
+              <div className={`max-w-[75%] px-3.5 py-2.5 text-[14px] leading-[1.45] ${isUser ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] text-[#111]'} ${brClass}`}>
+                {msg.photo && <img src={msg.photo} alt="Attachment" className={`w-full max-w-[240px] rounded-[12px] object-cover ${msg.text ? 'mb-1.5' : ''}`} />}
+                {msg.text && <span>{msg.text}</span>}
+              </div>
+              {showTime && (
+                <div className={`flex items-center gap-1 mt-1 px-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
+                  <span className="text-[10px] text-[#A09A94] font-medium" style={{ fontVariantNumeric: 'tabular-nums' }}>{msg.time}</span>
+                  {isUser && <CheckCheck size={12} className={msg.readStatus === 'read' ? 'text-[#E85D2A]' : 'text-[#A09A94]'} strokeWidth={2.5} />}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {isTyping && (
+          <div className="flex flex-col items-start mb-4 w-full animate-in fade-in duration-300">
+            <div className="bg-[#F3EFEB] px-4 py-3.5 rounded-[18px] rounded-bl-[5px] flex items-center gap-1">
+              <span className="typing-dot"></span><span className="typing-dot"></span><span className="typing-dot"></span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showScroll && (
+        <div className="absolute bottom-[130px] right-[16px] z-40 animate-in zoom-in fade-in duration-200">
+          <button onClick={scrollToBottom} className="h-9 px-3 bg-[#F3EFEB] border border-[#EDE8E2] rounded-full flex items-center justify-center gap-1.5 text-[#111] active:scale-[0.95] transition-transform">
+            <ArrowDown size={14} />
+          </button>
+        </div>
+      )}
+
+      <div className="absolute bottom-0 left-0 right-0 pt-[60px] pb-[28px] bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2]/95 to-transparent z-50 pointer-events-none flex flex-col justify-end">
+        <div className={`flex overflow-x-auto gap-2 px-4 pointer-events-auto transition-all duration-300 origin-bottom ${isFocused ? 'max-h-0 opacity-0 mb-0 scale-y-90' : 'max-h-[44px] opacity-100 mb-2.5 scale-y-100'}`} style={{ scrollbarWidth: 'none' }}>
+          {quickReplies.map((chip, idx) => (
+            <button key={idx} onClick={() => handleSend(chip)} className="whitespace-nowrap px-3.5 py-1.5 bg-[#F3EFEB] border border-[#EDE8E2] rounded-full text-[13px] text-[#111] font-medium active:scale-[0.97] transition-transform">{chip}</button>
+          ))}
+        </div>
+        <div className="pointer-events-auto flex items-end gap-2 px-4">
+          <button onClick={() => setIsAttachMenuOpen(true)} className="w-[40px] h-[40px] shrink-0 bg-[#F3EFEB] rounded-full flex items-center justify-center text-[#111] active:scale-[0.95] transition-transform">
+            <Plus size={18} strokeWidth={2} />
+          </button>
+          <div className="flex-1 bg-white border border-[#EDE8E2] rounded-[22px] min-h-[40px] max-h-[120px] flex items-center px-4 py-2 overflow-hidden transition-all duration-300">
+            <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(inputText); } }} placeholder={`Message ${fylos.petName}…`} className="w-full bg-transparent outline-none text-[14px] text-[#111] placeholder-[#A09A94] resize-none" rows={1} style={{ minHeight: '22px', scrollbarWidth: 'none' }} />
+          </div>
+          {inputText.trim() ? (
+            <button onClick={() => handleSend(inputText)} className="w-[40px] h-[40px] shrink-0 bg-[#111] text-white rounded-full flex items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.15)] active:scale-[0.95] transition-all animate-in zoom-in duration-200">
+              <Send size={16} className="ml-0.5" strokeWidth={2} />
+            </button>
+          ) : (
+            <button className="w-[40px] h-[40px] shrink-0 bg-[#F3EFEB] text-[#111] rounded-full flex items-center justify-center active:scale-[0.95] transition-transform">
+              <Mic size={18} strokeWidth={2} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <>
+          <div className="absolute inset-0 z-[60]" onClick={() => setIsMenuOpen(false)} />
+          <div className="absolute top-[100px] right-5 z-[70] w-[220px] bg-[#F7F5F2] border border-[#EDE8E2] rounded-[16px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
+            <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <User size={16} className="text-[#A09A94]" /> View profile
+            </button>
+            <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <Calendar size={16} className="text-[#A09A94]" /> Plan playdate
+            </button>
+            <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <MapPin size={16} className="text-[#A09A94]" /> Share location
+            </button>
+            <div className="h-[1px] bg-[#EDE8E2] mx-3" />
+            <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <Bell size={16} className="text-[#A09A94]" /> Mute notifications
+            </button>
+            <button className="w-full text-left px-4 py-3 text-[14px] font-semibold text-[#E85D2A] active:bg-[#FFF5F1] flex items-center gap-3 transition-colors">
+              <AlertTriangle size={16} className="text-[#E85D2A]" /> Report user
+            </button>
+          </div>
+        </>
+      )}
+
+      {isAttachMenuOpen && (
+        <>
+          <div className="absolute inset-0 z-[60]" onClick={() => setIsAttachMenuOpen(false)} />
+          <div className="absolute bottom-[110px] left-4 z-[70] w-[220px] bg-[#F7F5F2] border border-[#EDE8E2] rounded-[16px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-150">
+            <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <Camera size={16} className="text-[#A09A94]" /> Take photo
+            </button>
+            <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <ImageIcon size={16} className="text-[#A09A94]" /> Choose from library
+            </button>
+            <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
+              <MapPin size={16} className="text-[#A09A94]" /> Share location
+            </button>
+          </div>
+        </>
+      )}
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes typing { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }
+        .typing-dot { animation: typing 1s infinite; width: 5px; height: 5px; background-color: #A09A94; border-radius: 50%; display: inline-block; margin: 0 2px; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes messageEnter { 0% { opacity: 0; transform: translateY(4px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .msg-animate { animation: messageEnter 0.12s ease-out forwards; }
+      ` }} />
+    </div>
+  );
+};
+
+// ──────────────────────────────────────────────────────────
+// Fylos inbox — mirrors InboxScreen motif, warm-neutral adapted
+const FylosInboxView = ({ onClose }) => {
+  const [activeView, setActiveView] = useState(0); // 0:All 1:Unread 2:Actionable
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [scrollY, setScrollY] = useState(0);
+  // Progressive collapse: chips fade out first (0→35), then the segmented pill (30→85)
+  const pChips = Math.min(1, scrollY / 35);
+  const pSeg = Math.min(1, Math.max(0, (scrollY - 30) / 55));
+  const [notifications, setNotifications] = useState([
+    {
+      id: 'n1', read: false, category: 'requests', timeGroup: 'Today',
+      sender: { name: 'Charlie', photo: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=70&w=160' },
+      title: 'Charlie wants to be Fylos',
+      body: 'Golden Retriever · 2 mutual fylos · 0.8 km away',
+      timeAgo: '12m',
+      actions: [{ id: 'accept', label: 'Accept', type: 'primary' }, { id: 'decline', label: 'Decline', type: 'secondary' }],
+    },
+    {
+      id: 'n2', read: false, category: 'playdates', timeGroup: 'Today',
+      sender: { name: 'Daisy', photo: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=70&w=160' },
+      title: 'Daisy invited you to a playdate',
+      body: 'Saturday · 10:00 · Zurichhorn Park',
+      timeAgo: '45m',
+      actions: [{ id: 'accept', label: 'Join', type: 'primary' }, { id: 'decline', label: 'Pass', type: 'secondary' }],
+    },
+    {
+      id: 'n3', read: false, category: 'likes', timeGroup: 'Today',
+      sender: { name: 'Tao', photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=70&w=160' },
+      title: 'Tao liked your photo',
+      body: '"Morning light at Seefeld" · 2h ago',
+      timeAgo: '2h',
+    },
+    {
+      id: 'n4', read: false, category: 'comments', timeGroup: 'Today',
+      sender: { name: 'Bella', photo: 'https://images.unsplash.com/photo-1601758064957-83f2cecea06b?auto=format&fit=crop&q=70&w=160' },
+      title: 'Bella\u2019s owner commented',
+      body: '"Look at that tail! Leo is the best 🐾"',
+      timeAgo: '3h',
+    },
+    {
+      id: 'n5', read: true, category: 'updates', timeGroup: 'Yesterday',
+      sender: { name: 'Rocky', photo: 'https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&q=70&w=160' },
+      title: 'Rocky joined your network',
+      body: 'French Bulldog · introduced through Luna',
+      timeAgo: '1d',
+    },
+    {
+      id: 'n6', read: true, category: 'likes', timeGroup: 'Yesterday',
+      sender: { name: 'Luna', photo: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=70&w=160' },
+      title: 'Luna and 3 others liked your post',
+      body: '"Weekend swim at Limmat riverside"',
+      timeAgo: '1d',
+    },
+    {
+      id: 'n7', read: true, category: 'milestones', timeGroup: 'This week',
+      sender: { name: 'Tao', photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=70&w=160' },
+      title: '1 year as Fylos with Tao 🎉',
+      body: 'Celebrate the bond — send a wish or plan something.',
+      timeAgo: '3d',
+      actions: [{ id: 'wish', label: 'Send wish', type: 'primary' }],
+    },
+  ]);
+
+  const categories = [
+    { id: 'all', label: 'All' },
+    { id: 'requests', label: 'Requests', icon: UserPlus },
+    { id: 'playdates', label: 'Playdates', icon: Calendar },
+    { id: 'likes', label: 'Likes', icon: Heart },
+    { id: 'comments', label: 'Comments', icon: MessageCircle },
+    { id: 'milestones', label: 'Milestones', icon: Sparkles },
+    { id: 'updates', label: 'Updates', icon: Users },
+  ];
+
+  let filtered = notifications;
+  if (activeView === 1) filtered = filtered.filter((n) => !n.read);
+  if (activeView === 2) filtered = filtered.filter((n) => n.actions && n.actions.length > 0 && !n.read);
+  if (activeCategory !== 'all') filtered = filtered.filter((n) => n.category === activeCategory);
+
+  const grouped = filtered.reduce((acc, n) => {
+    if (!acc[n.timeGroup]) acc[n.timeGroup] = [];
+    acc[n.timeGroup].push(n);
+    return acc;
+  }, {});
+
+  const handleMarkRead = (id) => setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  const handleAction = (id, actId) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true, actions: null } : n)));
+  };
+  const handleArchiveAll = () => setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden" style={{ background: '#F7F5F2' }}>
+      {/* Top gradient fade — lets list scroll under the floating chrome */}
+      <div
+        className="absolute top-0 left-0 w-full h-[230px] z-20 pointer-events-none"
+        style={{
+          background:
+            'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.98) 55%, rgba(247,245,242,0.72) 82%, rgba(247,245,242,0) 100%)',
+        }}
+      />
+
+      {/* Floating header chrome — no solid bar */}
+      <div className="absolute top-0 left-0 w-full z-30 pt-14 pb-2 px-5 pointer-events-none">
+        <div className="flex justify-between items-center w-full mb-4 pointer-events-auto">
+          <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+          </button>
+          <h2 className="text-[17px] font-semibold text-[#111]">Inbox</h2>
+          <button onClick={handleArchiveAll} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+            <Archive size={18} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
+
+        {/* Segmented pill — collapses on scroll */}
+        <div
+          className="pointer-events-auto"
+          style={{
+            opacity: 1 - pSeg,
+            maxHeight: `${(1 - pSeg) * 38}px`,
+            marginBottom: `${(1 - pSeg) * 12}px`,
+            transform: `translateY(${-pSeg * 6}px)`,
+            overflowY: 'hidden',
+            transition: 'none',
+          }}
+        >
+          <div
+            className="relative grid grid-cols-3 p-[3px] rounded-full"
+            style={{ background: 'rgba(237,232,226,0.8)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
+          >
+            {['All', 'Unread', 'Actionable'].map((seg, idx) => {
+              const isActive = activeView === idx;
+              return (
+                <button
+                  key={seg}
+                  onClick={() => setActiveView(idx)}
+                  className={`relative z-10 h-[32px] rounded-full text-[12px] font-semibold transition-colors ${isActive ? 'text-white' : 'text-[#6E6058]'}`}
+                  style={isActive ? { background: '#111' } : {}}
+                >
+                  {seg}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Filter chips — collapse first on scroll */}
+        <div
+          className="-mx-5 pointer-events-auto"
+          style={{
+            opacity: 1 - pChips,
+            maxHeight: `${(1 - pChips) * 46}px`,
+            transform: `translateY(${-pChips * 4}px)`,
+            overflowY: 'hidden',
+            transition: 'none',
+          }}
+        >
+          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 px-5">
+            {categories.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = activeCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full whitespace-nowrap text-[12px] font-semibold transition-colors shrink-0 ${isActive ? 'text-white' : 'text-[#6E6058]'}`}
+                  style={
+                    isActive
+                      ? { background: '#E85D2A' }
+                      : {
+                          background: 'rgba(255,255,255,0.7)',
+                          border: '1px solid rgba(237,232,226,0.9)',
+                          backdropFilter: 'blur(8px)',
+                          WebkitBackdropFilter: 'blur(8px)',
+                        }
+                  }
+                >
+                  {Icon && <Icon size={13} strokeWidth={isActive ? 2.5 : 2} />}
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* List — scrolls under floating chrome */}
+      <div
+        onScroll={(e) => setScrollY(e.currentTarget.scrollTop)}
+        className="absolute inset-0 overflow-y-auto no-scrollbar px-5 pt-[220px] pb-12"
+      >
+        {filtered.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center pt-16">
+            <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}>
+              <Check size={20} className="text-[#2E7D32]" strokeWidth={2.25} />
+            </div>
+            <div className="text-[15px] font-semibold text-[#111] mb-1">
+              {activeView === 2 ? 'Nothing to do!' : 'All caught up!'}
+            </div>
+            <div className="text-[12px] text-[#A09A94]">
+              {activeView === 2 ? 'No pending action items.' : 'No new notifications right now.'}
+            </div>
+          </div>
+        ) : (
+          Object.entries(grouped).map(([group, items]) => (
+            <div key={group} className="mb-5">
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2 ml-2">
+                {group}
+              </div>
+              {items.map((n) => (
+                <div
+                  key={n.id}
+                  onClick={() => !n.read && handleMarkRead(n.id)}
+                  className={`relative p-3.5 mb-2 rounded-[18px] transition-all duration-200 ${n.read ? 'bg-transparent' : 'border'}`}
+                  style={n.read ? {} : { background: '#FFF', borderColor: '#EDE8E2' }}
+                >
+                  {!n.read && (
+                    <div className="absolute top-[26px] left-[6px] w-[7px] h-[7px] rounded-full" style={{ background: '#E85D2A' }} />
+                  )}
+                  <div className="flex gap-3 pl-2.5">
+                    <img src={n.sender.photo} alt={n.sender.name} className="w-[44px] h-[44px] rounded-full object-cover shrink-0" />
+                    <div className="flex-1 min-w-0 flex flex-col gap-1 pt-0.5">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className={`text-[14px] truncate ${n.read ? 'font-medium text-[#6E6058]' : 'font-bold text-[#111]'}`}>
+                          {n.title}
+                        </span>
+                        <span className="text-[11px] text-[#A09A94] shrink-0 pt-0.5">{n.timeAgo}</span>
+                      </div>
+                      <p className={`text-[12.5px] leading-snug ${n.read ? 'text-[#A09A94]' : 'text-[#2B2420]'}`}>
+                        {n.body}
+                      </p>
+                      {n.actions && n.actions.length > 0 && (
+                        <div className="flex gap-2 mt-2.5 mb-0.5">
+                          {n.actions.map((act) => (
+                            <button
+                              key={act.id}
+                              onClick={(e) => { e.stopPropagation(); handleAction(n.id, act.id); }}
+                              className={`flex-1 max-w-[140px] h-[34px] rounded-full text-[12px] font-semibold active:scale-[0.97] transition-transform ${act.type === 'primary' ? 'text-white' : 'text-[#111]'}`}
+                              style={act.type === 'primary' ? { background: '#E85D2A' } : { background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+                            >
+                              {act.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ──────────────────────────────────────────────────────────
+// Birthday / milestone wish sheet
+const WishSheet = ({ target, onClose }) => {
+  const mount = useFylosPortalTarget();
+  const [selected, setSelected] = useState(null);
+  if (!mount || !target) return null;
+  const greetings = [
+    `Happy birthday ${target.name || 'friend'}! 🎂`,
+    `Many more happy walks ahead, ${target.name}! 🐾`,
+    `Hope your day is full of treats and play 🦴`,
+    `Wishing ${target.name} the best birthday ever! 🎉`,
+  ];
+  const markup = (
+    <div className="absolute inset-0 z-[9999] flex items-end" style={{ background: 'rgba(20,15,10,0.5)' }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full rounded-t-[24px] pb-6 pt-2 animate-in slide-in-from-bottom duration-300" style={{ background: '#F7F5F2' }}>
+        <div className="flex justify-center pt-1 pb-2">
+          <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+        </div>
+        <div className="px-5 pt-2 pb-4 flex items-center gap-3">
+          <div className="relative">
+            <img src={target.avatar} alt={target.name} className="w-[52px] h-[52px] rounded-full object-cover" style={{ border: '2.5px solid #FFF', boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }} />
+            <div className="absolute -bottom-1 -right-1 w-[22px] h-[22px] rounded-full flex items-center justify-center text-[13px]" style={{ background: '#FFF', border: '2px solid #F7F5F2' }}>🎂</div>
+          </div>
+          <div>
+            <div className="text-[17px] font-bold text-[#111]">Wish {target.name} a happy birthday</div>
+            <div className="text-[12px] text-[#6E6058] mt-0.5">Pick a message or write your own</div>
+          </div>
+        </div>
+        <div className="px-5 space-y-2">
+          {greetings.map((g, i) => (
+            <button
+              key={i}
+              onClick={() => setSelected(i)}
+              className="w-full rounded-[14px] p-3 text-left text-[13.5px] text-[#111] active:scale-[0.99] transition-transform"
+              style={{ background: selected === i ? '#FFE9E2' : '#FFF', border: `1px solid ${selected === i ? '#FFD4CC' : '#EDE8E2'}`, color: selected === i ? '#E85D2A' : '#111' }}
+            >
+              {g}
+            </button>
+          ))}
+        </div>
+        <div className="px-5 pt-4 flex gap-2">
+          <button onClick={onClose} className="flex-1 h-[48px] rounded-full text-[13px] font-semibold" style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}>
+            Cancel
+          </button>
+          <button
+            onClick={() => { alert(`Sent: ${greetings[selected ?? 0]}`); onClose(); }}
+            className="flex-1 h-[48px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5"
+            style={{ background: '#E85D2A', boxShadow: '0 6px 14px rgba(232,93,42,0.3)' }}
+          >
+            <Send size={13} strokeWidth={2.25} /> Send wish
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// ──────────────────────────────────────────────────────────
+// Event details sheet
+const EventDetailsSheet = ({ event, joined, onClose, onToggleJoin }) => {
+  const mount = useFylosPortalTarget();
+  if (!mount || !event) return null;
+  const markup = (
+    <div className="absolute inset-0 z-[9999] flex items-end" style={{ background: 'rgba(20,15,10,0.5)' }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full rounded-t-[24px] pb-6 pt-2 animate-in slide-in-from-bottom duration-300" style={{ background: '#F7F5F2' }}>
+        <div className="flex justify-center pt-1 pb-3">
+          <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+        </div>
+        {/* Hero */}
+        <div className="px-5 pb-3">
+          <div className="rounded-[18px] p-4 flex items-center gap-3" style={{ background: event.color, border: '1px solid #EDE8E2' }}>
+            <div className="w-[56px] h-[56px] rounded-[14px] flex items-center justify-center text-[26px] shrink-0" style={{ background: '#FFF' }}>{event.emoji}</div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[17px] font-bold text-[#111]">{event.title}</div>
+              <div className="text-[11.5px] mt-0.5" style={{ color: event.accent }}>{event.date} · {event.joined} joined</div>
+            </div>
+          </div>
+        </div>
+        {/* Details list */}
+        <div className="px-5 space-y-2">
+          <div className="rounded-[14px] overflow-hidden" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+            <div className="flex items-center gap-3 px-3.5 py-3">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#EEF7EC' }}>
+                <MapPin size={13} className="text-[#2E7D32]" strokeWidth={2.25} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] text-[#A09A94]">Location</div>
+                <div className="text-[13px] font-semibold text-[#111]">{event.place}</div>
+              </div>
+            </div>
+            <div className="h-px mx-3.5" style={{ background: '#EDE8E2' }} />
+            <div className="flex items-center gap-3 px-3.5 py-3">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#FFE9E2' }}>
+                <Clock size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] text-[#A09A94]">When</div>
+                <div className="text-[13px] font-semibold text-[#111]">{event.date}</div>
+              </div>
+            </div>
+            <div className="h-px mx-3.5" style={{ background: '#EDE8E2' }} />
+            <div className="flex items-center gap-3 px-3.5 py-3">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#E6EDF9' }}>
+                <Users size={13} className="text-[#2E6FDD]" strokeWidth={2.25} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[11px] text-[#A09A94]">Going</div>
+                <div className="text-[13px] font-semibold text-[#111]">{event.joined} pups {joined ? '· you\u2019re in' : ''}</div>
+              </div>
+            </div>
+          </div>
+          {event.description && (
+            <div className="rounded-[14px] p-3.5" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.14em] mb-1">About</div>
+              <p className="text-[13px] text-[#111] leading-relaxed">{event.description}</p>
+            </div>
+          )}
+        </div>
+        <div className="px-5 pt-4 flex gap-2">
+          <button
+            onClick={() => { if (navigator.share) navigator.share({ title: event.title, text: `${event.title} · ${event.date} at ${event.place}`, url: 'https://fylos.app' }).catch(() => {}); }}
+            className="h-[48px] px-5 rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5"
+            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+          >
+            <Share2 size={13} strokeWidth={2.25} /> Share
+          </button>
+          <button
+            onClick={() => { onToggleJoin(event.id); onClose(); }}
+            className="flex-1 h-[48px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5"
+            style={{ background: joined ? '#FFF' : '#111', color: joined ? '#E85D2A' : '#FFF', border: joined ? '1px solid #FFD4CC' : 'none' }}
+          >
+            {joined ? 'Leave' : 'Join event'}
+            {!joined && <ChevronRight size={13} strokeWidth={2.5} />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// ──────────────────────────────────────────────────────────
+// Create Event multi-step sheet
+const CreateEventSheet = ({ isOpen, onClose, friends = [], onSubmit }) => {
+  const mount = useFylosPortalTarget();
+  const [step, setStep] = useState(1);
+  const [type, setType] = useState('meetup');
+  const [title, setTitle] = useState('');
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [place, setPlace] = useState('');
+  const [description, setDescription] = useState('');
+  const [invitedIds, setInvitedIds] = useState(new Set());
+
+  useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => {
+        setStep(1); setType('meetup'); setTitle(''); setDate(''); setTime(''); setPlace(''); setDescription(''); setInvitedIds(new Set());
+      }, 300);
+    }
+  }, [isOpen]);
+
+  if (!mount) return null;
+  const types = [
+    { id: 'meetup', label: 'Meetup', emoji: '🐕', color: '#EEF7EC', accent: '#2E7D32' },
+    { id: 'training', label: 'Training', emoji: '🎓', color: '#FFE9E2', accent: '#E85D2A' },
+    { id: 'social', label: 'Social hour', emoji: '🐾', color: '#E6EDF9', accent: '#2E6FDD' },
+    { id: 'walk', label: 'Group walk', emoji: '🚶', color: '#F3EFEB', accent: '#111' },
+  ];
+  const active = types.find((t) => t.id === type);
+  const canNext = step === 1 ? Boolean(title.trim()) : step === 2 ? Boolean(date && time && place.trim()) : true;
+  const toggleInvitee = (id) => setInvitedIds((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+
+  const submit = () => {
+    onSubmit({
+      type,
+      title: title.trim(),
+      date: date && time ? `${date} · ${time}` : date || time,
+      place: place.trim(),
+      description: description.trim(),
+      joined: invitedIds.size + 1,
+      emoji: active.emoji,
+      color: active.color,
+      accent: active.accent,
+      invitedCount: invitedIds.size,
+    });
+  };
+
+  const markup = (
+    <div
+      className={`absolute inset-0 z-[9999] transition-all duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      style={{ background: 'rgba(20,15,10,0.5)' }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`absolute left-0 right-0 bottom-0 rounded-t-[24px] transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+        style={{ background: '#F7F5F2', maxHeight: '92vh' }}
+      >
+        <div className="flex justify-center pt-2 pb-1">
+          <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+        </div>
+        <div className="flex items-center justify-between px-5 pt-2 pb-3">
+          <div>
+            <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Create event · Step {step} of 3</div>
+            <h3 className="text-[17px] font-bold text-[#111] mt-1">
+              {step === 1 ? 'What kind of event?' : step === 2 ? 'When & where?' : 'Invite your Fylos'}
+            </h3>
+          </div>
+          <button onClick={onClose} className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+            <X size={17} />
+          </button>
+        </div>
+        {/* Progress bar */}
+        <div className="px-5 pb-3 flex gap-1.5">
+          {[1, 2, 3].map((s) => (
+            <div key={s} className="flex-1 h-1 rounded-full" style={{ background: s <= step ? '#E85D2A' : '#EDE8E2' }} />
+          ))}
+        </div>
+        {/* Step content */}
+        <div className="overflow-y-auto px-5 pb-28 custom-scrollbar" style={{ maxHeight: 'calc(92vh - 150px)' }}>
+          {step === 1 && (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                {types.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setType(t.id)}
+                    className="rounded-[14px] p-3 flex items-center gap-2.5 text-left active:scale-[0.98] transition-transform"
+                    style={{ background: type === t.id ? t.color : '#FFF', border: `1px solid ${type === t.id ? t.accent : '#EDE8E2'}` }}
+                  >
+                    <div className="w-10 h-10 rounded-[10px] flex items-center justify-center text-[20px]" style={{ background: '#FFF' }}>{t.emoji}</div>
+                    <span className="text-[13px] font-semibold text-[#111]">{t.label}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="rounded-[14px] p-3 flex items-center gap-2" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <span className="text-[17px]">{active.emoji}</span>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Event name (e.g. Labrador meetup)"
+                  className="flex-1 bg-transparent text-[13.5px] text-[#111] placeholder:text-[#A09A94] focus:outline-none"
+                />
+              </div>
+            </div>
+          )}
+          {step === 2 && (
+            <div className="space-y-3">
+              <div className="rounded-[14px] p-3 flex items-center gap-2" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <Calendar size={14} className="text-[#E85D2A]" strokeWidth={2} />
+                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="flex-1 bg-transparent text-[13.5px] text-[#111] focus:outline-none" />
+              </div>
+              <div className="rounded-[14px] p-3 flex items-center gap-2" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <Clock size={14} className="text-[#E85D2A]" strokeWidth={2} />
+                <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="flex-1 bg-transparent text-[13.5px] text-[#111] focus:outline-none" />
+              </div>
+              <div className="rounded-[14px] p-3 flex items-center gap-2" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <MapPin size={14} className="text-[#E85D2A]" strokeWidth={2} />
+                <input value={place} onChange={(e) => setPlace(e.target.value)} placeholder="Location (e.g. Zurichhorn Park)" className="flex-1 bg-transparent text-[13.5px] text-[#111] placeholder:text-[#A09A94] focus:outline-none" />
+              </div>
+              <div className="rounded-[14px] p-3" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Description (optional) — what to expect, bring treats, etc."
+                  rows={3}
+                  className="w-full bg-transparent text-[13px] text-[#111] placeholder:text-[#A09A94] focus:outline-none resize-none"
+                />
+              </div>
+            </div>
+          )}
+          {step === 3 && (
+            <div>
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.16em] mb-2 flex items-center gap-1.5">
+                <Users size={11} strokeWidth={2} /> Tag Fylos
+                {invitedIds.size > 0 && <span className="text-[#E85D2A] font-bold">· {invitedIds.size}</span>}
+              </div>
+              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
+                {friends.map((f) => {
+                  const on = invitedIds.has(f.id);
+                  return (
+                    <button key={f.id} onClick={() => toggleInvitee(f.id)} className="shrink-0 flex flex-col items-center gap-1 active:scale-[0.97] transition-transform">
+                      <div className="relative">
+                        <img src={f.petPhoto} alt={f.petName} className="w-[50px] h-[50px] rounded-full object-cover" style={{ border: on ? '2.5px solid #E85D2A' : '2.5px solid #FFF', boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }} />
+                        {on && (
+                          <span className="absolute -bottom-0.5 -right-0.5 w-[18px] h-[18px] rounded-full flex items-center justify-center" style={{ background: '#E85D2A', border: '2px solid #F7F5F2' }}>
+                            <Check size={10} className="text-white" strokeWidth={3} />
+                          </span>
+                        )}
+                      </div>
+                      <span className={`text-[10.5px] ${on ? 'font-semibold text-[#111]' : 'text-[#6E6058]'}`}>{f.petName}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-5 rounded-[14px] p-4" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.14em] mb-2">Preview</div>
+                <div className="flex items-center gap-3">
+                  <div className="w-[46px] h-[46px] rounded-[12px] flex items-center justify-center text-[20px]" style={{ background: active.color }}>{active.emoji}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[13.5px] font-semibold text-[#111]">{title || '(untitled)'}</div>
+                    <div className="text-[11.5px] text-[#6E6058] mt-0.5">{date || '—'} {time ? `· ${time}` : ''}</div>
+                    <div className="text-[11.5px] text-[#A09A94] truncate">{place || '—'} · {invitedIds.size} invited</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        {/* Sticky submit */}
+        <div className="absolute left-0 right-0 bottom-0 px-5 pb-5 pt-3 flex gap-2" style={{ background: 'linear-gradient(180deg, rgba(247,245,242,0) 0%, rgba(247,245,242,0.98) 30%)' }}>
+          {step > 1 && (
+            <button onClick={() => setStep(step - 1)} className="h-[50px] px-5 rounded-full text-[13px] font-semibold" style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}>
+              Back
+            </button>
+          )}
+          <button
+            onClick={() => { if (!canNext) return; if (step < 3) setStep(step + 1); else submit(); }}
+            disabled={!canNext}
+            className="flex-1 h-[50px] rounded-full text-[14px] font-semibold text-white flex items-center justify-center gap-1.5"
+            style={{ background: canNext ? '#111' : '#CEC6B8', boxShadow: canNext ? '0 6px 16px rgba(0,0,0,0.2)' : 'none' }}
+          >
+            {step < 3 ? 'Continue' : 'Create event'}
+            <ChevronRight size={14} strokeWidth={2.5} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+  return createPortal(markup, mount);
+};
+
+// Create Post bottom sheet — Share a moment (photo / check-in / walk together)
+const CreatePostSheet = ({ isOpen, onClose, friends, onSubmit }) => {
+  const [type, setType] = useState('photo');
+  const [caption, setCaption] = useState('');
+  const [location, setLocation] = useState('');
+  const [taggedIds, setTaggedIds] = useState(new Set());
+  const [photoUrl, setPhotoUrl] = useState('');
+  const fileRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => {
+        setType('photo');
+        setCaption('');
+        setLocation('');
+        setTaggedIds(new Set());
+        setPhotoUrl('');
+      }, 250);
+    }
+  }, [isOpen]);
+
+  const toggleTag = (id) => {
+    setTaggedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handlePickPhoto = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setPhotoUrl(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const canSubmit = (type === 'photo' ? Boolean(photoUrl || caption.trim()) : Boolean(location.trim() || caption.trim()));
+  const typeOptions = [
+    { id: 'photo', label: 'Moment', icon: Camera },
+    { id: 'check-in', label: 'Check in', icon: MapPin },
+    { id: 'walk-together', label: 'Walk together', icon: Navigation },
+  ];
+
+  const withPetObjects = friends
+    .filter((f) => taggedIds.has(f.id))
+    .map((f) => ({ id: f.id, name: f.petName, avatar: f.petPhoto }));
+
+  const submit = () => {
+    if (!canSubmit) return;
+    onSubmit({
+      type,
+      caption: caption.trim(),
+      location: location.trim(),
+      photoUrl: photoUrl || null,
+      withPets: withPetObjects,
+    });
+  };
+
+  const sheetMarkup = (
+    <div
+      className={`absolute inset-0 z-[9999] transition-all duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      style={{ background: 'rgba(20,15,10,0.45)' }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`absolute left-0 right-0 bottom-0 rounded-t-[24px] transition-transform duration-300 ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}
+        style={{ background: '#F7F5F2', maxHeight: '90vh', transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)' }}
+      >
+        <div className="flex justify-center pt-2 pb-1">
+          <div className="w-[40px] h-[4px] rounded-full" style={{ background: '#D4CEC6' }} />
+        </div>
+        <div className="flex items-center justify-between px-5 pt-2 pb-3">
+          <h3 className="text-[17px] font-bold text-[#111]">Share a moment</h3>
+          <button onClick={onClose} className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+            <X size={17} />
+          </button>
+        </div>
+        <div className="overflow-y-auto px-5 pb-28 custom-scrollbar" style={{ maxHeight: 'calc(90vh - 60px)' }}>
+          {/* Type selector */}
+          <div className="flex gap-2 mb-3">
+            {typeOptions.map((opt) => {
+              const Icon = opt.icon;
+              const active = type === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => setType(opt.id)}
+                  className="flex-1 h-[44px] rounded-[12px] text-[12px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+                  style={{ background: active ? '#111' : '#FFF', color: active ? '#FFF' : '#111', border: `1px solid ${active ? '#111' : '#EDE8E2'}` }}
+                >
+                  <Icon size={13} strokeWidth={2.25} />
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Photo uploader (photo type) */}
+          {type === 'photo' && (
+            <div className="mb-3">
+              <input ref={fileRef} type="file" accept="image/*" hidden onChange={handlePickPhoto} />
+              {photoUrl ? (
+                <div className="relative rounded-[14px] overflow-hidden" style={{ border: '1px solid #EDE8E2' }}>
+                  <img src={photoUrl} alt="" className="w-full aspect-[4/3] object-cover" />
+                  <button
+                    onClick={() => setPhotoUrl('')}
+                    className="absolute right-2 top-2 w-8 h-8 rounded-full flex items-center justify-center"
+                    style={{ background: 'rgba(0,0,0,0.55)', color: '#FFF', backdropFilter: 'blur(6px)' }}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileRef.current?.click()}
+                  className="w-full rounded-[14px] aspect-[4/3] flex flex-col items-center justify-center gap-1.5 active:scale-[0.99] transition-all"
+                  style={{ background: '#FFF', border: '1px dashed #D4CEC6' }}
+                >
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: '#F7F5F2' }}>
+                    <Camera size={18} className="text-[#6E6058]" />
+                  </div>
+                  <div className="text-[12.5px] font-semibold text-[#111]">Add photo</div>
+                  <div className="text-[11px] text-[#A09A94]">Tap to pick from library</div>
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Location field (always present, required for check-in/walk) */}
+          <div className="mb-3 rounded-[14px] px-3 py-2.5 flex items-center gap-2" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+            <MapPin size={14} className="text-[#E85D2A]" strokeWidth={2} />
+            <input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder={type === 'check-in' ? 'Where did you check in?' : 'Add location (optional)'}
+              className="flex-1 bg-transparent text-[13.5px] text-[#111] placeholder:text-[#A09A94] focus:outline-none"
+            />
+          </div>
+
+          {/* Caption field */}
+          <div className="mb-3 rounded-[14px] px-3 py-2.5" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+            <textarea
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder={type === 'walk-together' ? 'How was the walk?' : type === 'check-in' ? 'Say something about this spot…' : 'Write a caption…'}
+              rows={3}
+              className="w-full bg-transparent text-[13.5px] text-[#111] placeholder:text-[#A09A94] focus:outline-none resize-none"
+            />
+          </div>
+
+          {/* Tag Fylos */}
+          <div className="mb-3">
+            <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2 flex items-center gap-1.5">
+              <Users size={10} strokeWidth={2} /> Tag Fylos
+              {taggedIds.size > 0 && <span className="text-[#E85D2A] font-bold">· {taggedIds.size}</span>}
+            </div>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-5 px-5">
+              {friends.map((f) => {
+                const active = taggedIds.has(f.id);
+                return (
+                  <button
+                    key={f.id}
+                    onClick={() => toggleTag(f.id)}
+                    className="shrink-0 flex flex-col items-center gap-1 active:scale-[0.97] transition-all"
+                  >
+                    <div className="relative">
+                      <img
+                        src={f.petPhoto}
+                        alt={f.petName}
+                        className="w-[52px] h-[52px] rounded-full object-cover"
+                        style={{ border: active ? '2px solid #E85D2A' : '2px solid #EDE8E2' }}
+                      />
+                      {active && (
+                        <span
+                          className="absolute -bottom-0.5 -right-0.5 w-[18px] h-[18px] rounded-full flex items-center justify-center"
+                          style={{ background: '#E85D2A', border: '2px solid #F7F5F2' }}
+                        >
+                          <Check size={10} className="text-white" strokeWidth={3} />
+                        </span>
+                      )}
+                    </div>
+                    <span className={`text-[11px] font-medium ${active ? 'text-[#111]' : 'text-[#6E6058]'}`}>{f.petName}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Sticky submit */}
+        <div className="absolute left-0 right-0 bottom-0 px-5 pb-5 pt-3" style={{ background: 'linear-gradient(180deg, rgba(247,245,242,0) 0%, rgba(247,245,242,0.98) 30%)' }}>
+          <button
+            onClick={submit}
+            disabled={!canSubmit}
+            className="w-full h-[50px] rounded-full text-[14px] font-semibold text-white flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+            style={{ background: canSubmit ? '#111' : '#CEC6B8', boxShadow: canSubmit ? '0 6px 16px rgba(0,0,0,0.2)' : 'none' }}
+          >
+            Post to your pack
+            <ChevronRight size={14} strokeWidth={2.5} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const mount = typeof document !== 'undefined' ? (document.getElementById('fylos-phone-root') || document.body) : null;
+  return mount ? createPortal(sheetMarkup, mount) : sheetMarkup;
+};
+
+// Lightweight static map preview — pure SVG, no deps, warm palette
+const MapPreview = ({ coords }) => {
+  const seed = coords ? Math.abs(Math.sin((coords.lat + coords.lng) * 43.19) * 1000) : 137;
+  const offsetX = (seed % 40) - 20;
+  const offsetY = ((seed * 1.7) % 40) - 20;
+  return (
+    <svg viewBox="0 0 200 120" preserveAspectRatio="xMidYMid slice" className="w-full h-full block" style={{ background: '#EEEAE4' }}>
+      {/* Park/green area */}
+      <path d={`M ${-20 + offsetX} ${80 + offsetY} Q 40 ${60 + offsetY} 80 ${78 + offsetY} T 220 ${70 + offsetY} L 220 140 L -20 140 Z`} fill="#DCE8D3" />
+      <path d={`M ${-10 + offsetX / 2} ${40 + offsetY / 2} Q 70 ${20 + offsetY / 2} 130 ${30 + offsetY / 2} T 220 ${25 + offsetY / 2} L 220 -10 L -10 -10 Z`} fill="#E9E3D8" />
+      {/* Water */}
+      <path d={`M ${160 + offsetX} ${-20} Q ${150 + offsetX} ${40} ${170 + offsetX} ${80} T ${210 + offsetX} ${140} L 220 140 L 220 -10 Z`} fill="#CEDCEA" />
+      {/* Roads */}
+      <line x1={-10 + offsetX} y1={72 + offsetY} x2={220 + offsetX} y2={58 + offsetY} stroke="#FFFFFF" strokeWidth="3" />
+      <line x1={40 + offsetX} y1={-10} x2={70 + offsetX} y2={140} stroke="#FFFFFF" strokeWidth="2.5" />
+      <line x1={110 + offsetX} y1={-10} x2={130 + offsetX} y2={140} stroke="#FFFFFF" strokeWidth="2" opacity="0.7" />
+      {/* Tiny buildings */}
+      <rect x={20 + offsetX} y={30 + offsetY} width="8" height="12" fill="#D9D2C6" />
+      <rect x={32 + offsetX} y={25 + offsetY} width="10" height="17" fill="#CEC6B8" />
+      <rect x={90 + offsetX} y={90 + offsetY} width="9" height="10" fill="#D9D2C6" />
+      <rect x={102 + offsetX} y={85 + offsetY} width="7" height="15" fill="#CEC6B8" />
+    </svg>
+  );
+};
+
+const ActivityFeedPostCard = ({ post, onLike, onViewLikes, onOpenPetProfile, onOpenMenu, onOpenLocation, onOpenPhoto }) => {
   const [heartAnimating, setHeartAnimating] = useState(false);
   const imageSrc = Array.isArray(post.photoUrls) && post.photoUrls.length > 0 ? post.photoUrls[0] : post.photoUrl;
-  const getActivityLabel = () => {
-    if (post.summary) return post.summary;
-    if (post.type === 'photo') return 'Photo added';
-    if (post.type === 'check-in') return 'Check-in completed';
-    if (post.type === 'walk' || post.type === 'walk-together') return 'Walk completed';
-    if (post.type === 'playdate-event') return 'Playdate scheduled';
-    return 'Activity update';
-  };
+  const isPhoto = Boolean(imageSrc);
+  const displayName = post.petName && post.petName !== 'System' ? post.petName : (post.ownerName || '').replace("'s owner", '');
+  const typeMeta = (() => {
+    if (post.type === 'check-in') return { icon: MapPin, label: 'Checked in', tint: '#E85D2A', bg: '#FFE9E2' };
+    if (post.type === 'walk' || post.type === 'walk-together') return { icon: Navigation, label: 'Walk together', tint: '#E85D2A', bg: '#FFE9E2' };
+    if (post.type === 'playdate-event') return { icon: Calendar, label: 'Playdate scheduled', tint: '#E85D2A', bg: '#FFE9E2' };
+    if (post.type === 'friend-update') return { icon: Users, label: 'New Fylos', tint: '#E85D2A', bg: '#FFE9E2' };
+    return { icon: Camera, label: 'Moment', tint: '#111', bg: '#F7F5F2' };
+  })();
   const handleLikeTap = () => {
     setHeartAnimating(true);
     onLike(post.id);
     if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') navigator.vibrate(8);
     setTimeout(() => setHeartAnimating(false), 220);
   };
+
   return (
-    <div className="bg-[#FFFFFF] rounded-[20px] p-4 border border-black/[0.04] shadow-sm mb-3.5">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <img src={post.avatar} alt={post.petName} className="w-10 h-10 rounded-full object-cover bg-[#F7F7F8]" loading="lazy" decoding="async" />
-          <div>
-            <h4 className="text-[15px] font-semibold text-[#111111] leading-tight">{post.ownerName}</h4>
-            <p className="text-[12px] text-[#8E8E93] mt-0.5 leading-none">{post.petName && post.petName !== 'System' ? `with ${post.petName} • ${post.timeAgo}` : post.timeAgo}</p>
+    <div className="rounded-[16px] overflow-hidden" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-3 pt-3 pb-2">
+        <button
+          onClick={() => onOpenPetProfile && onOpenPetProfile({ name: displayName, avatar: post.avatar })}
+          className="flex items-center gap-2.5 flex-1 min-w-0 text-left active:opacity-70"
+        >
+          <img src={post.avatar} alt={displayName} className="w-8 h-8 rounded-full object-cover shrink-0" loading="lazy" decoding="async" />
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-semibold text-[#111] truncate leading-tight">{displayName}</div>
+            <div className="text-[11px] text-[#A09A94] leading-tight">{post.timeAgo}</div>
           </div>
-        </div>
-        <button className="w-8 h-8 rounded-full bg-[#F7F7F8] flex items-center justify-center text-[#8E8E93] active:opacity-70"><MoreVertical size={15} /></button>
-      </div>
-
-      {imageSrc && (
-        <div className="mb-3">
-          <img src={imageSrc} alt="activity" className="w-full aspect-square object-cover rounded-[16px] shadow-[0_2px_10px_rgba(0,0,0,0.03)] bg-[#F3F3F5]" loading="lazy" decoding="async" />
-        </div>
-      )}
-
-      {post.location && (
-        <p className="text-[12px] text-[#8E8E93] flex items-center gap-1.5 mb-2">
-          <MapPin size={12} className="text-[#A6A6AC]" />
-          {post.location}
-        </p>
-      )}
-
-      <div className="mb-3">
-        <p className="text-[14px] font-medium text-[#111111] leading-snug">{getActivityLabel()}</p>
-        {post.details && <p className="text-[12px] text-[#6E6E73] mt-1">{post.details}</p>}
-      </div>
-
-      <div className="flex items-center justify-between pt-3 border-t border-black/[0.04]">
-        <div onClick={() => post.likesCount > 0 && onViewLikes(post)} className={`${post.likesCount > 0 ? 'cursor-pointer active:opacity-70' : ''}`}>
-          <p className="text-[13px] font-semibold text-[#111111]">❤️ {post.likesCount}</p>
-          <p className="text-[12px] text-[#8E8E93] mt-0.5">{post.likesCount > 0 ? `Liked by ${post.likersPreview}` : 'No likes yet'}</p>
-        </div>
-        <button onClick={handleLikeTap} className={`h-9 min-w-[42px] px-3 rounded-[12px] flex items-center justify-center transition-all duration-200 ${post.likedByMe ? 'bg-[#FF6A3D]/14 text-[#FF6A3D]' : 'bg-[#F3F3F6] text-[#8E8E93]'}`}>
-          <Heart size={18} fill={post.likedByMe ? 'currentColor' : 'none'} className={`${heartAnimating ? 'scale-[1.18]' : 'scale-100'} transition-transform duration-[180ms]`} />
         </button>
+        {!isPhoto && (
+          <span
+            className="h-6 px-2 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1"
+            style={{ background: typeMeta.bg, color: typeMeta.tint }}
+          >
+            <typeMeta.icon size={10} strokeWidth={2.25} />
+            {typeMeta.label}
+          </span>
+        )}
+        <button
+          onClick={() => onOpenMenu && onOpenMenu(post)}
+          className="w-7 h-7 rounded-full flex items-center justify-center text-[#A09A94] active:opacity-70 active:bg-[#F7F5F2]"
+        >
+          <MoreVertical size={14} />
+        </button>
+      </div>
+
+      {/* Photo w/ location overlay + tags */}
+      {isPhoto && (
+        <div className="relative mx-3 mb-2">
+          <button
+            onClick={() => onOpenPhoto && onOpenPhoto({ url: imageSrc, caption: post.summary, location: post.location })}
+            className="w-full block active:opacity-90"
+          >
+            <img src={imageSrc} alt="moment" className="w-full aspect-[4/3] object-cover rounded-[12px]" loading="lazy" decoding="async" />
+          </button>
+          {post.location && (
+            <button
+              onClick={() => onOpenLocation && onOpenLocation({ name: post.location, coords: post.mapCoords })}
+              className="absolute left-2 top-2 px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1 active:scale-[0.97]"
+              style={{ background: 'rgba(255,255,255,0.92)', color: '#111' }}
+            >
+              <MapPin size={9} strokeWidth={2} className="text-[#E85D2A]" />
+              {post.location}
+            </button>
+          )}
+          {post.withPets && post.withPets.length > 0 && (
+            <button
+              onClick={() => post.withPets.length === 1 && onOpenPetProfile && onOpenPetProfile(post.withPets[0])}
+              className="absolute right-2 top-2 flex items-center gap-1 px-2 py-0.5 rounded-full active:scale-[0.97]"
+              style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)' }}
+            >
+              <div className="flex -space-x-1.5">
+                {post.withPets.slice(0, 3).map((p) => (
+                  <img key={p.id} src={p.avatar} alt={p.name} className="w-[16px] h-[16px] rounded-full object-cover" style={{ border: '1.5px solid rgba(0,0,0,0.7)' }} />
+                ))}
+              </div>
+              <span className="text-[10px] font-semibold text-white">
+                {post.withPets.length === 1 ? post.withPets[0].name : `+${post.withPets.length}`}
+              </span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Check-in map preview */}
+      {!isPhoto && post.type === 'check-in' && (
+        <button
+          onClick={() => onOpenLocation && onOpenLocation({ name: post.location, coords: post.mapCoords })}
+          className="relative mx-3 mb-2 h-[120px] rounded-[12px] overflow-hidden block w-[calc(100%-24px)] active:opacity-90"
+          style={{ border: '1px solid #EDE8E2' }}
+        >
+          <MapPreview coords={post.mapCoords} />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="relative">
+              <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.2)]" style={{ background: '#E85D2A' }}>
+                <MapPin size={16} className="text-white" strokeWidth={2.5} fill="white" />
+              </div>
+              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-[-3px] w-[8px] h-[8px] rounded-full" style={{ background: '#E85D2A', opacity: 0.35 }} />
+            </div>
+          </div>
+          {post.location && (
+            <span className="absolute left-2 bottom-2 px-2 py-0.5 rounded-full text-[10px] font-semibold flex items-center gap-1" style={{ background: 'rgba(255,255,255,0.94)', color: '#111' }}>
+              <MapPin size={9} strokeWidth={2} className="text-[#E85D2A]" />
+              {post.location}
+            </span>
+          )}
+        </button>
+      )}
+
+      {/* Body: summary + details for non-photo, check-in, walk, etc. */}
+      {!isPhoto && (post.summary || post.details) && (
+        <div className="px-3 pb-1">
+          {post.summary && <div className="text-[13.5px] font-semibold text-[#111] leading-snug">{post.summary}</div>}
+          {post.details && <div className="text-[11.5px] text-[#6E6058] mt-0.5">{post.details}</div>}
+          {post.location && post.type !== 'check-in' && (
+            <div className="flex items-center gap-1 text-[11px] text-[#A09A94] mt-1.5">
+              <MapPin size={10} strokeWidth={1.75} />
+              {post.location}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Caption row for photos (summary = caption) */}
+      {isPhoto && post.summary && (
+        <div className="px-3 pb-1 text-[12.5px] text-[#111] leading-snug">{post.summary}</div>
+      )}
+
+      {/* With-pets chip for non-photo posts */}
+      {!isPhoto && post.withPets && post.withPets.length > 0 && (
+        <div className="px-3 pb-1 flex items-center gap-1.5">
+          <div className="flex -space-x-1">
+            {post.withPets.slice(0, 3).map((p) => (
+              <img key={p.id} src={p.avatar} alt={p.name} className="w-[18px] h-[18px] rounded-full object-cover" style={{ border: '1.5px solid #FFF' }} />
+            ))}
+          </div>
+          <span className="text-[11px] text-[#6E6058]">
+            with {post.withPets.map((p, i) => (
+              <React.Fragment key={p.id}>
+                {i > 0 ? ', ' : ''}
+                <button
+                  onClick={() => onOpenPetProfile && onOpenPetProfile(p)}
+                  className="font-semibold text-[#111] active:opacity-70"
+                >
+                  {p.name}
+                </button>
+              </React.Fragment>
+            ))}
+          </span>
+        </div>
+      )}
+
+      {/* Action row */}
+      <div className="flex items-center justify-between px-3 py-2">
+        <button
+          onClick={handleLikeTap}
+          className={`h-8 px-2.5 rounded-full flex items-center gap-1.5 transition-all active:scale-[0.97] ${post.likedByMe ? 'bg-[#FFE9E2]' : 'bg-[#F7F5F2]'}`}
+        >
+          <Heart
+            size={14}
+            strokeWidth={2}
+            fill={post.likedByMe ? '#E85D2A' : 'none'}
+            className={`${post.likedByMe ? 'text-[#E85D2A]' : 'text-[#6E6058]'} ${heartAnimating ? 'scale-[1.2]' : 'scale-100'} transition-transform duration-[180ms]`}
+          />
+          <span className={`text-[11.5px] font-semibold ${post.likedByMe ? 'text-[#E85D2A]' : 'text-[#6E6058]'}`}>
+            {post.likesCount || 0}
+          </span>
+        </button>
+        {post.likesCount > 0 && (
+          <button
+            onClick={() => onViewLikes(post)}
+            className="text-[11px] text-[#A09A94] truncate ml-2 flex-1 text-right active:opacity-70"
+          >
+            Liked by <span className="text-[#6E6058] font-medium">{post.likersPreview}</span>
+          </button>
+        )}
       </div>
     </div>
   );
 };
 
-const ActivityLikesBottomSheet = ({ isOpen, onClose, post }) => {
+const ActivityLikesBottomSheet = ({ isOpen, onClose, post, onOpenPetProfile }) => {
   if (!post) return null;
   return (
     <ActivityBottomSheet isOpen={isOpen} onClose={onClose} title="Likes">
@@ -7532,18 +9969,22 @@ const ActivityLikesBottomSheet = ({ isOpen, onClose, post }) => {
           <p className="text-[15px] font-medium text-[#111111]">No likes yet</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-1">
           {post.likers.map((liker) => (
-            <div key={liker.id} className="flex items-center justify-between">
+            <button
+              key={liker.id}
+              onClick={() => onOpenPetProfile && onOpenPetProfile({ name: liker.petName.replace(' (You)', ''), avatar: liker.avatar })}
+              className="w-full flex items-center justify-between px-1 py-2 rounded-[12px] active:bg-[#F7F5F2]"
+            >
               <div className="flex items-center gap-3">
-                <img src={liker.avatar} alt={liker.petName} className="w-[44px] h-[44px] rounded-full object-cover bg-[#F7F7F8]" />
-                <div>
-                  <h4 className="text-[15px] font-semibold text-[#111111]">{liker.petName}</h4>
-                  <p className="text-[13px] text-[#6E6E73]">{liker.breed} · {liker.timeAgo}</p>
+                <img src={liker.avatar} alt={liker.petName} className="w-[42px] h-[42px] rounded-full object-cover" style={{ border: '1px solid #EDE8E2' }} />
+                <div className="text-left">
+                  <div className="text-[14px] font-semibold text-[#111]">{liker.petName}</div>
+                  <div className="text-[12px] text-[#A09A94]">{liker.breed} · {liker.timeAgo}</div>
                 </div>
               </div>
-              <ChevronRight size={18} className="text-[#CFCFD4]" />
-            </div>
+              <ChevronRight size={16} className="text-[#A09A94]" />
+            </button>
           ))}
         </div>
       )}
@@ -7555,7 +9996,7 @@ const ActivityNotificationsScreen = ({ isOpen, onClose, notifications, markAsRea
   const [settingsOpen, setSettingsOpen] = useState(false);
   return (
     <ActivitySubScreenPortal isOpen={isOpen}>
-      <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F7F8]">
+      <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F5F2]">
         <div className="px-4 pt-14 pb-3 flex items-center justify-between bg-[#FFFFFF] border-b border-black/[0.04] shrink-0">
           <div className="flex items-center gap-3">
             <button onClick={onClose} className="p-2 -ml-2 text-[#111111]"><ArrowLeft size={24} /></button>
@@ -7571,7 +10012,7 @@ const ActivityNotificationsScreen = ({ isOpen, onClose, notifications, markAsRea
               </div>
               <div className="bg-[#FFFFFF] border-y border-black/[0.04]">
                 {group.items.map((item) => (
-                  <div key={item.id} onClick={() => markAsRead(item.id)} className={`flex items-start gap-4 p-4 ${!item.read ? 'bg-[#FF6A3D]/5' : ''}`}>
+                  <div key={item.id} onClick={() => markAsRead(item.id)} className={`flex items-start gap-4 p-4 ${!item.read ? 'bg-[#E85D2A]/5' : ''}`}>
                     <div className="relative pl-1">
                       <img src={item.petAvatar} className="w-12 h-12 rounded-full object-cover bg-[#F7F7F8]" alt="avatar" />
                       {item.type === 'like' && <div className="absolute -bottom-1 -right-1 bg-[#FF3B4A] w-5 h-5 rounded-full flex items-center justify-center border-[2px] border-white"><Heart size={10} fill="white" color="white" /></div>}
@@ -7611,24 +10052,6 @@ const ActivityNotificationsScreen = ({ isOpen, onClose, notifications, markAsRea
   );
 };
 
-const ACTIVITY_INSIGHTS_DATA = {
-  weeklySummary: {
-    period: 'Feb 16 - Feb 22',
-    walks: 5,
-    totalMinutes: 450,
-    trendPercent: 20,
-    dailyWalks: [1, 0, 1, 2, 0, 1, 0],
-    labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-  },
-  weightTrend: { current: 28, idealMin: 26, idealMax: 29 },
-  medication: { thisWeekTaken: 7, streak: 45 },
-  favoritePlaces: [
-    { name: 'Zurichhorn Park', visits: 12 },
-    { name: 'Rieterpark', visits: 5 },
-    { name: 'Lindenhof', visits: 2 }
-  ],
-  activeTimes: { eveningShare: 35 }
-};
 
 const ActivityInsightsBarChart = ({ data, labels }) => {
   const max = Math.max(...data, 1);
@@ -7670,7 +10093,7 @@ const ActivityInsightsScreen = ({ isOpen, onClose }) => {
                 </div>
               </div>
               <ActivityInsightsBarChart data={ACTIVITY_INSIGHTS_DATA.weeklySummary.dailyWalks} labels={ACTIVITY_INSIGHTS_DATA.weeklySummary.labels} />
-              <div className="mt-4 flex items-center justify-center gap-1 text-[14px] font-semibold text-[#FF6A3D]">View Full Report <ArrowRight size={16} /></div>
+              <div className="mt-4 flex items-center justify-center gap-1 text-[14px] font-semibold text-[#E85D2A]">View Full Report <ArrowRight size={16} /></div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -7682,7 +10105,7 @@ const ActivityInsightsScreen = ({ isOpen, onClose }) => {
               <div className="bg-[#FFFFFF] rounded-[20px] p-4 shadow-sm border border-black/[0.04]">
                 <div className="flex items-center gap-1.5 text-[#6E6E73] mb-2"><Activity size={16} /> <span className="text-[13px] font-medium">Medication</span></div>
                 <div className="text-[24px] font-bold text-[#111111]">{ACTIVITY_INSIGHTS_DATA.medication.thisWeekTaken}/7</div>
-                <p className="text-[12px] text-[#FF6A3D] font-medium mt-1 flex items-center gap-1"><Flame size={13} /> {ACTIVITY_INSIGHTS_DATA.medication.streak} day streak</p>
+                <p className="text-[12px] text-[#E85D2A] font-medium mt-1 flex items-center gap-1"><Flame size={13} /> {ACTIVITY_INSIGHTS_DATA.medication.streak} day streak</p>
               </div>
             </div>
 
@@ -7837,7 +10260,7 @@ const MyActivityContainer = ({ isVisible, onOpenInsights }) => {
                         <div className="min-w-0">
                           <div className={`text-[14px] truncate leading-none flex items-center gap-1.5 ${isToday ? 'font-semibold text-[#111111]' : 'font-medium text-[#111111]'}`}>
                             {row.title}
-                            {(row.isNew || showIncompleteDot) && <span className="w-[5px] h-[5px] rounded-full bg-[#FF6A3D] shrink-0" />}
+                            {(row.isNew || showIncompleteDot) && <span className="w-[5px] h-[5px] rounded-full bg-[#E85D2A] shrink-0" />}
                           </div>
                           <div className={`text-[13px] truncate mt-1 ${isMissed ? 'text-[#A06A62]' : 'text-[#6E6E73]'}`}>{row.subtitle}</div>
                         </div>
@@ -7846,13 +10269,13 @@ const MyActivityContainer = ({ isVisible, onOpenInsights }) => {
                         {row.action === 'complete' ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); toggleComplete(row.id); }}
-                            className={`w-[22px] h-[22px] rounded-full border inline-flex items-center justify-center transition-all duration-[200ms] ${isCompleted ? 'bg-[#FF6A3D] border-[#FF6A3D] scale-105' : 'bg-transparent border-black/[0.16] hover:border-[#FF6A3D]/40'}`}
+                            className={`w-[22px] h-[22px] rounded-full border inline-flex items-center justify-center transition-all duration-[200ms] ${isCompleted ? 'bg-[#E85D2A] border-[#E85D2A] scale-105' : 'bg-transparent border-black/[0.16] hover:border-[#E85D2A]/40'}`}
                             aria-label={`Mark ${row.title} as done`}
                           >
                             {isCompleted && <Check size={13} className="text-white" strokeWidth={2.8} />}
                           </button>
                         ) : row.action === 'expand' ? (
-                          <ChevronRight size={14} className={`text-[#B6B6BC] transition-transform duration-[250ms] ${isExpanded ? 'rotate-90 text-[#FF6A3D]' : ''}`} />
+                          <ChevronRight size={14} className={`text-[#B6B6BC] transition-transform duration-[250ms] ${isExpanded ? 'rotate-90 text-[#E85D2A]' : ''}`} />
                         ) : isMissed ? (
                           <span className="text-[11px] font-semibold text-[#D96852]">Missed</span>
                         ) : (
@@ -7886,7 +10309,7 @@ const MyActivityContainer = ({ isVisible, onOpenInsights }) => {
                                 </div>
                               )}
                               {(bookingDetails?.actionLabel || row.expandActionLabel) && (
-                                <button className="mt-2 text-[11px] font-semibold text-[#FF6A3D] active:opacity-70">{bookingDetails?.actionLabel || row.expandActionLabel}</button>
+                                <button className="mt-2 text-[11px] font-semibold text-[#E85D2A] active:opacity-70">{bookingDetails?.actionLabel || row.expandActionLabel}</button>
                               )}
                             </div>
                           )}
@@ -7904,13 +10327,79 @@ const MyActivityContainer = ({ isVisible, onOpenInsights }) => {
   );
 };
 
-const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, playdateEvents = [] }) => {
+const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, playdateEvents = [], onOpenPlaydates, pendingView }) => {
   const [currentView, setCurrentView] = useState('list');
   const [activeProfile, setActiveProfile] = useState(null);
+  // Handle deep-links from other sections (e.g., Playdates → profile)
+  const consumedPendingRef = useRef(null);
+  useEffect(() => {
+    if (isVisible && pendingView && consumedPendingRef.current !== pendingView) {
+      consumedPendingRef.current = pendingView;
+      setCurrentView(pendingView);
+      // Clear the pending view from router state so it doesn't re-fire when navigating back
+      try {
+        const s = window.history.state || {};
+        const usr = { ...(s.usr || {}) };
+        delete usr.pendingNetworkView;
+        window.history.replaceState({ ...s, usr }, '');
+      } catch (_) { /* noop */ }
+    }
+  }, [isVisible, pendingView]);
   const [activePlaydate, setActivePlaydate] = useState(null);
   const [createPlaydateOpen, setCreatePlaydateOpen] = useState(false);
+  const [suggestPlaydateTargetId, setSuggestPlaydateTargetId] = useState(null);
   const [likesSheetOpen, setLikesSheetOpen] = useState(false);
   const [activePostLikes, setActivePostLikes] = useState(null);
+  const [createPostOpen, setCreatePostOpen] = useState(false);
+  const [postMenuTarget, setPostMenuTarget] = useState(null);
+  const [locationSheet, setLocationSheet] = useState(null);
+  const [photoViewer, setPhotoViewer] = useState(null);
+  const [feedFocusPostId, setFeedFocusPostId] = useState(null);
+  const feedPostRefs = useRef({});
+  const [activeChat, setActiveChat] = useState(null);
+  const [chatDraft, setChatDraft] = useState('');
+  const [networkTab, setNetworkTab] = useState('feed'); // 'feed' | 'requests' | 'fylos'
+  const [personalitySheetPet, setPersonalitySheetPet] = useState(null); // null = closed; { name, petPhoto, ... } = open
+  const [bondsSheetOpen, setBondsSheetOpen] = useState(false); // Bond ladder
+  const [storySheet, setStorySheet] = useState(null); // { mode: 'view'|'wrap-up', story }
+  const [petOfDayOpen, setPetOfDayOpen] = useState(false); // Featured today expand
+  const [twinFinderOpen, setTwinFinderOpen] = useState(false); // Twin Finder mini-flow
+  const [activePackPage, setActivePackPage] = useState(null); // { id, name, motto, accent }
+  const [memoryWeekOpen, setMemoryWeekOpen] = useState(false); // Memory of the Week long-form
+  const [feedFilter, setFeedFilter] = useState('all'); // 'all' | 'photos' | 'checkins' | 'walks'
+  const [createEventOpen, setCreateEventOpen] = useState(false);
+  const [wishTarget, setWishTarget] = useState(null);
+  const [eventDetails, setEventDetails] = useState(null);
+  const [joinedEvents, setJoinedEvents] = useState(new Set());
+  const [userEvents, setUserEvents] = useState([]);
+  // Places state — browse + detail + saved
+  const [activePlace, setActivePlace] = useState(null);
+  const [savedPlaces, setSavedPlaces] = useState(new Set(['place_zurichhorn', 'place_cafe_baer', 'place_trail_uetliberg']));
+  const [placesCategory, setPlacesCategory] = useState('all');
+  const [placesSavedOnly, setPlacesSavedOnly] = useState(false);
+  const togglePlaceSave = useCallback((placeId) => {
+    setSavedPlaces((prev) => {
+      const next = new Set(prev);
+      if (next.has(placeId)) next.delete(placeId); else next.add(placeId);
+      return next;
+    });
+  }, []);
+  const openPlaceDetail = useCallback((place) => {
+    const resolved = typeof place === 'string' ? MOCK_PLACES.find((p) => p.id === place) : place;
+    if (resolved) {
+      setActivePlace(resolved);
+      setCurrentView('placeDetail');
+    }
+  }, []);
+  useEffect(() => {
+    if (!feedFocusPostId) return;
+    const t = setTimeout(() => {
+      const el = feedPostRefs.current[feedFocusPostId];
+      if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      setFeedFocusPostId(null);
+    }, 260);
+    return () => clearTimeout(t);
+  }, [feedFocusPostId]);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
@@ -8035,13 +10524,49 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
     setActivePostLikes(post);
     setLikesSheetOpen(true);
   };
+  const openPetProfileByName = (petRef) => {
+    if (!petRef) return;
+    const name = typeof petRef === 'string' ? petRef : petRef.name;
+    const avatar = typeof petRef === 'string' ? null : petRef.avatar;
+    // Try to match against existing friends (and suggestions) by name
+    const match = friends.find((f) => f.petName === name)
+      || suggestions.find((s) => s.petName === name);
+    if (match) {
+      setActiveProfile(match);
+      setCurrentView('profile');
+      setLikesSheetOpen(false);
+      return;
+    }
+    // Build a minimal stub profile so we can still show something
+    setActiveProfile({
+      id: `stub_${name}`,
+      petName: name,
+      petBreed: '—',
+      petPhoto: avatar || 'https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&q=80&w=150&h=150',
+      ownerName: `${name}'s owner`,
+      distance: '—',
+      friendsSince: 'Not connected',
+      lastActive: '—',
+      age: '—',
+      contextPetIds: [selectedPetId],
+    });
+    setCurrentView('profile');
+    setLikesSheetOpen(false);
+  };
 
   const activePetName = MOCK_DASHBOARD_PETS.find((pet) => pet.id === selectedPetId)?.name || MOCK_DASHBOARD_PETS[0]?.name || 'Leo';
   const byPetPerspective = (item) => !item.contextPetIds || item.contextPetIds.includes(selectedPetId);
   const filteredReceivedReqs = receivedReqs.filter(byPetPerspective);
   const filteredSuggestions = suggestions.filter(byPetPerspective);
   const filteredFriends = friends.filter(byPetPerspective);
-  const filteredFeedPosts = [...playdateEvents, ...feedPosts].filter(byPetPerspective);
+  const baseFeedPosts = [...playdateEvents, ...feedPosts].filter(byPetPerspective).filter((p) => p.type !== 'friend-update');
+  const filteredFeedPosts = baseFeedPosts.filter((p) => {
+    if (feedFilter === 'all') return true;
+    if (feedFilter === 'photos') return !!(p.photoUrl || (p.photoUrls && p.photoUrls.length) || p.type === 'photo');
+    if (feedFilter === 'checkins') return p.type === 'check-in' || !!p.locationName;
+    if (feedFilter === 'walks') return p.type === 'walk' || p.type === 'playdate' || /walk/i.test(p.caption || '') || /walk/i.test(p.type || '');
+    return true;
+  });
   const searchResults = query.length > 1 ? filteredSuggestions : [];
   const visibleFilteredFeedPosts = filteredFeedPosts.slice(0, visiblePostsCount);
   const hasMoreFeedPosts = visiblePostsCount < filteredFeedPosts.length;
@@ -8077,7 +10602,7 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
     <div key={`discover-inline-${keySuffix}`} className="bg-[#FFFFFF] rounded-[16px] border border-black/[0.035] p-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
       <div className="flex items-center justify-between mb-2">
         <h4 className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93]">Discover</h4>
-        <button onClick={() => setCurrentView('suggestions')} className="text-[12px] font-semibold text-[#FF6A3D]">See all</button>
+        <button onClick={() => setCurrentView('suggestions')} className="text-[12px] font-semibold text-[#E85D2A]">See all</button>
       </div>
       <div className="flex gap-2.5 overflow-x-auto custom-scrollbar friends-suggestions-scroll snap-x snap-mandatory pb-1">
         {filteredSuggestions.slice(0, 6).map((sugg) => (
@@ -8092,145 +10617,1270 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
     </div>
   );
 
+  const topRequest = filteredReceivedReqs[0];
+  const activeNowCount = Math.min(3, filteredFriends.length);
+  // Pack Diagram data — centre = you; satellites = your Fylos (pack members)
+  const packDiagramCenter = useMemo(() => {
+    const you = MOCK_DASHBOARD_PETS[0];
+    return { id: 'center', name: you?.name || 'Leo', photo: you?.avatar };
+  }, []);
+  const packDiagramMembers = useMemo(() => {
+    return (filteredFriends || []).slice(0, 8).map((f, i) => ({
+      id: f.id,
+      name: f.petName,
+      photo: f.petPhoto,
+      intimacy: Math.max(0.15, Math.min(1, (f.pastPlaydates || (i % 4) + 1) / 6)),
+      recency: (i % 5) / 4, // 0 fresh, 1 stale
+      connected: i < 3,     // first three = walked-with this week
+    }));
+  }, [filteredFriends]);
+
   return (
-    <div className={`${isVisible ? 'block' : 'hidden'}`}>
-      <div className="flex flex-col pt-2 pb-24 space-y-4">
-        <div className="px-5">
-          <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest">My Fylos ({filteredFriends.length})</h3>
-            <button onClick={() => setCurrentView('my-fylos')} className="text-[13px] font-semibold text-[#FF6A3D]">→</button>
+    <div className={`${isVisible ? 'block' : 'hidden'} bg-[#F7F5F2]`}>
+      <div className="flex flex-col pt-2 pb-28 px-5 space-y-3">
+        {/* ── IDENTITY ─ naked strip on bg, no card framing ─── */}
+        <button
+          onClick={() => setPersonalitySheetPet({ name: packDiagramCenter.name, petPhoto: packDiagramCenter.photo, breed: 'Golden Retriever' })}
+          className="w-full px-1 py-2 active:opacity-70 transition-opacity text-left"
+          style={{ background: 'transparent', border: 'none' }}
+        >
+          <div className="flex items-center gap-3">
+            <img
+              src={packDiagramCenter.photo}
+              alt={packDiagramCenter.name}
+              className="rounded-full object-cover shrink-0"
+              style={{ width: 48, height: 48, border: '2.5px solid #FFF', boxShadow: '0 3px 8px rgba(0,0,0,0.08)' }}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-1.5 truncate">
+                <span style={{ fontSize: 17, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>Leo</span>
+                <span style={{ fontSize: 11, color: '#A09A94' }}>·</span>
+                <span style={{ fontSize: 11.5, color: '#76767D' }} className="truncate">Golden Retriever · 3 yrs</span>
+              </div>
+              <div className="flex items-center gap-1.5 mt-1 truncate" style={{ fontSize: 11.5, color: '#76767D' }}>
+                <MapPin size={11} strokeWidth={2} className="shrink-0" />
+                <span className="shrink-0">Zurich</span>
+                <span style={{ color: '#A09A94' }} className="shrink-0">·</span>
+                <span className="shrink-0">{packDiagramMembers.length} Fylos</span>
+                <span style={{ color: '#A09A94' }} className="shrink-0">·</span>
+                <span className="truncate" style={{ color: '#E85D2A', fontWeight: 600 }}>23 sessions</span>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-[#A09A94] shrink-0" />
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar friends-suggestions-scroll">
-            {filteredFriends.map((friend) => (
-              <button key={friend.id} onClick={() => { setActiveProfile(friend); setCurrentView('profile'); }} className="shrink-0 flex flex-col items-center gap-1.5 px-1">
-                <img src={friend.petPhoto} alt={friend.petName} className="w-11 h-11 rounded-full object-cover bg-[#F7F7F8]" loading="lazy" decoding="async" />
-                <span className="text-[11px] text-[#6E6E73]">{friend.petName}</span>
-              </button>
-            ))}
+        </button>
+
+        {/* ── PRIMARY CTAs ─ visible without scroll ──────────────────────── */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setCurrentView('suggestions')}
+            className="flex-1 h-[44px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+          >
+            <Sparkles size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+            Discover
+          </button>
+          <button
+            onClick={() => { setNetworkTab('feed'); setCurrentView('feed'); }}
+            className="flex-1 h-[44px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+            style={{ background: '#E85D2A' }}
+          >
+            Open feed
+            <ChevronRight size={14} strokeWidth={2.5} />
+          </button>
+        </div>
+
+        {/* ── PACK ─ section label + horizontal avatar row (HIDDEN, replaced by Your Fylos card below) ─── */}
+        <div style={{ display: 'none' }} className="flex items-center justify-between px-1 pt-1">
+          <div className="flex items-baseline gap-2">
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#76767D', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Pack</span>
+            <span style={{ fontSize: 11, color: '#A09A94' }}>·</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#111' }}>{packDiagramMembers.length}</span>
+          </div>
+          <button
+            onClick={() => setBondsSheetOpen(true)}
+            className="inline-flex items-center gap-0.5 active:opacity-70"
+            style={{ fontSize: 11, fontWeight: 700, color: '#E85D2A', letterSpacing: '0.06em' }}
+          >
+            View bonds
+            <ChevronRight size={11} strokeWidth={2.5} />
+          </button>
+        </div>
+        <div className="rounded-[16px] p-3" style={{ display: 'none', background: '#FFF', border: '1px solid #EDE8E2' }}>
+          <div className="flex gap-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+            {packDiagramMembers.slice(0, 6).map((m, i) => {
+              const isActive = i < 2;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => {
+                    const friend = friends.find((f) => f.id === m.id);
+                    setPersonalitySheetPet({
+                      name: friend?.petName || m.name,
+                      petPhoto: friend?.petPhoto || m.photo,
+                      breed: friend?.petBreed,
+                    });
+                  }}
+                  className="flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform shrink-0"
+                  style={{ width: 56 }}
+                >
+                  <div className="relative">
+                    <img
+                      src={m.photo}
+                      alt={m.name}
+                      className="rounded-full object-cover"
+                      style={{ width: 44, height: 44, border: '2px solid #FFF', boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }}
+                    />
+                    {isActive && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          right: 0,
+                          width: 11,
+                          height: 11,
+                          borderRadius: 9999,
+                          background: '#34C759',
+                          border: '2px solid #FFF',
+                        }}
+                      />
+                    )}
+                  </div>
+                  <span
+                    style={{
+                      fontSize: 10.5,
+                      fontWeight: 600,
+                      color: '#111',
+                      maxWidth: 56,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {m.name}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {filteredReceivedReqs.length > 0 && (
-          <div className="px-5">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest flex items-center gap-1.5">Requests <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A3D]" /></h3>
-              <div className="flex items-center gap-2.5">
-                <span className="text-[11px] text-[#9A9AA0]">{currentRequestCardIndex + 1}/{filteredReceivedReqs.length}</span>
-                <button onClick={() => setCurrentView('requests')} className="text-[13px] font-semibold text-[#FF6A3D]">View all</button>
-              </div>
-            </div>
-            <div onTouchStart={handleRequestTouchStart} onTouchEnd={handleRequestTouchEnd} className="overflow-hidden rounded-[14px]">
-              <div
-                className="flex transition-transform duration-[280ms]"
+        {/* ── ACTIVE NOW ─ naked 1-line summary, no card ── */}
+        <button
+          onClick={() => {/* opens active now sheet — TODO */}}
+          className="w-full flex items-center gap-2.5 px-1 py-1 active:opacity-70 transition-opacity text-left"
+          style={{ background: 'transparent', border: 'none' }}
+        >
+          <span className="relative flex h-[7px] w-[7px] shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50" style={{ background: '#34C759' }} />
+            <span className="relative inline-flex rounded-full h-[7px] w-[7px]" style={{ background: '#34C759' }} />
+          </span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#34C759', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+            Active
+          </span>
+          <span style={{ fontSize: 11, color: '#A09A94' }}>·</span>
+          <span className="flex-1 truncate" style={{ fontSize: 12, color: '#76767D', fontWeight: 500 }}>
+            3 Fylos active near you
+          </span>
+          <ChevronRight size={14} className="text-[#A09A94] shrink-0" />
+        </button>
+
+        {/* Pack Diagram — constellation hero. "Oura for dog friendship." */}
+        <div
+          className="rounded-[20px] overflow-hidden relative"
+          style={{
+            display: 'none',
+            background: '#FFF',
+            border: '1px solid #EDE8E2',
+            boxShadow: '0 2px 10px rgba(30,20,10,0.04)',
+          }}
+        >
+          {/* Header — pack count + active indicator */}
+          <div className="px-5 pt-4 pb-1 flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <span
                 style={{
-                  transform: `translateX(-${currentRequestCardIndex * 100}%)`,
-                  transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)'
+                  fontFamily: '"Inter Tight", Inter, sans-serif',
+                  fontSize: 10,
+                  letterSpacing: '0.2em',
+                  fontWeight: 700,
+                  color: '#8E7A6B',
+                  textTransform: 'uppercase',
                 }}
               >
-                {filteredReceivedReqs.map((req) => (
-                  <div key={req.id} className="w-full shrink-0">
-                    <div className={`bg-[#FFFFFF] rounded-[14px] p-2.5 border border-black/[0.04] transition-all duration-200 ${requestExits[req.id] === 'accept' ? 'opacity-0 translate-x-1' : requestExits[req.id] === 'decline' ? 'opacity-0 -translate-x-2' : 'opacity-100'}`}>
-                      <div className="flex items-center gap-2.5">
-                        <img src={req.fromPetPhoto} alt={req.fromPetName} className="w-9 h-9 rounded-full object-cover bg-[#F7F7F8]" loading="lazy" decoding="async" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] text-[#8E8E93] truncate">
-                            <span className="font-semibold text-[#111111]">{req.fromPetName}</span>
-                            <span className="text-[#8E8E93]"> • {req.fromPetBreed}</span>
-                            <span className="text-[#8E8E93] whitespace-nowrap"> • {req.distance || 2} km</span>
-                          </p>
-                          <p className="text-[11px] text-[#7F7F86] mt-0.5">Wants to be {activePetName}&apos;s Fylos.</p>
+                The pack
+              </span>
+              <span style={{ fontSize: 11, color: '#D4CEC6' }}>·</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>
+                {packDiagramMembers.length}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex h-[6px] w-[6px]">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50" style={{ background: '#34C759' }} />
+                <span className="relative inline-flex rounded-full h-[6px] w-[6px]" style={{ background: '#34C759' }} />
+              </span>
+              <span style={{ fontSize: 9.5, fontWeight: 700, color: '#34C759', letterSpacing: '0.06em' }}>
+                2 active
+              </span>
+            </div>
+          </div>
+          {/* Compact constellation — height reduced for tighter density */}
+          <PackDiagram
+            centerPet={packDiagramCenter}
+            members={packDiagramMembers}
+            height={150}
+            onSelectMember={(m) => {
+              const friend = friends.find((f) => f.id === m.id);
+              if (friend) {
+                setPersonalitySheetPet({ name: friend.petName, petPhoto: friend.petPhoto, breed: friend.petBreed });
+              }
+            }}
+            onSelectCenter={() => {
+              setPersonalitySheetPet({ name: packDiagramCenter.name, petPhoto: packDiagramCenter.photo, breed: 'Golden Retriever' });
+            }}
+          />
+          {/* Bond ladder shortcut */}
+          <div className="px-5 pb-4 pt-1 flex items-center justify-end">
+            <button
+              onClick={() => setBondsSheetOpen(true)}
+              className="inline-flex items-center gap-1 active:scale-[0.96] transition-transform shrink-0"
+              style={{
+                padding: '6px 11px',
+                borderRadius: 9999,
+                background: '#FFFFFF',
+                border: '1px solid #EDE8E2',
+                fontSize: 11,
+                fontWeight: 700,
+                color: '#7A2F12',
+                letterSpacing: '0.06em',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              View bonds
+              <ChevronRight size={12} strokeWidth={2.4} />
+            </button>
+          </div>
+        </div>
+
+        {/* Your profile hero — you + your pack (hidden after redesign) */}
+        <button
+          onClick={() => setCurrentView('my-pack')}
+          className="w-full rounded-[16px] p-4 active:scale-[0.98] transition-transform text-left overflow-hidden relative"
+          style={{ display: 'none', background: '#FFF', border: '1px solid #EDE8E2', boxShadow: '0 2px 10px rgba(30,20,10,0.04)' }}
+        >
+          <div className="flex items-center gap-3">
+            <img
+              src={MOCK_USER?.avatar || 'https://i.pravatar.cc/150?u=alex_fylos'}
+              alt="you"
+              className="w-[46px] h-[46px] rounded-full object-cover shrink-0"
+              style={{ border: '2px solid #FFF', boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="text-[14px] font-bold text-[#111] leading-tight">Hi, {(MOCK_USER?.name || 'you').split(' ')[0]}</div>
+              <div className="text-[11px] text-[#6E6058] mt-0.5">View your profile</div>
+            </div>
+            <ChevronRight size={16} className="text-[#A09A94]" />
+          </div>
+          <div className="flex items-center gap-2 mt-3 pt-3" style={{ borderTop: '1px solid #EDE8E2' }}>
+            <div className="flex -space-x-2 shrink-0">
+              {MOCK_DASHBOARD_PETS.slice(0, 5).map((p) => (
+                <img
+                  key={p.id}
+                  src={p.avatar}
+                  alt={p.name}
+                  className="w-7 h-7 rounded-full object-cover"
+                  style={{ border: '2px solid #F3EFEB' }}
+                />
+              ))}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[11.5px] text-[#6E6058]">
+                Your pack <span className="font-semibold text-[#111]">· {MOCK_DASHBOARD_PETS.length} pets</span>
+              </div>
+            </div>
+          </div>
+        </button>
+
+        {/* Active now — enriched horizontal rail of pets currently out, each tappable */}
+        {(() => {
+          const actions = ['Walking', 'At the park', 'Sniff break', 'Sun-bathing'];
+          const minsAgo = [2, 5, 12, 18];
+          const distances = ['180 m', '420 m', '600 m', '1.1 km'];
+          const activeNow = filteredFriends.slice(0, 3).map((f, i) => ({
+            pet: f,
+            place: MOCK_PLACES.filter((p) => p.category === 'parks')[i % 3] || MOCK_PLACES[0],
+            action: actions[i % actions.length],
+            mins: minsAgo[i % minsAgo.length],
+            distance: distances[i % distances.length],
+          }));
+          if (activeNow.length === 0) return null;
+          return (
+            <div className="rounded-[16px] p-3" style={{ display: 'none', background: '#FFF', border: '1px solid #EDE8E2' }}>
+              <div className="flex items-center justify-between mb-2.5 px-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="relative flex h-[7px] w-[7px]">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-50" style={{ background: '#E85D2A' }} />
+                    <span className="relative inline-flex rounded-full h-[7px] w-[7px]" style={{ background: '#E85D2A' }} />
+                  </span>
+                  <span style={{ fontSize: 9.5, fontWeight: 700, color: '#E85D2A', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+                    Active right now
+                  </span>
+                </div>
+                <span style={{ fontSize: 9.5, fontWeight: 600, color: '#A09A94', letterSpacing: '0.06em' }}>
+                  {activeNow.length} in range
+                </span>
+              </div>
+              <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none', marginRight: -12, paddingRight: 12, paddingBottom: 2 }}>
+                {activeNow.map((a) => (
+                  <button
+                    key={a.pet.id}
+                    onClick={() => setPersonalitySheetPet({ name: a.pet.petName, petPhoto: a.pet.petPhoto, breed: a.pet.petBreed })}
+                    className="flex-shrink-0 rounded-[12px] p-2.5 active:scale-[0.97] transition-transform text-left"
+                    style={{ background: '#FFF5F1', border: '1px solid #FFD4CC', width: 158 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <img
+                        src={a.pet.petPhoto}
+                        alt={a.pet.petName}
+                        className="rounded-full object-cover shrink-0"
+                        style={{ width: 32, height: 32, border: '2px solid #FFF', boxShadow: '0 2px 6px rgba(232,93,42,0.18)' }}
+                      />
+                      <div className="min-w-0">
+                        <div className="truncate" style={{ fontSize: 12.5, fontWeight: 600, color: '#111', lineHeight: 1.05 }}>
+                          {a.pet.petName}
                         </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button onClick={() => handleDeclineRequest(req.id)} className="h-7 px-2.5 rounded-[8px] border border-black/[0.08] text-[11px] font-semibold text-[#6E6E73] active:scale-[0.98]">Ignore</button>
-                          <button onClick={() => handleAcceptRequest(req)} className="h-7 px-2.5 rounded-[8px] bg-[#FF6A3D] text-[11px] font-semibold text-white active:scale-[0.98] active:opacity-90">Be Fylos</button>
+                        <div style={{ fontSize: 8.5, fontWeight: 700, color: '#E85D2A', letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: 2 }}>
+                          {a.action}
                         </div>
                       </div>
                     </div>
+                    <div className="flex items-center gap-1 truncate" style={{ fontSize: 10, color: '#6E6058' }}>
+                      <MapPin size={10} strokeWidth={2} />
+                      <span className="truncate">{a.place.name}</span>
+                    </div>
+                    <div style={{ fontSize: 9, fontWeight: 600, color: '#A09A94', letterSpacing: '0.04em', marginTop: 3 }}>
+                      {a.mins}m ago · {a.distance}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Quick actions row — Search / Messages / Notifications / Events */}
+        <div className="flex gap-2">
+          {[
+            { id: 'search', label: 'Search', icon: Search, view: 'search', unread: 0 },
+            { id: 'messages', label: 'Messages', icon: MessageCircle, view: 'messages', unread: 3 },
+            { id: 'notifications', label: 'Alerts', icon: Bell, view: 'notifications', unread: 2 },
+            { id: 'events', label: 'Events', icon: Calendar, view: 'events', unread: 1 },
+          ].map((a) => {
+            const Icon = a.icon;
+            return (
+              <button
+                key={a.id}
+                onClick={() => setCurrentView(a.view)}
+                className="flex-1 rounded-[14px] py-2.5 flex flex-col items-center gap-1 active:scale-[0.97] transition-transform relative"
+                style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+              >
+                <div className="relative">
+                  <Icon size={16} className="text-[#111]" strokeWidth={2} />
+                  {a.unread > 0 && (
+                    <span className="absolute -top-1 -right-2 min-w-[14px] h-[14px] px-1 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style={{ background: '#E85D2A' }}>
+                      {a.unread}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] font-semibold text-[#6E6058]">{a.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Quick-action tray — peach chip + coral icon, brand-correct row.
+            Each cell deep-links to existing flows (no new routes). */}
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            {
+              id: 'discover',
+              label: 'Discover pups',
+              Icon: Sparkles,
+              onClick: () => onOpenPlaydates && onOpenPlaydates('discover'),
+            },
+            {
+              id: 'places',
+              label: 'Nearby places',
+              Icon: MapPin,
+              onClick: () => { setPlacesSavedOnly(false); setPlacesCategory('all'); setCurrentView('places'); },
+            },
+            {
+              id: 'invite',
+              label: 'Invite a friend',
+              Icon: UserPlus,
+              onClick: () => {
+                if (typeof navigator !== 'undefined' && navigator.share) {
+                  navigator.share({ title: 'Fylos', text: 'Join me on Fylos — the pack app for dog owners.', url: 'https://fylos.app' }).catch(() => {});
+                }
+              },
+            },
+            {
+              id: 'schedule',
+              label: 'Schedule playdate',
+              Icon: Calendar,
+              onClick: () => setCreatePlaydateOpen(true),
+            },
+          ].map((cell) => {
+            const Icon = cell.Icon;
+            return (
+              <button
+                key={cell.id}
+                onClick={cell.onClick}
+                className="rounded-[14px] py-3 px-3 flex items-center gap-2.5 active:scale-[0.97] transition-transform text-left"
+                style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+              >
+                <span
+                  className="shrink-0 w-[32px] h-[32px] rounded-full flex items-center justify-center"
+                  style={{ background: '#FBE7DD', border: '1px solid rgba(232,93,42,0.16)' }}
+                >
+                  <Icon size={15} className="text-[#E85D2A]" strokeWidth={2} />
+                </span>
+                <span className="text-[11.5px] font-semibold text-[#58585F] leading-tight">
+                  {cell.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* CTAs — Discover / Open feed (HIDDEN: moved to top of redesign) */}
+        <div className="flex gap-2" style={{ display: 'none' }}>
+          <button
+            onClick={() => setCurrentView('suggestions')}
+            className="flex-1 h-[46px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+          >
+            <Sparkles size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+            Discover
+          </button>
+          <button
+            onClick={() => { setNetworkTab('feed'); setCurrentView('feed'); }}
+            className="flex-1 h-[46px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+            style={{ background: '#E85D2A' }}
+          >
+            Open feed
+            <ChevronRight size={14} strokeWidth={2.5} />
+          </button>
+        </div>
+
+        {/* Your Fylos — your social connections (canonical pack entry) */}
+        <button
+          onClick={() => { setNetworkTab('fylos'); setCurrentView('feed'); }}
+          className="w-full rounded-[16px] p-4 active:scale-[0.98] transition-transform text-left"
+          style={{ background: '#FFF', border: '1px solid #EDE8E2', boxShadow: '0 2px 10px rgba(30,20,10,0.04)' }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-[28px] h-[28px] rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+                <Users size={13} className="text-[#E85D2A]" strokeWidth={2} />
+              </div>
+              <span className="text-[13px] font-semibold text-[#111]">Your Fylos</span>
+            </div>
+            <span
+              className="px-2.5 py-1 rounded-full text-[10.5px] font-semibold"
+              style={{ background: '#F3EFEB', color: '#E85D2A' }}
+            >
+              {filteredFriends.length} connected
+            </span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex -space-x-2">
+              {filteredFriends.slice(0, 5).map((friend) => (
+                <img
+                  key={friend.id}
+                  src={friend.petPhoto}
+                  alt={friend.petName}
+                  className="w-9 h-9 rounded-full object-cover"
+                  style={{ border: '2px solid #FFF' }}
+                />
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              {activeNowCount > 0 && (
+                <span className="flex items-center gap-1 text-[11px] font-semibold text-[#E85D2A]">
+                  <span className="w-[6px] h-[6px] rounded-full bg-[#E85D2A]" />
+                  {activeNowCount} active
+                </span>
+              )}
+              <ChevronRight size={16} className="text-[#A09A94]" />
+            </div>
+          </div>
+        </button>
+
+        {/* Places nearby — map preview + quick counts */}
+        {(() => {
+          const nearbyPlaces = MOCK_PLACES.slice().sort((a, b) => a.distance - b.distance).slice(0, 6);
+          const parksCount = MOCK_PLACES.filter((p) => p.category === 'parks').length;
+          const cafesCount = MOCK_PLACES.filter((p) => p.category === 'cafes' || p.category === 'restaurants').length;
+          const otherCount = MOCK_PLACES.length - parksCount - cafesCount;
+          return (
+            <button
+              onClick={() => { setPlacesSavedOnly(false); setPlacesCategory('all'); setCurrentView('places'); }}
+              className="w-full rounded-[16px] overflow-hidden active:scale-[0.98] transition-transform text-left"
+              style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+            >
+              <div className="p-3">
+                <PlacesMapPreview places={nearbyPlaces} height={120} />
+              </div>
+              <div className="px-4 pb-3 -mt-1 flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <MapPin size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+                    <span className="text-[13px] font-semibold text-[#111]">Places nearby</span>
+                    {savedPlaces.size > 0 && (
+                      <span className="text-[10px] font-semibold px-1.5 py-[1px] rounded-full flex items-center gap-0.5" style={{ background: '#FFF8F3', color: '#E85D2A', border: '1px solid #FFD4CC' }}>
+                        <Bookmark size={9} strokeWidth={2.5} fill="#E85D2A" /> {savedPlaces.size}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-[#6E6058]">
+                    {parksCount} parks <span className="text-[#D4CEC6] mx-1">·</span> {cafesCount} cafés <span className="text-[#D4CEC6] mx-1">·</span> {otherCount} more
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-[#A09A94] shrink-0 ml-2" />
+              </div>
+            </button>
+          );
+        })()}
+
+        {/* Requests alert */}
+        {topRequest && (
+          <button
+            onClick={() => { setNetworkTab('requests'); setCurrentView('feed'); }}
+            className="w-full rounded-[16px] p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
+            style={{ background: '#FFF5F1', border: '1px solid #FFD4CC' }}
+          >
+            <div className="relative shrink-0">
+              <img
+                src={topRequest.fromPetPhoto}
+                alt={topRequest.fromPetName}
+                className="w-[44px] h-[44px] rounded-[12px] object-cover"
+                style={{ border: '1px solid #FFD4CC' }}
+              />
+              <span
+                className="absolute -top-0.5 -right-0.5 w-[10px] h-[10px] rounded-full animate-pulse"
+                style={{ background: '#E85D2A', border: '2px solid #FFF' }}
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[13px] font-semibold text-[#111] truncate">
+                {topRequest.fromPetName} wants to be {activePetName}&apos;s Fylos
+              </div>
+              <div className="text-[11px] text-[#E85D2A] font-semibold mt-0.5 flex items-center gap-1">
+                {filteredReceivedReqs.length > 1 ? `+${filteredReceivedReqs.length - 1} more request${filteredReceivedReqs.length > 2 ? 's' : ''} · Tap to review` : 'Tap to review'}
+                <ChevronRight size={11} strokeWidth={2.5} />
+              </div>
+            </div>
+          </button>
+        )}
+
+
+        {/* Stories strip */}
+        <div>
+          <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-2">
+            Fylos updates
+          </span>
+          <div className="-mx-5 px-5 flex gap-3 overflow-x-auto no-scrollbar">
+            {/* Your post entry */}
+            <button
+              onClick={() => setCreatePostOpen(true)}
+              className="shrink-0 flex flex-col items-center gap-1 w-[58px] active:scale-[0.96] transition-transform"
+            >
+              <div
+                className="w-[56px] h-[56px] rounded-full flex items-center justify-center relative"
+                style={{ background: '#FFF', border: '2px dashed #FFD4CC' }}
+              >
+                <Camera size={18} className="text-[#E85D2A]" strokeWidth={2.25} />
+                <span
+                  className="absolute -bottom-0.5 -right-0.5 w-[18px] h-[18px] rounded-full flex items-center justify-center"
+                  style={{ background: '#E85D2A', border: '2px solid #F7F5F2' }}
+                >
+                  <Plus size={11} className="text-white" strokeWidth={3} />
+                </span>
+              </div>
+              <span className="text-[10.5px] font-semibold text-[#111] truncate max-w-full">Post</span>
+            </button>
+            {filteredFeedPosts.slice(0, 8).map((post, i) => {
+              const isNew = i < 3; // first 3 are "new" for demo
+              return (
+                <button
+                  key={`story-${post.id}`}
+                  onClick={() => { setNetworkTab('feed'); setFeedFocusPostId(post.id); setCurrentView('feed'); }}
+                  className="shrink-0 flex flex-col items-center gap-1 w-[58px] active:opacity-80 relative"
+                >
+                  <div
+                    className="p-[2px] rounded-full relative"
+                    style={{ background: isNew ? '#E85D2A' : '#EDE8E2' }}
+                  >
+                    <div className="p-[2px] rounded-full" style={{ background: '#F7F5F2' }}>
+                      <img
+                        src={post.avatar}
+                        alt={post.petName}
+                        className="w-[48px] h-[48px] rounded-full object-cover"
+                      />
+                    </div>
+                    {isNew && (
+                      <span
+                        className="absolute -top-0.5 -right-0.5 w-[12px] h-[12px] rounded-full flex items-center justify-center"
+                        style={{ background: '#E85D2A', border: '2px solid #F7F5F2' }}
+                      />
+                    )}
+                  </div>
+                  <span className={`text-[10.5px] truncate max-w-full ${isNew ? 'font-semibold text-[#111]' : 'text-[#6E6058]'}`}>
+                    {post.petName || 'Fylos'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Invite friends */}
+        <button
+          onClick={() => { if (navigator.share) navigator.share({ title: 'Fylos', text: 'Join me on Fylos — the pack app for dog owners.', url: 'https://fylos.app' }).catch(() => {}); }}
+          className="w-full rounded-[16px] p-3.5 flex items-center gap-3 text-left active:scale-[0.99] transition-all mt-2"
+          style={{ background: '#FFF5F1', border: '1px solid #FFD4CC' }}
+        >
+          <div
+            className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center shrink-0"
+            style={{ background: '#FFF', border: '1px solid #FFD4CC' }}
+          >
+            <Gift size={18} className="text-[#E85D2A]" strokeWidth={2} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13.5px] font-semibold text-[#111]">Invite friends to Fylos</div>
+            <div className="text-[11px] text-[#6E6058] mt-0.5 truncate">Grow your pack — share the app</div>
+          </div>
+          <span
+            className="shrink-0 px-3 py-1.5 rounded-full text-[11.5px] font-semibold text-white flex items-center gap-1"
+            style={{ background: '#E85D2A' }}
+          >
+            Share
+            <ChevronRight size={12} strokeWidth={2.5} />
+          </span>
+        </button>
+      </div>
+
+      <ActivitySubScreenPortal isOpen={currentView === 'my-pack'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          <div className="absolute top-0 left-0 w-full h-[130px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex justify-between items-center w-full pointer-events-auto">
+              <button onClick={() => setCurrentView('list')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Your profile</h2>
+              <button className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <Settings size={18} color="#111" strokeWidth={1.75} />
+              </button>
+            </div>
+          </header>
+          <div className="flex-1 overflow-y-auto pt-[116px] px-5 pb-16 custom-scrollbar space-y-3">
+            {/* User identity */}
+            <div className="rounded-[16px] p-4 flex items-center gap-3" style={{ background: '#FFF', border: '1px solid #EDE8E2', boxShadow: '0 2px 10px rgba(30,20,10,0.04)' }}>
+              <img
+                src={MOCK_USER?.avatar || 'https://i.pravatar.cc/150?u=alex_fylos'}
+                alt="you"
+                className="w-[56px] h-[56px] rounded-full object-cover shrink-0"
+                style={{ border: '3px solid #FFF', boxShadow: '0 2px 6px rgba(0,0,0,0.08)' }}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="text-[17px] font-bold text-[#111]">{MOCK_USER?.name || 'You'}</div>
+                <div className="text-[12px] text-[#6E6058] mt-0.5">
+                  {MOCK_DASHBOARD_PETS.length} pets · {friends.length} Fylos · 23 posts
+                </div>
+              </div>
+            </div>
+            {/* Pack section */}
+            <div className="pt-1">
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">
+                Your pack · {MOCK_DASHBOARD_PETS.length}
+              </div>
+              <div className="space-y-2">
+                {MOCK_DASHBOARD_PETS.map((pet) => (
+                  <button
+                    key={pet.id}
+                    onClick={() => {
+                      // Synthesize a friend-like profile so FylosProfileView can render it
+                      setActiveProfile({
+                        id: `own_${pet.id}`,
+                        userId: 'user_001',
+                        petId: pet.id,
+                        petName: pet.name,
+                        petBreed: pet.breed,
+                        petPhoto: pet.avatar,
+                        ownerName: MOCK_USER?.name || 'You',
+                        distance: 0,
+                        friendsSince: 'Always',
+                        lastActive: 'Now',
+                        age: pet.age,
+                        contextPetIds: [pet.id],
+                        isOwnPet: true,
+                      });
+                      setCurrentView('profile');
+                    }}
+                    className="w-full rounded-[14px] p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
+                    style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+                  >
+                    <img
+                      src={pet.avatar}
+                      alt={pet.name}
+                      className="w-[46px] h-[46px] rounded-[12px] object-cover shrink-0"
+                      style={{ border: '1px solid #EDE8E2' }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13.5px] font-semibold text-[#111] truncate">
+                        {pet.name} <span className="font-normal text-[#A09A94]">· {pet.breed}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-[#6E6058] mt-0.5">
+                        {pet.age} years · {pet.weight} kg
+                      </div>
+                    </div>
+                    <ChevronRight size={15} className="text-[#A09A94] shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Quick stats */}
+            <div className="pt-1">
+              <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">
+                Activity
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: 'Playdates', value: 12 },
+                  { label: 'Fylos', value: friends.length },
+                  { label: 'Posts', value: 23 },
+                ].map((s) => (
+                  <div key={s.label} className="rounded-[12px] p-3 text-center" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                    <div className="text-[18px] font-bold text-[#111] leading-none">{s.value}</div>
+                    <div className="text-[10.5px] text-[#A09A94] mt-1">{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
-            {filteredReceivedReqs.length > 2 && (
-              <div className="mt-2 text-[12px] text-[#8E8E93]">
-                +{filteredReceivedReqs.length - 2} more · <button onClick={() => setCurrentView('requests')} className="text-[#FF6A3D] font-medium">View all</button>
+          </div>
+        </div>
+      </ActivitySubScreenPortal>
+
+      <ActivitySubScreenPortal isOpen={currentView === 'feed'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          {/* Top fade — content scrolls behind header */}
+          <div className="absolute top-0 left-0 w-full h-[170px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+
+          {/* Header */}
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex justify-between items-center w-full pointer-events-auto">
+              <button
+                onClick={() => setCurrentView('list')}
+                className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
+                style={{ background: '#F3EFEB' }}
+              >
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Network</h2>
+              <button
+                onClick={() => setFeedFilter((f) => (f === 'all' ? 'photos' : 'all'))}
+                className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
+                style={{ background: feedFilter !== 'all' ? '#E85D2A' : '#F3EFEB' }}
+                aria-label="Toggle filter"
+              >
+                <SlidersHorizontal size={18} color={feedFilter !== 'all' ? '#FFF' : '#111'} strokeWidth={1.75} />
+              </button>
+            </div>
+          </header>
+
+          {/* Tab pill — internal state only, same shell (no page transition) */}
+          <div className="absolute top-[112px] left-0 w-full z-30 px-5">
+            <div
+              className="relative grid grid-cols-3 p-1.5 rounded-full"
+              style={{
+                background: 'rgba(255,255,255,0.85)',
+                border: '1px solid #EDE8E2',
+                backdropFilter: 'blur(12px)',
+              }}
+            >
+              <div
+                className="absolute top-1.5 bottom-1.5 rounded-full transition-all duration-[300ms]"
+                style={{
+                  left: `calc(${networkTab === 'feed' ? 0 : networkTab === 'requests' ? 33.333 : 66.666}% + 6px)`,
+                  width: 'calc(33.333% - 12px)',
+                  background: '#111',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                  transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)',
+                }}
+              />
+              <button
+                onClick={() => setNetworkTab('feed')}
+                className="relative z-10 py-1.5 text-[12.5px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                style={{ color: networkTab === 'feed' ? '#FFF' : '#6E6058' }}
+              >
+                Feed
+              </button>
+              <button
+                onClick={() => setNetworkTab('requests')}
+                className="relative z-10 py-1.5 text-[12.5px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                style={{ color: networkTab === 'requests' ? '#FFF' : '#6E6058' }}
+              >
+                Requests
+                {filteredReceivedReqs.length > 0 && (
+                  <span className="text-[9.5px] font-bold px-1.5 py-px rounded-full" style={{ background: networkTab === 'requests' ? 'rgba(255,255,255,0.2)' : '#E6E1DA', color: networkTab === 'requests' ? '#FFF' : '#6E6058' }}>
+                    {filteredReceivedReqs.length}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setNetworkTab('fylos')}
+                className="relative z-10 py-1.5 text-[12.5px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                style={{ color: networkTab === 'fylos' ? '#FFF' : '#6E6058' }}
+              >
+                Fylos
+                <span className="text-[9.5px] font-bold px-1.5 py-px rounded-full" style={{ background: networkTab === 'fylos' ? 'rgba(255,255,255,0.2)' : '#E6E1DA', color: networkTab === 'fylos' ? '#FFF' : '#6E6058' }}>
+                  {filteredFriends.length}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Scrollable content (under header + tabs) */}
+          <div className="flex-1 overflow-y-auto pt-[172px] pb-16 custom-scrollbar">
+            {networkTab === 'feed' && (<>
+            {/* Filter chips */}
+            <div className="px-5 pb-3 flex gap-2 overflow-x-auto no-scrollbar">
+              {[
+                { id: 'all', label: 'All', icon: null },
+                { id: 'photos', label: 'Photos', icon: ImageIcon },
+                { id: 'checkins', label: 'Check-ins', icon: MapPin },
+                { id: 'walks', label: 'Walks', icon: Navigation },
+              ].map((f) => {
+                const Icon = f.icon;
+                const active = feedFilter === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    onClick={() => setFeedFilter(f.id)}
+                    className="shrink-0 h-[36px] px-3 rounded-full flex items-center gap-1.5 text-[12px] font-semibold transition-all active:scale-[0.97]"
+                    style={{
+                      background: active ? '#111' : '#FFF',
+                      color: active ? '#FFF' : '#111',
+                      border: active ? 'none' : '1px solid #EDE8E2',
+                    }}
+                  >
+                    {Icon && <Icon size={12} strokeWidth={2.25} />}
+                    {f.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Featured / hero post */}
+            {filteredFeedPosts.length > 0 && (
+              <div className="px-5 pb-3">
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#FFE9E2' }}>
+                      <Sparkles size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                    </div>
+                    <span className="text-[12.5px] font-semibold text-[#111]">Featured today</span>
+                  </div>
+                  <button
+                    onClick={() => setPetOfDayOpen(true)}
+                    className="inline-flex items-center gap-1 active:scale-[0.96] transition-transform"
+                    style={{
+                      padding: '4px 8px',
+                      borderRadius: 9999,
+                      background: '#FBE7DD',
+                      border: '1px solid rgba(232,93,42,0.16)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      color: '#7A2F12',
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Open
+                    <ChevronRight size={11} strokeWidth={2.5} />
+                  </button>
+                </div>
+                <div ref={(el) => { feedPostRefs.current[filteredFeedPosts[0].id] = el; }}>
+                  <ActivityFeedPostCard
+                    post={filteredFeedPosts[0]}
+                    onLike={handleToggleLike}
+                    onViewLikes={handleViewLikes}
+                    onOpenPetProfile={openPetProfileByName}
+                    onOpenMenu={(p) => setPostMenuTarget(p)}
+                    onOpenLocation={(loc) => {
+                      const match = MOCK_PLACES.find((p) => p.name === loc.name) || MOCK_PLACES.find((p) => p.name.toLowerCase().includes((loc.name || '').toLowerCase().split(' ')[0]));
+                      if (match) { openPlaceDetail(match); } else { setLocationSheet(loc); }
+                    }}
+                    onOpenPhoto={(ph) => setPhotoViewer(ph)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Memory of the Week — long-form curated essay */}
+            <div className="px-5 pb-3">
+              <button
+                onClick={() => setMemoryWeekOpen(true)}
+                className="w-full rounded-[16px] overflow-hidden text-left active:scale-[0.99] transition-all"
+                style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+              >
+                <div className="relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1465379944081-7f47de8d74ac?w=900&h=420&fit=crop"
+                    alt="Memory of the week"
+                    className="w-full"
+                    style={{ aspectRatio: '16 / 9', objectFit: 'cover', display: 'block' }}
+                  />
+                  <span
+                    className="absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                    style={{ background: 'rgba(255,255,255,0.94)', backdropFilter: 'blur(6px)', fontSize: 10, fontWeight: 700, color: '#E85D2A', letterSpacing: '0.18em', textTransform: 'uppercase' }}
+                  >
+                    Sunday Reads · Issue 14
+                  </span>
+                </div>
+                <div className="px-4 py-3.5 flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[15px] font-bold text-[#111] leading-tight" style={{ letterSpacing: '-0.014em' }}>
+                      Sundays at Filopappou
+                    </div>
+                    <div className="text-[12px] text-[#76767D] mt-1 leading-snug">
+                      How a hill in Athens became the city's softest waiting room.
+                    </div>
+                    <div className="text-[10px] text-[#A09A94] mt-1.5 font-semibold uppercase tracking-[0.14em]">
+                      4 min read · Curated
+                    </div>
+                  </div>
+                  <span
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full shrink-0"
+                    style={{ background: '#FBE7DD', border: '1px solid rgba(232,93,42,0.16)', color: '#7A2F12', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}
+                  >
+                    Read
+                    <ChevronRight size={11} strokeWidth={2.5} />
+                  </span>
+                </div>
+              </button>
+            </div>
+
+            {/* Rest of feed */}
+            <div className="px-5">
+              <div className="flex items-center gap-2 pb-3 pt-1 px-1">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+                  <Users size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                </div>
+                <span className="text-[12.5px] font-semibold text-[#111]">Latest from your pack</span>
+              </div>
+              <div className="space-y-3">
+                {filteredFeedPosts.slice(1).map((post) => (
+                  <div key={post.id} ref={(el) => { feedPostRefs.current[post.id] = el; }}>
+                    <ActivityFeedPostCard
+                      post={post}
+                      onLike={handleToggleLike}
+                      onViewLikes={handleViewLikes}
+                      onOpenPetProfile={openPetProfileByName}
+                      onOpenMenu={(p) => setPostMenuTarget(p)}
+                      onOpenLocation={(loc) => {
+                        const match = MOCK_PLACES.find((p) => p.name === loc.name) || MOCK_PLACES.find((p) => p.name.toLowerCase().includes((loc.name || '').toLowerCase().split(' ')[0]));
+                        if (match) { openPlaceDetail(match); } else { setLocationSheet(loc); }
+                      }}
+                      onOpenPhoto={(ph) => setPhotoViewer(ph)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            </>)}
+
+            {/* ── REQUESTS tab content ──────────────────────────── */}
+            {networkTab === 'requests' && (
+              <div className="px-5">
+                <div className="pt-1">
+                  <div className="flex items-center gap-2 mb-3 px-1">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#FFE9E2' }}>
+                      <Bell size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                    </div>
+                    <span className="text-[12.5px] font-semibold text-[#111]">Received · {filteredReceivedReqs.length}</span>
+                  </div>
+                  {filteredReceivedReqs.length === 0 ? (
+                    <div className="rounded-[14px] p-5 text-center" style={{ background: '#FFF', border: '1px dashed #EDE8E2' }}>
+                      <Bell size={20} className="text-[#A09A94] mx-auto mb-2" />
+                      <p className="text-[13px] text-[#6E6058]">No pending requests</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {filteredReceivedReqs.map((req) => (
+                        <div key={req.id} className="rounded-[14px] p-3" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                          <div className="flex gap-3 items-start">
+                            <img src={req.fromPetPhoto} alt={req.fromPetName} className="w-[46px] h-[46px] rounded-[12px] object-cover shrink-0" style={{ border: '1px solid #EDE8E2' }} />
+                            <div className="flex-1 min-w-0">
+                              <div className="text-[13.5px] font-semibold text-[#111]">{req.fromPetName} <span className="font-normal text-[#A09A94]">· {req.fromPetBreed}</span></div>
+                              <div className="flex items-center gap-1.5 text-[11px] text-[#6E6058] mt-0.5">
+                                <Clock size={10} strokeWidth={1.75} />
+                                {req.timeAgo}
+                                {req.distance ? (
+                                  <>
+                                    <span className="text-[#D4CEC6]">·</span>
+                                    <MapPin size={9} strokeWidth={1.75} />
+                                    {req.distance} km
+                                  </>
+                                ) : null}
+                              </div>
+                              <div className="flex gap-2 mt-3">
+                                <button onClick={() => handleDeclineRequest(req.id)} className="flex-1 h-9 rounded-full text-[12px] font-semibold" style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}>Ignore</button>
+                                <button onClick={() => handleAcceptRequest(req)} className="flex-1 h-9 rounded-full text-white text-[12px] font-semibold" style={{ background: '#E85D2A' }}>Be Fylos</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="pt-5">
+                  <div className="flex items-center gap-2 mb-3 px-1">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+                      <Send size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                    </div>
+                    <span className="text-[12.5px] font-semibold text-[#111]">Sent · {sentReqs.length}</span>
+                  </div>
+                  {sentReqs.length === 0 ? (
+                    <div className="text-[12px] text-[#A09A94] px-1">No outgoing requests</div>
+                  ) : (
+                    <div className="space-y-2">
+                      {sentReqs.map((req) => (
+                        <div key={req.id} className="rounded-[14px] p-3 flex items-center gap-3" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                          <img src={req.toPetPhoto} alt={req.toPetName} className="w-[38px] h-[38px] rounded-full object-cover opacity-70" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[13px] font-semibold text-[#111] truncate">{req.toPetName}</div>
+                            <div className="text-[11px] text-[#A09A94]">Sent {req.timeAgo}</div>
+                          </div>
+                          <button onClick={() => setSentReqs((prev) => prev.filter((r) => r.id !== req.id))} className="h-8 px-3 rounded-full text-[11.5px] font-semibold text-[#E85D2A]" style={{ background: '#FFF5F1', border: '1px solid #FFD4CC' }}>Cancel</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ── FYLOS tab content ─────────────────────────────── */}
+            {networkTab === 'fylos' && (
+              <div className="px-5 space-y-2">
+                <div className="flex items-center gap-2 mb-2 px-1">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+                    <Users size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                  </div>
+                  <span className="text-[12.5px] font-semibold text-[#111]">Your Fylos · {filteredFriends.length}</span>
+                </div>
+                {filteredFriends.map((fylos) => (
+                  <div
+                    key={fylos.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => { setActiveProfile(fylos); setCurrentView('profile'); }}
+                    className="w-full rounded-[14px] p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all cursor-pointer"
+                    style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+                  >
+                    <img src={fylos.petPhoto} alt={fylos.petName} className="w-[46px] h-[46px] rounded-[12px] object-cover shrink-0" style={{ border: '1px solid #EDE8E2' }} loading="lazy" decoding="async" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13.5px] font-semibold text-[#111] truncate">{fylos.petName} <span className="font-normal text-[#A09A94]">· {fylos.petBreed}</span></div>
+                      <div className="flex items-center gap-1.5 text-[10.5px] text-[#A09A94] mt-[2px]">
+                        <span className="truncate text-[#6E6058]">{ownerHandle(fylos)}</span>
+                        <span className="text-[#D4CEC6]">·</span>
+                        <MapPin size={9} strokeWidth={1.75} className="shrink-0" />
+                        <span className="shrink-0">{fylos.distance} km</span>
+                        <span className="text-[#D4CEC6]">·</span>
+                        <span className="truncate">via {MOCK_DASHBOARD_PETS.find((pet) => pet.id === (fylos.connectedViaPetId || fylos.contextPetIds?.[0]))?.name || activePetName}</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setSuggestPlaydateTargetId(fylos.id); setCreatePlaydateOpen(true); }}
+                      className="shrink-0 px-2.5 h-8 rounded-full flex items-center gap-1 active:scale-[0.96] transition-transform"
+                      style={{ background: '#FBE7DD', color: '#7A2F12', border: '1px solid rgba(232,93,42,0.20)' }}
+                      aria-label={`Suggest a playdate with ${fylos.petName}`}
+                    >
+                      <span className="text-[10.5px] font-semibold">Suggest</span>
+                      <ChevronRight size={11} strokeWidth={2.4} />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
-        )}
-
-        <div className="px-4">
-          <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest mb-2 px-1">Updates</h3>
-          <div className="space-y-3.5">
-            {visibleFilteredFeedPosts.map((post, index) => (
-              <React.Fragment key={post.id}>
-                <ActivityFeedPostCard post={post} onLike={handleToggleLike} onViewLikes={handleViewLikes} />
-                {(index + 1) % 3 === 0 && filteredSuggestions.length > 0 ? renderDiscoverInline(`${post.id}-${index}`) : null}
-              </React.Fragment>
-            ))}
-            {hasMoreFeedPosts && <div ref={feedSentinelRef} className="h-8" />}
-          </div>
+          {/* Quick post FAB on Feed */}
+          <button
+            onClick={() => setCreatePostOpen(true)}
+            aria-label="Share a moment"
+            className="absolute right-5 bottom-5 z-40 h-[54px] pl-4 pr-5 rounded-full flex items-center gap-2 active:scale-[0.97] transition-transform"
+            style={{ background: '#E85D2A', color: '#FFF', boxShadow: '0 10px 28px rgba(232,93,42,0.35)' }}
+          >
+            <Plus size={18} strokeWidth={2.5} />
+            <span className="text-[13.5px] font-semibold">Post</span>
+          </button>
         </div>
-      </div>
+      </ActivitySubScreenPortal>
 
-      <ActivitySubScreenPortal isOpen={currentView === 'search'}>
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F7F8]">
-          <div className="px-4 pt-14 pb-3 flex items-center gap-3 bg-[#FFFFFF] border-b border-black/[0.04] shrink-0">
-            <button onClick={() => setCurrentView('list')} className="p-2 -ml-2 text-[#111111] active:opacity-50"><ArrowLeft size={24} /></button>
-            <div className="flex-1 relative">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E93]" />
-              <input autoFocus value={query} onChange={(e) => { setQuery(e.target.value); setSearching(true); setTimeout(() => setSearching(false), 250); }} placeholder="Search by pet name, breed..." className="w-full h-10 pl-10 pr-4 bg-[#F0F0F2] rounded-[12px] text-[15px] focus:outline-none placeholder:text-[#8E8E93]" />
-              {query && <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8E8E93]"><X size={16} /></button>}
+      <ActivitySubScreenPortal isOpen={currentView === 'search'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          <div className="absolute top-0 left-0 w-full h-[130px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex items-center gap-2 w-full pointer-events-auto">
+              <button onClick={() => setCurrentView('list')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] shrink-0" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <div className="flex-1 relative">
+                <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#A09A94]" />
+                <input autoFocus value={query} onChange={(e) => { setQuery(e.target.value); setSearching(true); setTimeout(() => setSearching(false), 250); }} placeholder="Search pet name, breed..." className="w-full h-[44px] pl-10 pr-9 rounded-full text-[13.5px] focus:outline-none placeholder:text-[#A09A94]" style={{ background: '#FFF', border: '1px solid #EDE8E2' }} />
+                {query && <button onClick={() => setQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A09A94]"><X size={14} /></button>}
+              </div>
             </div>
-          </div>
-          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+          </header>
+          <div className="flex-1 overflow-y-auto pt-[116px] px-5 pb-16 custom-scrollbar">
             {searching ? (
-              <div className="flex justify-center py-10"><Loader2 className="animate-spin text-[#8E8E93]" size={24} /></div>
+              <div className="flex justify-center py-10"><Loader2 className="animate-spin text-[#A09A94]" size={22} /></div>
             ) : query.length > 1 && searchResults.length === 0 ? (
-              <div className="text-center py-10 px-6"><Search size={32} className="text-[#CFCFD4] mx-auto mb-3" /><p className="text-[15px] font-medium text-[#111111]">No pets found for "{query}"</p></div>
+              <div className="text-center py-10 px-6">
+                <Search size={28} className="text-[#C9C1B6] mx-auto mb-3" />
+                <p className="text-[14px] font-semibold text-[#111]">No pets found for &ldquo;{query}&rdquo;</p>
+                <p className="text-[12px] text-[#6E6058] mt-1">Try another name or breed</p>
+              </div>
             ) : query.length > 1 ? (
-              <div className="space-y-3">
+              <div className="space-y-2">
+                <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-1 px-1">
+                  Results · {searchResults.length}
+                </div>
                 {searchResults.map((res) => (
-                  <div key={res.id} className="bg-[#FFFFFF] p-4 rounded-[16px] shadow-sm border border-black/[0.04] flex items-center gap-4">
-                    <img src={res.petPhoto} alt={res.petName} className="w-12 h-12 rounded-full object-cover bg-[#F7F7F8]" />
-                    <div className="flex-1">
-                      <h5 className="text-[15px] font-semibold text-[#111111]">{res.petName}</h5>
-                      <p className="text-[13px] text-[#6E6E73]">{res.petBreed} · {res.ownerName}</p>
+                  <div key={res.id} className="rounded-[14px] p-3 flex items-center gap-3" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                    <img src={res.petPhoto} alt={res.petName} className="w-[46px] h-[46px] rounded-full object-cover shrink-0" style={{ border: '1px solid #EDE8E2' }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13.5px] font-semibold text-[#111] truncate">{res.petName}</div>
+                      <div className="text-[11.5px] text-[#6E6058]">{res.petBreed} · {res.ownerName}</div>
                     </div>
-                    <button onClick={() => { handleSendRequest(res); setQuery(''); }} className="w-9 h-9 rounded-full bg-[#F7F7F8] flex items-center justify-center text-[#111111]"><UserPlus size={18} /></button>
+                    <button onClick={() => { handleSendRequest(res); setQuery(''); }} className="h-9 px-3 rounded-full text-[11.5px] font-semibold text-white flex items-center gap-1" style={{ background: '#E85D2A' }}>
+                      <UserPlus size={13} strokeWidth={2.25} /> Be Fylos
+                    </button>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-10 px-6"><p className="text-[14px] text-[#8E8E93]">Type to discover nearby pets</p></div>
+              <div className="space-y-4">
+                <div>
+                  <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2 px-1">Trending nearby</div>
+                  <div className="flex gap-2 flex-wrap">
+                    {['Golden Retriever', 'French Bulldog', 'Beagle', 'Shiba Inu', 'Poodle'].map((b) => (
+                      <button
+                        key={b}
+                        onClick={() => { setQuery(b); setSearching(true); setTimeout(() => setSearching(false), 200); }}
+                        className="h-[32px] px-3 rounded-full text-[12px] font-medium active:scale-[0.97]"
+                        style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+                      >
+                        {b}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2 px-1">Recent searches</div>
+                  <div className="rounded-[14px] overflow-hidden" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                    {['Tao', 'Bella', 'Seefeld Park'].map((s, i) => (
+                      <button
+                        key={s}
+                        onClick={() => { setQuery(s); setSearching(true); setTimeout(() => setSearching(false), 200); }}
+                        className="w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-[#F7F5F2]"
+                        style={{ borderTop: i > 0 ? '1px solid #EDE8E2' : 'none' }}
+                      >
+                        <Clock size={13} className="text-[#A09A94] shrink-0" />
+                        <span className="flex-1 text-[13px] text-[#111]">{s}</span>
+                        <ChevronRight size={14} className="text-[#A09A94]" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
       </ActivitySubScreenPortal>
 
-      <ActivitySubScreenPortal isOpen={currentView === 'requests'}>
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F7F8]">
-          <div className="px-4 pt-14 pb-3 flex items-center gap-3 bg-[#FFFFFF] border-b border-black/[0.04] shrink-0">
-            <button onClick={() => setCurrentView('list')} className="p-2 -ml-2 text-[#111111] active:opacity-50"><ArrowLeft size={24} /></button>
-            <h2 className="text-[18px] font-bold text-[#111111]">Requests</h2>
+      <ActivitySubScreenPortal isOpen={currentView === 'requests'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          <div className="absolute top-0 left-0 w-full h-[170px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex justify-between items-center w-full pointer-events-auto">
+              <button onClick={() => setCurrentView('list')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Network</h2>
+              <button className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <SlidersHorizontal size={18} color="#111" strokeWidth={1.75} />
+              </button>
+            </div>
+          </header>
+          <div className="absolute top-[112px] left-0 w-full z-30 px-5">
+            <div className="relative grid grid-cols-3 p-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #EDE8E2', backdropFilter: 'blur(12px)' }}>
+              <div className="absolute top-1.5 bottom-1.5 rounded-full transition-all duration-[300ms]" style={{ left: 'calc(33.333% + 6px)', width: 'calc(33.333% - 12px)', background: '#111', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
+              <button onClick={() => setCurrentView('feed')} className="relative z-10 py-1.5 text-[12.5px] font-semibold" style={{ color: '#6E6058' }}>Feed</button>
+              <button className="relative z-10 py-1.5 text-[12.5px] font-semibold flex items-center justify-center gap-1.5" style={{ color: '#FFF' }}>
+                Requests
+                {filteredReceivedReqs.length > 0 && (
+                  <span className="text-[9.5px] font-bold px-1.5 py-px rounded-full" style={{ background: 'rgba(255,255,255,0.22)', color: '#FFF' }}>{filteredReceivedReqs.length}</span>
+                )}
+              </button>
+              <button onClick={() => setCurrentView('my-fylos')} className="relative z-10 py-1.5 text-[12.5px] font-semibold flex items-center justify-center gap-1.5" style={{ color: '#6E6058' }}>
+                Fylos
+                <span className="text-[9.5px] font-bold px-1.5 py-px rounded-full" style={{ background: '#E6E1DA', color: '#6E6058' }}>{filteredFriends.length}</span>
+              </button>
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-8 custom-scrollbar pb-10">
-            <div>
-              <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">Received ({filteredReceivedReqs.length})</h3>
+          <div className="flex-1 overflow-y-auto pt-[172px] px-5 pb-16 custom-scrollbar">
+            <div className="pt-1">
+              <div className="flex items-center gap-2 mb-3 px-1">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#FFE9E2' }}>
+                  <Bell size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                </div>
+                <span className="text-[12.5px] font-semibold text-[#111]">Received · {filteredReceivedReqs.length}</span>
+              </div>
               {filteredReceivedReqs.length === 0 ? (
-                <div className="bg-transparent border border-dashed border-[#CFCFD4] rounded-[16px] p-6 text-center"><Bell size={24} className="text-[#8E8E93] mx-auto mb-2" /><p className="text-[14px] text-[#6E6E73]">No pending requests</p></div>
+                <div className="rounded-[14px] p-5 text-center" style={{ background: '#FFF', border: '1px dashed #EDE8E2' }}>
+                  <Bell size={20} className="text-[#A09A94] mx-auto mb-2" />
+                  <p className="text-[13px] text-[#6E6058]">No pending requests</p>
+                </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {filteredReceivedReqs.map((req) => (
-                    <div key={req.id} className="bg-[#FFFFFF] p-4 rounded-[16px] shadow-sm border border-black/[0.04]">
-                      <div className="flex gap-4">
-                        <img src={req.fromPetPhoto} alt={req.fromPetName} className="w-14 h-14 rounded-full object-cover bg-[#F7F7F8]" />
-                        <div className="flex-1">
-                          <h5 className="text-[15px] font-semibold text-[#111111] leading-tight mb-1">{req.fromPetName}</h5>
-                          <p className="text-[13px] text-[#6E6E73] mb-1">{req.fromPetBreed}</p>
-                          <p className="text-[12px] text-[#8E8E93] mb-3 flex items-center gap-1"><Clock size={12} /> {req.timeAgo}</p>
-                          <div className="flex gap-2">
-                            <button onClick={() => handleDeclineRequest(req.id)} className="flex-1 py-2 bg-[#F7F7F8] text-[#111111] text-[13px] font-semibold rounded-[12px]">Ignore</button>
-                            <button onClick={() => handleAcceptRequest(req)} className="flex-1 py-2 bg-[#FF6A3D] text-[#FFFFFF] text-[13px] font-semibold rounded-[12px]">Be Fylos</button>
+                    <div key={req.id} className="rounded-[14px] p-3" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                      <div className="flex gap-3 items-start">
+                        <img src={req.fromPetPhoto} alt={req.fromPetName} className="w-[46px] h-[46px] rounded-[12px] object-cover shrink-0" style={{ border: '1px solid #EDE8E2' }} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[13.5px] font-semibold text-[#111]">{req.fromPetName} <span className="font-normal text-[#A09A94]">· {req.fromPetBreed}</span></div>
+                          <div className="flex items-center gap-1.5 text-[11px] text-[#6E6058] mt-0.5">
+                            <Clock size={10} strokeWidth={1.75} />
+                            {req.timeAgo}
+                            {req.distance ? (
+                              <>
+                                <span className="text-[#D4CEC6]">·</span>
+                                <MapPin size={9} strokeWidth={1.75} />
+                                {req.distance} km
+                              </>
+                            ) : null}
+                          </div>
+                          <div className="flex gap-2 mt-3">
+                            <button onClick={() => handleDeclineRequest(req.id)} className="flex-1 h-9 rounded-full text-[12px] font-semibold" style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}>Ignore</button>
+                            <button onClick={() => handleAcceptRequest(req)} className="flex-1 h-9 rounded-full text-white text-[12px] font-semibold" style={{ background: '#E85D2A' }}>Be Fylos</button>
                           </div>
                         </div>
                       </div>
@@ -8239,137 +11889,214 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
                 </div>
               )}
             </div>
-            <div>
-              <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">Sent ({sentReqs.length})</h3>
-              <div className="space-y-3">
-                {sentReqs.map((req) => (
-                  <div key={req.id} className="bg-[#FFFFFF] p-4 rounded-[16px] shadow-sm border border-black/[0.04] flex items-center gap-4">
-                    <img src={req.toPetPhoto} alt={req.toPetName} className="w-12 h-12 rounded-full object-cover bg-[#F7F7F8] opacity-70" />
-                    <div className="flex-1">
-                      <h5 className="text-[15px] font-semibold text-[#111111]">{req.toPetName}</h5>
-                      <p className="text-[13px] text-[#6E6E73]">Sent {req.timeAgo}</p>
-                    </div>
-                    <button onClick={() => setSentReqs((prev) => prev.filter((r) => r.id !== req.id))} className="px-3 py-1.5 bg-[#F7F7F8] text-[#FF3B30] text-[12px] font-semibold rounded-[8px]">Cancel</button>
-                  </div>
-                ))}
+            <div className="pt-5">
+              <div className="flex items-center gap-2 mb-3 px-1">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+                  <Send size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                </div>
+                <span className="text-[12.5px] font-semibold text-[#111]">Sent · {sentReqs.length}</span>
               </div>
+              {sentReqs.length === 0 ? (
+                <div className="text-[12px] text-[#A09A94] px-1">No outgoing requests</div>
+              ) : (
+                <div className="space-y-2">
+                  {sentReqs.map((req) => (
+                    <div key={req.id} className="rounded-[14px] p-3 flex items-center gap-3" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                      <img src={req.toPetPhoto} alt={req.toPetName} className="w-[38px] h-[38px] rounded-full object-cover opacity-70" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[13px] font-semibold text-[#111] truncate">{req.toPetName}</div>
+                        <div className="text-[11px] text-[#A09A94]">Sent {req.timeAgo}</div>
+                      </div>
+                      <button onClick={() => setSentReqs((prev) => prev.filter((r) => r.id !== req.id))} className="h-8 px-3 rounded-full text-[11.5px] font-semibold text-[#E85D2A]" style={{ background: '#FFF5F1', border: '1px solid #FFD4CC' }}>Cancel</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
       </ActivitySubScreenPortal>
 
-      <ActivitySubScreenPortal isOpen={currentView === 'suggestions'}>
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F7F8]">
-          <div className="px-4 pt-14 pb-3 flex items-center gap-3 bg-[#FFFFFF] border-b border-black/[0.04] shrink-0">
-            <button onClick={() => setCurrentView('list')} className="p-2 -ml-2 text-[#111111] active:opacity-50"><ArrowLeft size={24} /></button>
-            <h2 className="text-[18px] font-bold text-[#111111]">Discover</h2>
-          </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+      <ActivitySubScreenPortal isOpen={currentView === 'suggestions'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          <div className="absolute top-0 left-0 w-full h-[130px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex justify-between items-center w-full pointer-events-auto">
+              <button onClick={() => setCurrentView('list')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Discover</h2>
+              <button className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <SlidersHorizontal size={18} color="#111" strokeWidth={1.75} />
+              </button>
+            </div>
+          </header>
+          <div className="flex-1 overflow-y-auto pt-[116px] px-5 pb-16 space-y-3 custom-scrollbar">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pt-1 pb-1">
+              {['All', 'Near me', 'Best match', 'New'].map((f, i) => (
+                <button key={f} className="shrink-0 h-[34px] px-3 rounded-full text-[12px] font-semibold active:scale-[0.97]" style={{ background: i === 0 ? '#111' : '#FFF', color: i === 0 ? '#FFF' : '#111', border: i === 0 ? 'none' : '1px solid #EDE8E2' }}>
+                  {f}
+                </button>
+              ))}
+            </div>
             {filteredSuggestions.length === 0 ? (
-              <div className="text-center py-10"><p className="text-[15px] text-[#6E6E73]">No more suggestions right now.</p></div>
+              <div className="text-center py-10"><p className="text-[13px] text-[#A09A94]">No more suggestions right now.</p></div>
             ) : (
-              filteredSuggestions.map((sugg) => (
-                <div key={sugg.id} className="bg-[#FFFFFF] rounded-[20px] p-4 shadow-sm border border-black/[0.04]">
-                  <div className="flex gap-4 mb-3">
-                    <img src={sugg.petPhoto} alt={sugg.petName} className="w-16 h-16 rounded-full object-cover bg-[#F7F7F8]" />
-                    <div className="flex-1">
-                      <h5 className="text-[16px] font-bold text-[#111111] leading-tight flex items-center gap-2">{sugg.petName}<span className="text-[12px] font-semibold text-[#34C759] bg-[#E8F8EE] px-2 py-0.5 rounded-full">{sugg.matchScore}% match</span></h5>
-                      <p className="text-[14px] text-[#6E6E73]">{sugg.petBreed} · {sugg.distance} km</p>
+              filteredSuggestions.map((sugg) => {
+                const expandedReasons = [
+                  ...(sugg.reasons || []),
+                  `${sugg.distance} km away`,
+                ];
+                return (
+                  <div key={sugg.id} className="rounded-[16px] p-4" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                    <div className="flex gap-3 mb-3">
+                      <img src={sugg.petPhoto} alt={sugg.petName} className="w-[58px] h-[58px] rounded-[14px] object-cover shrink-0" style={{ border: '1px solid #EDE8E2' }} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-baseline gap-2 flex-wrap">
+                          <span
+                            className="text-[#1A1614] leading-tight font-bold"
+                            style={{ fontSize: 18 }}
+                          >
+                            {sugg.petName}
+                          </span>
+                          <span className="text-[11px] text-[#8E7A6B]">{sugg.petBreed}</span>
+                        </div>
+                        <div className="mt-2">
+                          <ReasonStack
+                            title="Why this match"
+                            reasons={expandedReasons}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => handleDismissSuggestion(sugg.id)} className="w-10 h-9 rounded-full flex items-center justify-center" style={{ background: '#FFF', border: '1px solid #EDE8E2', color: '#111' }}><X size={16} /></button>
+                      <button onClick={() => handleSendRequest(sugg)} className="flex-1 h-9 rounded-full text-white text-[12.5px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: '#E85D2A' }}><UserPlus size={14} /> Be Fylos</button>
                     </div>
                   </div>
-                  <div className="bg-[#F7F7F8] rounded-[12px] p-3 mb-4 space-y-1.5">
-                    {sugg.reasons.map((reason, index) => (
-                      <p key={`${sugg.id}-${index}`} className="text-[13px] text-[#111111] flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-[#FF6A3D]" /> {reason}</p>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => handleDismissSuggestion(sugg.id)} className="w-12 h-10 bg-[#F7F7F8] text-[#111111] rounded-[12px] flex items-center justify-center"><X size={20} /></button>
-                    <button onClick={() => handleSendRequest(sugg)} className="flex-1 h-10 bg-[#111111] text-[#FFFFFF] text-[14px] font-semibold rounded-[12px] flex items-center justify-center gap-2 active:scale-[0.98] active:opacity-90"><UserPlus size={18} /> Be Fylos</button>
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
       </ActivitySubScreenPortal>
 
-      <ActivitySubScreenPortal isOpen={currentView === 'my-fylos'}>
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F7F8]">
-          <div className="px-4 pt-14 pb-3 flex items-center gap-3 bg-[#FFFFFF] border-b border-black/[0.04] shrink-0">
-            <button onClick={() => setCurrentView('list')} className="p-2 -ml-2 text-[#111111] active:opacity-50"><ArrowLeft size={24} /></button>
-            <h2 className="text-[18px] font-bold text-[#111111]">My Fylos</h2>
+      <ActivitySubScreenPortal isOpen={currentView === 'my-fylos'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          <div className="absolute top-0 left-0 w-full h-[170px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex justify-between items-center w-full pointer-events-auto">
+              <button onClick={() => setCurrentView('list')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Network</h2>
+              <button className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
+                <SlidersHorizontal size={18} color="#111" strokeWidth={1.75} />
+              </button>
+            </div>
+          </header>
+          <div className="absolute top-[112px] left-0 w-full z-30 px-5">
+            <div className="relative grid grid-cols-3 p-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid #EDE8E2', backdropFilter: 'blur(12px)' }}>
+              <div className="absolute top-1.5 bottom-1.5 rounded-full transition-all duration-[300ms]" style={{ left: 'calc(66.666% + 6px)', width: 'calc(33.333% - 12px)', background: '#111', boxShadow: '0 2px 8px rgba(0,0,0,0.12)' }} />
+              <button onClick={() => setCurrentView('feed')} className="relative z-10 py-1.5 text-[12.5px] font-semibold" style={{ color: '#6E6058' }}>Feed</button>
+              <button onClick={() => setCurrentView('requests')} className="relative z-10 py-1.5 text-[12.5px] font-semibold flex items-center justify-center gap-1.5" style={{ color: '#6E6058' }}>
+                Requests
+                {filteredReceivedReqs.length > 0 && (
+                  <span className="text-[9.5px] font-bold px-1.5 py-px rounded-full" style={{ background: '#E6E1DA', color: '#6E6058' }}>{filteredReceivedReqs.length}</span>
+                )}
+              </button>
+              <button className="relative z-10 py-1.5 text-[12.5px] font-semibold flex items-center justify-center gap-1.5" style={{ color: '#FFF' }}>
+                Fylos
+                <span className="text-[9.5px] font-bold px-1.5 py-px rounded-full" style={{ background: 'rgba(255,255,255,0.22)', color: '#FFF' }}>{filteredFriends.length}</span>
+              </button>
+            </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
-            {filteredFriends.map((fylos) => (
-              <div key={fylos.id} onClick={() => { setActiveProfile(fylos); setCurrentView('profile'); }} className="bg-[#FFFFFF] p-3.5 rounded-[14px] border border-black/[0.04] flex items-center gap-3 active:bg-black/[0.02] transition-colors">
-                <img src={fylos.petPhoto} alt={fylos.petName} className="w-12 h-12 rounded-full object-cover bg-[#F7F7F8]" loading="lazy" decoding="async" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[15px] font-medium text-[#111111] truncate">{fylos.petName}</p>
-                  <p className="text-[12px] text-[#8E8E93] truncate">{fylos.petBreed} • {fylos.distance} km</p>
-                  <p className="text-[11px] text-[#9A9AA0] mt-0.5">Connected via {MOCK_DASHBOARD_PETS.find((pet) => pet.id === (fylos.connectedViaPetId || fylos.contextPetIds?.[0]))?.name || activePetName}</p>
-                </div>
-                <ChevronRight size={16} className="text-[#CFCFD4]" />
+          <div className="flex-1 overflow-y-auto pt-[172px] px-5 pb-16 space-y-2 custom-scrollbar">
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+                <Users size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
               </div>
+              <span className="text-[12.5px] font-semibold text-[#111]">Your Fylos · {filteredFriends.length}</span>
+            </div>
+            {filteredFriends.map((fylos) => (
+              <button key={fylos.id} onClick={() => { setActiveProfile(fylos); setCurrentView('profile'); }} className="w-full rounded-[14px] p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <img src={fylos.petPhoto} alt={fylos.petName} className="w-[46px] h-[46px] rounded-[12px] object-cover shrink-0" style={{ border: '1px solid #EDE8E2' }} loading="lazy" decoding="async" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13.5px] font-semibold text-[#111] truncate">{fylos.petName} <span className="font-normal text-[#A09A94]">· {fylos.petBreed}</span></div>
+                  <div className="flex items-center gap-1.5 text-[10.5px] text-[#A09A94] mt-[2px]">
+                    <span className="truncate text-[#6E6058]">{ownerHandle(fylos)}</span>
+                    <span className="text-[#D4CEC6]">·</span>
+                    <MapPin size={9} strokeWidth={1.75} className="shrink-0" />
+                    <span className="shrink-0">{fylos.distance} km</span>
+                    <span className="text-[#D4CEC6]">·</span>
+                    <span className="truncate">via {MOCK_DASHBOARD_PETS.find((pet) => pet.id === (fylos.connectedViaPetId || fylos.contextPetIds?.[0]))?.name || activePetName}</span>
+                  </div>
+                </div>
+                <ChevronRight size={15} className="text-[#A09A94] shrink-0" />
+              </button>
             ))}
           </div>
         </div>
       </ActivitySubScreenPortal>
 
-      <ActivitySubScreenPortal isOpen={currentView === 'profile'}>
-        <div className="flex-1 flex flex-col relative overflow-hidden bg-[#F0F0F2]">
+      <ActivitySubScreenPortal isOpen={currentView === 'profile'} fullScreen>
+        <div className="flex-1 flex flex-col relative overflow-hidden bg-[#F7F5F2]">
           {activeProfile && (
             <>
-              <div className="absolute top-14 left-4 right-4 flex justify-between z-10">
-                <button onClick={() => setCurrentView('list')} className="w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white"><ArrowLeft size={20} /></button>
-                <button onClick={() => setProfileMenuOpen((v) => !v)} className="w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white relative">
-                  <MoreVertical size={20} />
+              {/* Top bar — back + more */}
+              <div className="absolute top-[54px] left-5 right-5 flex justify-between z-10">
+                <button
+                  onClick={() => setCurrentView('list')}
+                  aria-label="Back"
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center active:scale-[0.95]"
+                  style={{ border: '1px solid #EDE8E2' }}
+                >
+                  <ArrowLeft size={18} />
+                </button>
+                <button
+                  onClick={() => setProfileMenuOpen((v) => !v)}
+                  aria-label="More"
+                  className="w-10 h-10 rounded-full bg-white flex items-center justify-center relative active:scale-[0.95]"
+                  style={{ border: '1px solid #EDE8E2' }}
+                >
+                  <MoreVertical size={18} />
                   {profileMenuOpen && (
-                    <div className="absolute top-12 right-0 w-48 bg-[#FFFFFF] rounded-[16px] shadow-xl border border-black/[0.04] overflow-hidden py-1">
-                      <button className="w-full px-4 py-3 text-left text-[15px] font-medium text-[#111111] hover:bg-[#F7F7F8]">Mute notifications</button>
-                      <div className="h-[1px] bg-black/[0.04]" />
-                      <button onClick={() => handleRemoveFriend(activeProfile.id)} className="w-full px-4 py-3 text-left text-[15px] font-medium text-[#FF3B30] hover:bg-[#FFF0F0]">Remove connection</button>
+                    <div className="absolute top-12 right-0 w-52 bg-[#FFFFFF] rounded-[14px] shadow-xl border border-[#EDE8E2] overflow-hidden py-1">
+                      <button className="w-full px-4 py-3 text-left text-[14px] font-medium text-[#111] hover:bg-[#F7F5F2]">Mute notifications</button>
+                      <div className="h-[1px] bg-[#EDE8E2]" />
+                      <button onClick={() => handleRemoveFriend(activeProfile.id)} className="w-full px-4 py-3 text-left text-[14px] font-medium text-[#E85D2A] hover:bg-[#FFF5F1]">Remove Fylos</button>
                     </div>
                   )}
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto custom-scrollbar pb-24 relative">
-                <div className="h-[280px] w-full bg-[#E5E5EA] relative shrink-0">
-                  <img src={activeProfile.petPhoto} alt="profile" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <div className="absolute bottom-4 left-5 right-5 text-white">
-                    <h1 className="text-[32px] font-bold leading-tight drop-shadow-md">{activeProfile.petName}</h1>
-                    <p className="text-[15px] font-medium opacity-90">{activeProfile.petBreed} · {activeProfile.age} years</p>
-                  </div>
-                </div>
-                <div className="px-5 py-5 space-y-6">
-                  <div className="bg-[#FFFFFF] rounded-[20px] p-4 shadow-sm flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#E8F2FF] flex items-center justify-center text-[#007AFF]"><MapPin size={24} /></div>
-                    <div>
-                      <p className="text-[15px] font-semibold text-[#111111]">{activeProfile.distance} km away</p>
-                      <p className="text-[13px] text-[#6E6E73]">Connected since {activeProfile.friendsSince}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-5 bg-[#F0F0F2]/90 backdrop-blur-md border-t border-black/[0.04] z-20">
-                <div className="flex gap-3">
-                  <button className="flex-1 py-3.5 bg-[#FFFFFF] text-[#111111] text-[15px] font-semibold rounded-[16px] shadow-sm flex items-center justify-center gap-2 border border-black/[0.04]"><MessageCircle size={18} /> Message</button>
-                  <button onClick={() => setCurrentView('playdatesList')} className="flex-1 py-3.5 bg-[#FF6A3D] text-[#FFFFFF] text-[15px] font-semibold rounded-[16px] shadow-sm flex items-center justify-center gap-2"><Calendar size={18} /> Playdate</button>
-                </div>
-              </div>
+              <FylosProfileView
+                profile={activeProfile}
+                activePetName={activePetName}
+                connectedViaName={MOCK_DASHBOARD_PETS.find((pet) => pet.id === (activeProfile.connectedViaPetId || activeProfile.contextPetIds?.[0]))?.name || activePetName}
+                onOpenPlaydates={onOpenPlaydates}
+                onOpenPhoto={(ph) => setPhotoViewer(ph)}
+                onOpenLocation={(loc) => {
+                  // Prefer full place detail when we can match the location to a known Place
+                  const match = MOCK_PLACES.find((p) => p.name === loc.name) || MOCK_PLACES.find((p) => p.name.toLowerCase().includes((loc.name || '').toLowerCase().split(' ')[0]));
+                  if (match) { openPlaceDetail(match); } else { setLocationSheet(loc); }
+                }}
+                onOpenMessage={(p) => { setActiveChat(p); setCurrentView('chat'); }}
+                feedPosts={feedPosts}
+                friends={friends}
+              />
             </>
           )}
         </div>
       </ActivitySubScreenPortal>
 
-      <ActivitySubScreenPortal isOpen={currentView === 'playdatesList'}>
-        <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F7F8]">
+      <ActivitySubScreenPortal isOpen={currentView === 'playdatesList'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden bg-[#F7F5F2]">
           <div className="px-4 pt-14 pb-3 flex items-center justify-between bg-[#FFFFFF] border-b border-black/[0.04] shrink-0">
             <div className="flex items-center gap-3">
               <button onClick={() => setCurrentView('list')} className="p-2 -ml-2 text-[#111111] active:opacity-50"><ArrowLeft size={24} /></button>
               <h2 className="text-[18px] font-bold text-[#111111]">Playdates</h2>
             </div>
-            <button onClick={() => setCreatePlaydateOpen(true)} className="p-2 -mr-2 text-[#FF6A3D] active:opacity-50"><Plus size={24} /></button>
+            <button onClick={() => setCreatePlaydateOpen(true)} className="p-2 -mr-2 text-[#E85D2A] active:opacity-50"><Plus size={24} /></button>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-8 custom-scrollbar pb-10">
             {pendingPlaydates.length > 0 && (
@@ -8383,7 +12110,7 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
                       <p className="text-[14px] text-[#111111] my-4">Hosted by <strong>{pd.hostPetName}&apos;s owner</strong></p>
                       <div className="flex gap-2">
                         <button onClick={() => handleDeclinePlaydate(pd.id)} className="flex-1 py-2 bg-[#F7F7F8] text-[#111111] text-[13px] font-semibold rounded-[12px]">Decline</button>
-                        <button onClick={() => handleAcceptPlaydate(pd.id)} className="flex-1 py-2 bg-[#FF6A3D] text-[#FFFFFF] text-[13px] font-semibold rounded-[12px]">Accept</button>
+                        <button onClick={() => handleAcceptPlaydate(pd.id)} className="flex-1 py-2 bg-[#E85D2A] text-[#FFFFFF] text-[13px] font-semibold rounded-[12px]">Accept</button>
                       </div>
                     </div>
                   ))}
@@ -8401,7 +12128,7 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
                         <p className="text-[15px] font-bold text-[#111111]">{formatActivityDateStr(pd.date)} · {pd.startTime}</p>
                         <p className="text-[13px] text-[#6E6E73] flex items-center gap-1 mt-0.5"><MapPin size={12} /> {pd.place.name}</p>
                       </div>
-                      <div className={`text-[11px] font-bold px-2 py-1 rounded-[6px] uppercase tracking-wide ${pd.status === 'in-progress' ? 'bg-[#E8F8EE] text-[#34C759]' : 'bg-[#FFF0ED] text-[#FF6A3D]'}`}>{pd.status === 'in-progress' ? 'Live Now' : 'Upcoming'}</div>
+                      <div className={`text-[11px] font-bold px-2 py-1 rounded-[6px] uppercase tracking-wide ${pd.status === 'in-progress' ? 'bg-[#E8F8EE] text-[#34C759]' : 'bg-[#FFF0ED] text-[#E85D2A]'}`}>{pd.status === 'in-progress' ? 'Live Now' : 'Upcoming'}</div>
                     </div>
                     <button onClick={() => { setActivePlaydate(pd); setCurrentView('playdateDetails'); }} className="w-full py-2 bg-[#F7F7F8] text-[#111111] text-[13px] font-semibold rounded-[12px]">View Details</button>
                   </div>
@@ -8419,7 +12146,7 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
                         <p className="text-[14px] font-semibold text-[#111111]">{formatActivityDateStr(pd.date)}</p>
                         <p className="text-[13px] text-[#6E6E73] mt-0.5">{pd.place.name}</p>
                       </div>
-                      <button className="text-[13px] font-semibold text-[#FF6A3D]">Photos</button>
+                      <button className="text-[13px] font-semibold text-[#E85D2A]">Photos</button>
                     </div>
                   ))}
                 </div>
@@ -8429,7 +12156,270 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
         </div>
       </ActivitySubScreenPortal>
 
-      <ActivitySubScreenPortal isOpen={currentView === 'playdateDetails'}>
+      {/* NOTIFICATIONS — Inbox-style */}
+      <ActivitySubScreenPortal isOpen={currentView === 'notifications'} fullScreen>
+        <FylosInboxView onClose={() => setCurrentView('list')} />
+      </ActivitySubScreenPortal>
+
+      {/* PLACES — browse nearby places */}
+      <ActivitySubScreenPortal isOpen={currentView === 'places'} fullScreen>
+        <PlacesView
+          savedPlaces={savedPlaces}
+          togglePlaceSave={togglePlaceSave}
+          placesCategory={placesCategory}
+          setPlacesCategory={setPlacesCategory}
+          placesSavedOnly={placesSavedOnly}
+          setPlacesSavedOnly={setPlacesSavedOnly}
+          onOpenPlace={openPlaceDetail}
+          onClose={() => setCurrentView('list')}
+        />
+      </ActivitySubScreenPortal>
+
+      {/* PLACE DETAIL */}
+      <ActivitySubScreenPortal isOpen={currentView === 'placeDetail'} fullScreen>
+        <PlaceDetailView
+          place={activePlace}
+          savedPlaces={savedPlaces}
+          togglePlaceSave={togglePlaceSave}
+          friends={friends}
+          feedPosts={feedPosts}
+          onOpenPlaydates={onOpenPlaydates}
+          onOpenPhoto={(ph) => setPhotoViewer(ph)}
+          onClose={() => setCurrentView('places')}
+        />
+      </ActivitySubScreenPortal>
+
+      {/* MESSAGES INBOX */}
+      <ActivitySubScreenPortal isOpen={currentView === 'messages'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          <div className="absolute top-0 left-0 w-full h-[130px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex justify-between items-center w-full pointer-events-auto">
+              <button onClick={() => setCurrentView('list')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Messages</h2>
+              <button onClick={() => alert('New message — coming soon')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]" style={{ background: '#F3EFEB' }} aria-label="Compose">
+                <Edit3 size={17} color="#111" strokeWidth={1.75} />
+              </button>
+            </div>
+          </header>
+          <div className="flex-1 overflow-y-auto pt-[116px] px-5 pb-16 custom-scrollbar">
+            <div className="rounded-[14px] mb-3 flex items-center gap-2.5 px-3.5 py-2.5" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+              <Search size={14} className="text-[#A09A94]" />
+              <input placeholder="Search messages..." className="flex-1 bg-transparent text-[13.5px] text-[#111] placeholder:text-[#A09A94] focus:outline-none" />
+            </div>
+            <div className="rounded-[16px] overflow-hidden" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+              {filteredFriends.map((f, i) => {
+                const lastMsg = ['See you at the park tomorrow!', 'Bella loved that photo 🐾', 'Thanks for the playdate!', 'Tao is ready whenever.', 'Let us know!'][i % 5];
+                const time = ['2m', '1h', '3h', '1d', '2d'][i % 5];
+                const unread = i < 2;
+                return (
+                  <button
+                    key={f.id}
+                    onClick={() => { setActiveChat(f); setCurrentView('chat'); }}
+                    className="w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-[#F7F5F2]"
+                    style={{ borderTop: i > 0 ? '1px solid #EDE8E2' : 'none' }}
+                  >
+                    <div className="relative shrink-0">
+                      <img src={f.petPhoto} alt={f.petName} className="w-[46px] h-[46px] rounded-full object-cover" />
+                      {i < 3 && <span className="absolute bottom-0 right-0 w-[12px] h-[12px] rounded-full" style={{ background: '#E85D2A', border: '2.5px solid #FFF' }} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={`text-[13.5px] truncate ${unread ? 'font-bold text-[#111]' : 'font-semibold text-[#111]'}`}>{f.petName}</span>
+                        <span className="text-[10.5px] text-[#A09A94] shrink-0">{time}</span>
+                      </div>
+                      <div className={`text-[12px] truncate mt-0.5 ${unread ? 'font-semibold text-[#111]' : 'text-[#6E6058]'}`}>{lastMsg}</div>
+                    </div>
+                    {unread && <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#E85D2A' }} />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </ActivitySubScreenPortal>
+
+      {/* INDIVIDUAL CHAT */}
+      <ActivitySubScreenPortal isOpen={currentView === 'chat'} fullScreen>
+        {activeChat && (
+          <FylosChatView
+            fylos={activeChat}
+            onBack={() => setCurrentView('messages')}
+          />
+        )}
+      </ActivitySubScreenPortal>
+
+      {/* EVENTS */}
+      <ActivitySubScreenPortal isOpen={currentView === 'events'} fullScreen>
+        <div className="flex-1 flex flex-col overflow-hidden relative" style={{ background: '#F7F5F2' }}>
+          <div className="absolute top-0 left-0 w-full h-[130px] z-20 pointer-events-none" style={{ background: 'linear-gradient(180deg, #F7F5F2 0%, rgba(247,245,242,0.9) 70%, transparent 100%)' }} />
+          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-5 px-5 pointer-events-none">
+            <div className="flex justify-between items-center w-full pointer-events-auto">
+              <button onClick={() => setCurrentView('list')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]" style={{ background: '#F3EFEB' }}>
+                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              </button>
+              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Events</h2>
+              <button onClick={() => setCreateEventOpen(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97]" style={{ background: '#E85D2A', boxShadow: '0 4px 12px rgba(232,93,42,0.28)' }} aria-label="Create event">
+                <Plus size={20} color="#FFF" strokeWidth={2.25} />
+              </button>
+            </div>
+          </header>
+          <div className="flex-1 overflow-y-auto pt-[116px] px-5 pb-16 custom-scrollbar space-y-4">
+            {/* Birthdays & milestones */}
+            <div>
+              <div className="flex items-center gap-2 mb-2 px-1">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#FFE9E2' }}>
+                  <Award size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                </div>
+                <span className="text-[12.5px] font-semibold text-[#111]">Today&rsquo;s celebrations</span>
+              </div>
+              <div className="rounded-[16px] p-3.5 flex items-center gap-3" style={{ background: '#FFF5F1', border: '1px solid #FFD4CC' }}>
+                <div className="relative shrink-0">
+                  <img src="https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150" alt="Bella" className="w-[56px] h-[56px] rounded-full object-cover" style={{ border: '2px solid #FFF' }} />
+                  <div className="absolute -bottom-1 -right-1 w-[22px] h-[22px] rounded-full flex items-center justify-center text-[13px]" style={{ background: '#FFF', border: '2px solid #F7F5F2' }}>🎂</div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13.5px] font-bold text-[#111]">Bella turns 5 today</div>
+                  <div className="text-[11.5px] text-[#6E6058] mt-0.5">Wish a happy birthday 🎉</div>
+                </div>
+                <button
+                  onClick={() => setWishTarget({ name: 'Bella', avatar: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=150&h=150' })}
+                  className="shrink-0 h-8 px-3 rounded-full text-[11.5px] font-semibold text-white"
+                  style={{ background: '#E85D2A' }}
+                >
+                  Wish
+                </button>
+              </div>
+            </div>
+
+            {/* Community meetups — public events anyone can join */}
+            <div>
+              <div className="flex items-center justify-between mb-2 px-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
+                    <Users size={11} className="text-[#E85D2A]" strokeWidth={2.25} />
+                  </div>
+                  <span className="text-[12.5px] font-semibold text-[#111]">Community events</span>
+                </div>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#F3EFEB', color: '#E85D2A' }}>PUBLIC</span>
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { id: 'ev1', title: 'Labrador meetup', date: 'Sat · 10:00', place: 'Zurichhorn Park', joined: 12, emoji: '🐕', color: '#F3EFEB', accent: '#E85D2A', description: 'Friendly meetup for Labradors and their friends — bring treats and tennis balls!', host: { name: 'Theo', handle: '@theo_w', avatar: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=80' }, attendees: ['https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=80', 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=80', 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=80'] },
+                  { id: 'ev2', title: 'Puppy social hour', date: 'Sun · 15:00', place: 'Seefeld Park', joined: 8, emoji: '🐾', color: '#F3EFEB', accent: '#E85D2A', description: 'Socialization time for puppies under 1 year. Safe, supervised, and full of fun.', host: { name: 'Maya', handle: '@maya.k', avatar: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=80' }, attendees: ['https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=80', 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&q=80&w=80'] },
+                  { id: 'ev3', title: 'Training basics', date: 'Tue · 18:30', place: 'Bellerive', joined: 6, emoji: '🎓', color: '#FFE9E2', accent: '#E85D2A', description: 'Drop-in training for basic commands. All breeds welcome.', host: { name: 'Alex', handle: '@alex.r', avatar: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=80' }, attendees: ['https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=80', 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=80'] },
+                  ...userEvents,
+                ].map((e) => {
+                  const joined = joinedEvents.has(e.id);
+                  return (
+                    <div
+                      key={e.id || e.title}
+                      onClick={() => setEventDetails(e)}
+                      role="button"
+                      tabIndex={0}
+                      className="w-full rounded-[16px] p-3.5 text-left active:scale-[0.995] transition-transform cursor-pointer"
+                      style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+                    >
+                      {/* Top row: emoji + title/host */}
+                      <div className="flex gap-3">
+                        <div className="w-[44px] h-[44px] rounded-[12px] flex items-center justify-center text-[20px] shrink-0" style={{ background: e.color }}>{e.emoji}</div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <div className="text-[14px] font-bold text-[#111] truncate leading-tight">{e.title}</div>
+                            {joined && (
+                              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold" style={{ background: '#F3EFEB', color: '#E85D2A' }}>JOINED</span>
+                            )}
+                          </div>
+                          {e.host && (
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <img src={e.host.avatar} alt={e.host.name} className="w-[14px] h-[14px] rounded-full object-cover" />
+                              <span className="text-[11px] text-[#6E6058]">
+                                Hosted by <span className="font-semibold text-[#111]">{e.host.name}</span>
+                                <span className="text-[#A09A94] ml-1">{e.host.handle}</span>
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      {/* Details row: date + place */}
+                      <div className="text-[11.5px] text-[#6E6058] mt-2.5 flex items-center gap-1.5 flex-wrap">
+                        <Clock size={11} strokeWidth={2} />
+                        <span className="font-medium text-[#111]">{e.date}</span>
+                        <span className="text-[#D4CEC6]">·</span>
+                        <MapPin size={11} strokeWidth={2} />
+                        <span>{e.place}</span>
+                      </div>
+                      {/* Bottom row: attendees + RSVP */}
+                      <div className="mt-3 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {e.attendees && e.attendees.length > 0 && (
+                            <div className="flex -space-x-1.5">
+                              {e.attendees.slice(0, 3).map((a, i) => (
+                                <img key={i} src={a} alt="" className="w-[20px] h-[20px] rounded-full object-cover" style={{ border: '1.5px solid #FFF' }} />
+                              ))}
+                            </div>
+                          )}
+                          <span className="text-[11px] text-[#6E6058]">
+                            <span className="font-bold text-[#111]">{e.joined}</span> going
+                          </span>
+                        </div>
+                        <button
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            setJoinedEvents((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(e.id)) next.delete(e.id); else next.add(e.id);
+                              return next;
+                            });
+                          }}
+                          className="h-[30px] px-3 rounded-full text-[11.5px] font-semibold active:scale-[0.96] transition-transform flex items-center gap-1"
+                          style={joined
+                            ? { background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }
+                            : { background: '#E85D2A', color: '#FFF', boxShadow: '0 3px 8px rgba(232,93,42,0.25)' }
+                          }
+                        >
+                          {joined ? (<><Check size={12} strokeWidth={2.5} /> Going</>) : 'Join'}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Anniversaries */}
+            <div>
+              <div className="flex items-center gap-2 mb-2 px-1">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: '#FFF1EC' }}>
+                  <Heart size={11} className="text-[#E85D2A]" strokeWidth={2.25} fill="#E85D2A" />
+                </div>
+                <span className="text-[12.5px] font-semibold text-[#111]">Fylos anniversaries</span>
+              </div>
+              <div className="rounded-[16px] p-3.5 flex items-center gap-3" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+                <div className="flex -space-x-3 shrink-0">
+                  <img src={MOCK_DASHBOARD_PETS[0].avatar} alt="Leo" className="w-[42px] h-[42px] rounded-full object-cover" style={{ border: '3px solid #FFF' }} />
+                  <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=150&h=150" alt="Tao" className="w-[42px] h-[42px] rounded-full object-cover" style={{ border: '3px solid #FFF' }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13.5px] font-semibold text-[#111]">Leo &amp; Tao · 1 year Fylos</div>
+                  <div className="text-[11.5px] text-[#6E6058] mt-0.5">Celebrate together</div>
+                </div>
+                <button
+                  onClick={() => { if (navigator.share) navigator.share({ title: 'Fylos anniversary', text: 'Leo & Tao — 1 year as Fylos! 🐾', url: 'https://fylos.app' }).catch(() => {}); else alert('Anniversary shared!'); }}
+                  className="shrink-0 h-8 px-3 rounded-full text-[11.5px] font-semibold flex items-center gap-1"
+                  style={{ background: '#F3EFEB', color: '#111', border: '1px solid #EDE8E2' }}
+                >
+                  <Share2 size={11} strokeWidth={2.25} /> Share
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ActivitySubScreenPortal>
+
+      <ActivitySubScreenPortal isOpen={currentView === 'playdateDetails'} fullScreen>
         <div className="flex-1 flex flex-col overflow-hidden bg-[#F0F0F2] relative">
           {activePlaydate && (
             <>
@@ -8458,98 +12448,537 @@ const FriendsActivityContainer = ({ isVisible, setGlobalBadge, selectedPetId, pl
         </div>
       </ActivitySubScreenPortal>
 
-      <ActivityBottomSheet isOpen={createPlaydateOpen} onClose={() => setCreatePlaydateOpen(false)} title="Create Playdate">
+      <ActivityBottomSheet
+        isOpen={createPlaydateOpen}
+        onClose={() => { setCreatePlaydateOpen(false); setSuggestPlaydateTargetId(null); }}
+        title="Create Playdate"
+      >
         <div className="space-y-8">
           <div>
             <h3 className="text-[12px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">Invite Connections</h3>
             <div className="space-y-2">
-              {friends.map((friend) => (
-                <label key={friend.id} className="flex items-center justify-between p-3 bg-[#F7F7F8] rounded-[16px] border border-transparent cursor-pointer hover:border-black/[0.04]">
-                  <div className="flex items-center gap-3">
-                    <img src={friend.petPhoto} className="w-12 h-12 rounded-full object-cover bg-[#FFFFFF]" alt={friend.petName} />
-                    <div>
-                      <p className="text-[15px] font-bold text-[#111111]">{friend.petName}</p>
-                      <p className="text-[13px] text-[#6E6E73]">{friend.distance} km away</p>
+              {friends.map((friend) => {
+                const presetChecked = suggestPlaydateTargetId
+                  ? friend.id === suggestPlaydateTargetId
+                  : (friend.petName === 'Max' || friend.petName === 'Bella');
+                return (
+                  <label
+                    key={`${friend.id}-${suggestPlaydateTargetId || 'all'}`}
+                    className="flex items-center justify-between p-3 bg-[#F7F7F8] rounded-[16px] border border-transparent cursor-pointer hover:border-black/[0.04]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img src={friend.petPhoto} className="w-12 h-12 rounded-full object-cover bg-[#FFFFFF]" alt={friend.petName} />
+                      <div>
+                        <p className="text-[15px] font-bold text-[#111111]">{friend.petName}</p>
+                        <p className="text-[13px] text-[#6E6E73]">{friend.distance} km away</p>
+                      </div>
                     </div>
-                  </div>
-                  <input type="checkbox" className="w-6 h-6 accent-[#FF6A3D] rounded-full border-gray-300" defaultChecked={friend.petName === 'Max' || friend.petName === 'Bella'} />
-                </label>
-              ))}
+                    <input
+                      type="checkbox"
+                      className="w-6 h-6 accent-[#E85D2A] rounded-full border-gray-300"
+                      defaultChecked={presetChecked}
+                    />
+                  </label>
+                );
+              })}
             </div>
           </div>
-          <button onClick={() => { setCreatePlaydateOpen(false); setCurrentView('playdatesList'); }} className="w-full h-[56px] bg-[#FF6A3D] text-white font-bold text-[16px] rounded-[16px] shadow-[0_4px_14px_rgba(255,106,61,0.3)]">Create Playdate</button>
+          <button
+            onClick={() => { setCreatePlaydateOpen(false); setSuggestPlaydateTargetId(null); setCurrentView('playdatesList'); }}
+            className="w-full h-[56px] bg-[#E85D2A] text-white font-bold text-[16px] rounded-[16px] shadow-[0_4px_14px_rgba(232,93,42,0.3)]"
+          >
+            Create Playdate
+          </button>
         </div>
       </ActivityBottomSheet>
-      <ActivityLikesBottomSheet isOpen={likesSheetOpen} onClose={() => setLikesSheetOpen(false)} post={activePostLikes} />
+      <ActivityLikesBottomSheet isOpen={likesSheetOpen} onClose={() => setLikesSheetOpen(false)} post={activePostLikes} onOpenPetProfile={openPetProfileByName} />
+      <CreatePostSheet
+        isOpen={createPostOpen}
+        onClose={() => setCreatePostOpen(false)}
+        friends={filteredFriends}
+        onSubmit={(draft) => {
+          const newPost = {
+            id: `post_${Date.now()}`,
+            ownerName: 'You',
+            petName: activePetName,
+            avatar: MOCK_DASHBOARD_PETS.find((p) => p.id === selectedPetId)?.avatar || MOCK_DASHBOARD_PETS[0].avatar,
+            timeAgo: 'Just now',
+            location: draft.location || null,
+            type: draft.type,
+            photoUrl: draft.photoUrl || null,
+            summary: draft.type === 'walk-together'
+              ? `Walk together${draft.withPets.length ? ` with ${draft.withPets[0].name}` : ''}`
+              : draft.type === 'check-in'
+                ? `Checked in${draft.location ? ` at ${draft.location}` : ''}`
+                : (draft.caption || null),
+            details: draft.type !== 'photo' && draft.caption ? draft.caption : null,
+            likesCount: 0,
+            likedByMe: false,
+            likersPreview: '',
+            contextPetIds: [selectedPetId],
+            withPets: draft.withPets,
+            mapCoords: draft.type !== 'photo' ? { lat: 47.37 + Math.random() * 0.02, lng: 8.54 + Math.random() * 0.02 } : null,
+            likers: [],
+          };
+          setFeedPosts((prev) => [newPost, ...prev]);
+          setCreatePostOpen(false);
+        }}
+      />
+      {/* Share a moment FAB moved inline into the Stories strip */}
+      {/* Post action menu (3-dots) */}
+      {postMenuTarget && (
+        <PostMenuSheet
+          post={postMenuTarget}
+          onClose={() => setPostMenuTarget(null)}
+          onDelete={(id) => setFeedPosts((prev) => prev.filter((p) => p.id !== id))}
+        />
+      )}
+      {/* Location map sheet */}
+      {locationSheet && (
+        <LocationSheet location={locationSheet} onClose={() => setLocationSheet(null)} />
+      )}
+      {/* Full-screen photo viewer */}
+      {photoViewer && (
+        <PhotoViewer photo={photoViewer} onClose={() => setPhotoViewer(null)} />
+      )}
+      {/* Create Event sheet */}
+      {createEventOpen && (
+        <CreateEventSheet
+          isOpen={createEventOpen}
+          onClose={() => setCreateEventOpen(false)}
+          friends={filteredFriends}
+          onSubmit={(ev) => {
+            setUserEvents((prev) => [{ ...ev, id: `ev_${Date.now()}` }, ...prev]);
+            setCreateEventOpen(false);
+          }}
+        />
+      )}
+      {/* Wish (birthday/milestone) sheet */}
+      {wishTarget && (
+        <WishSheet target={wishTarget} onClose={() => setWishTarget(null)} />
+      )}
+      {/* Event details sheet */}
+      {eventDetails && (
+        <EventDetailsSheet
+          event={eventDetails}
+          joined={joinedEvents.has(eventDetails.id)}
+          onClose={() => setEventDetails(null)}
+          onToggleJoin={(id) => setJoinedEvents((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; })}
+        />
+      )}
+      {/* Personality card sheet — opens when a pet is tapped in the constellation */}
+      <PersonalityCardSheet
+        open={!!personalitySheetPet}
+        onClose={() => setPersonalitySheetPet(null)}
+        pet={personalitySheetPet}
+      />
+      {/* Bond ladder sheet — opens from the "View all bonds" entry */}
+      <BondScoreSheet
+        open={bondsSheetOpen}
+        onClose={() => setBondsSheetOpen(false)}
+        petName={packDiagramCenter?.name || 'Leo'}
+        petAvatar={packDiagramCenter?.photo}
+        onOpenPersonality={(p) => {
+          setBondsSheetOpen(false);
+          setTimeout(() => setPersonalitySheetPet({ name: p.name, petPhoto: p.avatar }), 80);
+        }}
+      />
+      {/* Story sheet — wrap-up flow + post detail viewer */}
+      <StoryCardSheet
+        open={!!storySheet}
+        mode={storySheet?.mode || 'view'}
+        story={storySheet?.story}
+        onClose={() => setStorySheet(null)}
+        onSave={() => setStorySheet(null)}
+      />
+      {/* Pet of the Day sheet — featured today expand */}
+      <PetOfTheDaySheet
+        open={petOfDayOpen}
+        onClose={() => setPetOfDayOpen(false)}
+        onOpenPersonality={(p) => {
+          setPetOfDayOpen(false);
+          setTimeout(() => setPersonalitySheetPet({ name: p.name, petPhoto: p.avatar }), 80);
+        }}
+        onOpenStory={(s) => {
+          setPetOfDayOpen(false);
+          setTimeout(() => setStorySheet({ mode: 'view', story: s }), 80);
+        }}
+      />
+      {/* Twin Finder mini-flow — opens from Twin Finder card */}
+      <TwinFinderSheet
+        open={twinFinderOpen}
+        onClose={() => setTwinFinderOpen(false)}
+        pet={{ name: packDiagramCenter?.name || 'Leo', archetype: 'The Diplomat', avatar: packDiagramCenter?.photo }}
+      />
+      {/* Pack page sheet — opens from a Tribe pack tap */}
+      <PackPageSheet
+        open={!!activePackPage}
+        onClose={() => setActivePackPage(null)}
+        pack={activePackPage}
+        onOpenPersonality={(p) => {
+          setActivePackPage(null);
+          setTimeout(() => setPersonalitySheetPet({ name: p.name, petPhoto: p.avatar }), 80);
+        }}
+      />
+      {/* Memory of the Week — opens from the curated card on Feed */}
+      <MemoryOfTheWeekSheet
+        open={memoryWeekOpen}
+        onClose={() => setMemoryWeekOpen(false)}
+        onOpenPersonality={(p) => {
+          setMemoryWeekOpen(false);
+          setTimeout(() => setPersonalitySheetPet({ name: p.name, petPhoto: p.avatar }), 80);
+        }}
+      />
     </div>
   );
 };
 
-const ActivityCommunityPlaceholder = ({ isVisible }) => {
-  const nav = (path) => { window.location.href = path; };
+
+const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [], onAddMemory }) => {
+  const open = (tab, wrapUpId) => onOpenPlaydates && onOpenPlaydates(tab, wrapUpId);
+  const [hasPendingWrapUp, setHasPendingWrapUp] = useState(true);
+  const [wrapUpSheet, setWrapUpSheet] = useState(false);
+  const [activeHotspot, setActiveHotspot] = useState(null);
+  const [personalityPet, setPersonalityPet] = useState(null);
+  const hotspots = [
+    { id: 'h1', name: 'Seefeld Park', pups: 8, distance: '0.5 km', photo: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=300&q=60' },
+    { id: 'h2', name: 'Limmat riverside', pups: 5, distance: '1.1 km', photo: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=300&q=60' },
+    { id: 'h3', name: 'Belvoirpark', pups: 4, distance: '1.8 km', photo: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&q=60' },
+  ];
   return (
     <div className={`${isVisible ? 'block' : 'hidden'} bg-[#F7F5F2] pb-24`}>
-      <div className="px-5 pt-4 space-y-4">
-        {/* Hero — Playdate intro */}
-        <div className="text-center pt-2 pb-4">
-          <div className="w-16 h-16 rounded-full bg-[#E85D2A]/10 flex items-center justify-center mx-auto mb-3">
-            <Heart size={28} className="text-[#E85D2A]" />
-          </div>
-          <h3 className="text-[18px] font-bold text-[#111] tracking-tight mb-1">Find playmates</h3>
-          <p className="text-[13px] text-[#A09A94] leading-relaxed max-w-[240px] mx-auto">
-            Match with dogs nearby for walks, park time, and socializing.
-          </p>
-        </div>
-
-        {/* Active matches */}
-        <div className="rounded-[16px] p-4 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }} onClick={() => nav('/playdate-matching')}>
+      <div className="px-5 pt-2 space-y-3">
+        {/* Playmates card (subset of Fylos you actually schedule playdates with) */}
+        <button
+          onClick={() => open('playmates')}
+          className="w-full rounded-[16px] p-4 active:scale-[0.98] transition-transform text-left"
+          style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+        >
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[13px] font-semibold text-[#111]">New matches</span>
-            <span className="px-2.5 py-1 bg-[#E85D2A] text-white rounded-full text-[11px] font-bold">4 matches</span>
+            <div className="flex items-center gap-2">
+              <PawPrint size={14} className="text-[#E85D2A]" strokeWidth={2.25} />
+              <span className="text-[13px] font-semibold text-[#111]">Your playmates</span>
+            </div>
+            <span
+              className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+              style={{ background: '#FFE9E2', color: '#E85D2A' }}
+            >
+              4 playmates
+            </span>
           </div>
-          <div className="flex -space-x-2">
-            {['https://i.pravatar.cc/80?u=pd1', 'https://i.pravatar.cc/80?u=pd2', 'https://i.pravatar.cc/80?u=pd3', 'https://i.pravatar.cc/80?u=pd4'].map((url, i) => (
-              <img key={i} src={url} alt="" className="w-10 h-10 rounded-full border-2 border-[#F7F5F2] object-cover" />
-            ))}
-            <div className="w-10 h-10 rounded-full border-2 border-[#F7F5F2] bg-[#EDE8E2] flex items-center justify-center">
-              <ChevronRight size={14} className="text-[#A09A94]" />
+          <div className="flex items-center justify-between">
+            <div className="flex -space-x-2">
+              {[
+                'https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60',
+                'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?auto=format&fit=crop&w=200&q=60',
+                'https://images.unsplash.com/photo-1582456891925-ed427bf17ef0?auto=format&fit=crop&w=200&q=60',
+                'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=200&q=60',
+              ].map((url, i) => (
+                <img
+                  key={i}
+                  src={url}
+                  alt=""
+                  className="w-9 h-9 rounded-full object-cover"
+                  style={{ border: '2px solid #FFF' }}
+                />
+              ))}
+            </div>
+            <ChevronRight size={16} className="text-[#A09A94]" />
+          </div>
+        </button>
+
+        {/* Needs wrap-up alert */}
+        {hasPendingWrapUp && (
+        <button
+          onClick={() => setWrapUpSheet(true)}
+          className="w-full rounded-[16px] p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
+          style={{
+            background: '#FFF5F1',
+            border: '1px solid #FFD4CC',
+          }}
+        >
+          <div className="relative shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60"
+              alt=""
+              className="w-[44px] h-[44px] rounded-[12px] object-cover"
+              style={{ border: '1px solid #FFD4CC' }}
+            />
+            <span
+              className="absolute -top-0.5 -right-0.5 w-[10px] h-[10px] rounded-full animate-pulse"
+              style={{ background: '#E85D2A', border: '2px solid #FFF' }}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-semibold text-[#111] truncate">
+              How was it with Buddy?
+            </div>
+            <div className="text-[11px] text-[#E85D2A] font-semibold mt-0.5 flex items-center gap-1">
+              Tap to wrap up
+              <ChevronRight size={11} strokeWidth={2.5} />
             </div>
           </div>
-        </div>
+        </button>
+        )}
 
-        {/* Upcoming playdates */}
+        {/* Next up — date block style */}
         <div>
-          <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-2">Upcoming</span>
-          <div className="rounded-[16px] p-4" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#E85D2A]/10 flex items-center justify-center shrink-0">
-                <Calendar size={18} className="text-[#E85D2A]" />
+          <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-2">
+            Next up
+          </span>
+          <div className="rounded-[16px]" style={{ background: '#FFF', border: '1px solid #EDE8E2' }}>
+          <button
+            onClick={() => open('scheduled')}
+            className="w-full p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
+            style={{ background: 'transparent', border: 'none' }}
+          >
+            <div
+              className="shrink-0 w-[58px] h-[58px] rounded-[14px] flex flex-col items-center justify-center"
+              style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+            >
+              <div
+                className="text-[10px] font-bold uppercase tracking-wider"
+                style={{ color: '#E85D2A' }}
+              >
+                Today
               </div>
+              <div
+                className="text-[15px] font-bold leading-none mt-0.5"
+                style={{ color: '#1A1614', fontVariantNumeric: 'tabular-nums' }}
+              >
+                16:00
+              </div>
+            </div>
+            <div className="flex-1 min-w-0 flex items-center gap-2.5">
+              <img
+                src="https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60"
+                alt="Buddy"
+                className="w-[36px] h-[36px] rounded-full object-cover shrink-0"
+                style={{ border: '1px solid #EDE8E2' }}
+              />
               <div className="flex-1 min-w-0">
-                <span className="text-[14px] font-semibold text-[#111] block leading-tight">Zurichhorn Park</span>
-                <span className="text-[12px] text-[#A09A94]">Saturday, 10:00 AM · 3 dogs</span>
+                <div className="text-[14px] font-semibold text-[#111] truncate">
+                  Buddy <span className="font-normal text-[#A09A94]">· Tom K.</span>
+                </div>
+                <div className="flex items-center gap-1 text-[11.5px] text-[#6E6058] truncate mt-0.5">
+                  <MapPin size={10} strokeWidth={1.75} />
+                  <span className="truncate">Seefeld Park</span>
+                </div>
               </div>
-              <ChevronRight size={16} className="text-[#A09A94] shrink-0" />
+            </div>
+            <span
+              className="w-[8px] h-[8px] rounded-full block shrink-0"
+              style={{ background: '#E85D2A', boxShadow: '0 0 0 3px rgba(232,93,42,0.15)' }}
+            />
+          </button>
+            {/* Match meta chips on the next-up session */}
+            <div className="px-3 pb-3 pt-1" style={{ borderTop: '1px solid #F3EFEB' }}>
+              <div className="flex items-center justify-between gap-2 pt-2">
+                <MatchChips fitScore={92} vouchedBy={3} vaccinated={true} recurring={true} />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Browse all CTA */}
-        <button onClick={() => nav('/playdate-matching')} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
-          Browse all playdates
+        {/* CTAs */}
+        <div className="flex gap-2 pt-1">
+          <button
+            onClick={() => open('discover')}
+            className="flex-1 h-[48px] rounded-full text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+            style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+          >
+            <Sparkles size={13} className="text-[#E85D2A]" strokeWidth={2.25} />
+            Discover pups
+          </button>
+          <button
+            onClick={() => open('scheduled')}
+            className="flex-1 h-[48px] rounded-full text-[13px] font-semibold text-white flex items-center justify-center gap-1.5 active:scale-[0.97] transition-all"
+            style={{ background: '#E85D2A' }}
+          >
+            All playdates
+            <ChevronRight size={14} strokeWidth={2.5} />
+          </button>
+        </div>
+
+        {/* Hotspots */}
+        <div className="pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">
+              Hotspots this week
+            </span>
+            <button
+              onClick={() => open('discover')}
+              className="text-[11px] font-semibold text-[#E85D2A] flex items-center gap-0.5 active:opacity-70"
+            >
+              See map
+              <ChevronRight size={11} strokeWidth={2.5} />
+            </button>
+          </div>
+          <div className="flex flex-col gap-2">
+            {hotspots.map((h) => (
+              <button
+                key={h.id}
+                onClick={() => setActiveHotspot(h)}
+                className="w-full rounded-[14px] p-2.5 flex items-center gap-3 text-left active:scale-[0.99] transition-all"
+                style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+              >
+                <img
+                  src={h.photo}
+                  alt={h.name}
+                  className="w-[46px] h-[46px] rounded-[12px] object-cover shrink-0"
+                  style={{ border: '1px solid #EDE8E2' }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13.5px] font-semibold text-[#111] truncate">{h.name}</div>
+                  <div className="flex items-center gap-1.5 text-[11px] text-[#6E6058] mt-0.5">
+                    <span className="flex items-center gap-0.5 font-semibold text-[#E85D2A]">
+                      <span className="w-[6px] h-[6px] rounded-full bg-[#E85D2A]" />
+                      {h.pups} pups today
+                    </span>
+                    <span className="text-[#D4CEC6]">·</span>
+                    <span className="flex items-center gap-0.5">
+                      <MapPin size={9} strokeWidth={1.75} />
+                      {h.distance}
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight size={15} className="text-[#A09A94] shrink-0" />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Latest memory — most recent wrap-up surfaces here. */}
+        {memories.length > 0 && (
+          <div className="pt-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">
+                Latest memory
+              </span>
+              <button
+                onClick={() => open('scheduled')}
+                className="text-[11px] font-semibold text-[#E85D2A] flex items-center gap-0.5 active:opacity-70"
+              >
+                All memories
+                <ChevronRight size={11} strokeWidth={2.5} />
+              </button>
+            </div>
+            {(() => {
+              const m = memories[0];
+              const shareText = `${m.dogA?.name || ''} & ${m.dogB?.name || ''} · ${m.title || ''}`.trim();
+              return (
+                <MemoryCard
+                  dogA={m.dogA}
+                  dogB={m.dogB}
+                  title={m.title}
+                  location={m.location}
+                  dateStr={m.dateStr}
+                  duration={m.duration}
+                  tags={m.tags}
+                  onShare={() => { if (navigator.share) navigator.share({ title: shareText, text: `${m.location || ''} · ${m.dateStr || ''}`, url: `https://fylos.app/memory/${m.id}` }).catch(() => {}); }}
+                  onOpen={() => open('scheduled')}
+                />
+              );
+            })()}
+          </div>
+        )}
+
+        {/* Invite friends to Fylos */}
+        <button
+          onClick={() => { if (navigator.share) navigator.share({ title: 'Fylos', text: 'Join me on Fylos — the pack app for dog owners.', url: 'https://fylos.app' }).catch(() => {}); }}
+          className="w-full rounded-[16px] p-3.5 flex items-center gap-3 text-left active:scale-[0.99] transition-all mt-3"
+          style={{
+            background: '#FFF5F1',
+            border: '1px solid #FFD4CC',
+          }}
+        >
+          <div
+            className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center shrink-0"
+            style={{ background: '#FFF', border: '1px solid #FFD4CC' }}
+          >
+            <Gift size={18} className="text-[#E85D2A]" strokeWidth={2} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13.5px] font-semibold text-[#111]">Invite friends to Fylos</div>
+            <div className="text-[11px] text-[#6E6058] mt-0.5 truncate">Grow your pack — share the app</div>
+          </div>
+          <span
+            className="shrink-0 px-3 py-1.5 rounded-full text-[11.5px] font-semibold text-white flex items-center gap-1"
+            style={{ background: '#E85D2A' }}
+          >
+            Share
+            <ChevronRight size={12} strokeWidth={2.5} />
+          </span>
         </button>
       </div>
+      {/* Wrap-up story sheet — opens from "How was it with Buddy?" prompt.
+          On save, the wrap-up is converted into a MemoryCard and pushed up so
+          it appears on the Profile tab's memories rail and as "Latest memory"
+          here on the Playdates tab — closing the playdate→memory loop. */}
+      <StoryCardSheet
+        open={wrapUpSheet}
+        mode="wrap-up"
+        story={{ partnerName: 'Buddy', partnerAvatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=200&q=60', ownerName: 'Tom K.', place: 'Seefeld Park' }}
+        onClose={() => setWrapUpSheet(false)}
+        onSave={(result) => {
+          setHasPendingWrapUp(false);
+          setWrapUpSheet(false);
+          const partnerName = 'Buddy';
+          const note = (result?.note || '').trim();
+          const titleFromNote = note ? note.slice(0, 28) : 'Park session';
+          const place = (result?.place || 'Seefeld Park').trim();
+          const today = new Date();
+          const dateStr = today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+          const positiveTags = ['🎾 Loved fetch', '🐾 Great vibes'];
+          const calmTags = ['🐾 Met up', '😌 Calm session'];
+          onAddMemory?.({
+            id: `memory_${Date.now()}`,
+            dogA: { name: 'Leo', photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=400&q=70' },
+            dogB: { name: partnerName, photo: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=400&q=70' },
+            title: titleFromNote,
+            location: place,
+            dateStr,
+            duration: '47 MIN',
+            tags: (result?.vibe ?? 5) >= 4 ? positiveTags : calmTags,
+          });
+        }}
+      />
+      {/* Hotspot detail sheet — opens from any Hotspots row */}
+      <HotspotPlaceSheet
+        open={!!activeHotspot}
+        onClose={() => setActiveHotspot(null)}
+        hotspot={activeHotspot}
+        onOpenPersonality={(p) => {
+          setActiveHotspot(null);
+          setTimeout(() => setPersonalityPet({ name: p.name, petPhoto: p.avatar }), 80);
+        }}
+      />
+      {/* Personality drill from Hotspot active-now avatars */}
+      <PersonalityCardSheet
+        open={!!personalityPet}
+        onClose={() => setPersonalityPet(null)}
+        pet={personalityPet}
+      />
     </div>
   );
 };
 
-const ActivityScreen = ({ isTabBarVisible = true }) => {
-  const [activeMode, setActiveMode] = useState('my');
+const ActivityScreen = ({ isTabBarVisible = true, initialMode, pendingNetworkView, onOpenPlaydates }) => {
+  const [activeMode, setActiveMode] = useState(initialMode === 'my' ? 'friends' : (initialMode || 'friends'));
+  // Central data slices (memories, notifications, scheduled playdate events) come from useSocialData.
+  const {
+    memories,
+    addMemory: handleAddMemory,
+    notifications,
+    markNotificationRead: handleMarkNotificationRead,
+    totalUnreadNotifications,
+    fylosPlaydateEvents,
+    schedulePlaydateEvent,
+  } = useSocialData();
   const [menuOpen, setMenuOpen] = useState(false);
   const [privacySheetOpen, setPrivacySheetOpen] = useState(false);
   const [insightsOpen, setInsightsOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [notifications, setNotifications] = useState(ACTIVITY_NOTIFICATIONS);
   const [hasNewFriendRequests, setHasNewFriendRequests] = useState(true);
   const [activeTypes, setActiveTypes] = useState(['all']);
   const [selectedActivityPetId, setSelectedActivityPetId] = useState(MOCK_DASHBOARD_PETS[0]?.id || null);
@@ -8561,10 +12990,12 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
   const [fylosPlaydateTime, setFylosPlaydateTime] = useState('');
   const [fylosPlaydateLocation, setFylosPlaydateLocation] = useState('');
   const [fylosPlaydateInviteeIds, setFylosPlaydateInviteeIds] = useState([]);
-  const [fylosPlaydateEvents, setFylosPlaydateEvents] = useState([]);
   const { progress: activityScrollY, handleScroll: handleActivityScroll, reset: resetActivityCollapse } = useDirectionalCollapseProgress(168, { showFactor: 2.25 });
-  const totalUnreadNotifications = notifications.reduce((acc, group) => acc + group.items.filter((item) => !item.read).length, 0);
-  const modes = [{ id: 'my', label: 'My' }, { id: 'friends', label: 'Network', badge: hasNewFriendRequests || totalUnreadNotifications > 0 }, { id: 'community', label: 'Playdates' }];
+  const modes = [
+    { id: 'profile', label: 'Profile' },
+    { id: 'friends', label: 'Network', badge: hasNewFriendRequests || totalUnreadNotifications > 0 },
+    { id: 'community', label: 'Playdates' },
+  ];
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
   const p1 = clamp01(activityScrollY / 56); // pets
   const p2 = clamp01((activityScrollY - 56) / 56); // pills
@@ -8572,7 +13003,7 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
   const activityTopPadding = activeMode === 'my'
     ? 172 - (44 * p1) - (44 * p2) - (40 * p3)
     : activeMode === 'friends'
-      ? 108 - (44 * p1) - (40 * p3)
+      ? 56 - (40 * p3)
     : 52;
   useEffect(() => {
     resetActivityCollapse();
@@ -8630,25 +13061,17 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
       likers: [],
       contextPetIds: [fylosPlaydatePetId]
     };
-    setFylosPlaydateEvents((prev) => [event, ...prev]);
+    schedulePlaydateEvent(event);
     setFylosPlaydateSheetOpen(false);
-  };
-  const handleMarkNotificationRead = (notificationId) => {
-    setNotifications((prev) =>
-      prev.map((group) => ({
-        ...group,
-        items: group.items.map((item) => (item.id === notificationId ? { ...item, read: true } : item))
-      }))
-    );
   };
   return (
     <>
       <ScreenContainer onScroll={handleActivityScroll}>
         <div style={{ paddingTop: `${activityTopPadding}px` }}>
           <div className="relative">
-            <MyActivityContainer isVisible={activeMode === 'my'} onOpenInsights={() => setInsightsOpen(true)} />
-            <FriendsActivityContainer isVisible={activeMode === 'friends'} setGlobalBadge={setHasNewFriendRequests} selectedPetId={selectedActivityPetId} playdateEvents={fylosPlaydateEvents} />
-            <ActivityCommunityPlaceholder isVisible={activeMode === 'community'} />
+            <ProfileMode isVisible={activeMode === 'profile'} pet={MOCK_DASHBOARD_PETS[0]} memories={memories} onAddMemory={handleAddMemory} friends={ACTIVITY_FRIEND_DATA.friends} onOpenNetwork={() => setActiveMode('friends')} />
+            <FriendsActivityContainer isVisible={activeMode === 'friends'} setGlobalBadge={setHasNewFriendRequests} selectedPetId={selectedActivityPetId} playdateEvents={fylosPlaydateEvents} onOpenPlaydates={onOpenPlaydates} pendingView={pendingNetworkView} />
+            <ActivityCommunityPlaceholder isVisible={activeMode === 'community'} onOpenPlaydates={onOpenPlaydates} memories={memories} onAddMemory={handleAddMemory} />
           </div>
         </div>
         <ActivityNotificationsScreen isOpen={notificationsOpen} onClose={() => setNotificationsOpen(false)} notifications={notifications} markAsRead={handleMarkNotificationRead} />
@@ -8676,7 +13099,7 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
                 <div key={item.label} className="flex flex-col gap-2">
                   <label className="text-[15px] font-semibold text-[#111111]">{item.label}</label>
                   <div className="relative">
-                    <select className="w-full h-[52px] px-4 bg-[#F7F7F8] border border-transparent text-[16px] text-[#111111] rounded-[16px] appearance-none focus:outline-none focus:border-[#FF6A3D] focus:bg-[#FFFFFF] transition-colors">
+                    <select className="w-full h-[52px] px-4 bg-[#F7F7F8] border border-transparent text-[16px] text-[#111111] rounded-[16px] appearance-none focus:outline-none focus:border-[#E85D2A] focus:bg-[#FFFFFF] transition-colors">
                       <option>{item.default}</option><option>Private</option><option>Public</option>
                     </select>
                     <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#8E8E93]" size={18} />
@@ -8688,7 +13111,7 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
                 <div className="w-full h-[52px] px-4 bg-[#F7F7F8] text-[16px] text-[#8E8E93] rounded-[16px] flex items-center">Always Private</div>
               </div>
             </div>
-            <button onClick={() => setPrivacySheetOpen(false)} className="w-full h-[56px] bg-[#111111] text-white font-semibold text-[16px] rounded-[16px]">Save Changes</button>
+            <button onClick={() => setPrivacySheetOpen(false)} className="w-full h-[56px] text-white font-semibold text-[16px] rounded-[16px]" style={{ background: '#E85D2A' }}>Save Changes</button>
           </div>
         </ActivityBottomSheet>
         <ActivityBottomSheet isOpen={fylosActionSheetOpen} onClose={() => setFylosActionSheetOpen(false)} title="Network actions">
@@ -8717,28 +13140,28 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93] mb-2">Date</p>
-                <input type="date" value={fylosPlaydateDate} onChange={(e) => setFylosPlaydateDate(e.target.value)} className="w-full h-10 rounded-[10px] border border-black/[0.06] bg-[#F7F7F8] px-3 text-[13px] text-[#111111] focus:outline-none focus:border-[#FF6A3D]" />
+                <input type="date" value={fylosPlaydateDate} onChange={(e) => setFylosPlaydateDate(e.target.value)} className="w-full h-10 rounded-[10px] border border-black/[0.06] bg-[#F7F7F8] px-3 text-[13px] text-[#111111] focus:outline-none focus:border-[#E85D2A]" />
               </div>
               <div>
                 <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93] mb-2">Time</p>
-                <input type="time" value={fylosPlaydateTime} onChange={(e) => setFylosPlaydateTime(e.target.value)} className="w-full h-10 rounded-[10px] border border-black/[0.06] bg-[#F7F7F8] px-3 text-[13px] text-[#111111] focus:outline-none focus:border-[#FF6A3D]" />
+                <input type="time" value={fylosPlaydateTime} onChange={(e) => setFylosPlaydateTime(e.target.value)} className="w-full h-10 rounded-[10px] border border-black/[0.06] bg-[#F7F7F8] px-3 text-[13px] text-[#111111] focus:outline-none focus:border-[#E85D2A]" />
               </div>
             </div>
             <div>
               <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93] mb-2">Location (optional)</p>
-              <input value={fylosPlaydateLocation} onChange={(e) => setFylosPlaydateLocation(e.target.value)} placeholder="e.g. Zurichhorn Park" className="w-full h-10 rounded-[10px] border border-black/[0.06] bg-[#F7F7F8] px-3 text-[13px] text-[#111111] placeholder:text-[#9A9AA0] focus:outline-none focus:border-[#FF6A3D]" />
+              <input value={fylosPlaydateLocation} onChange={(e) => setFylosPlaydateLocation(e.target.value)} placeholder="e.g. Zurichhorn Park" className="w-full h-10 rounded-[10px] border border-black/[0.06] bg-[#F7F7F8] px-3 text-[13px] text-[#111111] placeholder:text-[#9A9AA0] focus:outline-none focus:border-[#E85D2A]" />
             </div>
             <div>
               <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93] mb-2">Invite Fylos</p>
               <div className="max-h-[148px] overflow-y-auto custom-scrollbar space-y-2 pr-1">
                 {ACTIVITY_FRIEND_DATA.friends.slice(0, 8).map((friend) => (
-                  <button key={friend.id} onClick={() => toggleInvitee(friend.id)} className={`w-full h-9 rounded-[10px] border px-3 text-left text-[12px] font-medium transition-colors ${fylosPlaydateInviteeIds.includes(friend.id) ? 'bg-[#FFF1EC] border-[#FFD9CC] text-[#111111]' : 'bg-[#F7F7F8] border-black/[0.05] text-[#6E6E73]'}`}>
+                  <button key={friend.id} onClick={() => toggleInvitee(friend.id)} className={`w-full h-9 rounded-[10px] border px-3 text-left text-[12px] font-medium transition-colors ${fylosPlaydateInviteeIds.includes(friend.id) ? 'bg-[#FFE9E2] border-[#FFD4CC] text-[#111111]' : 'bg-[#F7F7F8] border-black/[0.05] text-[#6E6E73]'}`}>
                     {friend.petName} · {friend.petBreed}
                   </button>
                 ))}
               </div>
             </div>
-            <button onClick={scheduleFylosPlaydate} disabled={!fylosPlaydatePetId || !fylosPlaydateDate || !fylosPlaydateTime} className="w-full h-11 rounded-[12px] bg-[#FF6A3D] text-white text-[14px] font-semibold disabled:opacity-50">
+            <button onClick={scheduleFylosPlaydate} disabled={!fylosPlaydatePetId || !fylosPlaydateDate || !fylosPlaydateTime} className="w-full h-11 rounded-[12px] bg-[#E85D2A] text-white text-[14px] font-semibold disabled:opacity-50">
               Schedule Playdate
             </button>
           </div>
@@ -8802,34 +13225,7 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
           )}
         </>
       )}
-      {activeMode === 'friends' && MOCK_DASHBOARD_PETS.length > 1 && (
-        <div
-          className="absolute top-[164px] left-0 w-full z-30 px-5"
-          style={{
-            opacity: 1 - p1,
-            transform: `translateY(${-10 * p1}px)`,
-            pointerEvents: p1 > 0.96 ? 'none' : 'auto'
-          }}
-        >
-          <div className="px-0 -mr-[3px]">
-            <div className="w-full bg-[#F5F5F5] rounded-[16px] h-[44px] p-1 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.03)]">
-              {MOCK_DASHBOARD_PETS.map((pet) => {
-                const isSelected = selectedActivityPetId === pet.id;
-                return (
-                  <button
-                    key={pet.id}
-                    onClick={() => setSelectedActivityPetId(pet.id)}
-                    className={`h-full flex-1 flex items-center justify-center gap-1.5 rounded-[12px] transition-all duration-200 active:scale-[0.98] ${isSelected ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] px-2.5' : 'bg-transparent px-2'}`}
-                  >
-                    <img src={pet.avatar} alt={pet.name} className={`${isSelected ? 'w-6 h-6 opacity-100' : 'w-[22px] h-[22px] opacity-90'} rounded-full object-cover transition-all duration-200`} />
-                    <span className={`text-[13px] font-semibold ${isSelected ? 'text-[#111111]' : 'text-[#888888]'}`}>{pet.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Per-pet selector removed — Network is a unified Fylos pack view */}
       {activeMode === 'friends' && fylosFabOpen && (
         <button
           aria-label="Close add menu"
@@ -8837,51 +13233,7 @@ const ActivityScreen = ({ isTabBarVisible = true }) => {
           className="absolute inset-0 z-20 bg-black/[0.08]"
         />
       )}
-      {activeMode === 'friends' && !fylosFabOpen && !notificationsOpen && !insightsOpen && (
-        <button
-          onClick={openFylosPlaydateSheet}
-          aria-label="Schedule Playdate"
-          className="absolute right-5 z-30 w-11 h-11 rounded-full bg-white border border-black/[0.05] shadow-[0_4px_12px_rgba(0,0,0,0.04)] text-[#111111] flex items-center justify-center active:scale-[0.98] transition-all"
-          style={{ bottom: isTabBarVisible ? '146px' : '84px' }}
-        >
-          <div className="relative">
-            <CalendarDays size={17} />
-            <PawPrint size={10} className="absolute -bottom-1 -right-1 text-[#FF6A3D]" />
-          </div>
-        </button>
-      )}
-      {activeMode === 'friends' && (
-        <div
-          className={`absolute right-5 z-30 flex flex-col items-end gap-2 transition-all duration-300 ${fylosFabOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-          style={{ bottom: isTabBarVisible ? '150px' : '88px' }}
-        >
-          <button onClick={() => { setFylosFabOpen(false); alert('New Post composer coming soon'); }} className={`h-9 pl-3 pr-3.5 rounded-full bg-white border border-black/[0.05] shadow-[0_4px_12px_rgba(0,0,0,0.04)] text-[12px] font-semibold text-[#111111] flex items-center gap-2 transition-all duration-300 ${fylosFabOpen ? 'translate-y-0' : 'translate-y-2'}`}><Camera size={14} /> New Post</button>
-          <button onClick={openFylosPlaydateSheet} className={`h-9 pl-3 pr-3.5 rounded-full bg-white border border-black/[0.05] shadow-[0_4px_12px_rgba(0,0,0,0.04)] text-[12px] font-semibold text-[#111111] flex items-center gap-2 transition-all duration-300 delay-75 ${fylosFabOpen ? 'translate-y-0' : 'translate-y-2'}`}><CalendarDays size={14} /><PawPrint size={13} /> Schedule Playdate</button>
-          <button onClick={() => { setFylosFabOpen(false); alert('Add Photo coming soon'); }} className={`h-9 pl-3 pr-3.5 rounded-full bg-white border border-black/[0.05] shadow-[0_4px_12px_rgba(0,0,0,0.04)] text-[12px] font-semibold text-[#111111] flex items-center gap-2 transition-all duration-300 delay-100 ${fylosFabOpen ? 'translate-y-0' : 'translate-y-2'}`}><ImageIcon size={14} /> Add Photo</button>
-        </div>
-      )}
-      {(activeMode === 'my' || activeMode === 'friends') && !notificationsOpen && !insightsOpen && (
-        <button
-          aria-label={activeMode === 'my' ? 'Add activity' : 'Add fylos'}
-          onClick={() => {
-            if (activeMode === 'my') return;
-            setFylosFabOpen((prev) => !prev);
-          }}
-          className={`absolute right-5 z-30 w-12 h-12 flex items-center justify-center rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.04)] active:scale-95 transition-all duration-300 ease-out ${activeMode === 'friends' ? 'bg-[#0A0A0B] text-white border border-black/80 active:brightness-95' : 'text-[#FF6A3D] bg-[#FFF1EC] border border-[#FFD9CC]'}`}
-          style={{ bottom: isTabBarVisible ? '92px' : '30px' }}
-        >
-          <Plus size={18} />
-        </button>
-      )}
-      <div className="absolute top-[62px] right-4 flex items-center gap-1 z-30">
-        <button onClick={() => setNotificationsOpen(true)} className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
-          <Bell size={22} color="#111111" />
-          {totalUnreadNotifications > 0 && <span className="absolute top-[8px] right-[8px] w-[10px] h-[10px] bg-[#FF3B4A] rounded-full border-[2px] border-[#F7F7F8]" />}
-        </button>
-        <button onClick={() => setMenuOpen(true)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-black/5 transition-colors">
-          <MoreVertical size={24} color="#111111" />
-        </button>
-      </div>
+      {/* FAB moved inside FriendsActivityContainer — see CreatePostSheet trigger there. */}
     </>
   );
 };
@@ -10112,52 +14464,180 @@ const UPCOMING_FEATURES = [
 ];
 
 const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations }) => {
+  const navigateRouter = useNavigate();
+  const [twoFactor, setTwoFactor] = useState(false);
+  const [biometric, setBiometric] = useState(true);
+  const [subView, setSubView] = useState(null);
   if (!isOpen) return null;
-  const nav = (path) => { window.location.href = path; };
+  const nav = (path) => {
+    try { window.sessionStorage?.setItem('fylos.settingsOpen', '1'); } catch {}
+    navigateRouter(path);
+  };
+
+  const ICON_TINT   = '#FBE7DD';
+  const ICON_COLOR  = '#E85D2A';
+  const DIVIDER     = '#F1EDE8';
+  const TXT_PRIMARY = '#111111';
+  const TXT_MUTED   = '#9B9B9F';
+
+  const SectionLabel = ({ children }) => (
+    <div className="text-[10.5px] font-medium text-[#8E8E93] tracking-[0.02em] mb-1.5 ml-3 mt-5">{children}</div>
+  );
+
+  const SetRow = ({ icon: Icon, title, subtitle, rightValue, onClick, last, danger, trailing }) => (
+    <div className="relative">
+      <button
+        onClick={onClick}
+        className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left"
+      >
+        <div
+          className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center"
+          style={{ backgroundColor: danger ? '#FEE8E7' : ICON_TINT }}
+        >
+          <Icon size={15} color={danger ? '#EF4444' : ICON_COLOR} strokeWidth={2} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[14px] font-semibold text-[#111111] truncate leading-tight" style={{ color: TXT_PRIMARY }}>{title}</div>
+          {subtitle && <div className="text-[11.5px] truncate mt-[3px] leading-tight" style={{ color: TXT_MUTED }}>{subtitle}</div>}
+        </div>
+        {rightValue && <span className="text-[12.5px] font-medium mr-1 shrink-0" style={{ color: TXT_MUTED }}>{rightValue}</span>}
+        {trailing ? trailing : <ChevronRight size={14} className="text-[#D4D4D8] shrink-0" strokeWidth={2.2} />}
+      </button>
+      {!last && <div className="absolute bottom-0 left-[58px] right-0 h-px" style={{ background: DIVIDER }} />}
+    </div>
+  );
+
+  const MiniToggle = ({ value, onChange }) => (
+    <div
+      onClick={(e) => { e.stopPropagation(); onChange(!value); }}
+      className="shrink-0 cursor-pointer"
+      style={{ width: 38, height: 22, borderRadius: 9999, backgroundColor: value ? ICON_COLOR : '#E5E1DC', transition: 'background-color 200ms ease', position: 'relative' }}
+    >
+      <div style={{ position: 'absolute', top: 2, left: 2, width: 18, height: 18, borderRadius: '50%', background: 'white', transform: value ? 'translateX(16px)' : 'translateX(0)', transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }} />
+    </div>
+  );
+
   return (
-    <div className="absolute inset-0 z-[70] bg-[#F0F0F2] animate-in slide-in-from-right-full duration-300">
-      <div className="pt-14 pb-4 px-5 bg-[#F0F0F2] flex items-center justify-between">
-        <h2 className="text-[24px] font-bold text-[#111111]">Settings</h2>
-        <button onClick={onClose} className="w-10 h-10 rounded-full bg-white border border-black/[0.06] flex items-center justify-center">
-          <X size={20} />
+    <div className="absolute inset-0 z-[70] bg-[#F7F5F2] animate-in slide-in-from-right-full duration-300 overflow-y-auto custom-scrollbar">
+      {/* Canonical transparent header */}
+      <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
+        <button
+          onClick={onClose}
+          className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+        >
+          <X size={16} strokeWidth={2.2} color="#111" />
         </button>
+        <h1 className="text-[17px] font-semibold text-[#111111]">Settings</h1>
       </div>
-      <div className="px-5 pb-28 overflow-y-auto custom-scrollbar h-full">
-        <Card className="!p-4 mb-4 cursor-pointer active:scale-[0.98] transition-transform" onClick={() => nav('/user-profile')}>
-          <div className="flex items-center gap-3">
-            <Avatar src={MOCK_USER.avatar} size={52} />
-            <div className="flex-1">
-              <div className="text-[16px] font-bold text-[#111111]">Alex Mueller</div>
-              <div className="text-[13px] text-[#6E6E73]">alex@example.com</div>
+
+      <div className="px-4 pb-24">
+        {/* Profile strip with verified check + outlined tier pill */}
+        <button
+          onClick={() => nav('/user-profile')}
+          className="w-full flex items-center gap-3 p-3 mt-2 mb-5 rounded-[18px] bg-white border border-black/[0.04] active:scale-[0.99] transition-all text-left"
+        >
+          <div className="relative shrink-0">
+            <Avatar src={MOCK_USER.avatar} size={42} />
+            <div className="absolute -bottom-[1px] -right-[1px] w-[14px] h-[14px] rounded-full bg-[#00C060] border-[2px] border-white flex items-center justify-center">
+              <Check size={7} color="white" strokeWidth={4} />
             </div>
-            <ChevronRight size={18} className="text-[#C7C7CC]" />
           </div>
-        </Card>
-        <Card className="!p-0 overflow-hidden mb-4">
-          <ListRow icon={Bell} title="Notifications" subtitle="Push, email, in-app" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/notification-prefs')} />
-          <div className="h-[1px] bg-black/[0.04] ml-[56px]" />
-          <ListRow icon={CreditCard} title="Payment & Wallet" subtitle="Cards, balance, transactions" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/wallet')} />
-          <div className="h-[1px] bg-black/[0.04] ml-[56px]" />
-          <ListRow icon={Shield} title="Subscription" subtitle="Fylos Free" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/subscription')} />
-        </Card>
-        <Card className="!p-0 overflow-hidden mb-4">
-          <ListRow icon={Globe} title="Language" subtitle="English" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/language')} />
-          <div className="h-[1px] bg-black/[0.04] ml-[56px]" />
-          <ListRow icon={HeartPulse} title="Health Reminders" subtitle="Vaccinations, medications" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/health-reminders')} />
-          <div className="h-[1px] bg-black/[0.04] ml-[56px]" />
-          <ListRow icon={AlertTriangle} title="Emergency SOS" subtitle="Vet hotline, first aid" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/emergency')} />
-        </Card>
-        <Card className="!p-0 overflow-hidden mb-4">
-          <ListRow icon={HelpCircle} title="Help Center" subtitle="FAQ, support, report" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/help')} />
-          <div className="h-[1px] bg-black/[0.04] ml-[56px]" />
-          <ListRow icon={Rocket} title="What's Coming" subtitle="Preview upcoming features" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={onOpenComingSoon} />
-          <div className="h-[1px] bg-black/[0.04] ml-[56px]" />
-          <ListRow icon={Sparkles} title="Animations Lab" subtitle="Micro-interactions showcase" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={onOpenAnimations} />
-        </Card>
-        <Card className="!p-0 overflow-hidden mb-4">
-          <ListRow icon={Star} title="Become a Pro" subtitle="Register as walker or sitter" rightAccessory={<ChevronRight size={18} />} className="px-4" onClick={() => nav('/pro-registration')} />
-        </Card>
-        <Button variant="destructive" onClick={onClose}>Log Out</Button>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[14.5px] font-semibold text-[#111111] truncate">Alex Mueller</span>
+              <span className="text-[9.5px] font-bold text-[#E85D2A] border border-[#E85D2A]/35 px-1.5 py-[1px] rounded-[5px] tracking-[0.06em] shrink-0 leading-none">FREE</span>
+            </div>
+            <p className="text-[12px] mt-[3px] truncate" style={{ color: TXT_MUTED }}>alex@example.com</p>
+          </div>
+          <ChevronRight size={14} className="text-[#D4D4D8] shrink-0" strokeWidth={2.2} />
+        </button>
+
+        {/* Horizontal action shortcuts */}
+        <div className="flex gap-1 overflow-x-auto -mx-4 px-4 mb-6 pb-1" style={{ scrollbarWidth: 'none' }}>
+          {[
+            { icon: Award,  label: 'Upgrade', onClickItem: () => nav('/subscription') },
+            { icon: Gift,   label: 'Invite',  onClickItem: () => {} },
+            { icon: QrCode, label: 'QR',      onClickItem: () => {} },
+            { icon: Share2, label: 'Refer',   onClickItem: () => {} },
+          ].map(({ icon: Icon, label, onClickItem }, i) => (
+            <button
+              key={i}
+              onClick={onClickItem}
+              className="flex-1 flex flex-col items-center gap-[6px] py-1 active:scale-95 transition-all"
+            >
+              <div className="w-9 h-9 rounded-full bg-white border border-black/[0.05] flex items-center justify-center">
+                <Icon size={15} color={ICON_COLOR} strokeWidth={2} />
+              </div>
+              <span className="text-[10.5px] font-medium text-[#111111] text-center leading-tight">{label}</span>
+            </button>
+          ))}
+        </div>
+
+        <SectionLabel>Account</SectionLabel>
+        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
+          <SetRow icon={Bell}       title="Notifications"    subtitle="Push, email, in-app"          onClick={() => nav('/notification-prefs')} />
+          <SetRow icon={CreditCard} title="Payment & Wallet" subtitle="Cards, balance, transactions" onClick={() => nav('/wallet')} />
+          <SetRow icon={Shield}     title="Subscription"     rightValue="Free"                       onClick={() => nav('/subscription')} last />
+        </div>
+
+        <SectionLabel>Security</SectionLabel>
+        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
+          <SetRow icon={Lock}        title="Password"                 rightValue="2 months ago" onClick={() => nav('/security/password')} />
+          <SetRow icon={KeyRound}    title="Two-factor authentication" rightValue={twoFactor ? 'On' : 'Off'} onClick={() => nav('/security/2fa')} />
+          <SetRow icon={Fingerprint} title="Biometric unlock"          rightValue={biometric ? 'On' : 'Off'} onClick={() => nav('/security/biometric')} />
+          <SetRow icon={Smartphone}  title="Active sessions"           rightValue="2 devices" onClick={() => nav('/security/sessions')} />
+          <SetRow icon={Info}        title="Connected accounts"        rightValue="Apple"     onClick={() => nav('/security/connected-accounts')} last />
+        </div>
+
+        <SectionLabel>Privacy</SectionLabel>
+        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
+          <SetRow icon={Eye}           title="Profile visibility" rightValue="Friends"        onClick={() => nav('/privacy/visibility')} />
+          <SetRow icon={MessageCircle} title="Discoverable by"    rightValue="Phone & email"  onClick={() => nav('/privacy/discoverable')} />
+          <SetRow icon={MapPin}        title="Location sharing"   rightValue="Approximate"    onClick={() => nav('/privacy/location')} />
+          <SetRow icon={ActivityIcon}  title="Activity sharing"   rightValue="Friends"        onClick={() => nav('/privacy/activity')} last />
+        </div>
+
+        <SectionLabel>Pet care</SectionLabel>
+        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
+          <SetRow icon={Globe}         title="Language"         rightValue="English"                     onClick={() => nav('/language')} />
+          <SetRow icon={MapPin}         title="Region"          rightValue="Switzerland"                 onClick={() => nav('/region')} />
+          <SetRow icon={CreditCard}    title="Currency"         rightValue="CHF"                         onClick={() => nav('/currency')} />
+          <SetRow icon={HeartPulse}    title="Health reminders" subtitle="Vaccinations, medications"     onClick={() => nav('/health-reminders')} />
+          <SetRow icon={AlertTriangle} title="Emergency SOS"    subtitle="Vet hotline, first aid" danger onClick={() => nav('/emergency')} last />
+        </div>
+
+        <SectionLabel>Connected services</SectionLabel>
+        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
+          <SetRow icon={HeartPulse}    title="Apple Health / Google Fit" rightValue="Not connected" onClick={() => nav('/integrations/health-sync')} />
+          <SetRow icon={CalendarClock} title="Calendar sync"             rightValue="Connected"     onClick={() => nav('/integrations/calendar')} />
+          <SetRow icon={Stethoscope}   title="Primary vet clinic"        rightValue="Dr. Schmidt"   onClick={() => nav('/vet/primary')} last />
+        </div>
+
+        <SectionLabel>More</SectionLabel>
+        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
+          <SetRow icon={HelpCircle} title="Help center"    subtitle="FAQ, support, report"         onClick={() => nav('/help')} />
+          <SetRow icon={Rocket}     title="What's coming"  subtitle="Preview upcoming features"    onClick={() => setSubView('upcoming')} />
+          <SetRow icon={Zap}        title="Become a Pro"   subtitle="Register as walker or sitter" onClick={() => nav('/pro-registration')} last />
+        </div>
+
+        <SectionLabel>Data &amp; legal</SectionLabel>
+        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
+          <SetRow icon={Download} title="Export my data"   onClick={() => nav('/data/export')} />
+          <SetRow icon={FileText} title="Terms of service" onClick={() => nav('/legal/terms')} />
+          <SetRow icon={Shield}   title="Privacy policy"   onClick={() => nav('/legal/privacy')} />
+          <SetRow icon={Info}     title="Licenses"         onClick={() => nav('/legal/licenses')} last />
+        </div>
+
+        <button
+          onClick={onClose}
+          className="w-full mt-6 py-2.5 text-center text-[#FF3B30] text-[13.5px] font-semibold active:opacity-60"
+        >
+          Log out
+        </button>
+
+        <div className="text-center mt-1 mb-2">
+          <p className="text-[10.5px] text-[#B8B0A8]">FYLOS v1.2.0 · Zürich</p>
+        </div>
       </div>
     </div>
   );
@@ -10434,7 +14914,7 @@ const NotificationsOverlay = ({ isOpen, onClose, notifications, onMarkAllRead, o
         )}
       </div>
       {!isArchiveView && (
-        <button onClick={onMarkAllRead} className="absolute top-[66px] right-[74px] z-30 text-[12px] font-semibold text-[#FF6A3D] active:opacity-70">
+        <button onClick={onMarkAllRead} className="absolute top-[66px] right-[74px] z-30 text-[12px] font-semibold text-[#E85D2A] active:opacity-70">
           Mark all
         </button>
       )}
@@ -10593,10 +15073,17 @@ const AnimationsOverlay = ({ isOpen, onClose }) => {
 // --- APP SHELL (MAIN ENTRY POINT) ---
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [displayTab, setDisplayTab] = useState('home');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const initialTab = location.state?.tab || 'home';
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const [displayTab, setDisplayTab] = useState(initialTab);
   const [isFading, setIsFading] = useState(false);
-  const [isLoading, setIsLoading] = useState(() => !window.__fylosPetPending);
+  const [isLoading, setIsLoading] = useState(() => {
+    if (window.__fylosPetPending) return false;
+    if (typeof window !== 'undefined' && window.sessionStorage?.getItem('fylos.settingsOpen') === '1') return false;
+    return true;
+  });
   
   // App-level state for Pets Module
   const [petsData, setPetsData] = useState(INITIAL_MOCK_PETS);
@@ -10608,12 +15095,22 @@ export default function App() {
   const [pushedScreen, setPushedScreen] = useState(null);
   const [screenParams, setScreenParams] = useState({});
   const [bookingStatus, setBookingStatus] = useState('confirmed');
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.sessionStorage.getItem('fylos.settingsOpen') === '1';
+  });
+  // Clear the flag after mount so future loads don't auto-open Settings
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try { window.sessionStorage.removeItem('fylos.settingsOpen'); } catch {}
+    }
+  }, []);
   const [petMenuOpen, setPetMenuOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [animationsOpen, setAnimationsOpen] = useState(false);
+  const [playdatesOpen, setPlaydatesOpen] = useState(null); // null or { tab }
   const [appNotifications, setAppNotifications] = useState(APP_NOTIFICATIONS);
   const [joinedWaitlists, setJoinedWaitlists] = useState(new Set());
   const [isTabBarVisible, setIsTabBarVisible] = useState(true);
@@ -10622,6 +15119,18 @@ export default function App() {
 
   useEffect(() => {
     setTimeout(() => setIsLoading(false), 800);
+  }, []);
+
+  // Re-open Settings overlay when user returns to / from a settings sub-screen (back button)
+  useEffect(() => {
+    const checkFlag = () => {
+      if (window.location.pathname === '/' && window.sessionStorage?.getItem('fylos.settingsOpen') === '1') {
+        window.sessionStorage.removeItem('fylos.settingsOpen');
+        setSettingsOpen(true);
+      }
+    };
+    window.addEventListener('popstate', checkFlag);
+    return () => window.removeEventListener('popstate', checkFlag);
   }, []);
   // Detect new pet from Add Pet flow — branded loading → celebration overlay
   const startCelebration = useCallback((petData) => {
@@ -10796,7 +15305,7 @@ export default function App() {
         />
       );
       case 'services': return <ServicesScreen onNavigate={navigateTo} />;
-      case 'activity': return <ActivityScreen isTabBarVisible={isTabBarVisible} />;
+      case 'activity': return <ActivityScreen isTabBarVisible={isTabBarVisible} initialMode={location.state?.activitySubMode} pendingNetworkView={location.state?.pendingNetworkView} onOpenPlaydates={(tab, wrapUpId) => setPlaydatesOpen({ tab: tab || 'discover', wrapUpId })} />;
       case 'vault': return <VaultScreen onOpenHealthRecords={() => setPushedScreen('vault_health_records')} onOpenDocuments={() => setPushedScreen('vault_documents')} onOpenContacts={() => setPushedScreen('vault_contacts')} onOpenPlaces={() => setPushedScreen('vault_places')} />;
       default: return (
         <HomeScreen
@@ -10986,7 +15495,7 @@ export default function App() {
         }
       `}} />
 
-      <div className="relative w-full h-[100dvh] sm:h-[844px] sm:w-[390px] bg-[#F7F5F2] sm:rounded-[50px] shadow-2xl overflow-hidden sm:border-[8px] border-black sm:ring-1 sm:ring-black/10">
+      <div id="fylos-phone-root" className="relative w-full h-[100dvh] sm:h-[844px] sm:w-[390px] bg-[#F7F5F2] sm:rounded-[50px] shadow-2xl overflow-hidden sm:border-[8px] border-black sm:ring-1 sm:ring-black/10">
         <div className="absolute top-[12px] left-1/2 transform -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-[120] pointer-events-none hidden sm:block shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)]" />
 
         {isLoading ? (
@@ -11377,6 +15886,25 @@ export default function App() {
           </>
         )}
       </div>
+
+      {/* Playdates overlay — renders on top of UnifiedApp without unmounting it */}
+      {playdatesOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'auto' }}>
+          <PlaydateMatchingScreen
+            onClose={() => setPlaydatesOpen(null)}
+            initialTab={playdatesOpen.tab}
+            initialWrapUpId={playdatesOpen.wrapUpId}
+            onOpenProfile={() => {
+              setPlaydatesOpen(null);
+              navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'my-pack' } });
+            }}
+            onOpenMessages={() => {
+              setPlaydatesOpen(null);
+              navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'messages' } });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
