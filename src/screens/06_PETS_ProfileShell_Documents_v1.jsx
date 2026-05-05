@@ -3,20 +3,12 @@ import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AddPetMascot } from './37_ADD_PET_v1';
 import PlaydateMatchingScreen from './61_PLAYDATE_MATCHING_v1';
-import PackDiagram from '../components/PackDiagram';
-import ReasonStack from '../components/ReasonStack';
-import EarnedCounter from '../components/EarnedCounter';
 import MemoryCard from '../components/MemoryCard';
 import PersonalityCardSheet from '../components/PersonalityCardSheet';
 import StoryCardSheet from '../components/StoryCardSheet';
-import BondScoreSheet from '../components/BondScoreSheet';
-import PetOfTheDaySheet from '../components/PetOfTheDaySheet';
-import TwinFinderSheet from '../components/TwinFinderSheet';
-import PackPageSheet from '../components/PackPageSheet';
 import HotspotPlaceSheet from '../components/HotspotPlaceSheet';
-import MemoryOfTheWeekSheet from '../components/MemoryOfTheWeekSheet';
 import ProfileMode from '../features/social/profile/ProfileMode';
-import { TwinFinderCard, TribePacksRail, MatchChips } from '../components/PackInlines';
+import { MatchChips } from '../components/PackInlines';
 import {
   ACTIVITY_FRIEND_DATA,
   ACTIVITY_PLAYDATE_DATA,
@@ -3855,7 +3847,7 @@ const LaunchBanner = React.memo(({ feature, daysUntilLaunch, onDismiss, onJoinWa
           </button>
         </div>
         <div className="mt-1 ml-8 flex items-center justify-between gap-3">
-          <p className="text-[13px] text-gray-300 leading-relaxed">Find your local pack.</p>
+          <p className="text-[13px] text-gray-300 leading-relaxed">Find your local Fylos circle.</p>
           <button
             onClick={onJoinWaitlist}
             className="inline-flex items-center gap-1 ml-auto text-[var(--color-accent)] text-[14px] font-medium leading-none active:opacity-80"
@@ -7666,7 +7658,7 @@ const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [
 
         {/* Invite friends to Fylos */}
         <button
-          onClick={() => { if (navigator.share) navigator.share({ title: 'Fylos', text: 'Join me on Fylos — the pack app for dog owners.', url: 'https://fylos.app' }).catch(() => {}); }}
+          onClick={() => { if (navigator.share) navigator.share({ title: 'Fylos', text: 'Join me on Fylos — the warm app for dog parents.', url: 'https://fylos.app' }).catch(() => {}); }}
           className="w-full rounded-[16px] p-3.5 flex items-center gap-3 text-left active:scale-[0.99] transition-all mt-3"
           style={{
             background: '#FFF5F1',
@@ -7681,7 +7673,7 @@ const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[13.5px] font-semibold text-[#111]">Invite friends to Fylos</div>
-            <div className="text-[11px] text-[#6E6058] mt-0.5 truncate">Grow your pack — share the app</div>
+            <div className="text-[11px] text-[#6E6058] mt-0.5 truncate">Grow your circle — share the app</div>
           </div>
           <span
             className="shrink-0 px-3 py-1.5 rounded-full text-[11.5px] font-semibold text-white flex items-center gap-1"
@@ -8006,7 +7998,7 @@ const ActivityScreen = ({ isTabBarVisible = true, initialMode, pendingNetworkVie
           )}
         </>
       )}
-      {/* Per-pet selector removed — Network is a unified Fylos pack view */}
+      {/* Per-pet selector removed — Network is a unified Activity view across pets. */}
       {activeMode === 'friends' && fylosFabOpen && (
         <button
           aria-label="Close add menu"
@@ -10677,7 +10669,7 @@ export default function App() {
             initialWrapUpId={playdatesOpen.wrapUpId}
             onOpenProfile={() => {
               setPlaydatesOpen(null);
-              navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'my-pack' } });
+              navigate('/', { state: { activitySubMode: 'friends', pendingNetworkView: 'friends' } });
             }}
             onOpenMessages={() => {
               setPlaydatesOpen(null);
