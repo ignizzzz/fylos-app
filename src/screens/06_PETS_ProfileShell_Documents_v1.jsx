@@ -205,7 +205,7 @@ const TABS = [
   { id: 'pets', label: 'Pets', icon: PawPrint },
   { id: '_fab', label: '', icon: null },
   { id: 'services', label: 'Services', icon: Calendar },
-  { id: 'activity', label: 'Social', icon: Activity },
+  { id: 'activity', label: 'Activity', icon: Activity },
 ];
 
 const INITIAL_MOCK_PETS = [

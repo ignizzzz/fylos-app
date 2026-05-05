@@ -178,7 +178,7 @@
 | `21_VAULT_HealthRecords` | R | Tabular density |
 | `22_VAULT_Documents` | R | Tabular |
 | `25_ACTIVITY_Feed` | S | Memory storytelling |
-| `26_ACTIVITY_FriendSystem` | S | Social network discovery |
+| `26_ACTIVITY_FriendSystem` | S | Activity-tab Network discovery |
 | `29_ACTIVITY_Insights` | R | Sparklines |
 | `36_ONBOARDING` | S | First impression warmth |
 | `40_GPS_TRACKING` | L | Live |
@@ -272,7 +272,7 @@ WARMTH-LAYER   (Airbnb DNA)   — ο Fylos είναι by name, όχι "pet 1"
 
 **Translation philosophy**:
 
-- Brand-words ποτέ δεν μεταφράζονται: *Fylos*, *Vault*. (Το παλιό *Pack* αντικαταστάθηκε από το λειτουργικό **Social**, που μεταφράζεται κανονικά.)
+- Brand-words ποτέ δεν μεταφράζονται: *Fylos*, *Vault*. (Το παλιό *Pack* αντικαταστάθηκε από το λειτουργικό **Activity**, που μεταφράζεται κανονικά. Internal codenames μένουν `social`/`activity` ως legacy ονομασίες — δεν αγγίζουν UI.)
 - Functional copy μεταφράζεται με Swiss localization (de-CH, όχι de-DE)
 - "**Fylos**" παραμένει capitalized, μη-translated, σε όλες τις γλώσσες
 
