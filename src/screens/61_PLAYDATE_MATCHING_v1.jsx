@@ -4,12 +4,14 @@ import {
   ChevronLeft, ChevronRight, X, MapPin, MessageCircle, Calendar, Plus,
   Check, Star, Heart, Footprints, TreePine, GraduationCap, Coffee,
   Filter, Clock, Bookmark, BookmarkCheck, Sparkles, ArrowRight, Camera,
-  Edit3, Send, Smile,
+  Edit3, Send, Smile, RotateCcw, Image as ImageIcon,
 } from 'lucide-react';
 import {
   ACTIVITY_FRIEND_DATA,
   ACTIVITY_PLAYDATE_DATA,
   MOCK_PLACES,
+  ARCHETYPES,
+  ARCHETYPE_BY_ID,
 } from '../data/social';
 
 /* =========================================================================
@@ -40,6 +42,10 @@ const TABS = [
 // Map Network suggestions/friends into a richer "candidate" shape used by Discover.
 // Reasons + matchScore come from ACTIVITY_FRIEND_DATA.suggestions; everything else
 // is derived from the shared friends fixtures so a single edit ripples app-wide.
+//
+// `interested` flag: deterministic-ish by petId so the same pet always either
+// likes you back or doesn't (no flicker on re-render). ~40% match-back rate
+// keeps the swipe loop rewarding without trivialising matches.
 function buildCandidates() {
   const friendIds = new Set(ACTIVITY_FRIEND_DATA.friends.map((f) => f.petId));
   const all = [
@@ -55,10 +61,13 @@ function buildCandidates() {
     petPhoto: c.petPhoto,
     ownerName: c.ownerName,
     distance: c.distance,
+    age: c.age || 3,
     matchScore: c.matchScore || 75,
     reasons: c.reasons || ['Nearby in your routine'],
     activityTags: pickActivityTags(c.petId),
+    archetypeId: pickArchetype(c.petId),
     isFriend: friendIds.has(c.petId),
+    interested: pickInterested(c.petId),
   }));
 }
 
@@ -67,6 +76,19 @@ function buildCandidates() {
 function pickActivityTags(petId) {
   const slot = (petId || '').slice(-1).charCodeAt(0) % 4;
   return [['walks', 'park'], ['walks', 'training'], ['calm', 'park'], ['walks', 'calm']][slot] || ['walks'];
+}
+
+function pickArchetype(petId) {
+  const slot = (petId || '').slice(-1).charCodeAt(0) % ARCHETYPES.length;
+  return ARCHETYPES[slot]?.id || 'diplomat';
+}
+
+// Hash the last 2 chars of petId; ~40% of pets are pre-interested.
+function pickInterested(petId) {
+  const tail = (petId || '').slice(-2);
+  let h = 0;
+  for (let i = 0; i < tail.length; i++) h = (h * 31 + tail.charCodeAt(i)) | 0;
+  return (((h % 10) + 10) % 10) < 4;
 }
 
 // ---------------------------------------------------------------------------
@@ -84,12 +106,18 @@ export default function PlaydateMatchingScreen({
   const [tab, setTab] = useState(initialTab);
   const [activeActivity, setActiveActivity] = useState('all');
   const [savedIds, setSavedIds] = useState(() => new Set(['pet_012', 'pet_014']));
+  const [passedIds, setPassedIds] = useState(() => new Set());
 
-  const candidates = useMemo(() => buildCandidates(), []);
+  const allCandidates = useMemo(() => buildCandidates(), []);
   const filteredCandidates = useMemo(() => {
-    if (activeActivity === 'all') return candidates;
-    return candidates.filter((c) => c.activityTags.includes(activeActivity));
-  }, [candidates, activeActivity]);
+    let pool = allCandidates;
+    if (activeActivity !== 'all') pool = pool.filter((c) => c.activityTags.includes(activeActivity));
+    return pool;
+  }, [allCandidates, activeActivity]);
+  const swipeDeck = useMemo(
+    () => filteredCandidates.filter((c) => !passedIds.has(c.id) && !savedIds.has(c.id) && !c.isFriend),
+    [filteredCandidates, passedIds, savedIds]
+  );
 
   // Playdate state — seeded from shared fixtures so this screen and the in-tab
   // Playdates summary stay in sync.
@@ -107,6 +135,8 @@ export default function PlaydateMatchingScreen({
   const [profileSheet, setProfileSheet] = useState(null);
   const [scheduleSheet, setScheduleSheet] = useState(null);
   const [detailSheet, setDetailSheet] = useState(null);
+  const [match, setMatch] = useState(null); // { candidate } when mutual like
+  const [chatTarget, setChatTarget] = useState(null); // { candidate } when chat opens
   const [wrapUpSheet, setWrapUpSheet] = useState(() => past.find((p) => p.id === initialWrapUpId) || null);
   useEffect(() => {
     if (!initialWrapUpId) return;
@@ -136,8 +166,8 @@ export default function PlaydateMatchingScreen({
   };
 
   const playmates = useMemo(
-    () => candidates.filter((c) => savedIds.has(c.id) || c.isFriend),
-    [candidates, savedIds]
+    () => allCandidates.filter((c) => savedIds.has(c.id) || c.isFriend),
+    [allCandidates, savedIds]
   );
 
   const handleSchedulePlaydate = (formData) => {
@@ -174,6 +204,26 @@ export default function PlaydateMatchingScreen({
     showToast('Memory saved');
   };
 
+  // Swipe-deck handlers — `like` triggers MatchOverlay if the candidate is
+  // pre-marked as interested; `pass` silently advances.
+  const handlePass = (candidate) => {
+    setPassedIds((prev) => new Set(prev).add(candidate.id));
+  };
+  const handleLike = (candidate) => {
+    setSavedIds((prev) => new Set(prev).add(candidate.id));
+    if (candidate.interested) {
+      // Brief delay so the swipe-out animation finishes before the overlay.
+      setTimeout(() => setMatch({ candidate }), 240);
+    } else {
+      showToast(`Saved ${candidate.petName}`);
+    }
+  };
+  const handleResetDeck = () => setPassedIds(new Set());
+  const handleSendIcebreaker = (candidate, text) => {
+    showToast(`Said hi to ${candidate.petName}`);
+    setChatTarget(null);
+  };
+
   return (
     <div className="absolute inset-0 bg-[#F9F9FB] overflow-hidden flex flex-col">
       <Header tab={tab} onBack={goBack} onOpenFilters={() => showToast('Filters coming soon')} />
@@ -181,14 +231,14 @@ export default function PlaydateMatchingScreen({
 
       <div className="flex-1 overflow-y-auto wallet-scroll" style={{ paddingBottom: 32 }}>
         {tab === 'discover' && (
-          <DiscoverTab
-            candidates={filteredCandidates}
-            savedIds={savedIds}
+          <SwipeDeckTab
+            deck={swipeDeck}
             activeActivity={activeActivity}
             setActiveActivity={setActiveActivity}
-            onTapPet={setProfileSheet}
-            onSchedule={(c) => setScheduleSheet({ target: c })}
-            onToggleSave={(c) => { toggleSaved(c.id); showToast(savedIds.has(c.id) ? `Removed ${c.petName}` : `Saved ${c.petName}`); }}
+            onPass={handlePass}
+            onLike={handleLike}
+            onTapDetail={setProfileSheet}
+            onResetDeck={handleResetDeck}
           />
         )}
         {tab === 'playmates' && (
@@ -248,6 +298,23 @@ export default function PlaydateMatchingScreen({
           item={wrapUpSheet}
           onClose={() => setWrapUpSheet(null)}
           onSave={(data) => handleWrapUpSave(wrapUpSheet, data)}
+        />
+      )}
+      {match && (
+        <MatchOverlay
+          candidate={match.candidate}
+          myName="Leo"
+          myPhoto="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=300"
+          onClose={() => setMatch(null)}
+          onSayHi={() => { setChatTarget({ candidate: match.candidate }); setMatch(null); }}
+          onPlanPlaydate={() => { setScheduleSheet({ target: match.candidate }); setMatch(null); }}
+        />
+      )}
+      {chatTarget && (
+        <ChatSheet
+          candidate={chatTarget.candidate}
+          onClose={() => setChatTarget(null)}
+          onSend={(text) => handleSendIcebreaker(chatTarget.candidate, text)}
         />
       )}
       {toast && <Toast message={toast} />}
@@ -316,29 +383,24 @@ function TabBar({ tab, setTab }) {
 // ---------------------------------------------------------------------------
 // Discover tab
 // ---------------------------------------------------------------------------
-function DiscoverTab({ candidates, savedIds, activeActivity, setActiveActivity, onTapPet, onSchedule, onToggleSave }) {
+// ---------------------------------------------------------------------------
+// SwipeDeckTab — Tinder-style stack of curated candidates
+// ---------------------------------------------------------------------------
+function SwipeDeckTab({ deck, activeActivity, setActiveActivity, onPass, onLike, onTapDetail, onResetDeck }) {
   return (
-    <div className="px-5 pt-4 flex flex-col gap-4">
+    <div className="px-5 pt-4 flex flex-col gap-3 h-full">
       <ActivityChips active={activeActivity} onChange={setActiveActivity} />
-      <div className="flex items-center justify-between mt-1">
-        <p className="text-[12px] font-bold uppercase tracking-widest text-[#8E8E93]">{candidates.length} nearby</p>
-        <p className="text-[12px] text-[#8E8E93]">Sorted by match</p>
+      <div className="flex items-center justify-between -mt-1">
+        <p className="text-[11.5px] font-bold uppercase tracking-widest text-[#8E8E93]">
+          Curated for {' '}
+          <span className="text-[#E85D2A]">Leo</span>
+        </p>
+        <p className="text-[11.5px] text-[#8E8E93] tabular-nums">{deck.length} left</p>
       </div>
-      {candidates.length === 0 ? (
-        <DiscoverEmpty onClear={() => setActiveActivity('all')} />
+      {deck.length === 0 ? (
+        <DeckEmpty onReset={onResetDeck} onClearFilter={() => setActiveActivity('all')} hasFilter={activeActivity !== 'all'} />
       ) : (
-        <div className="flex flex-col gap-3">
-          {candidates.map((c) => (
-            <CandidateCard
-              key={c.id}
-              candidate={c}
-              saved={savedIds.has(c.id)}
-              onTap={() => onTapPet(c)}
-              onSchedule={() => onSchedule(c)}
-              onToggleSave={() => onToggleSave(c)}
-            />
-          ))}
-        </div>
+        <SwipeDeck deck={deck} onPass={onPass} onLike={onLike} onTapDetail={onTapDetail} />
       )}
     </div>
   );
@@ -369,80 +431,266 @@ function ActivityChips({ active, onChange }) {
   );
 }
 
-function CandidateCard({ candidate, saved, onTap, onSchedule, onToggleSave }) {
+// Stack of cards. Top card responds to drag (touch + mouse). Drag past the
+// horizontal threshold = animate out + advance. Snap back otherwise.
+function SwipeDeck({ deck, onPass, onLike, onTapDetail }) {
+  const [drag, setDrag] = useState(0);
+  const [exiting, setExiting] = useState(null); // 'left' | 'right' | null
+  const startXRef = useRef(null);
+  const draggingRef = useRef(false);
+  const movedRef = useRef(false);
+
+  const top = deck[0];
+  const peek = deck[1];
+  const peek2 = deck[2];
+
+  const threshold = 90;
+  const likeOpacity = Math.max(0, Math.min(1, drag / threshold));
+  const passOpacity = Math.max(0, Math.min(1, -drag / threshold));
+
+  const reset = () => {
+    setDrag(0);
+    startXRef.current = null;
+    draggingRef.current = false;
+    movedRef.current = false;
+  };
+
+  const triggerExit = (dir) => {
+    if (exiting) return;
+    setExiting(dir);
+    setDrag(dir === 'right' ? 600 : -600);
+    setTimeout(() => {
+      if (dir === 'right') onLike(top);
+      else onPass(top);
+      setExiting(null);
+      reset();
+    }, 240);
+  };
+
+  const onPointerDown = (e) => {
+    if (exiting || !top) return;
+    const x = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+    startXRef.current = x;
+    draggingRef.current = true;
+    movedRef.current = false;
+  };
+  const onPointerMove = (e) => {
+    if (!draggingRef.current || exiting) return;
+    const x = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
+    const delta = x - (startXRef.current ?? x);
+    if (Math.abs(delta) > 6) movedRef.current = true;
+    setDrag(delta);
+  };
+  const onPointerUp = () => {
+    if (!draggingRef.current || exiting) return;
+    if (drag > threshold) triggerExit('right');
+    else if (drag < -threshold) triggerExit('left');
+    else { setDrag(0); reset(); }
+  };
+
+  if (!top) return null;
+
   return (
-    <div className="bg-white rounded-[20px] overflow-hidden border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-      <button onClick={onTap} className="block w-full text-left active:opacity-90 transition-opacity">
-        <div className="flex items-start gap-3 p-4">
-          <img
-            src={candidate.petPhoto}
-            alt={candidate.petName}
-            className="w-[64px] h-[64px] rounded-[16px] object-cover bg-[#F3F3F5] shrink-0"
-          />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <h3 className="text-[15px] font-semibold text-[#111111] truncate">{candidate.petName}</h3>
-                <p className="text-[12px] text-[#6E6E73] truncate">{candidate.petBreed} · {candidate.distance.toFixed(1)} km</p>
-              </div>
-              <span
-                className="shrink-0 inline-flex items-center gap-1 h-[22px] px-2 rounded-full text-[10.5px] font-semibold"
-                style={{ background: '#FFE9DD', color: '#7A2F12' }}
-              >
-                {candidate.matchScore}% fit
-              </span>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {candidate.reasons.slice(0, 2).map((r, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center h-[22px] px-2 rounded-full text-[10.5px] font-medium text-[#6E6058]"
-                  style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-                >
-                  {r}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </button>
-      <div className="flex items-center gap-2 px-4 pb-4">
+    <div className="relative flex-1 flex flex-col items-center" style={{ minHeight: 480 }}>
+      {/* Stack */}
+      <div className="relative w-full" style={{ height: 460 }}>
+        {peek2 && (
+          <SwipeCardShell key={peek2.id} candidate={peek2} depth={2} />
+        )}
+        {peek && (
+          <SwipeCardShell key={peek.id} candidate={peek} depth={1} />
+        )}
+        <SwipeCardShell
+          key={top.id}
+          candidate={top}
+          depth={0}
+          drag={drag}
+          exiting={exiting}
+          likeOpacity={likeOpacity}
+          passOpacity={passOpacity}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onClick={() => { if (!movedRef.current) onTapDetail && onTapDetail(top); }}
+        />
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex items-center justify-center gap-3 mt-3">
         <button
-          onClick={onSchedule}
-          className="flex-1 h-10 rounded-[12px] text-white text-[13px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform"
-          style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)', boxShadow: '0 4px 12px rgba(232,93,42,0.22)' }}
+          onClick={() => triggerExit('left')}
+          aria-label="Pass"
+          className="w-14 h-14 rounded-full bg-white border border-black/[0.06] flex items-center justify-center text-[#76767D] active:scale-[0.92] transition-transform"
+          style={{ boxShadow: '0 6px 16px rgba(0,0,0,0.08)' }}
         >
-          <Calendar size={14} strokeWidth={2.2} />
-          Plan playdate
+          <X size={22} strokeWidth={2.4} />
         </button>
         <button
-          onClick={onToggleSave}
-          aria-label={saved ? 'Saved' : 'Save'}
-          className={`w-10 h-10 rounded-[12px] flex items-center justify-center border transition-colors ${
-            saved ? 'bg-[#FFE9DD] border-[#FFD4CC] text-[#E85D2A]' : 'bg-[#F7F7F8] border-black/[0.06] text-[#6E6E73]'
-          }`}
+          onClick={() => onTapDetail && onTapDetail(top)}
+          aria-label="View profile"
+          className="w-12 h-12 rounded-full bg-white border border-black/[0.06] flex items-center justify-center text-[#6E6E73] active:scale-[0.94] transition-transform"
+          style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
         >
-          {saved ? <BookmarkCheck size={16} strokeWidth={2.2} /> : <Bookmark size={16} strokeWidth={2.2} />}
+          <Sparkles size={16} strokeWidth={2.2} />
+        </button>
+        <button
+          onClick={() => triggerExit('right')}
+          aria-label="Like"
+          className="w-14 h-14 rounded-full text-white flex items-center justify-center active:scale-[0.92] transition-transform"
+          style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)', boxShadow: '0 8px 22px rgba(232,93,42,0.36)' }}
+        >
+          <Heart size={22} strokeWidth={2.4} fill="white" />
         </button>
       </div>
     </div>
   );
 }
 
-function DiscoverEmpty({ onClear }) {
+function SwipeCardShell({
+  candidate,
+  depth = 0,
+  drag = 0,
+  exiting = null,
+  likeOpacity = 0,
+  passOpacity = 0,
+  onPointerDown, onPointerMove, onPointerUp, onPointerCancel, onClick,
+}) {
+  const archetype = ARCHETYPE_BY_ID[candidate.archetypeId] || ARCHETYPES[0];
+  const isTop = depth === 0;
+  const rotate = drag * 0.06;
+  const shadowAlpha = isTop ? 0.12 : 0.06;
+  const transform = isTop
+    ? `translateX(${drag}px) rotate(${rotate}deg)`
+    : `translateY(${depth * 8}px) scale(${1 - depth * 0.04})`;
   return (
-    <div className="flex flex-col items-center text-center gap-3 py-10 px-6">
-      <div className="w-14 h-14 rounded-full bg-[#FFE9DD] flex items-center justify-center text-[#E85D2A]">
-        <Sparkles size={20} strokeWidth={2.2} />
-      </div>
-      <p className="text-[15px] font-semibold text-[#111111]">No matches with this filter</p>
-      <p className="text-[13px] text-[#6E6E73] max-w-[260px]">Try widening the activity to see more pups nearby.</p>
-      <button
-        onClick={onClear}
-        className="mt-1 h-9 px-4 rounded-full bg-[#111111] text-white text-[12.5px] font-semibold active:scale-[0.97] transition-transform"
+    <div
+      onPointerDown={isTop ? onPointerDown : undefined}
+      onPointerMove={isTop ? onPointerMove : undefined}
+      onPointerUp={isTop ? onPointerUp : undefined}
+      onPointerCancel={isTop ? onPointerCancel : undefined}
+      onClick={isTop && Math.abs(drag) < 4 ? onClick : undefined}
+      className="absolute inset-0 rounded-[24px] overflow-hidden bg-white"
+      style={{
+        transform,
+        transition: exiting ? 'transform 240ms cubic-bezier(0.32, 0.72, 0, 1)' : (isTop ? 'transform 220ms cubic-bezier(0.32, 0.72, 0, 1)' : 'transform 220ms ease'),
+        boxShadow: `0 ${10 + depth * 4}px ${30 + depth * 6}px rgba(0,0,0,${shadowAlpha})`,
+        cursor: isTop ? 'grab' : 'default',
+        touchAction: isTop ? 'pan-y' : 'auto',
+        zIndex: 10 - depth,
+      }}
+    >
+      <img
+        src={candidate.petPhoto}
+        alt={candidate.petName}
+        className="w-full h-full object-cover pointer-events-none"
+        draggable={false}
+      />
+      {/* Bottom gradient + content */}
+      <div
+        className="absolute left-0 right-0 bottom-0 p-5 pointer-events-none"
+        style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.78) 100%)' }}
       >
-        Clear filter
-      </button>
+        <div className="flex items-end justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-[24px] font-semibold text-white leading-tight drop-shadow">
+              {candidate.petName} <span className="font-normal text-white/85 text-[18px]">· {candidate.age || '?'}</span>
+            </p>
+            <p className="text-[13px] text-white/85 mt-1">
+              {candidate.petBreed} · {candidate.distance.toFixed(1)} km
+            </p>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              <span
+                className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full text-[11.5px] font-semibold"
+                style={{ background: archetype.color, color: '#7A2F12' }}
+              >
+                <span>{archetype.glyph}</span>
+                {archetype.label}
+              </span>
+              {candidate.reasons.slice(0, 1).map((r, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center h-7 px-2.5 rounded-full text-[11.5px] font-medium text-white"
+                  style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(4px)' }}
+                >
+                  {r}
+                </span>
+              ))}
+            </div>
+          </div>
+          <span
+            className="shrink-0 inline-flex items-center h-7 px-2.5 rounded-full text-[11.5px] font-semibold"
+            style={{ background: '#FFE9DD', color: '#7A2F12' }}
+          >
+            {candidate.matchScore}% fit
+          </span>
+        </div>
+      </div>
+
+      {/* Drag overlays — only on top card */}
+      {isTop && (
+        <>
+          <div
+            className="absolute top-6 left-6 px-3 py-1 rounded-[10px] border-2 pointer-events-none"
+            style={{
+              borderColor: '#34C759',
+              color: '#34C759',
+              fontSize: 18,
+              fontWeight: 800,
+              letterSpacing: '0.12em',
+              transform: `rotate(-12deg)`,
+              opacity: likeOpacity,
+              transition: exiting ? 'none' : 'opacity 120ms',
+            }}
+          >
+            LIKE
+          </div>
+          <div
+            className="absolute top-6 right-6 px-3 py-1 rounded-[10px] border-2 pointer-events-none"
+            style={{
+              borderColor: '#FF3B30',
+              color: '#FF3B30',
+              fontSize: 18,
+              fontWeight: 800,
+              letterSpacing: '0.12em',
+              transform: `rotate(12deg)`,
+              opacity: passOpacity,
+              transition: exiting ? 'none' : 'opacity 120ms',
+            }}
+          >
+            PASS
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DeckEmpty({ onReset, onClearFilter, hasFilter }) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center text-center gap-3 py-12 px-6">
+      <div className="w-16 h-16 rounded-full bg-[#FFE9DD] flex items-center justify-center text-[#E85D2A]">
+        <Sparkles size={22} strokeWidth={2.2} />
+      </div>
+      <p className="text-[16px] font-semibold text-[#111111]">That's everyone for today.</p>
+      <p className="text-[13px] text-[#6E6E73] max-w-[280px]">New pups arrive each morning. Come back tomorrow for fresh matches.</p>
+      <div className="flex flex-col gap-2 mt-2">
+        {hasFilter && (
+          <button
+            onClick={onClearFilter}
+            className="h-10 px-5 rounded-full bg-[#111111] text-white text-[12.5px] font-semibold active:scale-[0.97]"
+          >
+            Clear filter
+          </button>
+        )}
+        <button
+          onClick={onReset}
+          className="h-10 px-5 rounded-full bg-white border border-black/[0.06] text-[#111111] text-[12.5px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.97]"
+        >
+          <RotateCcw size={13} strokeWidth={2.2} />
+          Show passed pups again
+        </button>
+      </div>
     </div>
   );
 }
@@ -1027,6 +1275,281 @@ function SheetShell({ children, title, onClose }) {
 // ---------------------------------------------------------------------------
 // Toast
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// MatchOverlay — celebrates a mutual like (Bobby & Luna · same wavelength)
+// ---------------------------------------------------------------------------
+function MatchOverlay({ candidate, myName, myPhoto, onClose, onSayHi, onPlanPlaydate }) {
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+  const archetype = ARCHETYPE_BY_ID[candidate.archetypeId] || ARCHETYPES[0];
+  return (
+    <div
+      onClick={onClose}
+      className="absolute inset-0 z-[10001] flex items-center justify-center px-6"
+      style={{ background: 'linear-gradient(180deg, rgba(232,93,42,0.96) 0%, rgba(232,93,42,0.86) 100%)', backdropFilter: 'blur(8px)' }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-[340px] flex flex-col items-center text-center"
+        style={{ animation: 'matchPop 360ms cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+      >
+        <style>{`
+          @keyframes matchPop {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          @keyframes matchAvatarLeft {
+            0% { transform: translateX(20px) rotate(-6deg); opacity: 0; }
+            100% { transform: translateX(0) rotate(-6deg); opacity: 1; }
+          }
+          @keyframes matchAvatarRight {
+            0% { transform: translateX(-20px) rotate(6deg); opacity: 0; }
+            100% { transform: translateX(0) rotate(6deg); opacity: 1; }
+          }
+        `}</style>
+
+        {/* Avatars */}
+        <div className="relative h-[140px] w-[200px] mb-4">
+          <img
+            src={myPhoto}
+            alt={myName}
+            className="absolute left-0 top-2 w-[120px] h-[120px] rounded-full object-cover bg-white"
+            style={{ border: '4px solid #FFFFFF', animation: 'matchAvatarLeft 480ms cubic-bezier(0.34, 1.56, 0.64, 1) both' }}
+          />
+          <img
+            src={candidate.petPhoto}
+            alt={candidate.petName}
+            className="absolute right-0 top-2 w-[120px] h-[120px] rounded-full object-cover bg-white"
+            style={{ border: '4px solid #FFFFFF', animation: 'matchAvatarRight 480ms cubic-bezier(0.34, 1.56, 0.64, 1) both' }}
+          />
+          {/* Sparkle */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white flex items-center justify-center" style={{ boxShadow: '0 6px 16px rgba(0,0,0,0.18)' }}>
+            <Sparkles size={20} strokeWidth={2.2} className="text-[#E85D2A]" />
+          </div>
+        </div>
+
+        {/* Headline */}
+        <p className="text-[14px] uppercase tracking-[0.18em] font-semibold text-white/85">A new Fylos friend</p>
+        <h2 className="text-[26px] font-semibold text-white mt-1.5 leading-tight">
+          {myName} & {candidate.petName}
+        </h2>
+        <p className="text-[14px] text-white/90 mt-1">same wavelength</p>
+        <p className="text-[12.5px] text-white/80 mt-2 max-w-[260px]">
+          You both said yes. {candidate.reasons[0] || 'Looks like a real fit'}.
+        </p>
+
+        {/* CTAs */}
+        <div className="flex flex-col gap-2 w-full mt-6">
+          <button
+            onClick={onSayHi}
+            className="h-12 rounded-[14px] bg-white text-[#E85D2A] font-semibold text-[14px] flex items-center justify-center gap-1.5 active:scale-[0.98]"
+            style={{ boxShadow: '0 6px 18px rgba(0,0,0,0.18)' }}
+          >
+            <MessageCircle size={15} strokeWidth={2.4} />
+            Say hi
+          </button>
+          <button
+            onClick={onPlanPlaydate}
+            className="h-12 rounded-[14px] bg-white/15 backdrop-blur text-white font-semibold text-[14px] flex items-center justify-center gap-1.5 active:scale-[0.98] border border-white/30"
+          >
+            <Calendar size={15} strokeWidth={2.4} />
+            Plan a playdate
+          </button>
+          <button
+            onClick={onClose}
+            className="h-10 rounded-[12px] text-white/80 text-[12.5px] font-semibold active:opacity-70"
+          >
+            Maybe later
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ChatSheet — say-hi flow with 4 icebreaker chips + free text + photo attach
+// ---------------------------------------------------------------------------
+const ICEBREAKERS = [
+  "Hi! {name} would love to meet.",
+  "Free this weekend?",
+  "Where's your usual walk?",
+  "What's their perfect day?",
+];
+
+function ChatSheet({ candidate, onClose, onSend }) {
+  const [draft, setDraft] = useState('');
+  const [thread, setThread] = useState([]);
+  const [attaching, setAttaching] = useState(false);
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+  const sendText = (text) => {
+    if (!text.trim()) return;
+    setThread((prev) => [...prev, { id: Date.now(), from: 'me', text: text.trim(), kind: 'text' }]);
+    setDraft('');
+    // Scripted reply for realism
+    setTimeout(() => {
+      setThread((prev) => [...prev, { id: Date.now() + 1, from: 'them', text: scriptedReply(candidate, text), kind: 'text' }]);
+    }, 900);
+  };
+  const submitFinal = () => {
+    onSend && onSend(draft || 'Said hi via icebreaker');
+  };
+  const sendPhotoStub = () => {
+    setThread((prev) => [...prev, { id: Date.now(), from: 'me', kind: 'photo', url: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=400&q=70' }]);
+    setAttaching(false);
+  };
+  return (
+    <div
+      onClick={onClose}
+      className="absolute inset-0 z-[10000] flex items-end"
+      style={{ background: 'rgba(0,0,0,0.42)', backdropFilter: 'blur(2px)' }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full bg-white rounded-t-[24px] shadow-[0_-8px_40px_rgba(0,0,0,0.18)] flex flex-col"
+        style={{ height: '88%' }}
+      >
+        {/* Header */}
+        <div className="flex flex-col items-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-[#D1D1D6]" />
+        </div>
+        <div className="flex items-center gap-3 px-5 py-3 border-b border-black/[0.04]">
+          <img src={candidate.petPhoto} alt="" className="w-10 h-10 rounded-full object-cover bg-[#F3F3F5]" />
+          <div className="flex-1 min-w-0">
+            <p className="text-[14px] font-semibold text-[#111111] truncate">{candidate.petName}</p>
+            <p className="text-[11.5px] text-[#8E8E93] truncate">{candidate.ownerName} · matched just now</p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="w-8 h-8 rounded-full bg-[#F7F5F2] border border-[#EDE8E2] flex items-center justify-center text-[#111111] active:scale-[0.94]"
+          >
+            <X size={15} strokeWidth={2.2} />
+          </button>
+        </div>
+
+        {/* Thread */}
+        <div className="flex-1 overflow-y-auto wallet-scroll px-5 py-4 flex flex-col gap-2">
+          {thread.length === 0 ? (
+            <div className="flex flex-col items-center text-center gap-2 mt-4">
+              <div className="w-12 h-12 rounded-full bg-[#FFE9DD] flex items-center justify-center text-[#E85D2A]">
+                <MessageCircle size={18} strokeWidth={2.2} />
+              </div>
+              <p className="text-[13.5px] font-semibold text-[#111111]">Break the ice</p>
+              <p className="text-[12px] text-[#6E6E73] max-w-[260px]">Send a quick hello — pick an icebreaker below or write your own.</p>
+            </div>
+          ) : (
+            thread.map((m) => (
+              <ChatBubble key={m.id} message={m} candidatePhoto={candidate.petPhoto} />
+            ))
+          )}
+        </div>
+
+        {/* Icebreaker chips */}
+        {thread.length === 0 && (
+          <div className="px-5 pb-2 flex gap-2 overflow-x-auto custom-scrollbar">
+            {ICEBREAKERS.map((tpl, i) => {
+              const text = tpl.replace('{name}', candidate.petName);
+              return (
+                <button
+                  key={i}
+                  onClick={() => sendText(text)}
+                  className="shrink-0 h-8 px-3 rounded-full text-[12px] font-semibold bg-[#FFE9DD] border border-[#FFD4CC] text-[#7A2F12] active:scale-[0.97]"
+                >
+                  {text}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Composer */}
+        <div className="px-5 pb-5 pt-2 border-t border-black/[0.04] flex items-center gap-2">
+          <button
+            onClick={() => setAttaching((a) => !a)}
+            aria-label="Attach"
+            className={`w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-[0.94] ${
+              attaching ? 'bg-[#FFE9DD] border-[#FFD4CC] text-[#E85D2A]' : 'bg-white border-black/[0.06] text-[#6E6E73]'
+            }`}
+          >
+            <ImageIcon size={15} strokeWidth={2.2} />
+          </button>
+          <input
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { sendText(draft); } }}
+            placeholder="Message…"
+            className="flex-1 h-10 rounded-full px-4 outline-none text-[13.5px]"
+            style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}
+          />
+          <button
+            onClick={() => sendText(draft)}
+            disabled={!draft.trim() && thread.length === 0}
+            aria-label="Send"
+            className="w-10 h-10 rounded-full text-white flex items-center justify-center active:scale-[0.94]"
+            style={{
+              background: draft.trim() || thread.length > 0 ? 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)' : '#EDE8E2',
+              color: draft.trim() || thread.length > 0 ? '#FFF' : '#A09A94',
+            }}
+          >
+            <Send size={15} strokeWidth={2.4} />
+          </button>
+        </div>
+        {attaching && (
+          <div className="px-5 pb-4 -mt-1 flex gap-2">
+            <button
+              onClick={sendPhotoStub}
+              className="h-9 px-3 rounded-full bg-[#F7F7F8] border border-black/[0.06] text-[12px] font-semibold text-[#111111] flex items-center gap-1.5 active:scale-[0.97]"
+            >
+              <Camera size={13} strokeWidth={2.2} />
+              From gallery
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ChatBubble({ message, candidatePhoto }) {
+  const isMe = message.from === 'me';
+  return (
+    <div className={`flex items-end gap-2 ${isMe ? 'justify-end' : 'justify-start'}`}>
+      {!isMe && <img src={candidatePhoto} alt="" className="w-7 h-7 rounded-full object-cover bg-[#F3F3F5]" />}
+      <div
+        className="max-w-[78%] rounded-[18px] px-3 py-2"
+        style={{
+          background: isMe ? '#E85D2A' : '#F2F2F7',
+          color: isMe ? '#FFFFFF' : '#111111',
+          borderBottomRightRadius: isMe ? 6 : 18,
+          borderBottomLeftRadius: isMe ? 18 : 6,
+        }}
+      >
+        {message.kind === 'photo' ? (
+          <img src={message.url} alt="" className="rounded-[12px] max-w-[200px] max-h-[200px] object-cover" />
+        ) : (
+          <p className="text-[13.5px] leading-snug">{message.text}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function scriptedReply(candidate, userText) {
+  const t = userText.toLowerCase();
+  if (t.includes('weekend') || t.includes('free')) return `Saturday morning works for ${candidate.petName} — Zürichhorn?`;
+  if (t.includes('walk')) return 'Usually Seefeld around 8am. Big fan of long sniffs.';
+  if (t.includes('day')) return 'Morning run, nap on the couch, evening park sniff. The classic.';
+  return `${candidate.petName} would love that.`;
+}
+
 function Toast({ message }) {
   return (
     <div className="absolute left-1/2 bottom-[40px] -translate-x-1/2 z-[10001] px-4 py-2.5 rounded-full text-[12.5px] font-semibold text-white pointer-events-none whitespace-nowrap"
