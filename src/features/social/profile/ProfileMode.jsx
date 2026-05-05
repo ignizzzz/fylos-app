@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import PersonalityCardSheet from '../../../components/PersonalityCardSheet';
 import TwinFinderSheet from '../../../components/TwinFinderSheet';
-import { ARCHETYPES, ARCHETYPE_BY_ID } from '../../../data/social';
+import { ARCHETYPES, ARCHETYPE_BY_ID, ARCHETYPE_QUIZ, tallyArchetype } from '../../../data/social';
 
 /* =========================================================================
    ProfileMode — Activity tab · Profile sub-mode (rebuild)
@@ -154,6 +154,7 @@ export default function ProfileMode({
   const [editOpen, setEditOpen] = useState(false);
   const [milestoneSheetOpen, setMilestoneSheetOpen] = useState(false);
   const [archetypeOpen, setArchetypeOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [lightbox, setLightbox] = useState(null);
@@ -284,6 +285,14 @@ export default function ProfileMode({
           currentId={profile.archetypeId}
           onClose={() => setArchetypeOpen(false)}
           onPick={(id) => { setProfile((p) => ({ ...p, archetypeId: id })); setArchetypeOpen(false); showToast('Archetype updated'); }}
+          onTakeQuiz={() => { setArchetypeOpen(false); setTimeout(() => setQuizOpen(true), 160); }}
+        />
+      )}
+      {quizOpen && (
+        <ArchetypeQuizSheet
+          petName={profile.name}
+          onClose={() => setQuizOpen(false)}
+          onApply={(id) => { setProfile((p) => ({ ...p, archetypeId: id })); setQuizOpen(false); showToast(`${profile.name} is ${ARCHETYPE_BY_ID[id]?.label || 'set'}`); }}
         />
       )}
       {shareOpen && <ShareSheet profile={profile} archetype={archetype} stats={stats} latestMilestone={milestones[0]} onClose={() => setShareOpen(false)} onCopy={() => showToast('Link copied')} />}
@@ -980,11 +989,27 @@ function AddMilestoneSheet({ onClose, onSave }) {
 // ---------------------------------------------------------------------------
 // Archetype picker sheet — browse 12 archetypes
 // ---------------------------------------------------------------------------
-function ArchetypePickerSheet({ currentId, onClose, onPick }) {
+function ArchetypePickerSheet({ currentId, onClose, onPick, onTakeQuiz }) {
   return (
     <SheetShell title="Choose an archetype" onClose={onClose}>
-      <div className="px-6 pb-6 flex flex-col gap-2">
-        <p className="text-[12.5px] text-[#6E6E73] mb-1">Pick the one that fits today. You can change anytime.</p>
+      <div className="px-6 pb-6 flex flex-col gap-3">
+        <p className="text-[12.5px] text-[#6E6E73]">Pick the one that fits today. You can change anytime.</p>
+        {onTakeQuiz && (
+          <button
+            onClick={onTakeQuiz}
+            className="rounded-[14px] p-3 flex items-center gap-3 active:scale-[0.99] text-left"
+            style={{ background: '#FFF1E5', border: '1px solid #FFD4CC' }}
+          >
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-[#E85D2A]" style={{ background: '#FFE2D5' }}>
+              <Sparkles size={16} strokeWidth={2.2} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13.5px] font-semibold text-[#7A2F12]">Not sure? Take the quiz</p>
+              <p className="text-[11.5px] text-[#7A2F12]/75">5 quick questions · we'll suggest a fit.</p>
+            </div>
+            <ChevronRight size={14} color="#E85D2A" strokeWidth={2.4} />
+          </button>
+        )}
         <div className="grid grid-cols-2 gap-2">
           {ARCHETYPES.map((a) => {
             const active = currentId === a.id;
@@ -1308,6 +1333,125 @@ function AddMemorySheet({ petName, onClose, onSave }) {
 // ---------------------------------------------------------------------------
 // Toast
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Archetype quiz sheet — 5 questions → tally → suggested archetype card
+// ---------------------------------------------------------------------------
+function ArchetypeQuizSheet({ petName, onClose, onApply }) {
+  const [step, setStep] = useState(0); // 0..ARCHETYPE_QUIZ.length-1, then 'result'
+  const [answers, setAnswers] = useState({}); // { [questionId]: answerId }
+  const isResult = step === 'result';
+  const currentQ = !isResult ? ARCHETYPE_QUIZ[step] : null;
+  const total = ARCHETYPE_QUIZ.length;
+  const progress = isResult ? 1 : (step + 1) / total;
+
+  const pickAnswer = (qId, aId) => {
+    const next = { ...answers, [qId]: aId };
+    setAnswers(next);
+    if (step + 1 < total) setStep(step + 1);
+    else setStep('result');
+  };
+
+  const goBack = () => {
+    if (isResult) setStep(total - 1);
+    else if (step > 0) setStep(step - 1);
+  };
+
+  const resultId = isResult ? tallyArchetype(answers) : null;
+  const result = resultId ? ARCHETYPE_BY_ID[resultId] : null;
+
+  return (
+    <SheetShell title={isResult ? `${petName}'s archetype` : 'Quick quiz'} onClose={onClose}>
+      <div className="px-6 pb-6 flex flex-col gap-4">
+        {/* Progress bar */}
+        <div className="flex items-center gap-2">
+          {!isResult && step > 0 && (
+            <button onClick={goBack} aria-label="Back" className="w-8 h-8 rounded-full bg-[#F7F5F2] border border-[#EDE8E2] flex items-center justify-center text-[#111111] active:scale-[0.94]">
+              <ChevronLeft size={15} strokeWidth={2.2} />
+            </button>
+          )}
+          <div className="flex-1 h-1.5 rounded-full" style={{ background: '#EDE8E2' }}>
+            <div
+              className="h-full rounded-full transition-all duration-[300ms]"
+              style={{ width: `${Math.round(progress * 100)}%`, background: 'linear-gradient(90deg, #FF7240 0%, #E85D2A 100%)' }}
+            />
+          </div>
+          <span className="text-[11px] font-semibold text-[#8E8E93] tabular-nums">
+            {isResult ? `${total}/${total}` : `${step + 1}/${total}`}
+          </span>
+        </div>
+
+        {!isResult && currentQ && (
+          <div className="flex flex-col gap-3">
+            <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Question {step + 1}</p>
+            <h3 className="text-[18px] font-semibold text-[#111111] leading-snug">
+              {currentQ.prompt.replace('your Fylos', petName).replace('they', petName)}
+            </h3>
+            <div className="flex flex-col gap-2 mt-1">
+              {currentQ.answers.map((a) => (
+                <button
+                  key={a.id}
+                  onClick={() => pickAnswer(currentQ.id, a.id)}
+                  className="w-full text-left rounded-[14px] p-3.5 transition-colors active:scale-[0.99]"
+                  style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
+                >
+                  <p className="text-[14px] text-[#111111]">{a.label}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {isResult && result && (
+          <div className="flex flex-col gap-4">
+            <div className="rounded-[20px] overflow-hidden" style={{ background: 'linear-gradient(180deg, #FFF1E5 0%, #FFFAF5 100%)', border: '1px solid #FFD4CC' }}>
+              <div className="p-5 flex flex-col items-center text-center gap-3">
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-[28px]"
+                  style={{ background: result.color, border: `1px solid ${T.border}` }}
+                >
+                  {result.glyph}
+                </div>
+                <div>
+                  <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">{petName} is</p>
+                  <p className="text-[22px] font-semibold text-[#111111] leading-tight mt-0.5">{result.label}</p>
+                  <p className="text-[13px] text-[#6E6058] leading-snug mt-1.5">{result.tagline}</p>
+                </div>
+                <p className="text-[12.5px] text-[#5D5D64] leading-relaxed max-w-[280px]">{result.longDescription}</p>
+                {result.traits && result.traits.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 justify-center">
+                    {result.traits.map((t) => (
+                      <span key={t} className="inline-flex items-center h-7 px-2.5 rounded-full text-[11.5px] font-medium" style={{ background: '#FFFFFF', color: '#7A2F12', border: '1px solid #FFD4CC' }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => onApply(resultId)}
+                className="h-12 rounded-[14px] text-white text-[14px] font-semibold flex items-center justify-center gap-1.5 active:scale-[0.99]"
+                style={{ background: 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)', boxShadow: '0 6px 18px rgba(232,93,42,0.28)' }}
+              >
+                <Check size={15} strokeWidth={2.4} />
+                Apply to profile
+              </button>
+              <button
+                onClick={() => { setAnswers({}); setStep(0); }}
+                className="h-11 rounded-[12px] bg-[#F7F7F8] border border-black/[0.06] text-[13px] font-semibold text-[#111111] flex items-center justify-center gap-1.5 active:scale-[0.98]"
+              >
+                <Sparkles size={13} strokeWidth={2.2} />
+                Retake quiz
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </SheetShell>
+  );
+}
+
 function Toast({ message }) {
   return (
     <div

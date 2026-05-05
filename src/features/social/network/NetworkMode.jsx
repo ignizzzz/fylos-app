@@ -111,6 +111,12 @@ export default function NetworkMode({
     setActivePost((curr) => curr && curr.id === postId ? { ...curr, comments: [...(curr.comments || []), c] } : curr);
   };
 
+  const changeVisibility = (postId, visibility) => {
+    setFeedPosts((prev) => prev.map((p) => p.id === postId ? { ...p, visibility } : p));
+    setActivePost((curr) => curr && curr.id === postId ? { ...curr, visibility } : curr);
+    showToast(`Visibility · ${visibility}`);
+  };
+
   const acceptRequest = (req) => {
     if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') navigator.vibrate(8);
     setReceivedReqs((prev) => prev.filter((r) => r.id !== req.id));
@@ -232,6 +238,7 @@ export default function NetworkMode({
           onClose={() => setActivePost(null)}
           onToggleLike={() => toggleLike(activePost.id)}
           onComment={(text) => addComment(activePost.id, text)}
+          onChangeVisibility={(v) => changeVisibility(activePost.id, v)}
         />
       )}
       {activeProfile && (
@@ -746,9 +753,10 @@ function SheetShell({ children, title, onClose }) {
   );
 }
 
-function PostDetailSheet({ post, onClose, onToggleLike, onComment }) {
+function PostDetailSheet({ post, onClose, onToggleLike, onComment, onChangeVisibility }) {
   const [draft, setDraft] = useState('');
   const comments = post.comments || [];
+  const isOwnPost = post.ownerName === 'You';
   const submit = () => {
     if (!draft.trim()) return;
     onComment && onComment(draft);
@@ -786,6 +794,33 @@ function PostDetailSheet({ post, onClose, onToggleLike, onComment }) {
           <Heart size={15} strokeWidth={2.2} fill={post.likedByMe ? 'currentColor' : 'none'} />
           {post.likedByMe ? 'Liked' : 'Like'}
         </button>
+        {/* Visibility editor — own posts only */}
+        {isOwnPost && onChangeVisibility && (
+          <div className="flex flex-col gap-2 pt-2 border-t border-black/[0.04]">
+            <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">Who can see this</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { id: 'public',  label: 'Public',  Icon: Globe },
+                { id: 'friends', label: 'Friends', Icon: UsersIcon },
+                { id: 'private', label: 'Private', Icon: Lock },
+              ].map(({ id, label, Icon }) => {
+                const active = (post.visibility || 'friends') === id;
+                return (
+                  <button
+                    key={id}
+                    onClick={() => onChangeVisibility(id)}
+                    className={`flex items-center justify-center gap-1.5 h-10 rounded-[10px] border text-[12px] font-semibold transition-colors active:scale-[0.97] ${
+                      active ? 'bg-[#FFE9DD] border-[#FFD4CC] text-[#7A2F12]' : 'bg-white border-black/[0.06] text-[#6E6E73]'
+                    }`}
+                  >
+                    <Icon size={12} strokeWidth={2.2} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
         {/* Comments thread */}
         <div className="flex flex-col gap-3 pt-2 border-t border-black/[0.04]">
           <p className="text-[10.5px] font-bold uppercase tracking-widest text-[#8E7A6B]">
