@@ -11,3 +11,4 @@ export { ACTIVITY_SOCIAL_FEED } from './feed';
 export { ACTIVITY_NOTIFICATIONS } from './notifications';
 export { ACTIVITY_INSIGHTS_DATA } from './insights';
 export { INITIAL_MEMORIES } from './memories';
+export { ARCHETYPES, ARCHETYPE_BY_ID, ARCHETYPE_QUIZ, tallyArchetype } from './archetypes';
