@@ -165,6 +165,23 @@ export default function ProfileMode({
   const [toast, setToast] = useState(null);
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(null), 1600); };
 
+  // Close all sheets when ProfileMode is hidden (navigating away)
+  useEffect(() => {
+    if (!isVisible) {
+      setAddPhotoOpen(false);
+      setEditOpen(false);
+      setMilestoneSheetOpen(false);
+      setArchetypeOpen(false);
+      setQuizOpen(false);
+      setShareOpen(false);
+      setSettingsOpen(false);
+      setLightbox(null);
+      setAddMemoryOpen(false);
+      setPersonalityPet(null);
+      setTwinFinderOpen(false);
+    }
+  }, [isVisible]);
+
   // Derived
   const archetype = ARCHETYPE_BY_ID[profile.archetypeId] || ARCHETYPES[0];
   const heroPhotos = useMemo(() => {
@@ -360,39 +377,37 @@ function CarouselHero({ photos, onSettings, onShare, onAddPhoto }) {
         ))}
       </div>
 
-      {/* Arrow buttons (only when more than 1 photo) */}
-      {photos.length > 1 && (
-        <>
-          <button
-            onClick={() => stepTo(-1)}
-            disabled={active === 0}
-            aria-label="Previous photo"
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center bg-white/85 backdrop-blur text-[#111111] disabled:opacity-30 active:scale-[0.94] transition-all z-10"
-            style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}
-          >
-            <ChevronLeft size={16} strokeWidth={2.4} />
-          </button>
-          <button
-            onClick={() => stepTo(1)}
-            disabled={active === photos.length - 1}
-            aria-label="Next photo"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center bg-white/85 backdrop-blur text-[#111111] disabled:opacity-30 active:scale-[0.94] transition-all z-10"
-            style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}
-          >
-            <ChevronRight size={16} strokeWidth={2.4} />
-          </button>
-        </>
-      )}
-
-      {/* Top-right add photo (subtle, glassy) */}
+      {/* Add photo — top-left corner, separate from nav arrows */}
       <button
         onClick={onAddPhoto}
         aria-label="Add photo"
-        className="absolute right-3 top-12 w-9 h-9 rounded-full flex items-center justify-center bg-white/85 backdrop-blur text-[#111111] active:scale-[0.94] transition-transform z-10"
-        style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}
+        className="absolute left-3 top-3 w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.94] transition-transform z-10"
+        style={{ background: 'rgba(255,255,255,0.88)', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', backdropFilter: 'blur(8px)' }}
       >
-        <ImagePlus size={15} strokeWidth={2.2} />
+        <ImagePlus size={15} strokeWidth={2.2} className="text-[#111111]" />
       </button>
+
+      {/* Arrow buttons — only rendered when the step is available */}
+      {photos.length > 1 && active > 0 && (
+        <button
+          onClick={() => stepTo(-1)}
+          aria-label="Previous photo"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.94] transition-all z-10"
+          style={{ background: 'rgba(255,255,255,0.88)', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', backdropFilter: 'blur(8px)' }}
+        >
+          <ChevronLeft size={16} strokeWidth={2.4} className="text-[#111111]" />
+        </button>
+      )}
+      {photos.length > 1 && active < photos.length - 1 && (
+        <button
+          onClick={() => stepTo(1)}
+          aria-label="Next photo"
+          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.94] transition-all z-10"
+          style={{ background: 'rgba(255,255,255,0.88)', boxShadow: '0 4px 12px rgba(0,0,0,0.12)', backdropFilter: 'blur(8px)' }}
+        >
+          <ChevronRight size={16} strokeWidth={2.4} className="text-[#111111]" />
+        </button>
+      )}
 
       {/* Pagination dots */}
       {photos.length > 1 && (

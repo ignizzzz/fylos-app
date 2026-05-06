@@ -91,27 +91,18 @@ const LanguageSettingsScreen = () => {
           </div>
         </div>
 
-        {/* Floating Header */}
-        <header
-          className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent"
-          style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}
-        >
-          <div className="flex justify-between items-center w-full pointer-events-auto">
+        {/* Scroll Content with canonical transparent header */}
+        <div className="absolute inset-0 overflow-y-auto pb-[140px] lang-scroll">
+          <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
             <button
               onClick={() => window.history.back()}
-              className="w-[44px] h-[44px] flex items-center justify-center rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
-              style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+              className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
             >
-              <ChevronLeft size={22} color="#111" />
+              <ChevronLeft size={18} strokeWidth={2.2} color="#111" />
             </button>
-            <h2 className="text-[17px] font-semibold text-[#111]">Language</h2>
-            <div className="w-[44px]" />
+            <h1 className="text-[17px] font-semibold text-[#111]">Language</h1>
           </div>
-        </header>
-
-        {/* Scroll Content */}
-        <div className="absolute inset-0 overflow-y-auto pt-[110px] pb-[140px] px-5 lang-scroll">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div className="px-5" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
             {/* Current Language Card */}
             <div style={{ background: '#F3EFEB', borderRadius: 20, padding: 20, border: '1px solid #EDE8E2' }}>

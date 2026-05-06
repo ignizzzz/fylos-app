@@ -1,58 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
-  ChevronLeft,
-  Bell,
-  Calendar,
-  Heart,
-  MessageCircle,
-  MapPin,
-  AlertTriangle,
-  Star,
-  Settings,
-  Clock,
-  Mail,
+  ChevronLeft, Bell, Calendar, Heart, MessageCircle, MapPin,
+  AlertTriangle, Star, Settings, Mail,
 } from 'lucide-react';
 
 /**
  * 58_NOTIFICATION_PREFS_v1.jsx
- * Notification preferences screen for the Fylos pet care app.
- * Master toggle, category toggles, quiet hours, email notifications.
+ * Simple notifications screen — master, categories, quiet hours, email.
  */
 
+const THEME = {
+  bg: '#F7F5F2', card: '#FFFFFF', divider: '#F1EDE8',
+  coral: '#E85D2A', txt: '#111111', muted: '#9B9B9F', tint: '#FBE7DD',
+};
+
 const CATEGORIES = [
-  { id: 'bookings', label: 'Bookings', caption: 'Confirmations & reminders', Icon: Calendar, iconBg: 'rgba(0,122,255,0.10)', iconColor: '#007AFF', defaultOn: true },
-  { id: 'health', label: 'Health Reminders', caption: 'Vaccinations & checkups', Icon: Heart, iconBg: 'rgba(255,59,48,0.10)', iconColor: '#FF3B30', defaultOn: true },
-  { id: 'social', label: 'Social', caption: 'Messages & friend requests', Icon: MessageCircle, iconBg: 'rgba(52,199,89,0.10)', iconColor: '#34C759', defaultOn: true },
-  { id: 'walks', label: 'Walk Updates', caption: 'Real-time walk tracking', Icon: MapPin, iconBg: 'rgba(232,93,42,0.10)', iconColor: '#E85D2A', defaultOn: true },
-  { id: 'community', label: 'Community Alerts', caption: 'Safety reports nearby', Icon: AlertTriangle, iconBg: 'rgba(255,149,0,0.10)', iconColor: '#FF9500', defaultOn: true },
-  { id: 'promos', label: 'Promotions', caption: 'Deals & special offers', Icon: Star, iconBg: 'rgba(255,204,0,0.12)', iconColor: '#FFB800', defaultOn: false },
-  { id: 'system', label: 'System', caption: 'App updates & maintenance', Icon: Settings, iconBg: 'rgba(160,154,148,0.12)', iconColor: '#A09A94', defaultOn: true },
+  { id: 'bookings',  label: 'Bookings',         caption: 'Confirmations & reminders', Icon: Calendar,      tint: 'rgba(0,122,255,0.10)',  color: '#007AFF', defaultOn: true  },
+  { id: 'health',    label: 'Health Reminders', caption: 'Vaccinations & checkups',    Icon: Heart,         tint: 'rgba(255,59,48,0.10)',  color: '#FF3B30', defaultOn: true  },
+  { id: 'social',    label: 'Social',           caption: 'Messages & friend requests', Icon: MessageCircle, tint: 'rgba(52,199,89,0.12)',  color: '#2EA849', defaultOn: true  },
+  { id: 'walks',     label: 'Walk Updates',     caption: 'Real-time walk tracking',    Icon: MapPin,        tint: 'rgba(232,93,42,0.12)',  color: '#E85D2A', defaultOn: true  },
+  { id: 'community', label: 'Community Alerts', caption: 'Safety reports nearby',      Icon: AlertTriangle, tint: 'rgba(245,158,11,0.14)', color: '#F59E0B', defaultOn: true  },
+  { id: 'promos',    label: 'Promotions',       caption: 'Deals & special offers',     Icon: Star,          tint: 'rgba(245,158,11,0.14)', color: '#F59E0B', defaultOn: false },
+  { id: 'system',    label: 'System',           caption: 'App updates & maintenance',  Icon: Settings,      tint: 'rgba(142,142,147,0.14)', color: '#8E8E93', defaultOn: true  },
 ];
+
+/* ────────── Canonical transparent header ────────── */
+const AppHeader = ({ title, onBack }) => (
+  <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
+    <button
+      onClick={onBack}
+      className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+    >
+      <ChevronLeft size={18} strokeWidth={2.2} color={THEME.txt} />
+    </button>
+    <h1 className="text-[17px] font-semibold" style={{ color: THEME.txt }}>{title}</h1>
+  </div>
+);
 
 const Toggle = ({ value, onChange }) => (
   <div
     onClick={() => onChange(!value)}
-    className="active:scale-[0.97] transition-all duration-[120ms]"
+    className="active:scale-[0.97] transition-all duration-[120ms] shrink-0"
     style={{
-      width: 48,
-      height: 28,
-      borderRadius: 9999,
-      background: value ? '#E85D2A' : '#D5CEC7',
-      position: 'relative',
-      flexShrink: 0,
-      cursor: 'pointer',
-      transition: 'background 200ms ease',
+      width: 46, height: 26, borderRadius: 9999,
+      background: value ? THEME.coral : '#D5CEC7',
+      position: 'relative', cursor: 'pointer', transition: 'background 200ms ease',
     }}
   >
     <div
       style={{
-        position: 'absolute',
-        top: 3,
-        left: value ? 23 : 3,
-        width: 22,
-        height: 22,
-        borderRadius: 9999,
-        background: '#FFFFFF',
+        position: 'absolute', top: 3, left: value ? 23 : 3,
+        width: 20, height: 20, borderRadius: 9999, background: '#FFFFFF',
         boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
         transition: 'left 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}
@@ -60,21 +58,42 @@ const Toggle = ({ value, onChange }) => (
   </div>
 );
 
+const SectionLabel = ({ children }) => (
+  <div className="text-[10.5px] font-semibold text-[#8E8E93] tracking-[0.1em] uppercase mb-1.5 ml-3 mt-5">{children}</div>
+);
+
+const ToggleRow = ({ Icon, iconTint, iconColor, title, subtitle, value, onChange, dimmed, last }) => (
+  <div className="relative">
+    <div
+      className="flex items-center gap-3 px-3.5 py-3"
+      style={{ opacity: dimmed ? 0.45 : 1, transition: 'opacity 200ms ease' }}
+    >
+      <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center shrink-0" style={{ backgroundColor: iconTint }}>
+        <Icon size={17} color={iconColor} strokeWidth={2} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-[14.5px] font-semibold leading-tight" style={{ color: THEME.txt }}>{title}</div>
+        {subtitle && <div className="text-[11.5px] mt-[2px]" style={{ color: THEME.muted }}>{subtitle}</div>}
+      </div>
+      <Toggle value={value} onChange={onChange} />
+    </div>
+    {!last && <div className="absolute bottom-0 left-[60px] right-0 h-px" style={{ background: THEME.divider }} />}
+  </div>
+);
+
 const NotificationPrefsScreen = () => {
-  const initToggles = {};
-  CATEGORIES.forEach((c) => { initToggles[c.id] = c.defaultOn; });
+  const initToggles = useMemo(() => {
+    const o = {}; CATEGORIES.forEach((c) => { o[c.id] = c.defaultOn; }); return o;
+  }, []);
 
   const [pushOn, setPushOn] = useState(true);
   const [prefs, setPrefs] = useState(initToggles);
-  const [quietHours, setQuietHours] = useState(true);
   const [emailOn, setEmailOn] = useState(true);
 
   const handleMaster = (val) => {
     setPushOn(val);
     if (!val) {
-      const off = {};
-      CATEGORIES.forEach((c) => { off[c.id] = false; });
-      setPrefs(off);
+      const off = {}; CATEGORIES.forEach((c) => { off[c.id] = false; }); setPrefs(off);
     }
   };
 
@@ -85,61 +104,42 @@ const NotificationPrefsScreen = () => {
     if (anyOn && !pushOn) setPushOn(true);
   };
 
+  const back = () => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = '/';
+  };
+
   return (
     <div
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#EDE8E2',
-        padding: 20,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        minHeight: '100vh', backgroundColor: '#EDE8E2', padding: 20,
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       }}
     >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; }
         .notif-scroll::-webkit-scrollbar { display: none; }
         .notif-scroll { scrollbar-width: none; }
-        @keyframes npFadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .np-fade-in { animation: npFadeIn 200ms ease forwards; }
+        @keyframes npFadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .np-fade-in { animation: npFadeIn 220ms ease forwards; }
       `}</style>
 
-      {/* iPhone Frame */}
       <div
         className="relative"
         style={{
-          width: 390,
-          height: 844,
-          borderRadius: 50,
-          border: '8px solid #000',
-          overflow: 'hidden',
-          backgroundColor: '#F7F5F2',
+          width: 390, height: 844, borderRadius: 50,
+          border: '8px solid #000', overflow: 'hidden',
+          backgroundColor: THEME.bg,
           fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
           WebkitFontSmoothing: 'antialiased',
         }}
       >
-        {/* Notch */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 z-[100]"
-          style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }}
-        />
+        <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
 
-        {/* Home indicator */}
-        <div
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
-          style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }}
-        />
-
-        {/* Status bar */}
-        <div
-          className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8"
-          style={{ height: 54 }}
-        >
+        <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
           <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
           <div className="flex items-center gap-1">
             <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#111"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111"/></svg>
@@ -148,309 +148,61 @@ const NotificationPrefsScreen = () => {
           </div>
         </div>
 
-        {/* Floating Header */}
-        <header
-          className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent"
-          style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}
-        >
-          <div className="flex justify-between items-center w-full pointer-events-auto">
-            <button
-              onClick={() => window.history.back()}
-              className="w-[44px] h-[44px] flex items-center justify-center rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
-              style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-            >
-              <ChevronLeft size={22} color="#111111" />
-            </button>
-            <h2 className="text-[17px] font-semibold text-[#111111]">Notifications</h2>
-            <div className="w-[44px]" />
-          </div>
-        </header>
+        <div className="notif-scroll absolute inset-0 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+          <AppHeader title="Notifications" onBack={back} />
 
-        {/* Scroll Content */}
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
-          <div
-            className="notif-scroll absolute inset-0 overflow-y-auto pt-[110px] pb-[140px] px-5"
-            style={{ scrollbarWidth: 'none' }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24, paddingBottom: 32 }}>
-
-              {/* Master Toggle Card */}
+          <div className="px-4 pb-10">
+            {/* Master toggle */}
+            <div className="bg-white rounded-[18px] border border-black/[0.04] p-3.5 flex items-center gap-3 mt-2">
               <div
-                className="rounded-[20px] p-5"
-                style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+                className="w-[44px] h-[44px] rounded-[12px] flex items-center justify-center shrink-0"
+                style={{ backgroundColor: pushOn ? THEME.tint : '#ECE8E3', transition: 'background 200ms ease' }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 14,
-                      background: pushOn ? 'rgba(232,93,42,0.10)' : '#EDE8E2',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      transition: 'background 200ms ease',
-                    }}
-                  >
-                    <Bell size={22} color={pushOn ? '#E85D2A' : '#A09A94'} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: '#111111', marginBottom: 2 }}>
-                      Push Notifications
-                    </div>
-                    <div style={{ fontSize: 13, color: '#6E6058', fontWeight: 400 }}>
-                      {pushOn ? 'Receiving alerts' : 'All notifications paused'}
-                    </div>
-                  </div>
-                  <Toggle value={pushOn} onChange={handleMaster} />
+                <Bell size={20} color={pushOn ? THEME.coral : THEME.muted} strokeWidth={2} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[15px] font-semibold leading-tight" style={{ color: THEME.txt }}>Push notifications</div>
+                <div className="text-[12px] mt-[2px]" style={{ color: THEME.muted }}>
+                  {pushOn ? 'Receiving alerts' : 'All notifications paused'}
                 </div>
               </div>
+              <Toggle value={pushOn} onChange={handleMaster} />
+            </div>
 
-              {/* Category Section */}
-              <div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: '#A09A94',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 10,
-                    paddingLeft: 4,
-                  }}
-                >
-                  Categories
-                </span>
+            <SectionLabel>Categories</SectionLabel>
+            <div className="bg-white rounded-[18px] border border-black/[0.04] overflow-hidden">
+              {CATEGORIES.map((cat, idx) => (
+                <ToggleRow
+                  key={cat.id}
+                  Icon={cat.Icon}
+                  iconTint={cat.tint}
+                  iconColor={cat.color}
+                  title={cat.label}
+                  subtitle={cat.caption}
+                  value={prefs[cat.id]}
+                  onChange={(v) => handlePref(cat.id, v)}
+                  dimmed={!pushOn}
+                  last={idx === CATEGORIES.length - 1}
+                />
+              ))}
+            </div>
 
-                <div
-                  className="rounded-[20px]"
-                  style={{ overflow: 'hidden', background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-                >
-                  {CATEGORIES.map((cat, idx) => {
-                    const { Icon } = cat;
-                    const isLast = idx === CATEGORIES.length - 1;
-                    return (
-                      <div
-                        key={cat.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 14,
-                          padding: '14px 20px',
-                          borderBottom: !isLast ? '1px dashed #CFCFD4' : 'none',
-                          opacity: pushOn ? 1 : 0.4,
-                          transition: 'opacity 200ms ease',
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 12,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                            background: cat.iconBg,
-                          }}
-                        >
-                          <Icon size={18} color={cat.iconColor} />
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 15, fontWeight: 600, color: '#111111', marginBottom: 2 }}>
-                            {cat.label}
-                          </div>
-                          <div style={{ fontSize: 12, color: '#A09A94', fontWeight: 400 }}>
-                            {cat.caption}
-                          </div>
-                        </div>
-                        <Toggle value={prefs[cat.id]} onChange={(v) => handlePref(cat.id, v)} />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+            <SectionLabel>Other</SectionLabel>
+            <div className="bg-white rounded-[18px] border border-black/[0.04] overflow-hidden">
+              <ToggleRow
+                Icon={Mail}
+                iconTint="rgba(0,122,255,0.10)"
+                iconColor="#007AFF"
+                title="Email notifications"
+                subtitle="Weekly digest & account updates"
+                value={emailOn}
+                onChange={setEmailOn}
+                last
+              />
+            </div>
 
-              {/* Quiet Hours */}
-              <div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: '#A09A94',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 10,
-                    paddingLeft: 4,
-                  }}
-                >
-                  Quiet Hours
-                </span>
-
-                <div
-                  className="rounded-[20px] p-5"
-                style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 12,
-                        background: 'rgba(88,86,214,0.10)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Clock size={18} color="#5856D6" />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 15, fontWeight: 600, color: '#111111', marginBottom: 2 }}>
-                        Do Not Disturb
-                      </div>
-                      <div style={{ fontSize: 12, color: '#A09A94' }}>Silence notifications</div>
-                    </div>
-                    <Toggle value={quietHours} onChange={setQuietHours} />
-                  </div>
-
-                  {quietHours && (
-                    <div
-                      className="np-fade-in"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        background: '#EDE8E2',
-                        borderRadius: 12,
-                        padding: '14px 16px',
-                        marginTop: 16,
-                      }}
-                    >
-                      <div style={{ flex: 1, textAlign: 'center' }}>
-                        <div
-                          style={{
-                            fontSize: 11,
-                            color: '#A09A94',
-                            fontWeight: 600,
-                            marginBottom: 4,
-                            letterSpacing: '0.08em',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          From
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 6,
-                          }}
-                        >
-                          <Clock size={14} color="#6E6058" />
-                          <span
-                            style={{
-                              fontSize: 18,
-                              fontWeight: 700,
-                              color: '#111111',
-                              letterSpacing: '-0.5px',
-                            }}
-                          >
-                            22:00
-                          </span>
-                        </div>
-                      </div>
-                      <div style={{ width: 1, height: 36, background: '#CFCFD4' }} />
-                      <div style={{ flex: 1, textAlign: 'center' }}>
-                        <div
-                          style={{
-                            fontSize: 11,
-                            color: '#A09A94',
-                            fontWeight: 600,
-                            marginBottom: 4,
-                            letterSpacing: '0.08em',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          To
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 6,
-                          }}
-                        >
-                          <Clock size={14} color="#6E6058" />
-                          <span
-                            style={{
-                              fontSize: 18,
-                              fontWeight: 700,
-                              color: '#111111',
-                              letterSpacing: '-0.5px',
-                            }}
-                          >
-                            07:00
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Other Section */}
-              <div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: '#A09A94',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 10,
-                    paddingLeft: 4,
-                  }}
-                >
-                  Other
-                </span>
-
-                <div
-                  className="rounded-[20px] p-5"
-                style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 12,
-                        background: 'rgba(0,122,255,0.10)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Mail size={18} color="#007AFF" />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 15, fontWeight: 600, color: '#111111', marginBottom: 2 }}>
-                        Email Notifications
-                      </div>
-                      <div style={{ fontSize: 12, color: '#A09A94' }}>Weekly digest & updates</div>
-                    </div>
-                    <Toggle value={emailOn} onChange={setEmailOn} />
-                  </div>
-                </div>
-              </div>
-
+            <div className="text-center mt-5 mb-2">
+              <p className="text-[10.5px]" style={{ color: '#B8B0A8' }}>Emergency alerts always go through, regardless of settings.</p>
             </div>
           </div>
         </div>

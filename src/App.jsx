@@ -46,6 +46,33 @@ import PetProfileDetailScreen from './screens/66_PET_PROFILE_DETAIL_v1'
 import EmergencySOSScreen from './screens/67_EMERGENCY_SOS_v1'
 import ProviderReviewsScreen from './screens/68_PROVIDER_REVIEWS_v1'
 import CreateAccountScreen from './screens/69_CREATE_ACCOUNT_v1'
+import SecurityPasswordScreen from './screens/70_SECURITY_PASSWORD_v1'
+import SecurityTwoFactorScreen from './screens/71_SECURITY_2FA_v1'
+import SecurityBiometricScreen from './screens/72_SECURITY_BIOMETRIC_v1'
+import SecuritySessionsScreen from './screens/73_SECURITY_SESSIONS_v1'
+import SecurityAccountsScreen from './screens/74_SECURITY_ACCOUNTS_v1'
+import PrivacyVisibilityScreen from './screens/75_PRIVACY_VISIBILITY_v1'
+import PrivacyDiscoverableScreen from './screens/76_PRIVACY_DISCOVERABLE_v1'
+import PrivacyLocationScreen from './screens/77_PRIVACY_LOCATION_v1'
+import PrivacyActivityScreen from './screens/78_PRIVACY_ACTIVITY_v1'
+import RegionScreen from './screens/79_REGION_v1'
+import CurrencyScreen from './screens/80_CURRENCY_v1'
+import HealthSyncScreen from './screens/81_HEALTH_SYNC_v1'
+import CalendarSyncScreen from './screens/82_CALENDAR_SYNC_v1'
+import PrimaryVetScreen from './screens/83_PRIMARY_VET_v1'
+import WhatsComingScreen from './screens/84_WHATS_COMING_v1'
+import ExportDataScreen from './screens/86_EXPORT_DATA_v1'
+import TermsScreen from './screens/87_TERMS_v1'
+import PrivacyPolicyScreen from './screens/88_PRIVACY_POLICY_v1'
+import LicensesScreen from './screens/89_LICENSES_v1'
+import InvitePublicScreen from './screens/90_INVITE_PUBLIC_v1'
+import NetworkProfileScreen from './screens/91_NETWORK_PROFILE_v1'
+import MarketingShowcase from './screens/MARKETING_SHOWCASE_v1'
+import IconographyLab from './screens/ICONOGRAPHY_LAB_v1'
+import FeltIconSystem from './screens/FELT_ICON_SYSTEM_v1'
+import IconsCompare from './screens/ICONS_COMPARE_v1'
+import BrandKit from './screens/BRAND_KIT_v1'
+import ProfileHeroVariants from './screens/PROFILE_HERO_VARIANTS_v1'
 
 // Legacy screens
 import HomeScreen from './screens/Explore-home-v1'
@@ -105,6 +132,46 @@ function App() {
       <Route path="/emergency" element={<EmergencySOSScreen />} />
       <Route path="/provider-reviews" element={<ProviderReviewsScreen />} />
       <Route path="/create-account" element={<CreateAccountScreen />} />
+      <Route path="/security/password" element={<SecurityPasswordScreen />} />
+      <Route path="/security/2fa" element={<SecurityTwoFactorScreen />} />
+      <Route path="/security/biometric" element={<SecurityBiometricScreen />} />
+      <Route path="/security/sessions" element={<SecuritySessionsScreen />} />
+      <Route path="/security/connected-accounts" element={<SecurityAccountsScreen />} />
+      <Route path="/privacy/visibility" element={<PrivacyVisibilityScreen />} />
+      <Route path="/privacy/discoverable" element={<PrivacyDiscoverableScreen />} />
+      <Route path="/privacy/location" element={<PrivacyLocationScreen />} />
+      <Route path="/privacy/activity" element={<PrivacyActivityScreen />} />
+      <Route path="/region" element={<RegionScreen />} />
+      <Route path="/currency" element={<CurrencyScreen />} />
+      <Route path="/integrations/health-sync" element={<HealthSyncScreen />} />
+      <Route path="/integrations/calendar" element={<CalendarSyncScreen />} />
+      <Route path="/vet/primary" element={<PrimaryVetScreen />} />
+      <Route path="/upcoming" element={<WhatsComingScreen />} />
+      <Route path="/data/export" element={<ExportDataScreen />} />
+      <Route path="/legal/terms" element={<TermsScreen />} />
+      <Route path="/legal/privacy" element={<PrivacyPolicyScreen />} />
+      <Route path="/legal/licenses" element={<LicensesScreen />} />
+
+      {/* Public invite (Partiful-style, no iPhone frame, no auth) */}
+      <Route path="/invite/:inviteId" element={<InvitePublicScreen />} />
+      <Route path="/invite" element={<InvitePublicScreen />} />
+      <Route path="/network-profile" element={<NetworkProfileScreen />} />
+
+      {/* Marketing showcase (no iPhone frame, full-width landing-style preview) */}
+      <Route path="/marketing-preview" element={<MarketingShowcase />} />
+
+      {/* Iconography lab — 4 material variants side-by-side, no iPhone frame */}
+      <Route path="/iconography-lab" element={<IconographyLab />} />
+
+      {/* Felt icon system — 12 felt-styled icons, animated, full-page showcase */}
+      <Route path="/felt-icons" element={<FeltIconSystem />} />
+
+      {/* Icon comparison — current lucide vs proposed felt, side-by-side */}
+      <Route path="/icons-compare" element={<IconsCompare />} />
+
+      {/* Brand kit — standalone logo assets, color palette, downloads */}
+      <Route path="/brand" element={<BrandKit />} />
+      <Route path="/profile-hero-variants" element={<ProfileHeroVariants />} />
 
       {/* Legacy screens */}
       <Route path="/home" element={<HomeScreen />} />

@@ -35,6 +35,9 @@ import {
   CheckCheck,
   Loader2,
   Bell,
+  History,
+  Megaphone,
+  ThumbsUp,
 } from 'lucide-react';
 
 /**
@@ -222,6 +225,7 @@ const MOCK_REPORTS = [
     posX: 62, posY: 34,
     author: 'Lena K.',
     status: 'active',
+    minutesAgo: 5,
   },
   {
     id: 'r2',
@@ -236,6 +240,7 @@ const MOCK_REPORTS = [
     posX: 34, posY: 58,
     author: 'Marco B.',
     status: 'active',
+    minutesAgo: 22,
   },
   {
     id: 'r3',
@@ -248,8 +253,10 @@ const MOCK_REPORTS = [
     confirmations: 5,
     resolved: 0,
     posX: 74, posY: 68,
-    author: 'Iris M.',
+    author: 'You',
+    byMe: true,
     status: 'active',
+    minutesAgo: 60,
   },
   {
     id: 'r4',
@@ -264,6 +271,7 @@ const MOCK_REPORTS = [
     posX: 22, posY: 22,
     author: 'Jonas T.',
     status: 'active',
+    minutesAgo: 120,
   },
   {
     id: 'r5',
@@ -278,6 +286,7 @@ const MOCK_REPORTS = [
     posX: 82, posY: 18,
     author: 'Ana R.',
     status: 'active',
+    minutesAgo: 300,
   },
   {
     id: 'r6',
@@ -292,8 +301,10 @@ const MOCK_REPORTS = [
     photo:
       'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&w=600&q=60',
     posX: 48, posY: 80,
-    author: 'Peter S.',
+    author: 'You',
+    byMe: true,
     status: 'active',
+    minutesAgo: 180,
   },
   {
     id: 'r7',
@@ -308,6 +319,7 @@ const MOCK_REPORTS = [
     posX: 12, posY: 72,
     author: 'Sofia L.',
     status: 'resolved',
+    minutesAgo: 1440,
   },
   {
     id: 'r8',
@@ -322,8 +334,19 @@ const MOCK_REPORTS = [
     posX: 56, posY: 50,
     author: 'Nora F.',
     status: 'active',
+    minutesAgo: 1620,
   },
 ];
+
+// Time bucketing helper
+const TIME_BUCKETS = [
+  { id: 'recent', label: 'Last hour', max: 60 },
+  { id: 'today', label: 'Today', max: 1440 },
+  { id: 'earlier', label: 'Earlier', max: Infinity },
+];
+function getTimeBucket(min) {
+  return TIME_BUCKETS.find((b) => min <= b.max)?.id || 'earlier';
+}
 
 const FILTER_CHIPS = [
   { id: 'all', label: 'All' },
@@ -395,7 +418,10 @@ function MapCanvas() {
 }
 
 // ---------------- User location dot ----------------
-function UserDot() {
+function UserDot({ radius = 1000 }) {
+  // Map 250m -> 130px diameter, 2000m -> 360px diameter
+  const ringPx = 130 + Math.round(((radius - 250) / 1750) * 230);
+  const half = ringPx / 2;
   return (
     <div
       className="absolute"
@@ -403,12 +429,12 @@ function UserDot() {
     >
       {/* radius ring */}
       <div
-        className="absolute rounded-full"
+        className="absolute rounded-full transition-all duration-500 ease-out"
         style={{
-          width: 260,
-          height: 260,
-          left: -130,
-          top: -130,
+          width: ringPx,
+          height: ringPx,
+          left: -half,
+          top: -half,
           border: '1px dashed rgba(232,93,42,0.35)',
           background:
             'radial-gradient(circle, rgba(232,93,42,0.06) 0%, rgba(232,93,42,0) 70%)',
@@ -445,86 +471,107 @@ function FeedCard({ report, onTap }) {
   return (
     <button
       onClick={onTap}
-      className="w-full text-left rounded-[18px] overflow-hidden active:scale-[0.995] transition-all"
+      className="w-full text-left rounded-[20px] overflow-hidden active:scale-[0.99] transition-all bg-white"
       style={{
-        background: '#FFFFFF',
         border: '1px solid #EDE8E2',
-        boxShadow: '0 1px 0 rgba(0,0,0,0.015)',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.02)',
       }}
     >
-      <div className="flex">
-        <div style={{ width: 3, background: c.color }} />
-        <div className="flex-1 p-4">
-          <div className="flex items-start gap-3">
+      {/* HERO PHOTO + SEVERITY BADGE OVERLAY */}
+      {report.photo && (
+        <div className="relative w-full h-[140px] overflow-hidden">
+          <img src={report.photo} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-x-0 bottom-0 h-[60px] bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+          <div
+            className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md"
+            style={{ background: 'rgba(255,255,255,0.92)' }}
+          >
+            <span
+              className="w-[6px] h-[6px] rounded-full"
+              style={{ background: c.color }}
+            />
+            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: c.color }}>
+              {c.severity}
+            </span>
+          </div>
+          <span className="absolute top-3 right-3 text-[11px] font-medium text-white/95 backdrop-blur-md bg-black/30 px-2 py-0.5 rounded-full">
+            {report.time}
+          </span>
+        </div>
+      )}
+
+      {/* CONTENT */}
+      <div className="px-4 pt-4 pb-3.5">
+        {/* Title + severity (if no photo) */}
+        <div className="flex items-start justify-between gap-3 mb-1">
+          <h3 className="text-[16px] font-bold text-[#111] tracking-[-0.2px] leading-tight flex-1">
+            {report.title}
+          </h3>
+          {!report.photo && (
             <div
-              className="w-[36px] h-[36px] rounded-full flex items-center justify-center shrink-0"
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full shrink-0 mt-0.5"
               style={{ background: c.bg }}
             >
-              <CategoryGlyph id={report.category} size={16} color={c.color} />
+              <span className="w-[5px] h-[5px] rounded-full" style={{ background: c.color }} />
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: c.color }}>
+                {c.severity}
+              </span>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2">
-                <h3 className="text-[15px] font-semibold text-[#111] tracking-tight truncate">
-                  {report.title}
-                </h3>
-                <span className="text-[11px] text-[#A09A94] shrink-0 mt-[2px]">{report.time}</span>
-              </div>
-              <div className="flex items-center gap-1.5 mt-0.5 text-[12px] text-[#6E6058]">
-                <MapPin size={11} strokeWidth={1.75} />
-                <span className="truncate">{report.location}</span>
-                <span className="text-[#A09A94]">·</span>
-                <span>{distanceLabel} away</span>
-              </div>
-              <p
-                className="mt-2 text-[13px] leading-snug text-[#3F3A35]"
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
+          )}
+        </div>
+
+        {/* Location strip */}
+        <div className="flex items-center gap-1.5 text-[12px] text-[#A09A94]">
+          <MapPin size={11} strokeWidth={1.75} className="text-[#A09A94]" />
+          <span className="truncate">{report.location}</span>
+          <span className="text-[#CFCAC3]">·</span>
+          <span className="font-semibold text-[#6E6058]">{distanceLabel}</span>
+          {!report.photo && (
+            <>
+              <span className="text-[#CFCAC3]">·</span>
+              <span>{report.time}</span>
+            </>
+          )}
+        </div>
+
+        {/* Description */}
+        <p
+          className="mt-2.5 text-[13px] leading-[1.5] text-[#6E6058]"
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
+          {report.description}
+        </p>
+
+        {/* Footer — confirmations + action */}
+        <div className="mt-3.5 pt-3 flex items-center justify-between border-t border-dashed border-[#EDE8E2]">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <div
+                className="w-[20px] h-[20px] rounded-full flex items-center justify-center"
+                style={{ background: c.bg }}
               >
-                {report.description}
-              </p>
-
-              {report.photo && (
-                <div
-                  className="mt-3 rounded-[12px] overflow-hidden"
-                  style={{ border: '1px solid #EDE8E2', height: 110 }}
-                >
-                  <img
-                    src={report.photo}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-
-              <div className="mt-3 flex items-center gap-3 text-[12px]">
-                <div className="flex items-center gap-1 text-[#6E6058]">
-                  <CheckCheck size={13} strokeWidth={1.75} color={c.color} />
-                  <span>
-                    <span className="text-[#111] font-medium">{report.confirmations}</span>{' '}
-                    confirmed
-                  </span>
-                </div>
-                {report.resolved > 0 && (
-                  <div className="flex items-center gap-1 text-[#6E6058]">
-                    <Shield size={12} strokeWidth={1.75} />
-                    <span>{report.resolved} resolved</span>
-                  </div>
-                )}
-                <div
-                  className="ml-auto text-[11px] font-medium px-2 py-0.5 rounded-full"
-                  style={{
-                    color: c.color,
-                    background: c.bg,
-                  }}
-                >
-                  {c.severity}
-                </div>
+                <CheckCheck size={11} strokeWidth={2.5} color={c.color} />
               </div>
+              <span className="text-[12px] font-semibold text-[#111]">
+                {report.confirmations}
+              </span>
+              <span className="text-[12px] text-[#A09A94]">confirmed</span>
             </div>
+            {report.resolved > 0 && (
+              <div className="flex items-center gap-1 text-[12px] text-[#A09A94]">
+                <Shield size={11} strokeWidth={2} />
+                <span>{report.resolved}</span>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: c.color }}>
+            <span>Details</span>
+            <ChevronRight size={12} strokeWidth={2.5} />
           </div>
         </div>
       </div>
@@ -537,8 +584,9 @@ export default function DangerReportsScreen() {
   const [viewMode, setViewMode] = useState('map'); // map | feed
   const { progress: collapseProgress, handleScroll: handleScrollCollapse } = useDirectionalCollapse(96, { showFactor: 2.5 });
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
-  const tabsHidden = clamp01(collapseProgress / 48);
-  const chipsHidden = clamp01((collapseProgress - 48) / 48);
+  // Chips collapse first (0-48), then tabs collapse (48-96)
+  const chipsHidden = clamp01(collapseProgress / 48);
+  const tabsHidden = clamp01((collapseProgress - 48) / 48);
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedReport, setSelectedReport] = useState(null);
   const [reportFormOpen, setReportFormOpen] = useState(false);
@@ -547,20 +595,34 @@ export default function DangerReportsScreen() {
   const [formLocation, setFormLocation] = useState('Current location · Seefeld');
   const [formDescription, setFormDescription] = useState('');
   const [formSeverity, setFormSeverity] = useState('High');
-  const [formPhoto, setFormPhoto] = useState(false);
-  const [confirmedIds, setConfirmedIds] = useState(new Set());
+  const [formPhoto, setFormPhoto] = useState(null); // data URL string or null
+  const [confirmedIds, setConfirmedIds] = useState(new Set(['r2', 'r4']));
+  const [resolvedOverrides, setResolvedOverrides] = useState({}); // id -> 'active' | 'resolved'
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [previewedReport, setPreviewedReport] = useState(null);
+  const [radius, setRadius] = useState(1000); // meters
+
+  const getReportStatus = (report) =>
+    resolvedOverrides[report.id] ?? report.status;
+
+  const setReportStatus = (id, nextStatus) => {
+    setResolvedOverrides((prev) => ({ ...prev, [id]: nextStatus }));
+  };
 
   const filteredReports = useMemo(() => {
-    if (activeFilter === 'all') return MOCK_REPORTS;
-    return MOCK_REPORTS.filter((r) => r.category === activeFilter);
-  }, [activeFilter]);
+    return MOCK_REPORTS
+      .filter((r) => r.distance <= radius)
+      .filter((r) => activeFilter === 'all' || r.category === activeFilter);
+  }, [activeFilter, radius]);
+
+  const activeFilterChip = FILTER_CHIPS.find((c) => c.id === activeFilter);
 
   const openReportForm = () => {
     setReportFormOpen(true);
     setReportFormStep('category');
     setSelectedCategory(null);
     setFormDescription('');
-    setFormPhoto(false);
+    setFormPhoto(null);
   };
 
   const closeReportForm = () => {
@@ -643,10 +705,25 @@ export default function DangerReportsScreen() {
           </button>
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Safety</h2>
           <button
-            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
+            onClick={() => setHistoryOpen(true)}
+            className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
             style={{ background: '#F3EFEB' }}
+            aria-label="My activity"
           >
-            <Filter size={18} color="#111" strokeWidth={1.75} />
+            <History size={18} color="#111" strokeWidth={1.75} />
+            {(() => {
+              const resolvedByMe = Object.values(resolvedOverrides).filter((v) => v === 'resolved').length;
+              const total = MOCK_REPORTS.filter((r) => r.byMe).length + confirmedIds.size + resolvedByMe;
+              if (total === 0) return null;
+              return (
+                <span
+                  className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold text-white flex items-center justify-center"
+                  style={{ background: '#E85D2A', border: '2px solid #F7F5F2' }}
+                >
+                  {total}
+                </span>
+              );
+            })()}
           </button>
         </div>
       </header>
@@ -717,10 +794,18 @@ export default function DangerReportsScreen() {
             reports={filteredReports}
             activeFilter={activeFilter}
             setActiveFilter={setActiveFilter}
-            onSelect={(r) => setSelectedReport(r)}
-            selectedId={selectedReport?.id}
+            onPreview={(r) => setPreviewedReport(r)}
+            previewedReport={previewedReport}
+            onClearPreview={() => setPreviewedReport(null)}
+            onOpenDetails={(r) => { setPreviewedReport(null); setSelectedReport(r); }}
+            onViewInFeed={(r) => { setPreviewedReport(null); setViewMode('feed'); }}
+            selectedId={previewedReport?.id || selectedReport?.id}
             isEmpty={isEmpty}
             openReportForm={openReportForm}
+            radius={radius}
+            setRadius={setRadius}
+            activeFilterChip={activeFilterChip}
+            resetFilter={() => setActiveFilter('all')}
           />
         ) : (
           <FeedView
@@ -731,6 +816,9 @@ export default function DangerReportsScreen() {
             isEmpty={isEmpty}
             openReportForm={openReportForm}
             onScroll={handleScrollCollapse}
+            activeFilterChip={activeFilterChip}
+            resetFilter={() => setActiveFilter('all')}
+            radius={radius}
           />
         )}
       </div>
@@ -738,7 +826,7 @@ export default function DangerReportsScreen() {
       {/* FAB */}
       <button
         onClick={openReportForm}
-        className="absolute bottom-6 right-5 z-30 w-[56px] h-[56px] rounded-full flex items-center justify-center active:scale-[0.92] transition-all ease-soft"
+        className="absolute bottom-[72px] right-3 z-40 w-[56px] h-[56px] rounded-full flex items-center justify-center active:scale-[0.92] transition-all ease-soft"
         style={{
           background: '#FF3B30',
           boxShadow: '0 4px 20px rgba(255,59,48,0.35)',
@@ -751,9 +839,26 @@ export default function DangerReportsScreen() {
       {selectedReport && (
         <ReportDetailSheet
           report={selectedReport}
+          status={getReportStatus(selectedReport)}
+          onChangeStatus={(s) => setReportStatus(selectedReport.id, s)}
           onClose={() => setSelectedReport(null)}
           confirmed={confirmedIds.has(selectedReport.id)}
           toggleConfirm={() => toggleConfirm(selectedReport.id)}
+        />
+      )}
+
+      {/* History sheet */}
+      {historyOpen && (
+        <HistorySheet
+          allReports={MOCK_REPORTS}
+          confirmedIds={confirmedIds}
+          resolvedOverrides={resolvedOverrides}
+          getReportStatus={getReportStatus}
+          onClose={() => setHistoryOpen(false)}
+          onSelect={(report) => {
+            setHistoryOpen(false);
+            setSelectedReport(report);
+          }}
         />
       )}
 
@@ -782,7 +887,31 @@ export default function DangerReportsScreen() {
 }
 
 // ---------------- Map View ----------------
-function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId, isEmpty, openReportForm }) {
+const RADIUS_OPTIONS = [
+  { value: 250, label: '250m' },
+  { value: 500, label: '500m' },
+  { value: 1000, label: '1km' },
+  { value: 2000, label: '2km' },
+];
+
+function MapView({
+  reports,
+  activeFilter,
+  setActiveFilter,
+  onPreview,
+  previewedReport,
+  onClearPreview,
+  onOpenDetails,
+  onViewInFeed,
+  selectedId,
+  isEmpty,
+  openReportForm,
+  radius,
+  setRadius,
+  activeFilterChip,
+  resetFilter,
+}) {
+  const isFiltered = activeFilterChip && activeFilterChip.id !== 'all';
   return (
     <div className="relative w-full h-full">
       <div className="absolute inset-0 overflow-hidden">
@@ -794,51 +923,182 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
             key={r.id}
             category={r.category}
             selected={selectedId === r.id}
-            onClick={() => onSelect(r)}
+            onClick={() => onPreview(r)}
             style={{ left: `${r.posX}%`, top: `${r.posY}%` }}
           />
         ))}
 
-        <UserDot />
+        <UserDot radius={radius} />
 
         {/* Empty map */}
         {isEmpty && (
           <div
-            className="absolute left-1/2 top-[66%] -translate-x-1/2 px-4 py-3 rounded-[14px] text-center"
+            className="absolute left-1/2 top-[58%] -translate-x-1/2 px-4 py-3 rounded-[14px] text-center max-w-[260px]"
             style={{
               background: 'rgba(255,255,255,0.95)',
               border: '1px solid #EDE8E2',
               backdropFilter: 'blur(8px)',
             }}
           >
-            <div className="text-[13px] font-medium text-[#111]">You're in a safe zone</div>
-            <div className="text-[11px] text-[#6E6058] mt-0.5">No reports within 1km</div>
+            <div className="text-[13px] font-semibold text-[#111]">
+              {isFiltered ? `No ${activeFilterChip.label.toLowerCase()} reports` : 'You\u2019re in a safe zone'}
+            </div>
+            <div className="text-[11px] text-[#6E6058] mt-0.5">
+              {isFiltered
+                ? `Within ${radius >= 1000 ? `${radius / 1000}km` : `${radius}m`} \u00b7 no matches`
+                : `No reports within ${radius >= 1000 ? `${radius / 1000}km` : `${radius}m`}`}
+            </div>
+            {isFiltered && (
+              <button
+                onClick={resetFilter}
+                className="mt-2 px-3 h-[28px] rounded-full text-[11px] font-semibold text-white"
+                style={{ background: '#111' }}
+              >
+                Show all
+              </button>
+            )}
           </div>
         )}
 
-        {/* Legend */}
-        <div className="absolute bottom-7 left-3 right-[80px] z-40">
+        {/* Radius selector — bottom-left, above legend, beside FAB */}
+        <div className="absolute bottom-[64px] left-3 z-40">
           <div
-            className="flex items-center gap-2 px-3 py-2 rounded-full overflow-x-auto hide-scroll"
+            className="flex items-center gap-1 p-1 rounded-full"
             style={{
-              background: 'rgba(255,255,255,0.9)',
+              background: 'rgba(255,255,255,0.92)',
               border: '1px solid #EDE8E2',
-              backdropFilter: 'blur(6px)',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
+            }}
+          >
+            {RADIUS_OPTIONS.map((opt) => {
+              const active = radius === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => setRadius(opt.value)}
+                  className="h-[26px] px-2.5 rounded-full text-[11px] font-semibold transition-all"
+                  style={{
+                    background: active ? '#111' : 'transparent',
+                    color: active ? '#FFF' : '#6E6058',
+                  }}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Legend — full width, all categories visible */}
+        <div className="absolute bottom-6 left-3 right-3 z-30">
+          <div
+            className="flex items-center justify-between gap-1 px-3 py-2 rounded-full"
+            style={{
+              background: 'rgba(255,255,255,0.92)',
+              border: '1px solid #EDE8E2',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
             }}
           >
             {['poison', 'glass', 'aggressive', 'icy', 'construction'].map((k) => {
               const c = CATEGORIES[k];
               return (
-                <div key={k} className="flex items-center gap-1.5 shrink-0">
+                <div key={k} className="flex items-center gap-1.5 shrink-0 min-w-0">
                   <span
-                    className="w-[8px] h-[8px] rounded-full"
+                    className="w-[8px] h-[8px] rounded-full shrink-0"
                     style={{ background: c.color }}
                   />
-                  <span className="text-[11px] text-[#6E6058]">{c.short}</span>
+                  <span className="text-[11px] text-[#6E6058] truncate">{c.short}</span>
                 </div>
               );
             })}
           </div>
+        </div>
+
+        {/* Preview pill */}
+        {previewedReport && (
+          <MapPreviewPill
+            report={previewedReport}
+            onClose={onClearPreview}
+            onOpenDetails={() => onOpenDetails(previewedReport)}
+            onViewInFeed={() => onViewInFeed(previewedReport)}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------- Map preview pill ----------------
+function MapPreviewPill({ report, onClose, onOpenDetails, onViewInFeed }) {
+  const c = CATEGORIES[report.category];
+  const distLabel = report.distance >= 1000 ? `${(report.distance / 1000).toFixed(1)}km` : `${report.distance}m`;
+  return (
+    <div
+      className="absolute left-3 right-3 bottom-[150px] z-50"
+      style={{ animation: 'sheetSlideUp 280ms cubic-bezier(0.22, 1, 0.36, 1)' }}
+    >
+      <div
+        className="rounded-[18px] overflow-hidden"
+        style={{
+          background: '#FFFFFF',
+          border: '1px solid #EDE8E2',
+          boxShadow: '0 12px 32px rgba(0,0,0,0.14)',
+        }}
+      >
+        <div className="p-3 flex items-center gap-3">
+          <div
+            className="w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0"
+            style={{ background: c.bg }}
+          >
+            <CategoryGlyph id={report.category} size={20} color={c.color} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span
+                className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-px rounded-full"
+                style={{ background: c.bg, color: c.color }}
+              >
+                {c.severity}
+              </span>
+              <span className="text-[11px] text-[#A09A94]">{report.time}</span>
+            </div>
+            <div className="text-[14px] font-bold text-[#111] tracking-tight truncate mt-0.5">
+              {report.title}
+            </div>
+            <div className="flex items-center gap-1 text-[11px] text-[#6E6058] mt-0.5">
+              <MapPin size={10} strokeWidth={1.75} />
+              <span className="truncate">{report.location}</span>
+              <span className="text-[#CFCAC3]">·</span>
+              <span className="font-semibold">{distLabel}</span>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-[28px] h-[28px] rounded-full flex items-center justify-center shrink-0"
+            style={{ background: '#F3EFEB' }}
+            aria-label="Dismiss preview"
+          >
+            <X size={13} color="#6E6058" strokeWidth={2} />
+          </button>
+        </div>
+        <div className="px-3 pb-3 flex items-center gap-2">
+          <button
+            onClick={onOpenDetails}
+            className="flex-1 h-[36px] rounded-full text-[12px] font-semibold text-white flex items-center justify-center gap-1"
+            style={{ background: '#111' }}
+          >
+            View details
+            <ChevronRight size={13} strokeWidth={2.5} />
+          </button>
+          <button
+            onClick={onViewInFeed}
+            className="h-[36px] px-3 rounded-full text-[12px] font-semibold flex items-center gap-1"
+            style={{ background: '#F3EFEB', color: '#6E6058', border: '1px solid #EDE8E2' }}
+          >
+            In feed
+          </button>
         </div>
       </div>
     </div>
@@ -846,7 +1106,16 @@ function MapView({ reports, activeFilter, setActiveFilter, onSelect, selectedId,
 }
 
 // ---------------- Feed View ----------------
-function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, openReportForm, onScroll }) {
+function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, openReportForm, onScroll, activeFilterChip, resetFilter, radius }) {
+  // Group by time bucket, preserving the original ordering inside each group
+  const grouped = TIME_BUCKETS.map((b) => ({
+    ...b,
+    items: reports.filter((r) => getTimeBucket(r.minutesAgo ?? 0) === b.id),
+  })).filter((g) => g.items.length > 0);
+
+  const isFiltered = activeFilterChip && activeFilterChip.id !== 'all';
+  const radiusLabel = radius >= 1000 ? `${radius / 1000}km` : `${radius}m`;
+
   return (
     <div
       className="w-full h-full overflow-y-auto hide-scroll"
@@ -856,19 +1125,41 @@ function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, o
       <div className="px-5">
         {/* Heading strip */}
         <div className="flex items-center justify-between mb-3">
-          <div className="text-[12px] text-[#A09A94] tracking-wide uppercase">Nearby</div>
+          <div className="text-[12px] text-[#A09A94] tracking-wide uppercase">
+            {isFiltered ? activeFilterChip.label : 'Nearby'}
+          </div>
           <div className="text-[12px] text-[#6E6058]">
-            {reports.length} report{reports.length !== 1 ? 's' : ''}
+            {reports.length} report{reports.length !== 1 ? 's' : ''} · {radiusLabel}
           </div>
         </div>
 
         {/* Cards */}
         {isEmpty ? (
-          <EmptyState onReport={() => {}} />
+          <EmptyState
+            filtered={isFiltered}
+            filterLabel={activeFilterChip?.label}
+            radiusLabel={radiusLabel}
+            onClearFilter={resetFilter}
+            onReport={openReportForm}
+          />
         ) : (
-          <div className="flex flex-col gap-3 pb-6">
-            {reports.map((r) => (
-              <FeedCard key={r.id} report={r} onTap={() => onSelect(r)} />
+          <div className="flex flex-col gap-5 pb-6">
+            {grouped.map((group) => (
+              <section key={group.id}>
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#A09A94]">
+                    {group.label}
+                  </h3>
+                  <span className="text-[11px] text-[#A09A94]">
+                    {group.items.length}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-3">
+                  {group.items.map((r) => (
+                    <FeedCard key={r.id} report={r} onTap={() => onSelect(r)} />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         )}
@@ -878,7 +1169,7 @@ function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, o
 }
 
 // ---------------- Empty state ----------------
-function EmptyState({ onReport }) {
+function EmptyState({ onReport, filtered, filterLabel, radiusLabel = '1km', onClearFilter }) {
   return (
     <div
       className="rounded-[20px] px-6 py-10 flex flex-col items-center text-center"
@@ -888,15 +1179,35 @@ function EmptyState({ onReport }) {
         className="w-[64px] h-[64px] rounded-full flex items-center justify-center mb-4"
         style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
       >
-        <Shield size={28} color="#E85D2A" strokeWidth={1.5} />
+        {filtered ? (
+          <Filter size={26} color="#6E6058" strokeWidth={1.5} />
+        ) : (
+          <Shield size={28} color="#E85D2A" strokeWidth={1.5} />
+        )}
       </div>
       <div className="text-[16px] font-semibold text-[#111] tracking-tight">
-        You're in a safe zone
+        {filtered
+          ? `No ${(filterLabel || '').toLowerCase()} reports nearby`
+          : 'You\u2019re in a safe zone'}
       </div>
-      <div className="text-[13px] text-[#6E6058] mt-1">No reports within 1km</div>
+      <div className="text-[13px] text-[#6E6058] mt-1">
+        {filtered
+          ? `Nothing matches inside ${radiusLabel}. Try a wider radius or clear the filter.`
+          : `No reports within ${radiusLabel}`}
+      </div>
+      {filtered && onClearFilter && (
+        <button
+          onClick={onClearFilter}
+          className="mt-4 px-4 h-[36px] rounded-full text-[12px] font-semibold flex items-center gap-1.5 active:scale-[0.97] transition-all"
+          style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
+        >
+          <X size={12} strokeWidth={2.25} />
+          Clear filter
+        </button>
+      )}
       <button
         onClick={onReport}
-        className="mt-5 px-5 h-[40px] rounded-full text-[13px] font-semibold text-[#FFF] active:scale-[0.97] transition-all"
+        className="mt-3 px-5 h-[40px] rounded-full text-[13px] font-semibold text-[#FFF] active:scale-[0.97] transition-all"
         style={{ background: '#111' }}
       >
         Report a danger
@@ -906,10 +1217,12 @@ function EmptyState({ onReport }) {
 }
 
 // ---------------- Report detail sheet ----------------
-function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm }) {
+function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, onChangeStatus }) {
   const c = CATEGORIES[report.category];
   const distanceLabel =
     report.distance >= 1000 ? `${(report.distance / 1000).toFixed(1)}km` : `${report.distance}m`;
+  const currentStatus = status ?? report.status;
+  const isResolved = currentStatus === 'resolved';
 
   return (
     <div className="absolute inset-0 z-50">
@@ -1033,29 +1346,45 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm }) {
           </button>
         </div>
 
-        {/* Status / Actions */}
-        <div className="mt-4 flex items-center gap-2">
+        {/* Status toggle (sliding pill) */}
+        <div className="mt-4">
+          <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-2">Status</div>
           <div
-            className="flex-1 h-[40px] rounded-full flex items-center justify-center gap-1.5 text-[12px] font-medium"
-            style={{
-              background: report.status === 'resolved' ? '#EEF7EC' : '#FFF',
-              color: report.status === 'resolved' ? '#2E7D32' : '#6E6058',
-              border: '1px solid #EDE8E2',
-            }}
-          >
-            {report.status === 'resolved' ? (
-              <CheckCheck size={13} strokeWidth={2} />
-            ) : (
-              <Loader2 size={13} strokeWidth={2} />
-            )}
-            {report.status === 'resolved' ? 'Resolved' : 'Active'}
-          </div>
-          <button
-            className="h-[40px] px-4 rounded-full text-[12px] font-medium text-[#6E6058]"
+            className="relative grid grid-cols-2 p-1 rounded-full h-[44px]"
             style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
           >
-            Mark resolved
-          </button>
+            {/* sliding indicator */}
+            <div
+              className="absolute top-1 bottom-1 rounded-full transition-all duration-300 ease-out"
+              style={{
+                left: isResolved ? '50%' : '4px',
+                width: 'calc(50% - 4px)',
+                background: isResolved ? '#2E7D32' : '#111',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+              }}
+            />
+            <button
+              onClick={() => onChangeStatus && onChangeStatus('active')}
+              className="relative z-10 flex items-center justify-center gap-1.5 text-[12px] font-semibold transition-colors duration-200"
+              style={{ color: !isResolved ? '#FFF' : '#6E6058' }}
+            >
+              <Loader2 size={13} strokeWidth={2.25} />
+              Active
+            </button>
+            <button
+              onClick={() => onChangeStatus && onChangeStatus('resolved')}
+              className="relative z-10 flex items-center justify-center gap-1.5 text-[12px] font-semibold transition-colors duration-200"
+              style={{ color: isResolved ? '#FFF' : '#6E6058' }}
+            >
+              <CheckCheck size={13} strokeWidth={2.25} />
+              Resolved
+            </button>
+          </div>
+          <div className="mt-2 text-[11px] text-[#A09A94] text-center">
+            {isResolved
+              ? 'Marked as resolved — thanks for the update.'
+              : 'Still active. Mark resolved once it\u2019s handled.'}
+          </div>
         </div>
 
         <button
@@ -1064,6 +1393,246 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm }) {
         >
           Report inaccurate
         </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------- History sheet ----------------
+function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportStatus, onClose, onSelect }) {
+  const [tab, setTab] = useState('reports'); // 'reports' | 'confirmed' | 'resolved'
+  const myReports = allReports.filter((r) => r.byMe);
+  const myConfirmations = allReports.filter((r) => confirmedIds.has(r.id));
+  const myResolved = allReports.filter((r) => resolvedOverrides && resolvedOverrides[r.id] === 'resolved');
+  const TABS = [
+    { id: 'reports', label: 'Reported', icon: Megaphone, count: myReports.length },
+    { id: 'confirmed', label: 'Confirmed', icon: ThumbsUp, count: myConfirmations.length },
+    { id: 'resolved', label: 'Resolved', icon: CheckCheck, count: myResolved.length },
+  ];
+  const tabIndex = TABS.findIndex((t) => t.id === tab);
+  const list = tab === 'reports' ? myReports : tab === 'confirmed' ? myConfirmations : myResolved;
+
+  return (
+    <div className="absolute inset-0 z-50">
+      <div
+        className="absolute inset-0 bg-black/30"
+        style={{ animation: 'quickLogFadeIn 220ms ease-out' }}
+        onClick={onClose}
+      />
+      <div
+        className="absolute left-0 right-0 bottom-0 rounded-t-[24px] flex flex-col"
+        style={{
+          background: '#F7F5F2',
+          border: '1px solid #EDE8E2',
+          boxShadow: '0 -10px 30px rgba(0,0,0,0.08)',
+          animation: 'sheetSlideUp 320ms cubic-bezier(0.22, 1, 0.36, 1)',
+          maxHeight: '85%',
+          height: '78%',
+        }}
+      >
+        {/* grabber */}
+        <div className="flex justify-center pt-3 pb-1 shrink-0">
+          <div className="w-[36px] h-[4px] rounded-full" style={{ background: '#D9D1C6' }} />
+        </div>
+
+        {/* header */}
+        <div className="px-5 pt-2 pb-4 flex items-start justify-between shrink-0">
+          <div>
+            <div className="text-[11px] uppercase tracking-wide text-[#A09A94]">My activity</div>
+            <h3 className="text-[20px] font-bold text-[#111] tracking-tight mt-0.5">Safety history</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-[36px] h-[36px] rounded-full flex items-center justify-center"
+            style={{ background: '#F3EFEB' }}
+          >
+            <X size={16} color="#111" strokeWidth={1.75} />
+          </button>
+        </div>
+
+        {/* tab toggle (3-way sliding pill) */}
+        <div className="px-5 shrink-0">
+          <div
+            className="relative grid grid-cols-3 p-1 rounded-full h-[44px]"
+            style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
+          >
+            <div
+              className="absolute top-1 bottom-1 rounded-full transition-all duration-300 ease-out"
+              style={{
+                left: `calc(${(tabIndex * 100) / 3}% + 4px)`,
+                width: `calc(${100 / 3}% - 8px)`,
+                background: '#111',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)',
+              }}
+            />
+            {TABS.map((t) => {
+              const active = tab === t.id;
+              const Icon = t.icon;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className="relative z-10 flex items-center justify-center gap-1 text-[11.5px] font-semibold transition-colors duration-200 px-1"
+                  style={{ color: active ? '#FFF' : '#6E6058' }}
+                >
+                  <Icon size={12} strokeWidth={2.25} />
+                  <span>{t.label}</span>
+                  <span
+                    className="text-[9.5px] font-bold px-1.5 py-px rounded-full"
+                    style={{
+                      background: active ? 'rgba(255,255,255,0.25)' : '#E6E1DA',
+                      color: active ? '#FFF' : '#6E6058',
+                    }}
+                  >
+                    {t.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* list */}
+        <div className="flex-1 overflow-y-auto px-5 pt-4 pb-8">
+          {tab === 'resolved' && myResolved.length > 0 && (
+            <div
+              className="mb-3 rounded-[16px] p-3.5 flex items-center gap-3 relative overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #EEF7EC 0%, #DCEDD7 100%)',
+                border: '1px solid #C5DEC2',
+              }}
+            >
+              <div
+                className="w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0"
+                style={{ background: '#FFFFFF', boxShadow: '0 2px 8px rgba(46,125,50,0.18)' }}
+              >
+                <CheckCheck size={20} color="#2E7D32" strokeWidth={2.25} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-bold text-[#1B5E20] tracking-tight">
+                  Nice work — {myResolved.length} resolved this month
+                </div>
+                <div className="text-[11px] text-[#3F6F3F] mt-0.5">
+                  You’re making the neighborhood safer for everyone’s pup.
+                </div>
+              </div>
+              <div
+                className="text-[11px] font-bold px-2 py-1 rounded-full shrink-0"
+                style={{ background: '#FFFFFF', color: '#2E7D32' }}
+              >
+                +{myResolved.length}
+              </div>
+            </div>
+          )}
+          {list.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div
+                className="w-[56px] h-[56px] rounded-full flex items-center justify-center mb-3"
+                style={{ background: '#F3EFEB' }}
+              >
+                {tab === 'reports' ? (
+                  <Megaphone size={22} color="#A09A94" strokeWidth={1.75} />
+                ) : tab === 'confirmed' ? (
+                  <ThumbsUp size={22} color="#A09A94" strokeWidth={1.75} />
+                ) : (
+                  <CheckCheck size={22} color="#A09A94" strokeWidth={1.75} />
+                )}
+              </div>
+              <div className="text-[14px] font-semibold text-[#111]">
+                {tab === 'reports'
+                  ? 'No reports yet'
+                  : tab === 'confirmed'
+                  ? 'No confirmations yet'
+                  : 'Nothing resolved yet'}
+              </div>
+              <div className="text-[12px] text-[#6E6058] mt-1 max-w-[260px]">
+                {tab === 'reports'
+                  ? 'When you submit a report, it shows up here so you can track its status.'
+                  : tab === 'confirmed'
+                  ? 'Confirming someone else\u2019s report helps neighbors. Your confirmations land here.'
+                  : 'Cleaned up the glass? Picked up a poison bait? Mark a report as resolved and it lives here as a thank-you log.'}
+              </div>
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-2.5">
+              {list.map((report) => {
+                const c = CATEGORIES[report.category];
+                const status = getReportStatus(report);
+                const resolved = status === 'resolved';
+                const distLabel =
+                  report.distance >= 1000
+                    ? `${(report.distance / 1000).toFixed(1)}km`
+                    : `${report.distance}m`;
+                return (
+                  <li key={report.id}>
+                    <button
+                      onClick={() => onSelect(report)}
+                      className="w-full text-left rounded-[16px] p-3 flex items-center gap-3 active:scale-[0.99] transition-all"
+                      style={{ background: '#FFF', border: '1px solid #EDE8E2' }}
+                    >
+                      <div
+                        className="w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0 relative"
+                        style={{ background: c.bg }}
+                      >
+                        <CategoryGlyph id={report.category} size={20} color={c.color} />
+                        {resolved && (
+                          <span
+                            className="absolute -bottom-0.5 -right-0.5 w-[18px] h-[18px] rounded-full flex items-center justify-center"
+                            style={{ background: '#2E7D32', border: '2px solid #FFF' }}
+                          >
+                            <Check size={10} color="#FFF" strokeWidth={3} />
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[14px] font-semibold text-[#111] truncate">
+                            {report.title}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[12px] text-[#A09A94] mt-0.5">
+                          <MapPin size={10} strokeWidth={1.75} />
+                          <span className="truncate">{report.location}</span>
+                          <span className="text-[#CFCAC3]">·</span>
+                          <span>{report.time}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-1.5">
+                          <span
+                            className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-px rounded-full"
+                            style={{
+                              background: resolved ? '#EEF7EC' : c.bg,
+                              color: resolved ? '#2E7D32' : c.color,
+                            }}
+                          >
+                            {resolved ? 'Resolved' : 'Active'}
+                          </span>
+                          <span className="text-[11px] text-[#6E6058]">
+                            {tab === 'reports' && (
+                              <>
+                                <span className="font-semibold text-[#111]">
+                                  {report.confirmations}
+                                </span>{' '}
+                                confirmed
+                              </>
+                            )}
+                            {tab === 'confirmed' && (
+                              <>by {report.author} · {distLabel}</>
+                            )}
+                            {tab === 'resolved' && (
+                              <>marked by you · {distLabel}</>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight size={16} color="#A09A94" strokeWidth={2} />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1246,19 +1815,76 @@ function ReportFormPopup({
             </div>
 
             {/* Photo */}
-            <button
-              onClick={() => setPhoto(!photo)}
-              className="mt-3 w-full h-[44px] rounded-[12px] flex items-center gap-2 px-3 text-[13px] font-medium"
-              style={{
-                background: photo ? '#FFEBEA' : '#FFFFFF',
-                color: photo ? '#FF3B30' : '#6E6058',
-                border: `1px solid ${photo ? '#FF3B30' : '#EDE8E2'}`,
-              }}
-            >
-              <Camera size={15} strokeWidth={1.75} />
-              {photo ? 'Photo attached' : 'Add photo (optional)'}
-              {photo && <Check size={14} className="ml-auto" strokeWidth={2.25} />}
-            </button>
+            {photo ? (
+              <div
+                className="mt-3 rounded-[12px] overflow-hidden relative"
+                style={{ border: '1px solid #EDE8E2' }}
+              >
+                <img src={photo} alt="Attached" className="w-full h-[120px] object-cover" />
+                <div className="absolute inset-x-0 bottom-0 px-3 py-2 flex items-center justify-between bg-gradient-to-t from-black/60 to-transparent">
+                  <div className="flex items-center gap-1.5 text-white text-[11px] font-semibold">
+                    <Check size={12} strokeWidth={2.5} />
+                    Photo attached
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <label
+                      className="h-[26px] px-2.5 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer"
+                      style={{ background: 'rgba(255,255,255,0.92)', color: '#111' }}
+                    >
+                      <Camera size={11} strokeWidth={2.25} />
+                      Replace
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = () => setPhoto(reader.result);
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                    </label>
+                    <button
+                      onClick={() => setPhoto(null)}
+                      className="w-[26px] h-[26px] rounded-full flex items-center justify-center"
+                      style={{ background: 'rgba(0,0,0,0.55)' }}
+                      aria-label="Remove photo"
+                    >
+                      <X size={12} color="#FFF" strokeWidth={2.25} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <label
+                className="mt-3 w-full h-[44px] rounded-[12px] flex items-center gap-2 px-3 text-[13px] font-medium cursor-pointer"
+                style={{
+                  background: '#FFFFFF',
+                  color: '#6E6058',
+                  border: '1px solid #EDE8E2',
+                }}
+              >
+                <Camera size={15} strokeWidth={1.75} />
+                Add photo (optional)
+                <span className="ml-auto text-[11px] text-[#A09A94]">JPG/PNG</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = () => setPhoto(reader.result);
+                    reader.readAsDataURL(file);
+                  }}
+                />
+              </label>
+            )}
 
             {/* Submit */}
             <button

@@ -7569,8 +7569,8 @@ const ActivityCommunityPlaceholder = ({ isVisible, onOpenPlaydates, memories = [
                   </span>
                 </div>
                 <div className="px-3 py-2.5 flex flex-col gap-0.5">
-                  <p className="text-[13.5px] font-semibold text-[#111111] truncate">{h.name}</p>
-                  <p className="text-[11.5px] text-[#8E8E93] truncate flex items-center gap-1">
+                  <p className="text-[12.5px] font-semibold text-[#111111] truncate">{h.name}</p>
+                  <p className="text-[11px] text-[#8E8E93] truncate flex items-center gap-1">
                     <MapPin size={10} strokeWidth={2.1} className="text-[#A6A6AC]" />
                     {h.distance} · {h.vibe}
                   </p>
@@ -7689,8 +7689,8 @@ const ActivityActionTile = ({ icon: Icon, label, sublabel, onClick, primary = fa
       <Icon size={15} strokeWidth={2.2} />
     </div>
     <div className="min-w-0">
-      <p className={`text-[13.5px] font-semibold leading-tight truncate ${primary ? 'text-white' : 'text-[#111111]'}`}>{label}</p>
-      <p className={`text-[11px] leading-tight mt-0.5 truncate ${primary ? 'text-white/85' : 'text-[#8E8E93]'}`}>{sublabel}</p>
+      <p className={`text-[12.5px] font-semibold leading-tight truncate ${primary ? 'text-white' : 'text-[#111111]'}`}>{label}</p>
+      <p className={`text-[10.5px] leading-tight mt-0.5 truncate ${primary ? 'text-white/85' : 'text-[#8E8E93]'}`}>{sublabel}</p>
     </div>
     {avatars && (
       <div className="flex -space-x-2 mt-auto">

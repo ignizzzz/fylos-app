@@ -4,9 +4,10 @@ import {
   Home, PawPrint, Calendar, Activity, Folder, Search, Bell, 
   ChevronLeft, ChevronRight, MoreHorizontal, X, CheckCircle2, 
   AlertCircle, AlertTriangle, Info, Loader2, ChevronDown, 
-  User, Shield, CreditCard, Sliders, Database, HelpCircle, 
+  User, Shield, CreditCard, Sliders, Database, HelpCircle,
   Smartphone, Mail, Lock, Globe, Moon, Sun, Trash2, Download,
-  LogOut, Plus, Camera, Image as ImageIcon, Settings
+  LogOut, Plus, Camera, Image as ImageIcon, Settings,
+  HeartPulse, Rocket, Sparkles, ShieldCheck
 } from 'lucide-react';
 
 /**
@@ -238,34 +239,41 @@ const TabBar = ({ activeTab, onTabChange }) => (
 
 // --- SETTINGS SPECIFIC UI COMPONENTS ---
 
-const SettingsSection = ({ title, children, footer }) => (
-  <div className="mb-6 px-5">
+const SettingsSection = ({ title, children, footer, variant = 'card' }) => (
+  <div className="mb-4 px-5">
     {title && <h3 className="mb-2 text-[12px] font-semibold text-[#A09A94] uppercase tracking-wider ml-1">{title}</h3>}
-    <div className="bg-[#F3EFEB] rounded-[20px] border border-[#EDE8E2] overflow-hidden">
+    <div className={
+      variant === 'card'
+        ? "bg-white rounded-[22px] border border-black/[0.04] overflow-hidden shadow-[0_2px_10px_rgba(20,14,8,0.04)]"
+        : "bg-[#F3EFEB] rounded-[20px] border border-[#EDE8E2] overflow-hidden"
+    }>
       {children}
     </div>
     {footer && <p className="mt-2 text-[13px] text-[#6E6058] ml-1">{footer}</p>}
   </div>
 );
 
-const SettingsRow = ({ icon: Icon, title, subtitle, right, onClick, destructive, isLast, iconBg }) => (
-  <div className="relative">
-    <div onClick={onClick} className={`flex items-center gap-3 px-4 py-3.5 ${onClick ? 'cursor-pointer active:bg-black/5 transition-colors' : ''}`}>
-      {Icon && (
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${destructive ? 'bg-[#FFE5E5]' : iconBg || 'bg-[#F7F5F2]'}`}>
-          <Icon size={18} color={destructive ? THEME.colors.danger : (iconBg ? '#FFFFFF' : THEME.colors.primaryText)} />
+const SettingsRow = ({ icon: Icon, title, subtitle, right, onClick, destructive, isLast, iconBg, iconColor, iconSize = 'sm' }) => {
+  const dim = iconSize === 'lg' ? { box: 'w-10 h-10', icon: 20 } : { box: 'w-8 h-8', icon: 18 };
+  return (
+    <div className="relative">
+      <div onClick={onClick} className={`flex items-center gap-3 px-4 py-3.5 ${onClick ? 'cursor-pointer active:bg-black/5 transition-colors' : ''}`}>
+        {Icon && (
+          <div className={`${dim.box} rounded-full flex items-center justify-center shrink-0 ${destructive ? 'bg-[#FFE5E5]' : iconBg || 'bg-[#F7F5F2]'}`}>
+            <Icon size={dim.icon} color={destructive ? THEME.colors.danger : (iconColor || (iconBg ? '#FFFFFF' : THEME.colors.primaryText))} strokeWidth={1.9} />
+          </div>
+        )}
+        <div className="flex-1 min-w-0 pr-2">
+          <div className={`text-[16px] truncate ${destructive ? 'text-[#FF3B30] font-semibold' : 'text-[#111] font-semibold'}`}>{title}</div>
+          {subtitle && <div className="text-[13px] text-[#6E6058] truncate mt-0.5 leading-snug">{subtitle}</div>}
         </div>
-      )}
-      <div className="flex-1 min-w-0 pr-2">
-        <div className={`text-[16px] truncate ${destructive ? 'text-[#FF3B30] font-semibold' : 'text-[#111]'}`}>{title}</div>
-        {subtitle && <div className="text-[13px] text-[#6E6058] truncate mt-0.5 leading-snug">{subtitle}</div>}
+        {right && <div className="shrink-0">{right}</div>}
+        {onClick && !right && !destructive && <ChevronRight size={18} className="text-[#CFCFD4] shrink-0" />}
       </div>
-      {right && <div className="shrink-0">{right}</div>}
-      {onClick && !right && !destructive && <ChevronRight size={20} className="text-[#CFCFD4] shrink-0" />}
+      {!isLast && <div className="absolute bottom-0 left-[60px] right-4 border-t border-[#F0ECE7]" />}
     </div>
-    {!isLast && <div className="absolute bottom-0 left-[52px] right-4 border-t border-dashed border-[#CFCFD4]" />}
-  </div>
-);
+  );
+};
 
 const SettingsScreenLayout = ({ title, onBack, children }) => (
   <div className="absolute inset-0 bg-[#F7F5F2] z-[60] flex flex-col animate-in slide-in-from-right-full duration-200 ease-out">
@@ -600,52 +608,75 @@ const AboutScreen = ({ onBack }) => (
   </SettingsScreenLayout>
 );
 
+const ComingSoonScreen = ({ onBack, title, icon: Icon, blurb }) => (
+  <SettingsScreenLayout title={title} onBack={onBack}>
+    <div className="flex flex-col items-center justify-center pt-16 px-8 text-center">
+      <div className="w-20 h-20 rounded-full bg-[#FBE7DD] flex items-center justify-center mb-5">
+        <Icon size={32} color="#E85D2A" strokeWidth={1.8} />
+      </div>
+      <h3 className="text-[20px] font-bold text-[#111] mb-2">{title}</h3>
+      <p className="text-[15px] text-[#6E6058] leading-relaxed max-w-[280px]">{blurb}</p>
+    </div>
+  </SettingsScreenLayout>
+);
+
 const SettingsHome = ({ onNavigate, onClose }) => {
   const [logoutSheet, setLogoutSheet] = useState(false);
-  
+
+  const ICON_TINT = 'bg-[#FBE7DD]';
+  const ICON_COLOR = '#E85D2A';
+
   return (
     <div className="absolute inset-0 bg-[#F7F5F2] z-[60] flex flex-col animate-in slide-in-from-bottom-full duration-300 ease-out">
       <header className="pt-14 pb-4 px-5 bg-[#F7F5F2] flex items-center justify-between shrink-0 sticky top-0 z-10">
-        <h2 className="text-[24px] font-bold text-[#111]">Settings</h2>
-        <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>
-          <X size={22} color="#111" />
+        <h2 className="text-[28px] font-bold text-[#111] tracking-tight">Settings</h2>
+        <button onClick={onClose} className="w-[40px] h-[40px] flex items-center justify-center rounded-full active:scale-95 transition-all bg-white border border-black/[0.06] shadow-[0_2px_8px_rgba(20,14,8,0.04)]">
+          <X size={20} color="#111" />
         </button>
       </header>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar pb-10">
         {/* Profile Card */}
-        <div className="px-5 mb-6">
-          <div onClick={() => onNavigate('account')} className="bg-[#F3EFEB] rounded-[24px] p-5 flex items-center gap-4 border border-[#EDE8E2] cursor-pointer active:scale-[0.98] transition-all">
-            <Avatar src={MOCK_USER.avatar} size={60} />
+        <div className="px-5 mb-4">
+          <div onClick={() => onNavigate('account')} className="bg-white rounded-[22px] px-4 py-4 flex items-center gap-3 border border-black/[0.04] shadow-[0_2px_10px_rgba(20,14,8,0.04)] cursor-pointer active:scale-[0.99] transition-all">
+            <Avatar src={MOCK_USER.avatar} size={52} />
             <div className="flex-1 min-w-0">
-              <h3 className="text-[18px] font-bold text-[#111] truncate">{MOCK_USER.name}</h3>
-              <p className="text-[14px] text-[#6E6058] truncate">{MOCK_USER.email}</p>
+              <h3 className="text-[17px] font-bold text-[#111] truncate leading-tight">{MOCK_USER.name}</h3>
+              <p className="text-[13px] text-[#6E6058] truncate mt-0.5">{MOCK_USER.email}</p>
             </div>
-            <div className="shrink-0 flex items-center gap-1 text-[#E85D2A] font-semibold text-[14px]">
-              Edit <ChevronRight size={16} />
-            </div>
+            <ChevronRight size={18} className="text-[#CFCFD4] shrink-0" />
           </div>
         </div>
 
-        <SettingsSection title="General">
-          <SettingsRow icon={PawPrint} iconBg="bg-[#FF9500]" title="Pets" subtitle="Manage your pets" onClick={() => onNavigate('pets')} />
-          <SettingsRow icon={Bell} iconBg="bg-[#FF3B30]" title="Notifications" subtitle="Push, email, in-app" onClick={() => onNavigate('notifications')} />
-          <SettingsRow icon={Shield} iconBg="bg-[#00C060]" title="Privacy" subtitle="Activity sharing, data" onClick={() => onNavigate('privacy')} />
-          <SettingsRow icon={CreditCard} iconBg="bg-[#007AFF]" title="Payment Methods" subtitle="Cards, billing history" onClick={() => onNavigate('payments')} />
-          <SettingsRow icon={Sliders} iconBg="bg-[#5856D6]" title="Preferences" subtitle="Theme, language, units" onClick={() => onNavigate('preferences')} isLast />
+        <SettingsSection>
+          <SettingsRow iconSize="lg" icon={Bell} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Notifications" subtitle="Push, email, in-app" onClick={() => onNavigate('notifications')} />
+          <SettingsRow iconSize="lg" icon={CreditCard} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Payment & Wallet" subtitle="Cards, balance, transactions" onClick={() => onNavigate('payments')} />
+          <SettingsRow iconSize="lg" icon={ShieldCheck} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Subscription" subtitle="Fylos Free" onClick={() => onNavigate('subscription')} isLast />
         </SettingsSection>
 
-        <SettingsSection title="Data & Storage">
-          <SettingsRow icon={Database} iconBg="bg-[#A09A94]" title="Data Management" subtitle="Export, backup, delete" onClick={() => onNavigate('data')} isLast />
+        <SettingsSection>
+          <SettingsRow iconSize="lg" icon={Globe} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Language" subtitle="English" onClick={() => onNavigate('preferences')} />
+          <SettingsRow iconSize="lg" icon={HeartPulse} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Health Reminders" subtitle="Vaccinations, medications" onClick={() => onNavigate('health')} />
+          <SettingsRow iconSize="lg" icon={AlertTriangle} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Emergency SOS" subtitle="Vet hotline, first aid" onClick={() => onNavigate('sos')} isLast />
         </SettingsSection>
 
-        <SettingsSection title="Support & About">
-          <SettingsRow icon={HelpCircle} iconBg="bg-[#FF2D55]" title="Help & Support" subtitle="FAQ, contact us" onClick={() => onNavigate('support')} />
-          <SettingsRow icon={Info} iconBg="bg-[#34C759]" title="About FYLOS" subtitle="Version, legal, licenses" onClick={() => onNavigate('about')} isLast />
+        <SettingsSection>
+          <SettingsRow iconSize="lg" icon={HelpCircle} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Help Center" subtitle="FAQ, support, report" onClick={() => onNavigate('support')} />
+          <SettingsRow iconSize="lg" icon={Rocket} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="What's Coming" subtitle="Preview upcoming features" onClick={() => onNavigate('upcoming')} />
+          <SettingsRow iconSize="lg" icon={Sparkles} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Animations Lab" subtitle="Experimental motion & effects" onClick={() => onNavigate('animlab')} isLast />
         </SettingsSection>
 
-        <div className="px-5 mt-8">
-          <SettingsRow icon={LogOut} title="Log Out" destructive onClick={() => setLogoutSheet(true)} className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2]" isLast />
+        <SettingsSection>
+          <SettingsRow iconSize="lg" icon={PawPrint} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Pets" subtitle="Manage your pets" onClick={() => onNavigate('pets')} />
+          <SettingsRow iconSize="lg" icon={Shield} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Privacy" subtitle="Activity sharing, data" onClick={() => onNavigate('privacy')} />
+          <SettingsRow iconSize="lg" icon={Database} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="Data & Storage" subtitle="Export, backup, delete" onClick={() => onNavigate('data')} />
+          <SettingsRow iconSize="lg" icon={Info} iconBg={ICON_TINT} iconColor={ICON_COLOR} title="About FYLOS" subtitle="Version, legal, licenses" onClick={() => onNavigate('about')} isLast />
+        </SettingsSection>
+
+        <div className="px-5 mt-2 mb-6">
+          <button onClick={() => setLogoutSheet(true)} className="w-full bg-white rounded-[22px] border border-black/[0.04] shadow-[0_2px_10px_rgba(20,14,8,0.04)] py-3.5 flex items-center justify-center gap-2 text-[#FF3B30] font-semibold text-[15px] active:scale-[0.99] transition-all">
+            <LogOut size={18} /> Log Out
+          </button>
         </div>
       </div>
 
@@ -752,6 +783,11 @@ export default function App() {
                 {settingsView === 'data' && <DataManagement onBack={() => setSettingsView('home')} />}
                 {settingsView === 'support' && <HelpSupport onBack={() => setSettingsView('home')} />}
                 {settingsView === 'about' && <AboutScreen onBack={() => setSettingsView('home')} />}
+                {settingsView === 'subscription' && <ComingSoonScreen onBack={() => setSettingsView('home')} title="Subscription" icon={ShieldCheck} blurb="You're on the Fylos Free plan. Paid tiers with unlimited cloud backup, priority support and extended health tracking are on the way." />}
+                {settingsView === 'health' && <ComingSoonScreen onBack={() => setSettingsView('home')} title="Health Reminders" icon={HeartPulse} blurb="Set up vaccination schedules, medication alerts and vet check-up reminders. Coming soon — we're finalising vet partner integrations." />}
+                {settingsView === 'sos' && <ComingSoonScreen onBack={() => setSettingsView('home')} title="Emergency SOS" icon={AlertTriangle} blurb="One-tap access to the nearest 24/7 vet hotline, poison control and step-by-step first-aid guides tailored to your pet." />}
+                {settingsView === 'upcoming' && <ComingSoonScreen onBack={() => setSettingsView('home')} title="What's Coming" icon={Rocket} blurb="Peek at features we're building next and opt-in to early previews. Your feedback shapes the roadmap." />}
+                {settingsView === 'animlab' && <ComingSoonScreen onBack={() => setSettingsView('home')} title="Animations Lab" icon={Sparkles} blurb="A playground for motion, haptics and micro-interactions. Toggle experimental effects and help us tune them." />}
               </>
             )}
           </>

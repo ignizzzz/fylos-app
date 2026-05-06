@@ -516,7 +516,7 @@ function SwipeDeck({ deck, onPass, onLike, onTapDetail }) {
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
-          onClick={() => { if (!movedRef.current) onTapDetail && onTapDetail(top); }}
+          onClick={undefined}
         />
       </div>
 
@@ -529,14 +529,6 @@ function SwipeDeck({ deck, onPass, onLike, onTapDetail }) {
           style={{ boxShadow: '0 6px 16px rgba(0,0,0,0.08)' }}
         >
           <X size={22} strokeWidth={2.4} />
-        </button>
-        <button
-          onClick={() => onTapDetail && onTapDetail(top)}
-          aria-label="View profile"
-          className="w-12 h-12 rounded-full bg-white border border-black/[0.06] flex items-center justify-center text-[#6E6E73] active:scale-[0.94] transition-transform"
-          style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-        >
-          <Sparkles size={16} strokeWidth={2.2} />
         </button>
         <button
           onClick={() => triggerExit('right')}
@@ -853,8 +845,7 @@ function PlaymateMiniCard({ candidate, onTap, onSchedule }) {
 // Scheduled tab — Zone L (live state, time-sensitive)
 // ---------------------------------------------------------------------------
 function ScheduledTab({ scheduled, pending, past, onTap, onAccept, onDecline, onWrapUp, onPlanFirst }) {
-  const todayItems = scheduled.filter((s) => /today/i.test(s.date));
-  const restItems = scheduled.filter((s) => !/today/i.test(s.date));
+  const [selectedDayId, setSelectedDayId] = useState(0); // 0 = today
   const wrapUpQueue = past.filter((p) => !p.wrappedUp);
 
   if (!scheduled.length && !pending.length && !wrapUpQueue.length) {
@@ -879,17 +870,32 @@ function ScheduledTab({ scheduled, pending, past, onTap, onAccept, onDecline, on
   // Build a 7-day strip starting from today (mock days populated where we have items).
   const days = useMemo(() => buildWeekStrip(scheduled, pending), [scheduled, pending]);
 
+  // Filter items by selected day (day 0 = today, shows all today; others filter by day label)
+  const selectedDay = days[selectedDayId];
+  const todayItems = scheduled.filter((s) => /today/i.test(s.date));
+  const restItems = scheduled.filter((s) => !/today/i.test(s.date));
+
+  // When a specific non-today day is selected, show items for that day (or all if none match)
+  const filteredScheduled = selectedDayId === 0
+    ? scheduled
+    : scheduled.filter((s) => {
+        const label = selectedDay?.label?.toLowerCase();
+        return (s.date || '').toLowerCase().includes(label || '___');
+      });
+  const filteredToday = filteredScheduled.filter((s) => /today/i.test(s.date));
+  const filteredRest = filteredScheduled.filter((s) => !/today/i.test(s.date));
+
   return (
     <div className="px-4 pt-3 flex flex-col gap-4 pb-6">
-      {/* Week strip — visual rhythm */}
-      <WeekStrip days={days} />
+      {/* Week strip — tappable days */}
+      <WeekStrip days={days} selectedId={selectedDayId} onSelect={setSelectedDayId} />
 
-      {/* Today hero — only if there's an in-progress / today playdate */}
-      {todayItems.length > 0 && (
-        <TodayHero item={todayItems[0]} onTap={() => onTap(todayItems[0])} />
+      {/* Today hero — only if there's an in-progress / today playdate and today is selected */}
+      {filteredToday.length > 0 && (
+        <TodayHero item={filteredToday[0]} onTap={() => onTap(filteredToday[0])} />
       )}
 
-      {wrapUpQueue.length > 0 && (
+      {wrapUpQueue.length > 0 && selectedDayId === 0 && (
         <ScheduledSection title="Wrap up · save the memory">
           {wrapUpQueue.map((p) => (
             <WrapUpRow key={p.id} item={p} onWrapUp={() => onWrapUp(p)} />
@@ -897,12 +903,21 @@ function ScheduledTab({ scheduled, pending, past, onTap, onAccept, onDecline, on
         </ScheduledSection>
       )}
 
-      {restItems.length > 0 && (
+      {filteredRest.length > 0 && (
         <ScheduledSection title="Upcoming">
-          {restItems.map((s) => (
+          {filteredRest.map((s) => (
             <ScheduledCard key={s.id} item={s} onTap={() => onTap(s)} />
           ))}
         </ScheduledSection>
+      )}
+
+      {filteredScheduled.length === 0 && selectedDayId !== 0 && (
+        <div className="flex flex-col items-center text-center gap-1.5 py-6">
+          <p className="text-[13px] text-[#6E6E73]">Nothing scheduled on {selectedDay?.label}</p>
+          <button onClick={() => setSelectedDayId(0)} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">
+            Show all
+          </button>
+        </div>
       )}
 
       {pending.length > 0 && (
@@ -922,8 +937,8 @@ function buildWeekStrip(scheduled, pending) {
   const todayDow = today.getDay();
   const labels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
   const events = new Set();
+  // Only confirmed/scheduled items get a dot — pending invites do not
   scheduled.forEach((s) => events.add((s.date || '').toLowerCase()));
-  pending.forEach((p) => events.add((p.date || '').toLowerCase()));
   // Build today + next 6 days
   return Array.from({ length: 7 }, (_, i) => {
     const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
@@ -938,32 +953,39 @@ function buildWeekStrip(scheduled, pending) {
   });
 }
 
-function WeekStrip({ days }) {
+function WeekStrip({ days, selectedId, onSelect }) {
   return (
     <div className="flex items-center gap-1 px-1">
-      {days.map((d) => (
-        <div
-          key={d.id}
-          className="flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-[10px]"
-          style={{
-            background: d.isToday ? 'linear-gradient(180deg, #FFE2D5 0%, #FFF1E5 100%)' : 'transparent',
-            border: d.isToday ? '1px solid #FFD4CC' : '1px solid transparent',
-          }}
-        >
-          <span className={`text-[9px] font-semibold uppercase tracking-wide ${d.isToday ? 'text-[#7A2F12]' : 'text-[#A09A94]'}`}>
-            {d.label}
-          </span>
-          <span className={`text-[13px] font-semibold tabular-nums ${d.isToday ? 'text-[#111111]' : 'text-[#6E6E73]'}`}>
-            {d.num}
-          </span>
-          <span
-            className="w-1 h-1 rounded-full mt-0.5"
+      {days.map((d) => {
+        const isSelected = d.id === selectedId;
+        const isToday = d.isToday;
+        return (
+          <button
+            key={d.id}
+            onClick={() => onSelect?.(d.id)}
+            className="flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-[10px] active:scale-[0.94] transition-all"
             style={{
-              background: d.hasEvent ? '#E85D2A' : 'transparent',
+              background: isSelected
+                ? 'linear-gradient(180deg, #FF7240 0%, #E85D2A 100%)'
+                : isToday
+                  ? 'linear-gradient(180deg, #FFE2D5 0%, #FFF1E5 100%)'
+                  : 'transparent',
+              border: isSelected ? '1px solid #E85D2A' : isToday ? '1px solid #FFD4CC' : '1px solid transparent',
             }}
-          />
-        </div>
-      ))}
+          >
+            <span className={`text-[9px] font-semibold uppercase tracking-wide ${isSelected ? 'text-white/80' : isToday ? 'text-[#7A2F12]' : 'text-[#A09A94]'}`}>
+              {d.label}
+            </span>
+            <span className={`text-[13px] font-semibold tabular-nums ${isSelected ? 'text-white' : isToday ? 'text-[#111111]' : 'text-[#6E6E73]'}`}>
+              {d.num}
+            </span>
+            <span
+              className="w-1 h-1 rounded-full mt-0.5"
+              style={{ background: d.hasEvent ? (isSelected ? 'rgba(255,255,255,0.7)' : '#E85D2A') : 'transparent' }}
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -2,377 +2,847 @@ import React, { useState } from 'react';
 import {
   ChevronLeft, ChevronRight, MapPin, Star, Camera, Bell,
   CreditCard, Shield, Phone, Info, Calendar, PawPrint,
-  MessageCircle, User, Trash2, Heart,
+  MessageCircle, User, Trash2, Heart, AtSign, Edit3,
+  Lock, KeyRound, Fingerprint, Smartphone, Users, Globe,
+  Eye, FileText, Download, LogOut, Gift, Activity,
+  HeartPulse, CalendarClock, Stethoscope, Check, MailCheck,
+  ScanLine, Briefcase, Cake, CircleUserRound, X,
+  ShieldCheck, LifeBuoy, Copy, Share2, QrCode, Plus,
+  AlertCircle
 } from 'lucide-react';
 
 /* ═══════════════════════════════════════════════════════
-   65 — USER PROFILE v1
-   Full user profile with settings, edit view, and logout
+   65 — USER PROFILE v3
+   Identity profile · per-field edit sheets · rate limits
    ═══════════════════════════════════════════════════════ */
 
 const MOCK_USER = {
+  // Identity
   firstName: 'Talita',
   lastName: 'Kowalski',
-  email: 'talita.k@email.com',
-  phone: '+41 78 555 1234',
-  address: 'Bahnhofstrasse 12, 8001 Zurich',
-  location: 'Zurich, Switzerland',
+  username: 'talita.k',
   initials: 'TK',
-  pets: 2,
-  bookings: 14,
-  rating: 4.9,
-  language: 'English',
-  paymentMethod: 'Visa ••42',
-  subscription: 'Fylos Free',
-  twoFactor: false,
-  faceId: true,
+  avatar: null,
+  bio: 'Dog mom to Leo & Luna — Zürich walks, playdates, always looking for new furry friends.',
+  dobDisplay: 'Mar 12, 1995',
+  gender: 'Private',
+
+  // Contact
+  email: 'talita.k@email.com',
+  emailVerified: true,
+  phone: '+41 78 555 1234',
+  phoneVerified: true,
+  addressShort: 'Zürich',
+  addressStreet: 'Bahnhofstrasse 12',
+  addressPostal: '8001',
+  addressCity: 'Zürich',
+  addressCountry: 'Switzerland',
+  location: 'Zürich, Switzerland',
+  emergencyContact: { name: 'Tom K.', relation: 'Partner', phone: '+41 79 222 3344' },
+
+  // Verification
+  idVerified: true,
+  idVerifiedOn: 'March 18, 2024',
+  profileCompletePct: 92,
+  profileChecklist: [
+    { key: 'photo', label: 'Profile photo', done: true },
+    { key: 'bio', label: 'Bio', done: true },
+    { key: 'phone', label: 'Phone verified', done: true },
+    { key: 'email', label: 'Email verified', done: true },
+    { key: 'id', label: 'Identity verified', done: true },
+    { key: 'emergency', label: 'Emergency contact', done: true },
+    { key: 'address', label: 'Home address verified', done: false },
+  ],
+
+  // Memberships
+  plan: 'Fylos Free',
+  memberSinceDisplay: 'March 2024',
+
+  // Rate limits & locks
+  nameChangesRemaining: 3,
+  nameChangesPerYear: 3,
+  usernameChangesRemaining: 2,
+  usernameChangesPerYear: 2,
+  dobLocked: true,
+
+  // Family & pets
+  pets: [
+    { id: 'p1', name: 'Leo',  breed: 'Golden Retriever', photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=120&h=120' },
+    { id: 'p2', name: 'Luna', breed: 'Mixed',            photo: 'https://images.unsplash.com/photo-1537151608804-ea2f1ea14a15?auto=format&fit=crop&q=80&w=120&h=120' },
+  ],
+  coOwners: [{ id: 'co1', name: 'Tom K.', relation: 'Partner', avatar: null }],
+  familyMembers: [
+    { id: 'f1', name: 'Mum',      relation: 'Mother',   avatar: null },
+    { id: 'f2', name: 'Elena',    relation: 'Sister',   avatar: null },
+    { id: 'f3', name: 'Oma Hanna', relation: 'Grandma', avatar: null },
+  ],
+  inviteCode: 'TALITA2024',
+
+  // Stats
+  bookingsCount: 14,
+  playdatesCount: 8,
+  photosCount: 247,
+  streakDays: 45,
 };
 
-const TABS = [
-  { id: 'home', label: 'Home', icon: Calendar },
-  { id: 'pets', label: 'Pets', icon: PawPrint },
-  { id: 'services', label: 'Services', icon: Star },
-  { id: 'activity', label: 'Activity', icon: Heart },
-  { id: 'profile', label: 'Profile', icon: User },
-];
+/* ────────── Theme ────────── */
+const THEME = {
+  bg: '#F7F5F2',
+  card: '#FFFFFF',
+  border: 'rgba(0,0,0,0.04)',
+  divider: '#F1EDE8',
+  tint: '#FBE7DD',
+  coral: '#E85D2A',
+  txt: '#111111',
+  muted: '#9B9B9F',
+  mutedDark: '#6E6E73',
+  danger: '#FF3B30',
+  dangerTint: '#FEE8E7',
+  success: '#00C060',
+  warn: '#F59E0B',
+  warnTint: '#FFF3DF',
+};
 
-/* ── Shared Components ── */
+/* ────────── Primitives ────────── */
+const SectionLabel = ({ children }) => (
+  <div className="text-[10.5px] font-medium text-[#8E8E93] tracking-[0.02em] mb-1.5 ml-3 mt-5">{children}</div>
+);
 
-const Toggle = ({ value, onChange }) => (
-  <div
-    role="button"
-    tabIndex={0}
-    onClick={() => onChange(!value)}
-    className="relative flex-shrink-0 cursor-pointer"
-    style={{
-      width: 48, height: 28, borderRadius: 9999,
-      backgroundColor: value ? '#E85D2A' : '#F3EFEB',
-      transition: 'background-color 200ms ease',
-    }}
-  >
-    <div
-      className="absolute top-[2px] rounded-full bg-white shadow-sm"
-      style={{
-        width: 24, height: 24,
-        transform: value ? 'translateX(22px)' : 'translateX(2px)',
-        transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-      }}
-    />
+const Card = ({ children }) => (
+  <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">{children}</div>
+);
+
+const Row = ({ icon: Icon, title, value, onClick, last, danger, verified, locked }) => (
+  <div className="relative">
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left"
+    >
+      <div
+        className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center"
+        style={{ backgroundColor: danger ? THEME.dangerTint : THEME.tint }}
+      >
+        <Icon size={15} color={danger ? THEME.danger : THEME.coral} strokeWidth={2} />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div
+          className="text-[14px] font-semibold truncate leading-tight"
+          style={{ color: danger ? THEME.danger : THEME.txt }}
+        >
+          {title}
+        </div>
+      </div>
+      {verified && (
+        <span className="flex items-center gap-[3px] text-[11px] font-medium shrink-0 mr-0.5" style={{ color: THEME.success }}>
+          <Check size={11} strokeWidth={3} /> verified
+        </span>
+      )}
+      {locked && (
+        <span className="flex items-center gap-[3px] text-[11px] font-medium shrink-0 mr-0.5" style={{ color: THEME.muted }}>
+          <Lock size={10} strokeWidth={2.4} /> locked
+        </span>
+      )}
+      {value && (
+        <span className="text-[12.5px] font-medium mr-1 shrink-0 truncate max-w-[140px]" style={{ color: THEME.muted }}>
+          {value}
+        </span>
+      )}
+      {!danger && <ChevronRight size={14} className="text-[#D4D4D8] shrink-0" strokeWidth={2.2} />}
+    </button>
+    {!last && <div className="absolute bottom-0 left-[58px] right-0 h-px" style={{ background: THEME.divider }} />}
   </div>
 );
 
-const SettingRow = ({ icon: Icon, label, value, toggle, toggleValue, onToggle, onClick, danger, isLast }) => (
-  <div
-    onClick={onClick}
-    role="button"
-    tabIndex={0}
-    className="flex items-center w-full text-left gap-3 active:bg-black/[0.02] transition-colors cursor-pointer"
-    style={{ padding: '13px 20px', borderBottom: isLast ? 'none' : '1px dashed #CFCFD4' }}
-  >
-    {Icon && (
+/* ────────── Header (canonical transparent pattern) ────────── */
+const ProfileHeader = ({ onBack, onShare }) => (
+  <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
+    <button
+      onClick={onBack}
+      className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+    >
+      <ChevronLeft size={18} strokeWidth={2.2} color={THEME.txt} />
+    </button>
+    <h1 className="text-[17px] font-semibold" style={{ color: THEME.txt }}>Profile</h1>
+    <button
+      onClick={onShare}
+      className="absolute right-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+    >
+      <Share2 size={14} strokeWidth={2.2} color={THEME.txt} />
+    </button>
+  </div>
+);
+
+/* ────────── Hero ────────── */
+const ProfileHero = ({ user, onChangePhoto }) => (
+  <div className="flex flex-col items-center pt-4 pb-5 px-6">
+    <div className="relative mb-3">
       <div
-        className="flex items-center justify-center flex-shrink-0 rounded-[10px]"
+        className="flex items-center justify-center"
         style={{
-          width: 36, height: 36,
-          backgroundColor: danger ? 'rgba(255,59,48,0.06)' : '#F3EFEB',
+          width: 86, height: 86, borderRadius: 9999,
+          background: 'linear-gradient(145deg, #FF7240 0%, #E85D2A 100%)',
+          boxShadow: '0 10px 28px rgba(232,93,42,0.25)',
         }}
       >
-        <Icon size={18} color={danger ? '#FF3B30' : '#6E6058'} />
+        <span className="text-white font-semibold text-[30px] tracking-tight">{user.initials}</span>
       </div>
-    )}
-    <span className="flex-1 text-[15px]" style={{ color: danger ? '#FF3B30' : '#111' }}>
-      {label}
-    </span>
-    {toggle ? (
-      <Toggle value={toggleValue} onChange={onToggle} />
-    ) : value ? (
-      <div className="flex items-center gap-1">
-        <span className="text-[13px] text-[#A09A94]">{value}</span>
-        <ChevronRight size={16} className="text-[#A09A94]" />
-      </div>
-    ) : !danger ? (
-      <ChevronRight size={16} className="text-[#A09A94]" />
-    ) : null}
+      {user.idVerified && (
+        <div
+          className="absolute bottom-0 left-0 w-[22px] h-[22px] rounded-full flex items-center justify-center"
+          style={{ background: THEME.success, border: `2.5px solid ${THEME.bg}`, boxShadow: '0 2px 6px rgba(0,192,96,0.3)' }}
+        >
+          <Check size={11} color="white" strokeWidth={3.5} />
+        </div>
+      )}
+      <button
+        onClick={onChangePhoto}
+        className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full flex items-center justify-center active:scale-95 transition-all"
+        style={{ background: '#FFFFFF', border: `2px solid ${THEME.bg}`, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+      >
+        <Camera size={12} strokeWidth={2.2} color={THEME.txt} />
+      </button>
+    </div>
+
+    <div className="flex items-center gap-2 mb-1">
+      <h2 className="text-[20px] font-semibold tracking-tight" style={{ color: THEME.txt }}>
+        {user.firstName} {user.lastName}
+      </h2>
+      <span
+        className="text-[9.5px] font-bold text-[#E85D2A] border px-1.5 py-[1px] rounded-[5px] tracking-[0.06em] leading-none"
+        style={{ borderColor: 'rgba(232,93,42,0.35)' }}
+      >
+        FREE
+      </span>
+    </div>
+
+    <p className="text-[12.5px] mb-2" style={{ color: THEME.muted }}>
+      @{user.username} · {user.addressShort} · Since {user.memberSinceDisplay}
+    </p>
+
+    <p className="text-[12.5px] text-center px-2 leading-snug max-w-[280px]" style={{ color: THEME.mutedDark }}>
+      {user.bio}
+    </p>
   </div>
 );
 
-const SectionCard = ({ label, children }) => (
-  <div className="mb-3.5">
-    {label && (
-      <span className="block text-[12px] font-bold text-[#A09A94] uppercase tracking-widest mb-2 pl-1">
-        {label}
-      </span>
-    )}
-    <div className="rounded-[20px] overflow-hidden" style={{ backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-      {children}
+/* ────────── At-a-glance stats ────────── */
+const StatsStrip = ({ user }) => (
+  <div className="px-4 mb-2">
+    <div className="bg-white rounded-[16px] border border-black/[0.04] flex items-center py-3">
+      {[
+        { val: user.pets.length,     label: 'pets' },
+        { val: user.bookingsCount,   label: 'bookings' },
+        { val: user.streakDays,      label: 'day streak' },
+        { val: user.photosCount,     label: 'photos' },
+      ].map((s, i) => (
+        <div
+          key={s.label}
+          className="flex-1 flex flex-col items-center"
+          style={{ borderRight: i < 3 ? `1px solid ${THEME.divider}` : 'none' }}
+        >
+          <span className="text-[16px] font-semibold leading-none" style={{ color: THEME.txt }}>{s.val}</span>
+          <span className="text-[10.5px] mt-1 lowercase" style={{ color: THEME.muted }}>{s.label}</span>
+        </div>
+      ))}
     </div>
   </div>
 );
 
-const InputField = ({ label, value, onChange, type = 'text' }) => (
-  <div className="mb-4">
-    <span className="block text-[12px] font-bold text-[#A09A94] uppercase tracking-widest mb-1.5 px-1">
-      {label}
-    </span>
-    <input
-      type={type}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full h-[52px] px-4 rounded-[16px] text-[16px] text-[#111] placeholder:text-[#A09A94] focus:outline-none focus:border-[#E85D2A] focus:ring-4 focus:ring-[#E85D2A]/10 transition-all duration-200"
-      style={{ backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}
-    />
+/* ────────── Pets strip ────────── */
+const PetsStrip = ({ pets, onTapPet, onAddPet }) => (
+  <div className="px-4 mb-2">
+    <div className="bg-white rounded-[16px] border border-black/[0.04] p-3">
+      <div className="flex items-center justify-between mb-2.5">
+        <span className="text-[12px] font-semibold" style={{ color: THEME.muted }}>My pets · {pets.length}</span>
+        <button onClick={onAddPet} className="text-[11.5px] font-semibold" style={{ color: THEME.coral }}>+ Add pet</button>
+      </div>
+      <div className="flex gap-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+        {pets.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => onTapPet(p.id)}
+            className="shrink-0 flex flex-col items-center gap-1.5 active:scale-95 transition-all"
+            style={{ width: 56 }}
+          >
+            <div className="w-[48px] h-[48px] rounded-full overflow-hidden" style={{ border: '1.5px solid rgba(0,0,0,0.04)' }}>
+              {p.photo ? (
+                <img src={p.photo} alt={p.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: THEME.tint }}>
+                  <PawPrint size={18} color={THEME.coral} strokeWidth={2} />
+                </div>
+              )}
+            </div>
+            <span className="text-[11px] font-medium text-center leading-tight truncate w-full" style={{ color: THEME.txt }}>{p.name}</span>
+          </button>
+        ))}
+        <button
+          onClick={onAddPet}
+          className="shrink-0 flex flex-col items-center gap-1.5 active:scale-95 transition-all"
+          style={{ width: 56 }}
+        >
+          <div className="w-[48px] h-[48px] rounded-full flex items-center justify-center" style={{ backgroundColor: THEME.bg, border: `1.5px dashed ${THEME.muted}` }}>
+            <Plus size={18} color={THEME.muted} strokeWidth={2.2} />
+          </div>
+          <span className="text-[11px] font-medium text-center leading-tight" style={{ color: THEME.muted }}>Add</span>
+        </button>
+      </div>
+    </div>
   </div>
 );
 
-/* ── Bottom Sheet ── */
+/* ────────── Bottom Sheet Shell ────────── */
 const BottomSheet = ({ open, onClose, children }) => {
   if (!open) return null;
   return (
     <div className="absolute inset-0 z-50 flex items-end justify-center" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" style={{ transition: 'opacity 200ms' }} />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
       <div
-        className="relative w-full rounded-t-[20px] shadow-[0_-8px_40px_rgba(0,0,0,0.12)]"
-        style={{ backgroundColor: '#F7F5F2' }}
+        className="relative w-full rounded-t-[22px] shadow-[0_-8px_40px_rgba(0,0,0,0.12)] max-h-[80%] overflow-y-auto up-scroll"
+        style={{ backgroundColor: THEME.bg }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-full flex flex-col items-center pt-5 pb-3">
+        <div className="w-full flex flex-col items-center pt-3 pb-1 sticky top-0 z-10" style={{ background: THEME.bg }}>
           <div className="w-10 h-1 rounded-full" style={{ backgroundColor: '#D5CEC7' }} />
         </div>
-        <div className="px-6 pb-8">
-          {children}
-        </div>
+        <div className="px-5 pb-7">{children}</div>
       </div>
     </div>
   );
 };
 
-/* ── Tab Bar ── */
-const TabBar = ({ activeTab, onTabChange }) => (
-  <nav className="absolute bottom-[22px] left-0 w-full px-5 z-40 pointer-events-none">
-    <div className="pointer-events-auto backdrop-blur-xl shadow-[0_10px_40px_rgba(0,0,0,0.06)] rounded-[9999px] h-[55px] flex justify-between items-center px-0.5" style={{ backgroundColor: 'rgba(247,245,242,0.7)' }}>
-      {TABS.map(tab => {
-        const active = tab.id === activeTab;
-        const Icon = tab.icon;
+/* ────────── Field Sheet contents ────────── */
+const SheetHeader = ({ title, subtitle, onClose }) => (
+  <div className="flex items-start justify-between mb-4 mt-1">
+    <div className="flex-1 pr-3">
+      <h3 className="text-[17px] font-semibold mb-1" style={{ color: THEME.txt }}>{title}</h3>
+      {subtitle && <p className="text-[12.5px] leading-snug" style={{ color: THEME.mutedDark }}>{subtitle}</p>}
+    </div>
+    <button onClick={onClose} className="w-7 h-7 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95">
+      <X size={14} strokeWidth={2.2} />
+    </button>
+  </div>
+);
+
+const TextField = ({ label, value, onChange, prefix, maxLength, type = 'text', placeholder, suffix }) => (
+  <div className="mb-3">
+    {label && <label className="block text-[11px] font-medium tracking-[0.04em] mb-1 ml-1" style={{ color: THEME.muted }}>{label}</label>}
+    <div className="relative">
+      {prefix && (
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[14.5px] font-medium" style={{ color: THEME.muted }}>{prefix}</span>
+      )}
+      <input
+        type={type}
+        value={value ?? ''}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        className="w-full h-[44px] rounded-[12px] text-[14.5px] focus:outline-none"
+        style={{
+          backgroundColor: '#FFFFFF', border: '1px solid rgba(0,0,0,0.06)', color: THEME.txt,
+          paddingLeft: prefix ? 28 : 14, paddingRight: suffix ? 60 : 14,
+        }}
+      />
+      {suffix && (
+        <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[11px] font-medium" style={{ color: THEME.muted }}>{suffix}</span>
+      )}
+    </div>
+  </div>
+);
+
+const TextArea = ({ label, value, onChange, maxLength = 160, placeholder }) => (
+  <div className="mb-3">
+    {label && <label className="block text-[11px] font-medium tracking-[0.04em] mb-1 ml-1" style={{ color: THEME.muted }}>{label}</label>}
+    <div className="relative">
+      <textarea
+        value={value ?? ''}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        rows={3}
+        className="w-full px-3.5 py-3 rounded-[12px] text-[14.5px] focus:outline-none resize-none"
+        style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(0,0,0,0.06)', color: THEME.txt }}
+      />
+      <span className="absolute bottom-2 right-3 text-[10.5px]" style={{ color: THEME.muted }}>{(value ?? '').length}/{maxLength}</span>
+    </div>
+  </div>
+);
+
+const Banner = ({ tone = 'warn', icon: Icon = AlertCircle, children }) => {
+  const tones = {
+    warn: { bg: THEME.warnTint, color: '#8B5A00', iconColor: THEME.warn },
+    info: { bg: '#E8F1FD', color: '#0B4C8F', iconColor: '#2E78D9' },
+    danger: { bg: THEME.dangerTint, color: '#8B1A14', iconColor: THEME.danger },
+    muted: { bg: '#F3EFEB', color: THEME.mutedDark, iconColor: THEME.muted },
+    success: { bg: '#E4F9ED', color: '#0B6A34', iconColor: THEME.success },
+  }[tone];
+  return (
+    <div className="flex items-start gap-2 px-3 py-2.5 rounded-[12px] mb-3" style={{ backgroundColor: tones.bg }}>
+      <Icon size={14} color={tones.iconColor} strokeWidth={2.2} className="shrink-0 mt-[1px]" />
+      <span className="text-[12px] leading-snug" style={{ color: tones.color }}>{children}</span>
+    </div>
+  );
+};
+
+const PrimaryBtn = ({ children, onClick, disabled }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className="w-full h-11 rounded-[14px] font-semibold text-[14.5px] text-white active:scale-[0.98] transition-all"
+    style={{ backgroundColor: disabled ? '#D4D4D8' : THEME.coral, cursor: disabled ? 'not-allowed' : 'pointer' }}
+  >
+    {children}
+  </button>
+);
+
+const GhostBtn = ({ children, onClick }) => (
+  <button
+    onClick={onClick}
+    className="w-full h-11 rounded-[14px] font-semibold text-[14.5px] active:scale-[0.98] transition-all mt-2"
+    style={{ backgroundColor: '#FFFFFF', color: THEME.txt, border: '1px solid rgba(0,0,0,0.06)' }}
+  >
+    {children}
+  </button>
+);
+
+/* ────────── Per-field sheet content ────────── */
+const NameSheet = ({ user, onSave, onClose }) => {
+  const [fn, setFn] = useState(user.firstName);
+  const [ln, setLn] = useState(user.lastName);
+  const remaining = user.nameChangesRemaining;
+  const blocked = remaining <= 0;
+  return (
+    <>
+      <SheetHeader title="Full name" subtitle="We show this on your profile and in bookings." onClose={onClose} />
+      <Banner tone={blocked ? 'danger' : 'warn'}>
+        {blocked
+          ? 'You\'ve used all name changes this year. Contact support to update.'
+          : `${remaining} of ${user.nameChangesPerYear} changes remaining this year. Limits help our fraud team.`}
+      </Banner>
+      <TextField label="First name" value={fn} onChange={setFn} />
+      <TextField label="Last name"  value={ln} onChange={setLn} />
+      <PrimaryBtn disabled={blocked || !fn.trim() || !ln.trim()} onClick={() => onSave({ firstName: fn.trim(), lastName: ln.trim(), nameChangesRemaining: Math.max(0, remaining - 1) })}>
+        Save changes
+      </PrimaryBtn>
+      <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+    </>
+  );
+};
+
+const UsernameSheet = ({ user, onSave, onClose }) => {
+  const [u, setU] = useState(user.username);
+  const remaining = user.usernameChangesRemaining;
+  const blocked = remaining <= 0;
+  const taken = ['admin', 'fylos', 'leo'].includes(u.toLowerCase());
+  const valid = /^[a-z0-9_.]{3,20}$/i.test(u) && !taken;
+  const suffix = u ? (valid ? '✓ available' : (taken ? '× taken' : '× invalid')) : '';
+  return (
+    <>
+      <SheetHeader title="Change username" subtitle="Letters, numbers, dots & underscores. 3–20 characters." onClose={onClose} />
+      <Banner tone={blocked ? 'danger' : 'warn'}>
+        {blocked
+          ? 'No username changes left this year.'
+          : `${remaining} of ${user.usernameChangesPerYear} changes remaining. Your old @${user.username} will be released after 30 days.`}
+      </Banner>
+      <TextField label="Username" value={u} onChange={(v) => setU(v.replace(/\s/g, '').toLowerCase())} prefix="@" suffix={suffix} />
+      <PrimaryBtn disabled={blocked || !valid || u === user.username} onClick={() => onSave({ username: u, usernameChangesRemaining: Math.max(0, remaining - 1) })}>
+        Save username
+      </PrimaryBtn>
+      <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+    </>
+  );
+};
+
+const DobSheet = ({ user, onClose }) => (
+  <>
+    <SheetHeader title="Date of birth" subtitle="Your birthday is used for age verification." onClose={onClose} />
+    <div className="flex flex-col items-center py-4">
+      <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: THEME.tint }}>
+        <Lock size={18} color={THEME.coral} strokeWidth={2} />
+      </div>
+      <p className="text-[15px] font-semibold mb-1" style={{ color: THEME.txt }}>{user.dobDisplay}</p>
+      <p className="text-[12px] text-center leading-snug px-2" style={{ color: THEME.mutedDark }}>
+        This field is locked after verification. To correct it, please contact support with an ID photo.
+      </p>
+    </div>
+    <Banner tone="info" icon={Info}>
+      Identity-related fields can't be edited here for safety reasons — we'll verify any changes through support.
+    </Banner>
+    <PrimaryBtn onClick={onClose}>Contact support</PrimaryBtn>
+    <GhostBtn onClick={onClose}>Close</GhostBtn>
+  </>
+);
+
+const BioSheet = ({ user, onSave, onClose }) => {
+  const [bio, setBio] = useState(user.bio);
+  return (
+    <>
+      <SheetHeader title="Edit bio" subtitle="A short line shown on your public profile." onClose={onClose} />
+      <TextArea label="Bio" value={bio} onChange={setBio} maxLength={160} placeholder="Tell the community about you and your pets…" />
+      <PrimaryBtn onClick={() => onSave({ bio: bio.trim() })}>Save</PrimaryBtn>
+      <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+    </>
+  );
+};
+
+const EmailSheet = ({ user, onSave, onClose }) => {
+  const [email, setEmail] = useState(user.email);
+  const [step, setStep] = useState('enter'); // 'enter' | 'verify'
+  const [code, setCode] = useState('');
+  const changed = email.trim().toLowerCase() !== user.email.toLowerCase();
+
+  if (step === 'verify') {
+    return (
+      <>
+        <SheetHeader title="Verify email" subtitle={`We sent a 6-digit code to ${email}.`} onClose={onClose} />
+        <TextField label="Verification code" value={code} onChange={(v) => setCode(v.replace(/\D/g, '').slice(0, 6))} placeholder="123456" />
+        <PrimaryBtn disabled={code.length !== 6} onClick={() => onSave({ email: email.trim(), emailVerified: true })}>
+          Confirm new email
+        </PrimaryBtn>
+        <GhostBtn onClick={() => setStep('enter')}>Back</GhostBtn>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <SheetHeader title="Change email" subtitle="We'll send a 6-digit code to confirm your new address." onClose={onClose} />
+      <TextField label="Email address" value={email} onChange={setEmail} type="email" placeholder="you@example.com" />
+      {!changed && user.emailVerified && (
+        <Banner tone="success" icon={Check}>Your current email is verified.</Banner>
+      )}
+      <PrimaryBtn disabled={!changed || !/.+@.+\..+/.test(email)} onClick={() => setStep('verify')}>
+        Send verification code
+      </PrimaryBtn>
+      <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+    </>
+  );
+};
+
+const PhoneSheet = ({ user, onSave, onClose }) => {
+  const [phone, setPhone] = useState(user.phone);
+  const [step, setStep] = useState('enter');
+  const [code, setCode] = useState('');
+  const changed = phone.replace(/\s/g, '') !== user.phone.replace(/\s/g, '');
+
+  if (step === 'verify') {
+    return (
+      <>
+        <SheetHeader title="Verify phone" subtitle={`We texted a 6-digit code to ${phone}.`} onClose={onClose} />
+        <TextField label="SMS code" value={code} onChange={(v) => setCode(v.replace(/\D/g, '').slice(0, 6))} placeholder="123456" />
+        <PrimaryBtn disabled={code.length !== 6} onClick={() => onSave({ phone, phoneVerified: true })}>
+          Confirm new phone
+        </PrimaryBtn>
+        <GhostBtn onClick={() => setStep('enter')}>Back</GhostBtn>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <SheetHeader title="Change phone" subtitle="We'll send an SMS with a 6-digit code." onClose={onClose} />
+      <TextField label="Phone number" value={phone} onChange={setPhone} type="tel" placeholder="+41 79 555 1234" />
+      {!changed && user.phoneVerified && (
+        <Banner tone="success" icon={Check}>Your current phone is verified.</Banner>
+      )}
+      <PrimaryBtn disabled={!changed || phone.replace(/\D/g, '').length < 7} onClick={() => setStep('verify')}>
+        Send SMS code
+      </PrimaryBtn>
+      <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+    </>
+  );
+};
+
+const AddressSheet = ({ user, onSave, onClose }) => {
+  const [form, setForm] = useState({
+    street: user.addressStreet, postal: user.addressPostal,
+    city: user.addressCity, country: user.addressCountry,
+  });
+  const upd = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  return (
+    <>
+      <SheetHeader title="Home address" subtitle="Used for deliveries, invoices and emergency services." onClose={onClose} />
+      <TextField label="Street & number" value={form.street} onChange={(v) => upd('street', v)} />
+      <div className="flex gap-2">
+        <div className="w-[90px]"><TextField label="Postal" value={form.postal} onChange={(v) => upd('postal', v)} /></div>
+        <div className="flex-1"><TextField label="City" value={form.city} onChange={(v) => upd('city', v)} /></div>
+      </div>
+      <TextField label="Country" value={form.country} onChange={(v) => upd('country', v)} />
+      <PrimaryBtn
+        onClick={() => onSave({
+          addressStreet: form.street, addressPostal: form.postal,
+          addressCity: form.city, addressCountry: form.country,
+          addressShort: form.city,
+        })}
+      >
+        Save address
+      </PrimaryBtn>
+      <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+    </>
+  );
+};
+
+const EmergencySheet = ({ user, onSave, onClose }) => {
+  const [form, setForm] = useState({ ...user.emergencyContact });
+  const upd = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  return (
+    <>
+      <SheetHeader title="Emergency contact" subtitle="We'll reach them if something happens to you or your pets." onClose={onClose} />
+      <TextField label="Full name" value={form.name} onChange={(v) => upd('name', v)} />
+      <TextField label="Relation" value={form.relation} onChange={(v) => upd('relation', v)} placeholder="Partner, parent, friend…" />
+      <TextField label="Phone" value={form.phone} onChange={(v) => upd('phone', v)} type="tel" />
+      <Banner tone="muted" icon={Info}>This contact will only be used in emergencies.</Banner>
+      <PrimaryBtn disabled={!form.name || !form.phone} onClick={() => onSave({ emergencyContact: form })}>Save contact</PrimaryBtn>
+      <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+    </>
+  );
+};
+
+const IdVerifySheet = ({ user, onClose }) => (
+  <>
+    <SheetHeader title="Identity & ID" subtitle="Verified identity unlocks playdates, pro bookings and trust badges." onClose={onClose} />
+    <div className="flex flex-col items-center py-4">
+      <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#E4F9ED' }}>
+        <ShieldCheck size={22} color={THEME.success} strokeWidth={2.2} />
+      </div>
+      <p className="text-[15px] font-semibold mb-0.5" style={{ color: THEME.txt }}>Verified</p>
+      <p className="text-[12px]" style={{ color: THEME.mutedDark }}>on {user.idVerifiedOn}</p>
+    </div>
+    <Banner tone="info" icon={Info}>To re-verify or update your ID, contact support with your new document.</Banner>
+    <PrimaryBtn onClick={onClose}>Got it</PrimaryBtn>
+  </>
+);
+
+const CompleteSheet = ({ user, onClose }) => (
+  <>
+    <SheetHeader title="Profile completeness" subtitle={`Your profile is ${user.profileCompletePct}% complete.`} onClose={onClose} />
+    <div className="h-2 rounded-full mb-4" style={{ backgroundColor: THEME.divider }}>
+      <div className="h-full rounded-full" style={{ width: `${user.profileCompletePct}%`, background: 'linear-gradient(90deg, #FF7240, #E85D2A)' }} />
+    </div>
+    <Card>
+      {user.profileChecklist.map((item, i) => (
+        <div key={item.key} className="relative flex items-center gap-3 px-3.5 py-2.5">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: item.done ? '#E4F9ED' : THEME.divider }}>
+            {item.done ? <Check size={13} color={THEME.success} strokeWidth={3} /> : <Plus size={12} color={THEME.muted} strokeWidth={2.5} />}
+          </div>
+          <span className="flex-1 text-[14px]" style={{ color: item.done ? THEME.txt : THEME.mutedDark }}>{item.label}</span>
+          {!item.done && <span className="text-[11.5px] font-medium" style={{ color: THEME.coral }}>Add</span>}
+          {i < user.profileChecklist.length - 1 && (
+            <div className="absolute bottom-0 left-[42px] right-3 h-px" style={{ background: THEME.divider }} />
+          )}
+        </div>
+      ))}
+    </Card>
+    <div className="h-3" />
+    <PrimaryBtn onClick={onClose}>Close</PrimaryBtn>
+  </>
+);
+
+const ListManageSheet = ({ title, subtitle, items, primaryLabel, onAdd, onRemove, onClose }) => (
+  <>
+    <SheetHeader title={title} subtitle={subtitle} onClose={onClose} />
+    <div className="space-y-2 mb-3">
+      {items.map((m) => (
+        <div key={m.id} className="flex items-center gap-3 p-2.5 rounded-[12px] bg-white border border-black/[0.04]">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: THEME.tint }}>
+            <User size={15} color={THEME.coral} strokeWidth={2} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[14px] font-semibold truncate" style={{ color: THEME.txt }}>{m.name}</p>
+            {m.relation && <p className="text-[11.5px] truncate" style={{ color: THEME.muted }}>{m.relation}</p>}
+          </div>
+          <button onClick={() => onRemove(m.id)} className="w-7 h-7 rounded-full flex items-center justify-center" style={{ backgroundColor: THEME.dangerTint }}>
+            <Trash2 size={13} color={THEME.danger} strokeWidth={2} />
+          </button>
+        </div>
+      ))}
+      {items.length === 0 && (
+        <div className="text-center py-6">
+          <p className="text-[12.5px]" style={{ color: THEME.muted }}>No one added yet.</p>
+        </div>
+      )}
+    </div>
+    <PrimaryBtn onClick={onAdd}>{primaryLabel}</PrimaryBtn>
+    <GhostBtn onClick={onClose}>Done</GhostBtn>
+  </>
+);
+
+const InviteSheet = ({ user, onClose }) => {
+  const [copied, setCopied] = useState(false);
+  const url = `https://fylos.app/i/${user.inviteCode}`;
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(url); } catch (e) {}
+    setCopied(true); setTimeout(() => setCopied(false), 1500);
+  };
+  return (
+    <>
+      <SheetHeader title="Invite friends" subtitle="Earn 1 month Pro for each friend who joins." onClose={onClose} />
+      <div className="flex flex-col items-center py-2 mb-2">
+        <div className="w-32 h-32 rounded-[16px] flex items-center justify-center mb-3" style={{ backgroundColor: THEME.tint }}>
+          <QrCode size={82} color={THEME.coral} strokeWidth={1.5} />
+        </div>
+        <p className="text-[12.5px] mb-1" style={{ color: THEME.mutedDark }}>Your invite code</p>
+        <p className="text-[20px] font-semibold tracking-[0.18em]" style={{ color: THEME.coral }}>{user.inviteCode}</p>
+      </div>
+      <div className="flex items-center gap-2 p-3 rounded-[12px] bg-white border border-black/[0.04] mb-3">
+        <span className="flex-1 text-[12.5px] truncate" style={{ color: THEME.mutedDark }}>{url}</span>
+        <button onClick={copy} className="flex items-center gap-1 px-3 h-8 rounded-full text-[12px] font-semibold active:scale-95" style={{ backgroundColor: THEME.coral, color: 'white' }}>
+          <Copy size={12} strokeWidth={2.2} /> {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <PrimaryBtn onClick={onClose}><span className="flex items-center gap-2 justify-center"><Share2 size={14} strokeWidth={2.2} /> Share link</span></PrimaryBtn>
+    </>
+  );
+};
+
+const PhotoSheet = ({ onClose }) => (
+  <>
+    <SheetHeader title="Profile photo" subtitle="Upload a clear, well-lit photo of your face." onClose={onClose} />
+    <div className="space-y-2">
+      {[
+        { icon: Camera, label: 'Take a photo' },
+        { icon: Download, label: 'Choose from library' },
+        { icon: Trash2, label: 'Remove photo', danger: true },
+      ].map((item, i) => {
+        const Icn = item.icon;
         return (
           <button
-            key={tab.id}
-            onClick={() => {
-              if (tab.id !== 'profile') { window.location.href = '/'; }
-              else { onTabChange(tab.id); }
-            }}
-            className="relative flex-1 h-full flex flex-col items-center justify-center gap-[3px] active:scale-[0.95]"
-            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+            key={i}
+            onClick={onClose}
+            className="w-full flex items-center gap-3 p-3 rounded-[12px] bg-white border border-black/[0.04] active:scale-[0.99] transition-all"
           >
-            <Icon
-              size={18}
-              strokeWidth={active ? 2 : 1.5}
-              className={`transition-all ${active ? 'text-[#E85D2A] scale-110' : 'text-[#A09A94] opacity-60'}`}
-            />
-            <span
-              className={`text-[10px] font-medium transition-all ${active ? 'text-[#E85D2A] opacity-100' : 'opacity-0'}`}
-            >
-              {tab.label}
-            </span>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: item.danger ? THEME.dangerTint : THEME.tint }}>
+              <Icn size={15} color={item.danger ? THEME.danger : THEME.coral} strokeWidth={2} />
+            </div>
+            <span className="text-[14px] font-semibold" style={{ color: item.danger ? THEME.danger : THEME.txt }}>{item.label}</span>
           </button>
         );
       })}
     </div>
-  </nav>
+    <div className="h-3" />
+    <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+  </>
 );
 
-/* ── Profile Overview ── */
-const ProfileOverview = ({ user, onEditProfile, onRowTap, onToggleTwoFactor, onToggleFaceId, onLogout, onDeleteAccount }) => (
-  <div className="absolute inset-0 flex flex-col" style={{ backgroundColor: '#F7F5F2' }}>
-    <div className="h-[54px] flex-shrink-0" />
+/* ────────── Field Sheet Router ────────── */
+const FieldSheet = ({ field, user, onSave, onClose }) => {
+  if (!field) return null;
+  const save = (patch) => { onSave(patch); onClose(); };
+  switch (field) {
+    case 'name':      return <NameSheet      user={user} onSave={save} onClose={onClose} />;
+    case 'username':  return <UsernameSheet  user={user} onSave={save} onClose={onClose} />;
+    case 'dob':       return <DobSheet       user={user} onClose={onClose} />;
+    case 'bio':       return <BioSheet       user={user} onSave={save} onClose={onClose} />;
+    case 'email':     return <EmailSheet     user={user} onSave={save} onClose={onClose} />;
+    case 'phone':     return <PhoneSheet     user={user} onSave={save} onClose={onClose} />;
+    case 'address':   return <AddressSheet   user={user} onSave={save} onClose={onClose} />;
+    case 'emergency': return <EmergencySheet user={user} onSave={save} onClose={onClose} />;
+    case 'id-verify': return <IdVerifySheet  user={user} onClose={onClose} />;
+    case 'complete':  return <CompleteSheet  user={user} onClose={onClose} />;
+    case 'co-owners':
+      return (
+        <ListManageSheet
+          title="Co-owners"
+          subtitle="Co-owners can fully manage your pets and bookings."
+          items={user.coOwners}
+          primaryLabel="+ Add co-owner"
+          onAdd={onClose}
+          onRemove={(id) => save({ coOwners: user.coOwners.filter((c) => c.id !== id) })}
+          onClose={onClose}
+        />
+      );
+    case 'family':
+      return (
+        <ListManageSheet
+          title="Family"
+          subtitle="Family members can view and log activities."
+          items={user.familyMembers}
+          primaryLabel="+ Invite family member"
+          onAdd={onClose}
+          onRemove={(id) => save({ familyMembers: user.familyMembers.filter((m) => m.id !== id) })}
+          onClose={onClose}
+        />
+      );
+    case 'invite':    return <InviteSheet    user={user} onClose={onClose} />;
+    case 'photo':     return <PhotoSheet     onClose={onClose} />;
+    default:          return null;
+  }
+};
 
-    <div className="flex-1 overflow-y-auto pb-[100px]" style={{ scrollbarWidth: 'none' }}>
-      {/* Avatar + name */}
-      <div className="flex flex-col items-center pt-2 pb-5 px-6">
-        <div
-          className="flex items-center justify-center mb-3"
-          style={{
-            width: 80, height: 80, borderRadius: 9999,
-            background: 'linear-gradient(to bottom, #FF7240, #E85D2A)',
-            boxShadow: '0 4px 16px rgba(232,93,42,0.3)',
-          }}
-        >
-          <span className="text-white font-semibold text-[28px]">{user.initials}</span>
+/* ────────── Overview ────────── */
+const ProfileOverview = ({ user, onRowTap, onLogout, onDeleteAccount, onBack, onShare }) => (
+  <div className="absolute inset-0 flex flex-col" style={{ backgroundColor: THEME.bg }}>
+    <div className="flex-1 overflow-y-auto up-scroll pb-[32px]">
+      <ProfileHeader onBack={onBack} onShare={onShare} />
+      <ProfileHero user={user} onChangePhoto={() => onRowTap('photo')} />
+      <StatsStrip user={user} />
+      <PetsStrip pets={user.pets} onTapPet={(id) => onRowTap('pet:' + id)} onAddPet={() => onRowTap('addpet')} />
+
+      <div className="px-4">
+        <SectionLabel>Personal</SectionLabel>
+        <Card>
+          <Row icon={User}     title="Full name"     value={`${user.firstName} ${user.lastName}`} onClick={() => onRowTap('name')} />
+          <Row icon={AtSign}   title="Username"      value={'@' + user.username}                  onClick={() => onRowTap('username')} />
+          <Row icon={Cake}     title="Date of birth" value={user.dobDisplay} locked                onClick={() => onRowTap('dob')} />
+          <Row icon={FileText} title="Bio"           value={user.bio.slice(0, 18) + '…'}          onClick={() => onRowTap('bio')} last />
+        </Card>
+
+        <SectionLabel>Contact</SectionLabel>
+        <Card>
+          <Row icon={MailCheck}  title="Email"             value={user.email} verified={user.emailVerified} onClick={() => onRowTap('email')} />
+          <Row icon={Phone}      title="Phone"             value={user.phone} verified={user.phoneVerified} onClick={() => onRowTap('phone')} />
+          <Row icon={MapPin}     title="Home address"      value={user.addressShort} onClick={() => onRowTap('address')} />
+          <Row icon={HeartPulse} title="Emergency contact" value={user.emergencyContact.name} onClick={() => onRowTap('emergency')} last />
+        </Card>
+
+        <SectionLabel>Verification</SectionLabel>
+        <Card>
+          <Row icon={ScanLine}        title="Identity & ID"    value="Verified" onClick={() => onRowTap('id-verify')} />
+          <Row icon={CircleUserRound} title="Profile complete" value={user.profileCompletePct + '%'} onClick={() => onRowTap('complete')} last />
+        </Card>
+
+        <SectionLabel>Family</SectionLabel>
+        <Card>
+          <Row icon={Users} title="Co-owners"     value={user.coOwners.length + (user.coOwners.length === 1 ? ' person' : ' people')} onClick={() => onRowTap('co-owners')} />
+          <Row icon={Heart} title="Family"        value={user.familyMembers.length + ' members'}  onClick={() => onRowTap('family')} />
+          <Row icon={Gift}  title="Invite friends" onClick={() => onRowTap('invite')} last />
+        </Card>
+
+        <SectionLabel>Danger zone</SectionLabel>
+        <Card>
+          <Row icon={LogOut} title="Log out"        danger onClick={onLogout} />
+          <Row icon={Trash2} title="Delete account" danger onClick={onDeleteAccount} last />
+        </Card>
+
+        <div className="text-center mt-5 mb-2">
+          <p className="text-[10.5px]" style={{ color: '#B8B0A8' }}>User ID #74621 · Manage preferences in Settings</p>
         </div>
-        <h2 className="text-[22px] font-semibold text-[#111] tracking-tight mb-0.5">
-          {user.firstName} {user.lastName}
-        </h2>
-        <p className="text-[13px] text-[#6E6058] mb-1">{user.email}</p>
-        <div className="flex items-center gap-1 mb-3">
-          <MapPin size={13} className="text-[#6E6058]" />
-          <span className="text-[13px] text-[#6E6058]">{user.location}</span>
-        </div>
-        <button
-          onClick={onEditProfile}
-          className="px-5 py-2 rounded-full text-[13px] font-medium active:scale-[0.97] transition-all duration-[120ms] cursor-pointer text-[#111]"
-          style={{ backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}
-        >
-          Edit Profile
-        </button>
-      </div>
-
-      {/* Stats */}
-      <div className="px-5 mb-5">
-        <div className="rounded-[20px] p-5 flex" style={{ backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-          {[
-            { val: user.pets, label: 'Pets' },
-            { val: user.bookings, label: 'Bookings' },
-            { val: user.rating, label: 'Rating' },
-          ].map((stat, i) => (
-            <div
-              key={stat.label}
-              className="flex-1 flex flex-col items-center"
-              style={{ borderRight: i < 2 ? '1px dashed #CFCFD4' : 'none' }}
-            >
-              <span className="text-[22px] font-semibold text-[#111] tracking-tight">{stat.val}</span>
-              <span className="text-[12px] font-bold text-[#A09A94] uppercase tracking-widest">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Setting sections */}
-      <div className="px-5">
-        <SectionCard label="Personal">
-          <SettingRow icon={User} label="Full Name" value={`${user.firstName} ${user.lastName}`} onClick={() => onRowTap('name')} />
-          <SettingRow icon={MessageCircle} label="Email" value={user.email} onClick={() => onRowTap('email')} />
-          <SettingRow icon={Phone} label="Phone" value={user.phone} onClick={() => onRowTap('phone')} />
-          <SettingRow icon={MapPin} label="Address" value="Zurich" onClick={() => onRowTap('address')} isLast />
-        </SectionCard>
-
-        <SectionCard label="Preferences">
-          <SettingRow icon={Info} label="Language" value={user.language} onClick={() => onRowTap('language')} />
-          <SettingRow icon={Bell} label="Notifications" onClick={() => onRowTap('notifications')} />
-          <SettingRow icon={CreditCard} label="Payment Methods" value={user.paymentMethod} onClick={() => onRowTap('payment')} />
-          <SettingRow icon={Star} label="Subscription" value={user.subscription} onClick={() => onRowTap('subscription')} isLast />
-        </SectionCard>
-
-        <SectionCard label="Security">
-          <SettingRow icon={Shield} label="Change Password" onClick={() => onRowTap('password')} />
-          <SettingRow icon={Shield} label="Two-Factor Auth" toggle toggleValue={user.twoFactor} onToggle={onToggleTwoFactor} />
-          <SettingRow icon={Star} label="Face ID" toggle toggleValue={user.faceId} onToggle={onToggleFaceId} isLast />
-        </SectionCard>
-
-        <SectionCard label="Support">
-          <SettingRow icon={Info} label="Help Center" onClick={() => onRowTap('help')} />
-          <SettingRow icon={Info} label="Report a Problem" onClick={() => onRowTap('report')} />
-          <SettingRow icon={Info} label="Terms of Service" onClick={() => onRowTap('terms')} />
-          <SettingRow icon={Shield} label="Privacy Policy" onClick={() => onRowTap('privacy')} isLast />
-        </SectionCard>
-
-        <SectionCard label="Danger Zone">
-          <SettingRow icon={Shield} label="Log Out" danger onClick={onLogout} />
-          <SettingRow icon={Trash2} label="Delete Account" danger onClick={onDeleteAccount} isLast />
-        </SectionCard>
-
-        <div className="h-4" />
       </div>
     </div>
   </div>
 );
 
-/* ── Edit Profile View ── */
-const EditProfileView = ({ user, onBack, onSave }) => {
-  const [form, setForm] = useState({
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    phone: user.phone,
-    address: user.address,
-  });
-  const update = (key, val) => setForm(prev => ({ ...prev, [key]: val }));
-
-  return (
-    <div className="absolute inset-0 z-20" style={{ backgroundColor: '#F7F5F2' }}>
-      {/* Header */}
-      <header
-        className="absolute top-0 left-0 w-full z-40 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent"
-        style={{ paddingTop: 56, paddingBottom: 24, paddingLeft: 20, paddingRight: 20 }}
-      >
-        <div className="flex justify-between items-center w-full pointer-events-auto">
-          <button
-            onClick={onBack}
-            className="w-[44px] h-[44px] flex items-center justify-center rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
-            style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-          >
-            <ChevronLeft size={22} color="#111" />
-          </button>
-          <h2 className="text-[17px] font-semibold text-[#111]">Edit Profile</h2>
-          <button
-            onClick={() => onSave(form)}
-            className="text-[15px] font-semibold text-[#E85D2A] active:opacity-60 transition-opacity cursor-pointer"
-            style={{ width: 44, textAlign: 'center', background: 'none', border: 'none' }}
-          >
-            Save
-          </button>
-        </div>
-      </header>
-
-      <div className="absolute inset-0 overflow-y-auto pb-[120px]" style={{ paddingTop: 100, paddingLeft: 20, paddingRight: 20, scrollbarWidth: 'none' }}>
-        {/* Avatar */}
-        <div className="flex justify-center mb-6">
-          <div className="relative">
-            <div
-              className="flex items-center justify-center"
-              style={{
-                width: 80, height: 80, borderRadius: 9999,
-                background: 'linear-gradient(to bottom, #FF7240, #E85D2A)',
-                boxShadow: '0 4px 16px rgba(232,93,42,0.3)',
-              }}
-            >
-              <span className="text-white font-semibold text-[28px]">{user.initials}</span>
-            </div>
-            <div
-              className="absolute bottom-0 right-0 flex items-center justify-center"
-              style={{
-                width: 28, height: 28, borderRadius: 9999,
-                background: 'linear-gradient(to bottom, #FF7240, #E85D2A)',
-                border: '2px solid #F7F5F2',
-                boxShadow: '0 2px 8px rgba(232,93,42,0.3)',
-              }}
-            >
-              <Camera size={14} color="white" />
-            </div>
-          </div>
-        </div>
-
-        <InputField label="First Name" value={form.firstName} onChange={(v) => update('firstName', v)} />
-        <InputField label="Last Name" value={form.lastName} onChange={(v) => update('lastName', v)} />
-        <InputField label="Email" value={form.email} onChange={(v) => update('email', v)} type="email" />
-        <InputField label="Phone" value={form.phone} onChange={(v) => update('phone', v)} type="tel" />
-        <InputField label="Address" value={form.address} onChange={(v) => update('address', v)} />
-
-        <button
-          onClick={() => onSave(form)}
-          className="w-full flex items-center justify-center font-semibold text-[16px] text-white mt-4 bg-[#111] rounded-[14px] py-3.5 active:scale-[0.97] transition-all duration-[120ms]"
-          style={{
-            border: 'none', cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-          }}
-        >
-          Save Changes
-        </button>
-      </div>
-    </div>
-  );
-};
-
 /* ═══════════════════════════════════════════════════════
-   MAIN COMPONENT
+   MAIN
    ═══════════════════════════════════════════════════════ */
 export default function App() {
-  const [activeTab, setActiveTab] = useState('profile');
-  const [view, setView] = useState('overview');
-  const [showLogout, setShowLogout] = useState(false);
   const [user, setUser] = useState({ ...MOCK_USER });
+  const [editingField, setEditingField] = useState(null);
+  const [showLogout, setShowLogout] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
-  const handleToggleTwoFactor = (val) => setUser((prev) => ({ ...prev, twoFactor: val }));
-  const handleToggleFaceId = (val) => setUser((prev) => ({ ...prev, faceId: val }));
-  const handleSave = (formData) => { setUser((prev) => ({ ...prev, ...formData })); setView('overview'); };
+  const handleSave = (patch) => setUser((p) => ({ ...p, ...patch }));
+
+  const back = () => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = '/';
+  };
+
+  const handleRowTap = (row) => {
+    if (row.startsWith('pet:')) return;
+    if (row === 'addpet') return;
+    setEditingField(row);
+  };
 
   return (
     <>
@@ -394,18 +864,12 @@ export default function App() {
           style={{
             width: 390, height: 844, borderRadius: 50,
             border: '8px solid #000', overflow: 'hidden',
-            backgroundColor: '#F7F5F2',
+            backgroundColor: THEME.bg,
           }}
         >
-          {/* Notch */}
-          <div className="absolute left-1/2 -translate-x-1/2 z-[100]"
-               style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
 
-          {/* Home indicator */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
-               style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
-
-          {/* Status bar */}
           <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
             <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
             <div className="flex items-center gap-1">
@@ -415,50 +879,42 @@ export default function App() {
             </div>
           </div>
 
-          {/* Views */}
           <div className="relative w-full h-full overflow-hidden">
-            {view === 'overview' ? (
-              <ProfileOverview
-                user={user}
-                onEditProfile={() => setView('edit')}
-                onRowTap={(row) => {
-                  if (row === 'language') window.location.href = '/language';
-                  else if (row === 'notifications') window.location.href = '/notification-prefs';
-                  else if (row === 'payment') window.location.href = '/wallet';
-                  else if (row === 'subscription') window.location.href = '/subscription';
-                  else if (row === 'help') window.location.href = '/help';
-                  else setView('edit');
-                }}
-                onToggleTwoFactor={handleToggleTwoFactor}
-                onToggleFaceId={handleToggleFaceId}
-                onLogout={() => setShowLogout(true)}
-                onDeleteAccount={() => {}}
-              />
-            ) : (
-              <EditProfileView user={user} onBack={() => setView('overview')} onSave={handleSave} />
-            )}
-
-            <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+            <ProfileOverview
+              user={user}
+              onBack={back}
+              onShare={() => setShowShare(true)}
+              onRowTap={handleRowTap}
+              onLogout={() => setShowLogout(true)}
+              onDeleteAccount={() => setEditingField('delete')}
+            />
           </div>
 
-          {/* Logout sheet */}
+          <BottomSheet open={!!editingField} onClose={() => setEditingField(null)}>
+            <FieldSheet field={editingField} user={user} onSave={handleSave} onClose={() => setEditingField(null)} />
+          </BottomSheet>
+
+          <BottomSheet open={showShare} onClose={() => setShowShare(false)}>
+            <InviteSheet user={user} onClose={() => setShowShare(false)} />
+          </BottomSheet>
+
           <BottomSheet open={showLogout} onClose={() => setShowLogout(false)}>
             <div className="flex flex-col items-center">
-              <h3 className="text-[18px] font-semibold text-[#111] mb-2">Are you sure?</h3>
-              <p className="text-[13px] text-[#6E6058] mb-6 text-center">
+              <h3 className="text-[17px] font-semibold mb-1.5" style={{ color: THEME.txt }}>Log out?</h3>
+              <p className="text-[12.5px] mb-5 text-center" style={{ color: THEME.mutedDark }}>
                 You will be logged out of your Fylos account on this device.
               </p>
               <button
                 onClick={() => setShowLogout(false)}
-                className="w-full flex items-center justify-center font-semibold text-[16px] text-white mb-3 active:scale-[0.97] transition-all duration-[120ms] rounded-[14px] py-3.5"
-                style={{ backgroundColor: '#FF3B30', border: 'none', cursor: 'pointer' }}
+                className="w-full flex items-center justify-center font-semibold text-[14.5px] text-white mb-2.5 active:scale-[0.97] transition-all rounded-[14px] py-3"
+                style={{ backgroundColor: THEME.danger, border: 'none', cursor: 'pointer' }}
               >
-                Log Out
+                Log out
               </button>
               <button
                 onClick={() => setShowLogout(false)}
-                className="w-full flex items-center justify-center font-semibold text-[16px] text-[#111] active:scale-[0.97] transition-all duration-[120ms] rounded-[14px] py-3.5 cursor-pointer"
-                style={{ backgroundColor: '#F3EFEB', border: 'none' }}
+                className="w-full flex items-center justify-center font-semibold text-[14.5px] active:scale-[0.97] transition-all rounded-[14px] py-3"
+                style={{ backgroundColor: '#FFFFFF', color: THEME.txt, border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer' }}
               >
                 Cancel
               </button>
