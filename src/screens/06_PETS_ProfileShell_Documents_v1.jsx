@@ -2,13 +2,15 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AddPetMascot } from './37_ADD_PET_v1';
+import JournalScreen from '../features/journal/JournalScreen';
 import {
   Home,
-  PawPrint, 
-  Calendar, 
-  Activity, 
-  Folder, 
-  Search, 
+  PawPrint,
+  Calendar,
+  Activity,
+  Folder,
+  BookOpen,
+  Search,
   Bell, 
   ChevronLeft, 
   ChevronRight,
@@ -176,7 +178,7 @@ const TABS = [
   { id: 'pets', label: 'Pets', icon: PawPrint },
   { id: '_fab', label: '', icon: null },
   { id: 'services', label: 'Services', icon: Calendar },
-  { id: 'vault', label: 'Vault', icon: Folder },
+  { id: 'journal', label: 'Journal', icon: BookOpen },
 ];
 
 const INITIAL_MOCK_PETS = [
@@ -9183,6 +9185,7 @@ export default function App() {
         />
       );
       case 'services': return <ServicesScreen onNavigate={navigateTo} />;
+      case 'journal': return <JournalScreen />;
       case 'vault': return <VaultScreen onOpenHealthRecords={() => setPushedScreen('vault_health_records')} onOpenDocuments={() => setPushedScreen('vault_documents')} onOpenContacts={() => setPushedScreen('vault_contacts')} onOpenPlaces={() => setPushedScreen('vault_places')} />;
       default: return (
         <HomeScreen
