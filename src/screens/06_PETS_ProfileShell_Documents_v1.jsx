@@ -8204,13 +8204,6 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
 // --- STEPS 30-35 (SETTINGS, NOTIFICATIONS, SEARCH, COMING SOON, ANIMATIONS) ---
 const APP_NOTIFICATIONS = [
   {
-    id: 'inbox_001', category: 'social', type: 'friend-request', priority: 'normal',
-    sender: { name: "Tao's owner", petName: 'Tao', photo: 'https://i.pravatar.cc/150?u=max_dog' },
-    title: 'Friend request', body: 'Tao wants to connect with Leo.',
-    actions: [{ id: 'accept', label: 'Accept', type: 'primary' }, { id: 'decline', label: 'Ignore', type: 'secondary' }],
-    read: false, archived: false, timeGroup: 'Today', timeAgo: 'Just now'
-  },
-  {
     id: 'inbox_002', category: 'health', type: 'medication-reminder', priority: 'critical',
     sender: { name: 'FYLOS Health', icon: HeartPulse },
     title: 'Medication reminder', body: 'Apoquel 16mg · Due now',
@@ -8245,13 +8238,6 @@ const APP_NOTIFICATIONS = [
     read: false, archived: false, timeGroup: 'Today', timeAgo: '3h'
   },
   {
-    id: 'inbox_007', category: 'social', type: 'playdate-invite', priority: 'normal',
-    sender: { name: "Charlie's owner", photo: 'https://i.pravatar.cc/150?u=charlie_dog' },
-    title: 'Playdate invitation', body: 'Charlie wants to play at Dog Park Enge this weekend. Are you free?',
-    actions: [{ id: 'accept', label: 'Accept', type: 'primary' }, { id: 'decline', label: 'Decline', type: 'secondary' }],
-    read: false, archived: false, timeGroup: 'Yesterday', timeAgo: '14:30'
-  },
-  {
     id: 'inbox_008', category: 'bookings', type: 'booking-cancelled', priority: 'critical',
     sender: { name: 'FYLOS Bookings', icon: XCircle },
     title: 'Booking cancelled', body: 'Unfortunately Emma W. had to cancel your scheduled walk for Friday.',
@@ -8279,13 +8265,6 @@ const APP_NOTIFICATIONS = [
     read: true, archived: false, timeGroup: 'Earlier this week', timeAgo: 'Mon'
   },
   {
-    id: 'inbox_012', category: 'social', type: 'milestone', priority: 'normal',
-    sender: { name: 'FYLOS Community', icon: PartyPopper },
-    title: "Luna's birthday!", body: 'Luna turned 3 years old! Share the celebration with your friends.',
-    actions: [{ id: 'share', label: 'Share profile', type: 'secondary' }],
-    read: true, archived: false, timeGroup: 'Earlier this week', timeAgo: 'Sun'
-  },
-  {
     id: 'inbox_013', category: 'bookings', type: 'review-left', priority: 'low',
     sender: { name: 'FYLOS Bookings', icon: Star },
     title: 'Review published', body: 'You left a 5-star review for Sarah T. Thanks for supporting the community.',
@@ -8304,19 +8283,11 @@ const APP_NOTIFICATIONS = [
     title: 'Checkup completed', body: 'General checkup notes have been uploaded to your vault.',
     actions: [{ id: 'view_notes', label: 'View notes', type: 'secondary' }],
     read: true, archived: true, timeGroup: 'Older', timeAgo: 'Feb 22'
-  },
-  {
-    id: 'inbox_016', category: 'social', type: 'friend-accepted', priority: 'low',
-    sender: { name: "Rocky's owner", photo: 'https://i.pravatar.cc/150?u=rocky_dog' },
-    title: 'Friend request accepted', body: 'Rocky is now friends with Luna.',
-    actions: [{ id: 'say_hi', label: 'Say hi', type: 'secondary' }],
-    read: true, archived: true, timeGroup: 'Older', timeAgo: 'Feb 20'
   }
 ];
 
 const INBOX_CATEGORIES = [
   { id: 'all', label: 'All', icon: null },
-  { id: 'social', label: 'Social', icon: Users },
   { id: 'bookings', label: 'Bookings', icon: Calendar },
   { id: 'health', label: 'Health', icon: HeartPulse },
   { id: 'system', label: 'Updates', icon: Megaphone }
@@ -8338,8 +8309,6 @@ const SEARCH_INDEX_DATA = [
 ];
 
 const UPCOMING_FEATURES = [
-  { id: 'f1', title: 'Community Mode', icon: Globe, launchDate: '2026-03-15', waitlistCount: 1247, color: '#00C060', description: 'Connect with pet owners nearby.' },
-  { id: 'f2', title: 'Smart Playdate Matching', icon: Sparkles, launchDate: '2026-04-10', waitlistCount: 523, color: '#007AFF', description: 'AI matching for compatible playdates.' },
   { id: 'f3', title: 'Expert Health Content', icon: Stethoscope, launchDate: '2026-05-05', waitlistCount: 892, color: '#FF9500', description: 'Vet-reviewed content and guides.' },
   { id: 'f4', title: 'Behavior Insights', icon: BrainCircuit, launchDate: '2026-09-01', waitlistCount: 412, color: '#AF52DE', description: 'AI-powered behavior pattern tracking.' }
 ];
