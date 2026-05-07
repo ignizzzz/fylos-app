@@ -290,11 +290,11 @@ const BookingFlow = ({ provider, showToast }) => {
               {monthDates.map((item, idx) => (
                 <button
                   key={item.dayNum}
-                  style={idx === 0 ? { gridColumnStart: item.offset + 1 } : {}}
                   disabled={item.busy === 'full'}
                   onClick={() => handleSelectDateFromCalendar(item.dayNum)}
                   className="h-9 w-9 rounded-full flex items-center justify-center text-[13px] font-bold transition-all relative active:scale-95"
                   style={{
+                    ...(idx === 0 ? { gridColumnStart: item.offset + 1 } : {}),
                     backgroundColor: selectedDate === item.dayNum ? T.coral : 'transparent',
                     color: selectedDate === item.dayNum
                       ? '#fff'
