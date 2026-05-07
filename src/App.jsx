@@ -37,7 +37,6 @@ import PaymentWalletScreen from './screens/57_PAYMENT_WALLET_v1'
 import NotificationPrefsScreen from './screens/58_NOTIFICATION_PREFS_v1'
 import HealthRemindersScreen from './screens/59_HEALTH_REMINDERS_v1'
 import HelpCenterScreen from './screens/60_HELP_CENTER_v1'
-import PlaydateMatchingScreen from './screens/61_PLAYDATE_MATCHING_v1'
 import ProviderDetailScreen from './screens/62_PROVIDER_DETAIL_v1'
 import BookingFlowScreen from './screens/63_BOOKING_FLOW_v1'
 import ChatMessagingScreen from './screens/64_CHAT_MESSAGING_v1'
@@ -66,7 +65,6 @@ import TermsScreen from './screens/87_TERMS_v1'
 import PrivacyPolicyScreen from './screens/88_PRIVACY_POLICY_v1'
 import LicensesScreen from './screens/89_LICENSES_v1'
 import InvitePublicScreen from './screens/90_INVITE_PUBLIC_v1'
-import NetworkProfileScreen from './screens/91_NETWORK_PROFILE_v1'
 import MarketingShowcase from './screens/MARKETING_SHOWCASE_v1'
 import IconographyLab from './screens/ICONOGRAPHY_LAB_v1'
 import FeltIconSystem from './screens/FELT_ICON_SYSTEM_v1'
@@ -123,7 +121,6 @@ function App() {
       <Route path="/notification-prefs" element={<NotificationPrefsScreen />} />
       <Route path="/health-reminders" element={<HealthRemindersScreen />} />
       <Route path="/help" element={<HelpCenterScreen />} />
-      <Route path="/playdate-matching" element={<PlaydateMatchingScreen />} />
       <Route path="/provider-detail" element={<ProviderDetailScreen />} />
       <Route path="/booking-flow" element={<BookingFlowScreen />} />
       <Route path="/chat" element={<ChatMessagingScreen />} />
@@ -155,7 +152,6 @@ function App() {
       {/* Public invite (Partiful-style, no iPhone frame, no auth) */}
       <Route path="/invite/:inviteId" element={<InvitePublicScreen />} />
       <Route path="/invite" element={<InvitePublicScreen />} />
-      <Route path="/network-profile" element={<NetworkProfileScreen />} />
 
       {/* Marketing showcase (no iPhone frame, full-width landing-style preview) */}
       <Route path="/marketing-preview" element={<MarketingShowcase />} />
