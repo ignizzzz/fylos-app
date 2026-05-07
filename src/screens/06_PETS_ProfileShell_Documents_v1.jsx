@@ -23,6 +23,7 @@ import {
 import useSocialData from '../features/social/useSocialData';
 import { AmenityTag, CategoryBadge, PlacesMapPreview } from '../features/social/network/PlacesPreview';
 import NetworkMode from '../features/social/network/NetworkMode';
+import ServicesTab from '../features/services/ServicesTab';
 import {
   Home,
   PawPrint, 
@@ -10043,7 +10044,14 @@ export default function App() {
           }}
         />
       );
-      case 'services': return <ServicesScreen onNavigate={navigateTo} />;
+      case 'services':
+        return (
+          <ServicesTab
+            pets={MOCK_DASHBOARD_PETS}
+            selectedPetId={null}
+            onNavigate={navigateTo}
+          />
+        );
       case 'activity': return <ActivityScreen isTabBarVisible={isTabBarVisible} initialMode={location.state?.activitySubMode} pendingNetworkView={location.state?.pendingNetworkView} onOpenPlaydates={(tab, wrapUpId) => setPlaydatesOpen({ tab: tab || 'discover', wrapUpId })} />;
       case 'vault': return <VaultScreen onOpenHealthRecords={() => setPushedScreen('vault_health_records')} onOpenDocuments={() => setPushedScreen('vault_documents')} onOpenContacts={() => setPushedScreen('vault_contacts')} onOpenPlaces={() => setPushedScreen('vault_places')} />;
       default: return (

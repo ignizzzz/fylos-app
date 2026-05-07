@@ -32,11 +32,25 @@ Link: https://fylos-mobile-ui-viewer-cebkvqo0u.vercel.app/?_vercel_share=TsQHJYD
 ## ➕ Add-pet flow
 Loading → celebration animation (confetti/bounce) όταν προστίθεται νέο κατοικίδιο.
 
-## 🔍 Services tab
-- **Search-first** layout, icon pills (Walking, Sitting, Grooming, Vet)
-- **Horizontal providers** carousel
-- **Provider profile**: πλήρες editorial redesign (info layout, reviews, booking CTA)
-- **Booking + Payment + Request Sent + Booking Details**: όλα redesigned σε warm minimal
+## 🔍 Services tab — πλήρες rebuild
+Νέα δομή `src/features/services/` με 3 sub-tabs (Discover · Bookings · Saved), κοινό data layer (`useServicesData`), και slide-in stack ταυτόσημο με αυτό του Social tab (z-[80] με notch + dock visible).
+
+- **Discover**: peach + coral category chips (Walking · Sitting · Grooming · Vet ενεργά, Daycare/Boarding/Training/Pet Taxi ως coming-soon με lock), "Recommended for {pet}" rail, Top rated near you λίστα, Recently viewed, New on Fylos, Quick actions (Map · Vet telehealth)
+- **Bookings**: pet-aware φίλτρα (All / per-pet), status sub-tabs (Upcoming · In progress · Pending → amber-badge inside Upcoming · Past · Cancelled), List/Calendar toggle με dot-marked διαθέσιμες ημέρες
+- **Saved**: bookmarked providers ομαδοποιημένοι ανά κατηγορία + Recently viewed
+- **Provider Profile** (canonical slide-in pattern): identity + stats strip (Years/Jobs/Repeat) + trust chips + About + Services list + This-week availability + Reviews preview + Photos + Certifications. Bottom CTA = peach gradient `Book` + secondary `Message` (όχι solid black). More sheet σε z-[110]
+- **Booking flow** (5-step progressive disclosure): Service → Date+time → Pet → Add-ons → Notes, sticky `Continue · CHF X` με peach gradient
+- **Payment**: booking summary + cost breakdown + saved methods (Visa/Mastercard/Apple Pay/TWINT) + Lock copy
+- **Request sent**: calm soft tick (όχι confetti / gamification), pending status card, 3 actions (View booking · Message provider · Browse more), "What happens next" timeline
+- **Booking Details**: status banner, status-aware actions (Cancel/Reschedule · Track live · Leave review · Rebook), live-progress card για in-progress, vertical timeline (Requested → Confirmed → Started → Completed → Reviewed)
+- **Messages**: per-provider thread με pinned booking-context card, inbox με unread dots, secure-message hint
+- **Cancel/Reschedule**: bottom sheet με 6 reasons + optional note + 24h refund policy
+- **Add Review**: center modal με 5-star tap + tag chips (On time / Friendly / Great photos / Patient / κ.ά.) + optional note
+- **Search**: full slide-in με recent searches + browse-by-category fallback
+- **Category Detail**: κατηγορία-scoped λίστα με sort filters (Recommended · Price · Rating · Distance · Available now)
+- **Live tracking bridge** στο υπάρχον `/gps-tracking` route μέσω react-router
+
+Νέο canonical pattern για όλα τα sub-screens: portal στο `#fylos-phone-root`, slide-in `translate-x-full → 0` (300ms cubic-bezier), gradient sticky header με back+title+optional more, bottom-fade gradient που ξεθωριάζει στο dock area, `z-[80]` για content (notch+dock visible) και `z-[110]` για sheets/modals από πάνω.
 
 ## 🛡️ Safety Reports (νέο tab)
 - **Full-screen map** με gradient fades και iPhone frame

@@ -37,3 +37,8 @@ body {
   scrollbar-width: none;
 }
 
+@keyframes fylosPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.55; }
+}
+
