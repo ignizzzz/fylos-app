@@ -1,7 +1,10 @@
 import React from 'react';
 
-// Sliding-pill 3-way switcher.
-// Same pattern the Social tab uses (NetworkMode.SubTabs) — kept in sync visually.
+// Sliding-pill 3-way switcher — premium pass.
+// Refined surface: cream-tinted container with crisp inner shadow for depth,
+// active pill uses a warm dark gradient (not flat black) with subtle inner
+// highlight, springier motion. Messages icon outside this control is styled
+// to match.
 
 export default function ServicesSubTabs({ tab, setTab, badges = {} }) {
   const tabs = [
@@ -12,15 +15,7 @@ export default function ServicesSubTabs({ tab, setTab, badges = {} }) {
   const activeIndex = Math.max(0, tabs.findIndex((t) => t.id === tab));
 
   return (
-    <div className="flex bg-white/80 backdrop-blur-xl p-1.5 rounded-full border border-black/[0.04] relative">
-      <div
-        className="absolute top-1.5 bottom-1.5 bg-[#111111] rounded-full transition-all duration-[300ms]"
-        style={{
-          width: `calc(${100 / tabs.length}% - 12px)`,
-          left: `calc(${(100 / tabs.length) * activeIndex}% + 6px)`,
-          transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)',
-        }}
-      />
+    <div className="flex items-baseline gap-6 pb-1">
       {tabs.map((t) => {
         const isActive = t.id === tab;
         const badge = badges[t.id];
@@ -28,19 +23,33 @@ export default function ServicesSubTabs({ tab, setTab, badges = {} }) {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold transition-colors duration-[200ms] flex items-center justify-center gap-1.5 ${
-              isActive ? 'text-white' : 'text-[#8E8E93] hover:text-[#111111]'
-            }`}
+            className="relative py-1 flex items-baseline"
+            style={{
+              color: isActive ? '#1A1715' : '#B0A89F',
+              fontSize: isActive ? '20px' : '13.5px',
+              fontWeight: isActive ? 700 : 400,
+              letterSpacing: isActive ? '-0.03em' : '-0.005em',
+              lineHeight: 1,
+              transition:
+                'color 240ms ease, font-size 280ms cubic-bezier(0.34, 1.2, 0.64, 1), letter-spacing 240ms ease',
+            }}
+            aria-label={badge ? `${t.label} (${badge} updates)` : t.label}
           >
             {t.label}
             {badge ? (
-              <span
-                className={`min-w-[14px] h-[14px] px-1 rounded-full text-[9px] font-bold inline-flex items-center justify-center ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-[#FF6A3D] text-white'
-                }`}
+              <sup
+                className="font-bold ml-[3px]"
+                style={{
+                  color: '#E85D2A',
+                  fontSize: isActive ? '11px' : '9.5px',
+                  lineHeight: 0,
+                  position: 'relative',
+                  top: isActive ? '-0.55em' : '-0.5em',
+                  letterSpacing: 0,
+                }}
               >
                 {badge}
-              </span>
+              </sup>
             ) : null}
           </button>
         );

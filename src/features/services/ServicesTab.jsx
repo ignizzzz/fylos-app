@@ -183,31 +183,40 @@ export default function ServicesTab({
       }}
     >
       <div className="min-h-full pt-[110px] pb-32">
-        {/* Pet selector */}
-        {pets.length > 1 && (
-          <div className="px-5 pt-1 pb-2">
-            <PetSelectorPill
-              pets={pets}
-              selectedPetId={petId}
-              onSelect={handlePet}
-              showAll={subTab === 'bookings' || subTab === 'saved'}
-            />
-          </div>
-        )}
-
-        {/* Sub-tabs + Messages icon */}
-        <div className="px-5 pt-1 pb-3 flex items-center gap-2">
+        {/* Sub-tabs + Messages icon — clean row, no pet pill */}
+        <div className="px-5 pt-2 pb-3 flex items-center gap-2">
           <div className="flex-1 min-w-0">
             <ServicesSubTabs tab={subTab} setTab={setSubTab} badges={subTabBadges} />
           </div>
           <button
             onClick={openMessagesInbox}
-            className="relative w-[40px] h-[40px] rounded-full bg-white border border-black/[0.05] flex items-center justify-center active:scale-[0.96] transition-all"
-            aria-label="Messages"
+            className={`relative h-[40px] flex items-center justify-center gap-1.5 rounded-full active:scale-[0.96] transition-all shrink-0 ml-1 ${
+              data.totalUnreadMessages > 0 ? 'px-3' : 'w-[40px]'
+            }`}
+            style={
+              data.totalUnreadMessages > 0
+                ? {
+                    backgroundColor: '#FFEDE3',
+                    border: '1px solid rgba(232,93,42,0.18)',
+                  }
+                : {
+                    backgroundColor: '#F4EEE5',
+                    border: '1px solid rgba(0,0,0,0.04)',
+                  }
+            }
+            aria-label={
+              data.totalUnreadMessages > 0
+                ? `Messages (${data.totalUnreadMessages} unread)`
+                : 'Messages'
+            }
           >
-            <MessageCircle size={17} className="text-[#111111]" strokeWidth={2.2} />
+            <MessageCircle
+              size={16}
+              strokeWidth={1.9}
+              color={data.totalUnreadMessages > 0 ? '#E85D2A' : '#2A211B'}
+            />
             {data.totalUnreadMessages > 0 && (
-              <span className="absolute top-1 right-1 min-w-[14px] h-[14px] px-1 rounded-full text-[9px] font-bold bg-[#FF6A3D] text-white inline-flex items-center justify-center">
+              <span className="text-[12px] font-bold text-[#E85D2A] tabular-nums leading-none">
                 {data.totalUnreadMessages}
               </span>
             )}
@@ -226,6 +235,7 @@ export default function ServicesTab({
             onOpenMap={openMap}
             onOpenVetTelehealth={openVetTelehealth}
             onOpenBookingDetails={openBookingDetails}
+            onSelectPet={handlePet}
           />
         )}
         {subTab === 'bookings' && (

@@ -71,6 +71,9 @@ import FeltIconSystem from './screens/FELT_ICON_SYSTEM_v1'
 import IconsCompare from './screens/ICONS_COMPARE_v1'
 import BrandKit from './screens/BRAND_KIT_v1'
 import ProfileHeroVariants from './screens/PROFILE_HERO_VARIANTS_v1'
+import ServicesCategoriesVariants from './screens/SERVICES_CATEGORIES_VARIANTS_v1'
+import NextUpVariants from './screens/NEXT_UP_VARIANTS_v1'
+import ProviderCardVariants from './screens/PROVIDER_CARD_VARIANTS_v1'
 
 // Legacy screens
 import HomeScreen from './screens/Explore-home-v1'
@@ -168,6 +171,9 @@ function App() {
       {/* Brand kit — standalone logo assets, color palette, downloads */}
       <Route path="/brand" element={<BrandKit />} />
       <Route path="/profile-hero-variants" element={<ProfileHeroVariants />} />
+      <Route path="/services-variants" element={<ServicesCategoriesVariants />} />
+      <Route path="/next-up-variants" element={<NextUpVariants />} />
+      <Route path="/provider-card-variants" element={<ProviderCardVariants />} />
 
       {/* Legacy screens */}
       <Route path="/home" element={<HomeScreen />} />
