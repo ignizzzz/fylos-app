@@ -131,13 +131,15 @@ export default function AuthShell({
           )}
         </div>
 
-        {/* Scroll area */}
+        {/* Scroll area — vertically centers the full stack so the screen
+            doesn't feel top-heavy with empty space below the form. */}
         <div
           style={{
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            padding: heroSrc ? '0 24px 24px' : '40px 24px 24px',
+            justifyContent: 'center',
+            padding: heroSrc ? '0 24px 28px' : '24px 24px 28px',
             overflowY: 'auto',
             minHeight: 0,
           }}
@@ -199,7 +201,7 @@ export default function AuthShell({
             <div
               style={{
                 textAlign: 'center',
-                marginTop: 22,
+                marginTop: 18,
                 animation: 'auth-fadeUp 600ms 160ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
               }}
             >
@@ -251,20 +253,20 @@ export default function AuthShell({
           {/* Form slot */}
           <div
             style={{
-              marginTop: 22,
+              marginTop: 18,
               animation: 'auth-fadeUp 600ms 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
             }}
           >
             {children}
           </div>
 
-          {/* Footer cross-link */}
+          {/* Footer cross-link — sits right under the form so the stack
+              reads as one centered block, not split with a bottom-pinned link. */}
           {footer && (
             <div
               style={{
                 textAlign: 'center',
-                marginTop: 'auto',
-                paddingTop: 24,
+                marginTop: 22,
                 fontSize: 12.5,
                 color: TAuth.textTertiary,
                 animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',

@@ -68,7 +68,7 @@ export default function SignIn() {
       onBack={() => navigate(-1)}
       tagline="A calmer way to care."
       title="Welcome back."
-      subtitle="Drop your email — we'll ping a one-tap link."
+      subtitle="Drop your email. We'll send a one-tap link."
       footer={
         <span>
           First time here?{' '}
