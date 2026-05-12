@@ -97,15 +97,15 @@ export default function AuthShell({
           }
         `}</style>
 
-        {/* Header — back button only (no title; the hero carries identity) */}
+        {/* Header — back button only, padded down so it clears the
+            Dynamic Island instead of sitting in front of it. */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            padding: '16px 16px 8px',
+            padding: '52px 16px 12px',
             position: 'relative',
             zIndex: 5,
-            minHeight: 52,
           }}
         >
           {onBack ? (
@@ -131,15 +131,14 @@ export default function AuthShell({
           )}
         </div>
 
-        {/* Scroll area — vertically centers the full stack so the screen
-            doesn't feel top-heavy with empty space below the form. */}
+        {/* Scroll area — wordmark anchored near the top, the rest of the
+            stack (title → form → footer) centered in the space below. */}
         <div
           style={{
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
-            padding: heroSrc ? '0 24px 28px' : '24px 24px 28px',
+            padding: heroSrc ? '0 24px 28px' : '0 24px 28px',
             overflowY: 'auto',
             minHeight: 0,
           }}
@@ -168,14 +167,15 @@ export default function AuthShell({
             </div>
           )}
 
-          {/* FYLOS wordmark + tagline.
-              No-hero layout leans on a larger wordmark to anchor the page. */}
+          {/* Top region: FYLOS wordmark + tagline, anchored near the top
+              so the brand sits high (less empty space above it). */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               gap: 6,
+              paddingTop: heroSrc ? 0 : 4,
               marginTop: heroSrc ? -4 : 0,
               animation: 'auth-fadeUp 600ms 80ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
             }}
@@ -196,85 +196,95 @@ export default function AuthShell({
             )}
           </div>
 
-          {/* Eyebrow + title + subtitle */}
-          {(eyebrow || title || subtitle) && (
-            <div
-              style={{
-                textAlign: 'center',
-                marginTop: 18,
-                animation: 'auth-fadeUp 600ms 160ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
-              }}
-            >
-              {eyebrow && (
-                <div
-                  style={{
-                    fontSize: 10.5,
-                    fontWeight: 700,
-                    letterSpacing: '0.10em',
-                    color: TAuth.coral,
-                    textTransform: 'uppercase',
-                    marginBottom: 6,
-                  }}
-                >
-                  {eyebrow}
-                </div>
-              )}
-              {title && (
-                <h1
-                  style={{
-                    fontFamily: '"Nunito", sans-serif',
-                    fontSize: 24,
-                    fontWeight: 800,
-                    color: TAuth.text,
-                    letterSpacing: '-0.015em',
-                    lineHeight: 1.15,
-                    marginBottom: subtitle ? 6 : 0,
-                  }}
-                >
-                  {title}
-                </h1>
-              )}
-              {subtitle && (
-                <p
-                  style={{
-                    fontSize: 13.5,
-                    color: TAuth.textMuted,
-                    lineHeight: 1.5,
-                    maxWidth: 300,
-                    margin: '0 auto',
-                  }}
-                >
-                  {subtitle}
-                </p>
-              )}
-            </div>
-          )}
-
-          {/* Form slot */}
+          {/* Middle region: title + form + footer stack right under the
+              wordmark, with empty space falling naturally at the bottom. */}
           <div
             style={{
-              marginTop: 18,
-              animation: 'auth-fadeUp 600ms 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              paddingTop: 28,
+              paddingBottom: 4,
             }}
           >
-            {children}
-          </div>
+            {(eyebrow || title || subtitle) && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  animation: 'auth-fadeUp 600ms 160ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+                }}
+              >
+                {eyebrow && (
+                  <div
+                    style={{
+                      fontSize: 10.5,
+                      fontWeight: 700,
+                      letterSpacing: '0.10em',
+                      color: TAuth.coral,
+                      textTransform: 'uppercase',
+                      marginBottom: 6,
+                    }}
+                  >
+                    {eyebrow}
+                  </div>
+                )}
+                {title && (
+                  <h1
+                    style={{
+                      fontFamily: '"Nunito", sans-serif',
+                      fontSize: 24,
+                      fontWeight: 800,
+                      color: TAuth.text,
+                      letterSpacing: '-0.015em',
+                      lineHeight: 1.15,
+                      marginBottom: subtitle ? 6 : 0,
+                    }}
+                  >
+                    {title}
+                  </h1>
+                )}
+                {subtitle && (
+                  <p
+                    style={{
+                      fontSize: 13.5,
+                      color: TAuth.textMuted,
+                      lineHeight: 1.5,
+                      maxWidth: 300,
+                      margin: '0 auto',
+                    }}
+                  >
+                    {subtitle}
+                  </p>
+                )}
+              </div>
+            )}
 
-          {/* Footer cross-link — sits right under the form so the stack
-              reads as one centered block, not split with a bottom-pinned link. */}
-          {footer && (
+            {/* Form slot */}
             <div
               style={{
-                textAlign: 'center',
-                marginTop: 22,
-                fontSize: 12.5,
-                color: TAuth.textTertiary,
-                animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+                marginTop: 18,
+                animation: 'auth-fadeUp 600ms 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
               }}
             >
-              {footer}
+              {children}
             </div>
-          )}
+
+            {/* Footer cross-link — sits right under the form. */}
+            {footer && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  marginTop: 22,
+                  fontSize: 12.5,
+                  color: TAuth.textTertiary,
+                  animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+                }}
+              >
+                {footer}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
