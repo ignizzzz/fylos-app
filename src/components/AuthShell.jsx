@@ -137,12 +137,12 @@ export default function AuthShell({
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            padding: '0 24px 24px',
+            padding: heroSrc ? '0 24px 24px' : '40px 24px 24px',
             overflowY: 'auto',
             minHeight: 0,
           }}
         >
-          {/* Hero watercolor */}
+          {/* Hero watercolor (optional) */}
           {heroSrc && (
             <div
               style={{
@@ -166,18 +166,19 @@ export default function AuthShell({
             </div>
           )}
 
-          {/* FYLOS wordmark + tagline */}
+          {/* FYLOS wordmark + tagline.
+              No-hero layout leans on a larger wordmark to anchor the page. */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: 4,
-              marginTop: heroSrc ? -4 : 8,
+              gap: 6,
+              marginTop: heroSrc ? -4 : 0,
               animation: 'auth-fadeUp 600ms 80ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
             }}
           >
-            <FylosWordmark fontSize={28} />
+            <FylosWordmark fontSize={heroSrc ? 28 : 40} />
             {tagline && (
               <div
                 style={{

@@ -28,16 +28,12 @@ export default function CreateAccountV2() {
   return (
     <AuthShell
       onBack={() => navigate(-1)}
-      heroSrc="/onboarding/philos.png"
-      heroAlt="φίλος watercolor"
-      heroHeight={210}
       tagline="A calmer way to care."
-      eyebrow="Welcome"
-      title="Create your account"
-      subtitle="One quick step and Luna is in."
+      title="Hi, friend."
+      subtitle="Three quick things and you're set."
       footer={
         <span>
-          Already have an account?{' '}
+          Already with us?{' '}
           <span
             onClick={() => navigate('/sign-in')}
             style={{ color: TAuth.coral, fontWeight: 700, cursor: 'pointer' }}
@@ -51,7 +47,7 @@ export default function CreateAccountV2() {
         <AuthInput
           icon={<User size={17} strokeWidth={2.2} />}
           autoComplete="name"
-          placeholder="Full name"
+          placeholder="Name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
@@ -60,7 +56,7 @@ export default function CreateAccountV2() {
           type="email"
           inputMode="email"
           autoComplete="email"
-          placeholder="you@somewhere.com"
+          placeholder="Email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
@@ -91,7 +87,7 @@ export default function CreateAccountV2() {
 
         <div style={{ marginTop: 6 }}>
           <AuthCta onClick={submit} disabled={!valid}>
-            Come in
+            Let's go
             <ArrowRight size={17} strokeWidth={2.4} />
           </AuthCta>
         </div>
@@ -106,9 +102,9 @@ export default function CreateAccountV2() {
             maxWidth: 280,
           }}
         >
-          By continuing, you agree to our{' '}
+          By tapping above, you're cool with our{' '}
           <span style={{ color: TAuth.coral, fontWeight: 600 }}>Terms</span> &{' '}
-          <span style={{ color: TAuth.coral, fontWeight: 600 }}>Privacy Policy</span>.
+          <span style={{ color: TAuth.coral, fontWeight: 600 }}>Privacy</span>.
         </p>
       </div>
     </AuthShell>

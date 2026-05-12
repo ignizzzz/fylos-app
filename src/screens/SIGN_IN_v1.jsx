@@ -27,16 +27,12 @@ export default function SignIn() {
     return (
       <AuthShell
         onBack={() => setSent(false)}
-        heroSrc="/onboarding/philos.png"
-        heroAlt="φίλος watercolor"
-        heroHeight={210}
         tagline="A calmer way to care."
-        eyebrow="Almost in"
-        title="Check your inbox"
-        subtitle={`We sent a sign-in link to ${email}. Tap it and you're back with Luna.`}
+        title="Link sent."
+        subtitle={`Tap the link we just sent to ${email} and you're in.`}
         footer={
           <span>
-            Didn't get it?{' '}
+            Didn't land?{' '}
             <span
               onClick={submit}
               style={{ color: TAuth.coral, fontWeight: 700, cursor: 'pointer' }}
@@ -61,7 +57,7 @@ export default function SignIn() {
           }}
         >
           <Check size={16} strokeWidth={2.6} />
-          Link on its way
+          On its way.
         </div>
       </AuthShell>
     );
@@ -70,16 +66,12 @@ export default function SignIn() {
   return (
     <AuthShell
       onBack={() => navigate(-1)}
-      heroSrc="/onboarding/philos.png"
-      heroAlt="φίλος watercolor"
-      heroHeight={220}
       tagline="A calmer way to care."
-      eyebrow="Welcome back"
-      title="Sign in to Fylos"
-      subtitle="Type your email and we'll send a one-tap link. No passwords to remember."
+      title="Welcome back."
+      subtitle="Drop your email — we'll ping a one-tap link."
       footer={
         <span>
-          New to Fylos?{' '}
+          First time here?{' '}
           <span
             onClick={() => navigate('/create-account')}
             style={{ color: TAuth.coral, fontWeight: 700, cursor: 'pointer' }}
@@ -95,13 +87,13 @@ export default function SignIn() {
           type="email"
           inputMode="email"
           autoComplete="email"
-          placeholder="you@somewhere.com"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <AuthCta onClick={submit} disabled={!valid}>
-          Send me a link
+          Ping me a link
           <ArrowRight size={17} strokeWidth={2.4} />
         </AuthCta>
 
@@ -118,7 +110,7 @@ export default function SignIn() {
             fontFamily: 'inherit',
           }}
         >
-          Use a password instead
+          Prefer a password?
         </button>
       </div>
     </AuthShell>
