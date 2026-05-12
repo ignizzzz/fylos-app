@@ -1523,16 +1523,19 @@ export default function OnboardingV4() {
   const prev = () => setSlideIndex((i) => Math.max(0, i - 1));
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: T.bg,
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+    <div className="min-h-screen bg-[#F0F0F2] flex items-center justify-center sm:p-8 font-sans antialiased">
+      {/* iPhone 14/15 Pro frame — matches the rest of the app */}
+      <div
+        className="relative w-full h-[100dvh] sm:h-[844px] sm:w-[390px] sm:rounded-[50px] shadow-2xl overflow-hidden sm:border-[8px] border-black sm:ring-1 sm:ring-gray-200"
+        style={{
+          background: T.bg,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {/* Dynamic Island */}
+        <div className="absolute top-[12px] left-1/2 transform -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-50 pointer-events-none hidden sm:block shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)]" />
+
       <style>{`
         /* Mascot animation keyframes — reused from AddPetMascot canonical set
            (copied from 06_PETS_ProfileShell_Documents_v1:9256-9271) */
@@ -1830,6 +1833,7 @@ export default function OnboardingV4() {
             </span>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
