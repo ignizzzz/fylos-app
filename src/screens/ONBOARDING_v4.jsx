@@ -1827,6 +1827,7 @@ export default function OnboardingV4() {
           >
             Already have an account?{' '}
             <span
+              onClick={() => navigate('/sign-in')}
               style={{ color: T.coral, fontWeight: 700, cursor: 'pointer' }}
             >
               Sign in

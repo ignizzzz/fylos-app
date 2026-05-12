@@ -52,6 +52,8 @@ import PetProfileDetailScreen from './screens/66_PET_PROFILE_DETAIL_v1'
 import EmergencySOSScreen from './screens/67_EMERGENCY_SOS_v1'
 import ProviderReviewsScreen from './screens/68_PROVIDER_REVIEWS_v1'
 import CreateAccountScreen from './screens/69_CREATE_ACCOUNT_v1'
+import CreateAccountV2 from './screens/69_CREATE_ACCOUNT_v2'
+import SignIn from './screens/SIGN_IN_v1'
 import SecurityPasswordScreen from './screens/70_SECURITY_PASSWORD_v1'
 import SecurityTwoFactorScreen from './screens/71_SECURITY_2FA_v1'
 import SecurityBiometricScreen from './screens/72_SECURITY_BIOMETRIC_v1'
@@ -145,7 +147,9 @@ function App() {
       <Route path="/pet-profile" element={<PetProfileDetailScreen />} />
       <Route path="/emergency" element={<EmergencySOSScreen />} />
       <Route path="/provider-reviews" element={<ProviderReviewsScreen />} />
-      <Route path="/create-account" element={<CreateAccountScreen />} />
+      <Route path="/create-account" element={<CreateAccountV2 />} />
+      <Route path="/create-account-v1" element={<CreateAccountScreen />} />
+      <Route path="/sign-in" element={<SignIn />} />
       <Route path="/security/password" element={<SecurityPasswordScreen />} />
       <Route path="/security/2fa" element={<SecurityTwoFactorScreen />} />
       <Route path="/security/biometric" element={<SecurityBiometricScreen />} />
