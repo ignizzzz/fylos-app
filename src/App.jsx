@@ -55,6 +55,9 @@ import CreateAccountScreen from './screens/69_CREATE_ACCOUNT_v1'
 import CreateAccountV2 from './screens/69_CREATE_ACCOUNT_v2'
 import SignIn from './screens/SIGN_IN_v1'
 import SignInPassword from './screens/SIGN_IN_PASSWORD_v1'
+import SignInPhone from './screens/SIGN_IN_PHONE_v1'
+import ForgotPassword from './screens/FORGOT_PASSWORD_v1'
+import VerifyEmail from './screens/VERIFY_EMAIL_v1'
 import SecurityPasswordScreen from './screens/70_SECURITY_PASSWORD_v1'
 import SecurityTwoFactorScreen from './screens/71_SECURITY_2FA_v1'
 import SecurityBiometricScreen from './screens/72_SECURITY_BIOMETRIC_v1'
@@ -152,6 +155,9 @@ function App() {
       <Route path="/create-account-v1" element={<CreateAccountScreen />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/sign-in-password" element={<SignInPassword />} />
+      <Route path="/sign-in-phone" element={<SignInPhone />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/security/password" element={<SecurityPasswordScreen />} />
       <Route path="/security/2fa" element={<SecurityTwoFactorScreen />} />
       <Route path="/security/biometric" element={<SecurityBiometricScreen />} />

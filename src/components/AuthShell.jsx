@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Loader2 } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────────────────
    AuthShell — shared wrapper for /sign-in and /create-account.
@@ -292,7 +292,7 @@ export default function AuthShell({
 }
 
 /* ──────────────────────────────────────────────────────────────────────
-   AuthInput — coral-soft pill input.
+   AuthInput — coral-soft pill input with optional error state.
    ────────────────────────────────────────────────────────────────────── */
 export function AuthInput({
   icon,
@@ -304,77 +304,97 @@ export function AuthInput({
   autoComplete,
   inputMode,
   autoFocus,
+  maxLength,
   onFocus,
   onBlur,
+  error,
 }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-        height: 52,
-        padding: '0 16px',
-        background: TAuth.coralInput,
-        border: '1px solid transparent',
-        borderRadius: 14,
-        transition: 'border-color 180ms ease, background 180ms ease',
-      }}
-    >
-      {icon && (
-        <span
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          height: 52,
+          padding: '0 16px',
+          background: TAuth.coralInput,
+          border: error ? `1px solid ${TAuth.coral}` : '1px solid transparent',
+          borderRadius: 14,
+          transition: 'border-color 180ms ease, background 180ms ease',
+        }}
+      >
+        {icon && (
+          <span
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: TAuth.coral,
+              flexShrink: 0,
+            }}
+          >
+            {icon}
+          </span>
+        )}
+        <input
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          inputMode={inputMode}
+          autoFocus={autoFocus}
+          maxLength={maxLength}
+          onFocus={onFocus}
+          onBlur={onBlur}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: TAuth.coral,
-            flexShrink: 0,
+            flex: 1,
+            border: 'none',
+            outline: 'none',
+            background: 'transparent',
+            fontSize: 15,
+            fontWeight: 500,
+            color: TAuth.text,
+            fontFamily: 'Inter, -apple-system, sans-serif',
+          }}
+        />
+        {trailing}
+      </div>
+      {error && (
+        <div
+          style={{
+            fontSize: 11.5,
+            color: TAuth.coralDark,
+            marginTop: 4,
+            paddingLeft: 12,
+            fontWeight: 600,
+            animation: 'auth-fadeIn 200ms ease both',
           }}
         >
-          {icon}
-        </span>
+          {error}
+        </div>
       )}
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        inputMode={inputMode}
-        autoFocus={autoFocus}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        style={{
-          flex: 1,
-          border: 'none',
-          outline: 'none',
-          background: 'transparent',
-          fontSize: 15,
-          fontWeight: 500,
-          color: TAuth.text,
-          fontFamily: 'Inter, -apple-system, sans-serif',
-        }}
-      />
-      {trailing}
     </div>
   );
 }
 
 /* ──────────────────────────────────────────────────────────────────────
-   AuthCta — coral pill, identical sizing to onboarding CTA.
+   AuthCta — coral pill with optional loading spinner.
    ────────────────────────────────────────────────────────────────────── */
-export function AuthCta({ children, onClick, disabled, type = 'button' }) {
+export function AuthCta({ children, onClick, disabled, loading, type = 'button' }) {
+  const isDown = disabled || loading;
   return (
     <button
       type={type}
-      onClick={onClick}
-      disabled={disabled}
+      onClick={loading ? undefined : onClick}
+      disabled={isDown}
       style={{
         width: '100%',
         height: 54,
         borderRadius: 27,
         border: 'none',
-        cursor: disabled ? 'not-allowed' : 'pointer',
+        cursor: isDown ? 'not-allowed' : 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -383,13 +403,130 @@ export function AuthCta({ children, onClick, disabled, type = 'button' }) {
         fontWeight: 700,
         fontSize: 15.5,
         background: TAuth.coral,
-        boxShadow: disabled ? 'none' : '0 6px 18px rgba(232,93,42,0.30)',
+        boxShadow: isDown ? 'none' : '0 6px 18px rgba(232,93,42,0.30)',
         fontFamily: 'inherit',
-        opacity: disabled ? 0.45 : 1,
+        opacity: loading ? 0.85 : disabled ? 0.45 : 1,
         transition: 'opacity 180ms ease, transform 120ms ease',
       }}
     >
-      {children}
+      {loading ? (
+        <>
+          <Loader2 size={17} className="animate-spin" strokeWidth={2.6} />
+          One sec…
+        </>
+      ) : (
+        children
+      )}
     </button>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   SSO row — Apple / Google / SMS. Coral-soft cards so they sit visually
+   below the primary CTA (clearly secondary, but readable).
+   ────────────────────────────────────────────────────────────────────── */
+
+function AppleIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#111" aria-hidden="true">
+      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35-4.71-4.85-4.16-12.39 1.39-12.67 1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 6.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+    </svg>
+  );
+}
+
+function GoogleIcon({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 18 18" aria-hidden="true">
+      <path d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.72v2.26h2.92a8.78 8.78 0 002.68-6.62z" fill="#4285F4" />
+      <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.83.86-3.04.86-2.34 0-4.33-1.58-5.04-3.71H.96v2.33A9 9 0 009 18z" fill="#34A853" />
+      <path d="M3.96 10.71A5.41 5.41 0 013.68 9c0-.6.1-1.17.28-1.71V4.96H.96A9 9 0 000 9c0 1.45.35 2.82.96 4.04l3-2.33z" fill="#FBBC05" />
+      <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 00.96 4.96l3 2.33C4.67 5.16 6.66 3.58 9 3.58z" fill="#EA4335" />
+    </svg>
+  );
+}
+
+function SsoButton({ icon, label, onClick, ariaLabel }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={ariaLabel || label}
+      style={{
+        flex: 1,
+        height: 48,
+        background: TAuth.coralInput,
+        border: '1px solid transparent',
+        borderRadius: 14,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 7,
+        cursor: 'pointer',
+        fontFamily: 'inherit',
+        transition: 'background 180ms ease, transform 120ms ease',
+      }}
+    >
+      {icon}
+      <span
+        style={{
+          fontSize: 12.5,
+          color: TAuth.text,
+          fontWeight: 600,
+        }}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
+  return (
+    <div style={{ marginTop: 18 }}>
+      {/* Divider with label */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          marginBottom: 14,
+        }}
+      >
+        <div style={{ flex: 1, height: 1, background: TAuth.divider }} />
+        <span
+          style={{
+            fontSize: 11,
+            color: TAuth.textTertiary,
+            fontWeight: 600,
+            letterSpacing: '0.06em',
+            textTransform: 'lowercase',
+          }}
+        >
+          {label}
+        </span>
+        <div style={{ flex: 1, height: 1, background: TAuth.divider }} />
+      </div>
+      {/* Buttons */}
+      <div style={{ display: 'flex', gap: 10 }}>
+        <SsoButton
+          icon={<AppleIcon />}
+          label="Apple"
+          ariaLabel="Continue with Apple"
+          onClick={onApple}
+        />
+        <SsoButton
+          icon={<GoogleIcon />}
+          label="Google"
+          ariaLabel="Continue with Google"
+          onClick={onGoogle}
+        />
+        <SsoButton
+          icon={<MessageSquare size={17} color={TAuth.coral} strokeWidth={2.2} />}
+          label="Text"
+          ariaLabel="Continue with SMS"
+          onClick={onPhone}
+        />
+      </div>
+    </div>
   );
 }

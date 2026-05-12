@@ -13,15 +13,30 @@ import AuthShell, { AuthInput, AuthCta, TAuth } from '../components/AuthShell';
 export default function SignInPassword() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [touched, setTouched] = useState({ email: false, password: false });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const valid =
-    /\S+@\S+\.\S+/.test(form.email) && form.password.length >= 6;
+  const errors = {
+    email: !/\S+@\S+\.\S+/.test(form.email) ? 'That looks off. Try again?' : '',
+    password: form.password.length < 6 ? 'Six characters minimum.' : '',
+  };
+  const valid = !errors.email && !errors.password;
 
   const submit = () => {
+    setTouched({ email: true, password: true });
     if (!valid) return;
+    setLoading(true);
     // Placeholder — Panagiotis wires real auth here.
-    navigate('/home');
+    setTimeout(() => {
+      setLoading(false);
+      navigate('/home');
+    }, 700);
+  };
+
+  const onField = (field) => (e) => {
+    setForm({ ...form, [field]: e.target.value });
+    if (touched[field]) setTouched({ ...touched, [field]: false });
   };
 
   return (
@@ -50,7 +65,8 @@ export default function SignInPassword() {
           autoComplete="email"
           placeholder="Email"
           value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onChange={onField('email')}
+          error={touched.email ? errors.email : ''}
         />
         <AuthInput
           icon={<Lock size={17} strokeWidth={2.2} />}
@@ -58,7 +74,8 @@ export default function SignInPassword() {
           autoComplete="current-password"
           placeholder="Password"
           value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChange={onField('password')}
+          error={touched.password ? errors.password : ''}
           trailing={
             <button
               onClick={() => setShowPassword((v) => !v)}
@@ -97,7 +114,11 @@ export default function SignInPassword() {
         </div>
 
         <div style={{ marginTop: 4 }}>
-          <AuthCta onClick={submit} disabled={!valid}>
+          <AuthCta
+            onClick={submit}
+            disabled={!valid && (touched.email || touched.password)}
+            loading={loading}
+          >
             Sign in
             <ArrowRight size={17} strokeWidth={2.4} />
           </AuthCta>

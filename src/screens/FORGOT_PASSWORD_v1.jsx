@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, ArrowRight, Check } from 'lucide-react';
-import AuthShell, { AuthInput, AuthCta, AuthSsoRow, TAuth } from '../components/AuthShell';
+import AuthShell, { AuthInput, AuthCta, TAuth } from '../components/AuthShell';
 
 /* ──────────────────────────────────────────────────────────────────────
-   SIGN_IN_v1.jsx
-   Magic-link first sign-in. Single email field → "Send me a link".
-   On submit, swaps to a "Check your inbox" confirmation in the same
-   shell so the transition feels calm, not a route hop.
+   FORGOT_PASSWORD_v1.jsx
+   Single email field. Submit swaps in place to a "Check your inbox"
+   state — same pattern as the magic-link confirmation in /sign-in.
    ────────────────────────────────────────────────────────────────────── */
 
-export default function SignIn() {
+export default function ForgotPassword() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [touched, setTouched] = useState(false);
@@ -24,7 +23,7 @@ export default function SignIn() {
     setTouched(true);
     if (!valid) return;
     setLoading(true);
-    // Placeholder — Panagiotis wires this to Supabase / Resend.
+    // Placeholder — Panagiotis wires reset email.
     setTimeout(() => {
       setLoading(false);
       setSent(true);
@@ -36,8 +35,8 @@ export default function SignIn() {
       <AuthShell
         onBack={() => setSent(false)}
         tagline="A calmer way to care."
-        title="Link sent."
-        subtitle={`Tap the link we just sent to ${email} and you're in.`}
+        title="Reset link sent."
+        subtitle={`Tap the link we just sent to ${email} to set a new password.`}
         footer={
           <span>
             Didn't land?{' '}
@@ -73,18 +72,18 @@ export default function SignIn() {
 
   return (
     <AuthShell
-      onBack={() => navigate(-1)}
+      onBack={() => navigate('/sign-in-password')}
       tagline="A calmer way to care."
-      title="Welcome back."
-      subtitle="Drop your email. We'll send a one-tap link."
+      title="Forgot it? No drama."
+      subtitle="Drop your email and we'll send a reset link."
       footer={
         <span>
-          First time here?{' '}
+          Remembered it?{' '}
           <span
-            onClick={() => navigate('/create-account')}
+            onClick={() => navigate('/sign-in-password')}
             style={{ color: TAuth.coral, fontWeight: 700, cursor: 'pointer' }}
           >
-            Create account
+            Sign in
           </span>
         </span>
       }
@@ -103,33 +102,10 @@ export default function SignIn() {
           }}
           error={error}
         />
-
         <AuthCta onClick={submit} disabled={!valid && touched} loading={loading}>
-          Ping me a link
+          Send reset link
           <ArrowRight size={17} strokeWidth={2.4} />
         </AuthCta>
-
-        <button
-          onClick={() => navigate('/sign-in-password')}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: 12.5,
-            color: TAuth.textTertiary,
-            padding: '4px 8px',
-            margin: '2px auto 0',
-            fontFamily: 'inherit',
-          }}
-        >
-          Prefer a password?
-        </button>
-
-        <AuthSsoRow
-          onApple={() => alert('Apple SSO — wire me up')}
-          onGoogle={() => alert('Google SSO — wire me up')}
-          onPhone={() => navigate('/sign-in-phone')}
-        />
       </div>
     </AuthShell>
   );

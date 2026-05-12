@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import AuthShell, { AuthInput, AuthCta, TAuth } from '../components/AuthShell';
+import AuthShell, { AuthInput, AuthCta, AuthSsoRow, TAuth } from '../components/AuthShell';
 
 /* ──────────────────────────────────────────────────────────────────────
    69_CREATE_ACCOUNT_v2.jsx
@@ -13,16 +13,31 @@ import AuthShell, { AuthInput, AuthCta, TAuth } from '../components/AuthShell';
 export default function CreateAccountV2() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [touched, setTouched] = useState({ name: false, email: false, password: false });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const valid =
-    form.name.trim().length >= 2 &&
-    /\S+@\S+\.\S+/.test(form.email) &&
-    form.password.length >= 6;
+  const errors = {
+    name: form.name.trim().length < 2 ? 'Need at least two letters.' : '',
+    email: !/\S+@\S+\.\S+/.test(form.email) ? 'That looks off. Try again?' : '',
+    password: form.password.length < 6 ? 'Six characters minimum.' : '',
+  };
+  const valid = !errors.name && !errors.email && !errors.password;
 
   const submit = () => {
+    setTouched({ name: true, email: true, password: true });
     if (!valid) return;
-    navigate('/add-pet');
+    setLoading(true);
+    // Placeholder — Panagiotis wires real signup.
+    setTimeout(() => {
+      setLoading(false);
+      navigate('/verify-email', { state: { email: form.email } });
+    }, 700);
+  };
+
+  const onField = (field) => (e) => {
+    setForm({ ...form, [field]: e.target.value });
+    if (touched[field]) setTouched({ ...touched, [field]: false });
   };
 
   return (
@@ -49,7 +64,8 @@ export default function CreateAccountV2() {
           autoComplete="name"
           placeholder="Name"
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          onChange={onField('name')}
+          error={touched.name ? errors.name : ''}
         />
         <AuthInput
           icon={<Mail size={17} strokeWidth={2.2} />}
@@ -58,7 +74,8 @@ export default function CreateAccountV2() {
           autoComplete="email"
           placeholder="Email"
           value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          onChange={onField('email')}
+          error={touched.email ? errors.email : ''}
         />
         <AuthInput
           icon={<Lock size={17} strokeWidth={2.2} />}
@@ -66,7 +83,8 @@ export default function CreateAccountV2() {
           autoComplete="new-password"
           placeholder="Password"
           value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          onChange={onField('password')}
+          error={touched.password ? errors.password : ''}
           trailing={
             <button
               onClick={() => setShowPassword((v) => !v)}
@@ -86,7 +104,11 @@ export default function CreateAccountV2() {
         />
 
         <div style={{ marginTop: 6 }}>
-          <AuthCta onClick={submit} disabled={!valid}>
+          <AuthCta
+            onClick={submit}
+            disabled={!valid && (touched.name || touched.email || touched.password)}
+            loading={loading}
+          >
             Let's go
             <ArrowRight size={17} strokeWidth={2.4} />
           </AuthCta>
@@ -106,6 +128,12 @@ export default function CreateAccountV2() {
           <span style={{ color: TAuth.coral, fontWeight: 600 }}>Terms</span> &{' '}
           <span style={{ color: TAuth.coral, fontWeight: 600 }}>Privacy</span>.
         </p>
+
+        <AuthSsoRow
+          onApple={() => alert('Apple SSO — wire me up')}
+          onGoogle={() => alert('Google SSO — wire me up')}
+          onPhone={() => navigate('/sign-in-phone')}
+        />
       </div>
     </AuthShell>
   );
