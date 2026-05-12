@@ -13,6 +13,13 @@ import PetsHealth from './screens/05_PETS_ProfileShell_Health_v1'
 
 // New screens
 import OnboardingScreen from './screens/36_ONBOARDING_v1'
+import OnboardingV2 from './screens/36_ONBOARDING_v2'
+import OnboardingDirections from './screens/ONBOARDING_DIRECTIONS_v1'
+import OnboardingConnected from './screens/ONBOARDING_CONNECTED_v1'
+import OnboardingV3 from './screens/ONBOARDING_v3'
+import OnboardingV4 from './screens/ONBOARDING_v4'
+import OnboardingPreview from './screens/ONBOARDING_PREVIEW_v1'
+import SplashVariants from './screens/SPLASH_VARIANTS_v1'
 import AddPetScreen from './screens/37_ADD_PET_v1'
 import EditPetScreen from './screens/38_EDIT_PET_v1'
 import ReviewRatingScreen from './screens/39_REVIEW_RATING_v1'
@@ -100,6 +107,13 @@ function App() {
 
       {/* New screens */}
       <Route path="/onboarding" element={<OnboardingScreen />} />
+      <Route path="/onboarding-v2" element={<OnboardingV2 />} />
+      <Route path="/onboarding-directions" element={<OnboardingDirections />} />
+      <Route path="/onboarding-connected" element={<OnboardingConnected />} />
+      <Route path="/onboarding-v3" element={<OnboardingV3 />} />
+      <Route path="/onboarding-v4" element={<OnboardingV4 />} />
+      <Route path="/onboarding-preview" element={<OnboardingPreview />} />
+      <Route path="/splash-variants" element={<SplashVariants />} />
       <Route path="/add-pet" element={<AddPetScreen />} />
       <Route path="/edit-pet" element={<EditPetScreen />} />
       <Route path="/review" element={<ReviewRatingScreen />} />
