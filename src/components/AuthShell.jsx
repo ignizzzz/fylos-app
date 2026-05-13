@@ -134,87 +134,82 @@ export default function AuthShell({
           )}
         </div>
 
-        {/* Scroll area — wordmark anchored near the top, the rest of the
-            stack (title → form → footer) centered in the space below. */}
+        {/* Scroll area — top half reserved for a future hero image, all
+            text + form + SSO docked to the bottom half. */}
         <div
           style={{
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            padding: heroSrc ? '0 24px 28px' : '0 24px 28px',
+            padding: '0 24px 28px',
             overflowY: 'auto',
             minHeight: 0,
           }}
         >
-          {/* Hero watercolor (optional) */}
-          {heroSrc && (
-            <div
-              style={{
-                width: '100%',
-                height: heroHeight,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                animation: 'auth-fadeIn 600ms ease-out both',
-              }}
-            >
+          {/* Top zone — reserved for hero photo. Flex-grows so the bottom
+              content compresses upward. Empty until heroSrc lands. */}
+          <div
+            style={{
+              flex: 1,
+              minHeight: 80,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              animation: 'auth-fadeIn 600ms ease-out both',
+            }}
+          >
+            {heroSrc && (
               <img
                 src={heroSrc}
                 alt={heroAlt}
                 style={{
                   maxWidth: '100%',
-                  maxHeight: '100%',
+                  maxHeight: heroHeight,
                   objectFit: 'contain',
                 }}
               />
-            </div>
-          )}
-
-          {/* Top region: FYLOS wordmark + tagline, anchored near the top
-              so the brand sits high (less empty space above it). */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 6,
-              paddingTop: heroSrc ? 0 : 4,
-              marginTop: heroSrc ? -4 : 0,
-              animation: 'auth-fadeUp 600ms 80ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
-            }}
-          >
-            <FylosWordmark fontSize={heroSrc ? 28 : 40} />
-            {tagline && (
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: TAuth.coral,
-                  letterSpacing: '0.02em',
-                  fontFamily: 'Inter, -apple-system, sans-serif',
-                }}
-              >
-                {tagline}
-              </div>
             )}
           </div>
 
-          {/* Middle region: title + form + footer stack right under the
-              wordmark, with empty space falling naturally at the bottom. */}
+          {/* Bottom zone — everything else, stacked tight. */}
           <div
             style={{
-              flex: 1,
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'flex-start',
-              paddingTop: 28,
-              paddingBottom: 4,
+              paddingTop: 12,
             }}
           >
+            {/* FYLOS wordmark + tagline */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 6,
+                animation: 'auth-fadeUp 600ms 80ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+              }}
+            >
+              <FylosWordmark fontSize={32} />
+              {tagline && (
+                <div
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: TAuth.coral,
+                    letterSpacing: '0.02em',
+                    fontFamily: 'Inter, -apple-system, sans-serif',
+                  }}
+                >
+                  {tagline}
+                </div>
+              )}
+            </div>
+
             {(eyebrow || title || subtitle) && (
               <div
                 style={{
                   textAlign: 'center',
+                  marginTop: 14,
                   animation: 'auth-fadeUp 600ms 160ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
                 }}
               >
@@ -236,12 +231,12 @@ export default function AuthShell({
                   <h1
                     style={{
                       fontFamily: '"Playfair Display", "Georgia", serif',
-                      fontSize: 30,
+                      fontSize: 28,
                       fontWeight: 700,
                       color: TAuth.text,
                       letterSpacing: '-0.01em',
                       lineHeight: 1.15,
-                      marginBottom: subtitle ? 8 : 0,
+                      marginBottom: subtitle ? 6 : 0,
                     }}
                   >
                     {title}
@@ -267,22 +262,18 @@ export default function AuthShell({
             {/* Form slot */}
             <div
               style={{
-                marginTop: 18,
+                marginTop: 16,
                 animation: 'auth-fadeUp 600ms 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
               }}
             >
               {children}
             </div>
 
-            {/* Secondary actions (e.g. SSO row) — pinned to the bottom
-                of the middle region via margin-top: auto, so the form
-                stays high and the alternative paths sit near the home
-                indicator where the thumb naturally rests. */}
+            {/* Secondary actions (e.g. SSO row) */}
             {secondaryActions && (
               <div
                 style={{
-                  marginTop: 'auto',
-                  paddingTop: 24,
+                  marginTop: 20,
                   animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
                 }}
               >
@@ -290,14 +281,12 @@ export default function AuthShell({
               </div>
             )}
 
-            {/* Footer cross-link — below secondary actions if any,
-                otherwise pushed down with margin-top: auto. */}
+            {/* Footer cross-link */}
             {footer && (
               <div
                 style={{
                   textAlign: 'center',
-                  marginTop: secondaryActions ? 18 : 'auto',
-                  paddingTop: secondaryActions ? 0 : 24,
+                  marginTop: secondaryActions ? 16 : 22,
                   fontSize: 12.5,
                   color: TAuth.textTertiary,
                   animation: 'auth-fadeUp 600ms 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
