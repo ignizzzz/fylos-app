@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, MessageSquare, Loader2 } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Loader2, HelpCircle } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────────────────
    AuthShell — shared wrapper for /sign-in and /create-account.
@@ -90,10 +90,11 @@ export function FylosBilingualLockup({ fontSize = 32, gap = 10 }) {
 
 export default function AuthShell({
   onBack,
+  onHelp,
   heroSrc,
   heroAlt = '',
   heroHeight = 240,
-  tagline,
+  tagline, // accepted for backward compat, no longer rendered
   eyebrow,
   title,
   subtitle,
@@ -127,12 +128,13 @@ export default function AuthShell({
           }
         `}</style>
 
-        {/* Header — back button only, padded down so it clears the
-            Dynamic Island instead of sitting in front of it. */}
+        {/* Header — back button left, optional help button right.
+            Padded down so the buttons clear the Dynamic Island. */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             padding: '52px 16px 12px',
             position: 'relative',
             zIndex: 5,
@@ -155,6 +157,27 @@ export default function AuthShell({
               }}
             >
               <ChevronLeft size={18} color={TAuth.coralDark} />
+            </button>
+          ) : (
+            <div style={{ width: 36 }} />
+          )}
+          {onHelp ? (
+            <button
+              onClick={onHelp}
+              aria-label="Help"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: TAuth.coralSoft,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <HelpCircle size={18} color={TAuth.coralDark} strokeWidth={2.2} />
             </button>
           ) : (
             <div style={{ width: 36 }} />
@@ -196,22 +219,7 @@ export default function AuthShell({
                 }}
               />
             ) : (
-              <>
-                <FylosBilingualLockup fontSize={32} />
-                {tagline && (
-                  <div
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: TAuth.coral,
-                      letterSpacing: '0.02em',
-                      fontFamily: 'Inter, -apple-system, sans-serif',
-                    }}
-                  >
-                    {tagline}
-                  </div>
-                )}
-              </>
+              <FylosBilingualLockup fontSize={32} />
             )}
           </div>
 

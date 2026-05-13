@@ -73,9 +73,8 @@ export default function SignIn() {
 
   return (
     <AuthShell
-      onBack={() => navigate(-1)}
-      tagline="A calmer way to care."
-      title="Welcome back."
+      onHelp={() => alert('Help — coming soon')}
+      title="Right where you left it."
       subtitle="Drop your email. We'll send a one-tap link."
       footer={
         <span>

@@ -42,8 +42,7 @@ export default function CreateAccountV2() {
 
   return (
     <AuthShell
-      onBack={() => navigate(-1)}
-      tagline="A calmer way to care."
+      onHelp={() => alert('Help — coming soon')}
       title="Hi, friend."
       subtitle="Three quick things and you're set."
       footer={
