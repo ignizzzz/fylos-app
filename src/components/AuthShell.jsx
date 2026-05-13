@@ -28,7 +28,7 @@ export const TAuth = {
   divider: '#ECE6DE',
 };
 
-export function FylosWordmark({ fontSize = 28 }) {
+export function FylosWordmark({ text = 'FYLOS', fontSize = 28 }) {
   return (
     <div
       style={{
@@ -47,7 +47,7 @@ export function FylosWordmark({ fontSize = 28 }) {
           lineHeight: 1,
         }}
       >
-        FYLOS
+        {text}
       </span>
       <div
         style={{
@@ -57,6 +57,23 @@ export function FylosWordmark({ fontSize = 28 }) {
           backgroundColor: TAuth.coral,
         }}
       />
+    </div>
+  );
+}
+
+/* Bilingual brand lockup — ΦΙΛΟΣ above FYLOS, same Nunito, same size. */
+export function FylosBilingualLockup({ fontSize = 32, gap = 6 }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap,
+      }}
+    >
+      <FylosWordmark text="ΦΙΛΟΣ" fontSize={fontSize} />
+      <FylosWordmark text="FYLOS" fontSize={fontSize} />
     </div>
   );
 }
@@ -146,19 +163,20 @@ export default function AuthShell({
             minHeight: 0,
           }}
         >
-          {/* Top zone — reserved for hero photo. Flex-grows so the bottom
-              content compresses upward. Empty until heroSrc lands. */}
+          {/* Top zone — hosts the bilingual brand lockup (ΦΙΛΟΣ + FYLOS).
+              Swaps to a hero image if heroSrc is provided later. */}
           <div
             style={{
               flex: 1,
-              minHeight: 80,
+              minHeight: 100,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              paddingTop: 8,
               animation: 'auth-fadeIn 600ms ease-out both',
             }}
           >
-            {heroSrc && (
+            {heroSrc ? (
               <img
                 src={heroSrc}
                 alt={heroAlt}
@@ -168,10 +186,12 @@ export default function AuthShell({
                   objectFit: 'contain',
                 }}
               />
+            ) : (
+              <FylosBilingualLockup fontSize={32} />
             )}
           </div>
 
-          {/* Bottom zone — everything else, stacked tight. */}
+          {/* Bottom zone — title, form, secondary actions, footer. */}
           <div
             style={{
               display: 'flex',
@@ -179,37 +199,11 @@ export default function AuthShell({
               paddingTop: 12,
             }}
           >
-            {/* FYLOS wordmark + tagline */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 6,
-                animation: 'auth-fadeUp 600ms 80ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
-              }}
-            >
-              <FylosWordmark fontSize={32} />
-              {tagline && (
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: TAuth.coral,
-                    letterSpacing: '0.02em',
-                    fontFamily: 'Inter, -apple-system, sans-serif',
-                  }}
-                >
-                  {tagline}
-                </div>
-              )}
-            </div>
-
             {(eyebrow || title || subtitle) && (
               <div
                 style={{
                   textAlign: 'center',
-                  marginTop: 14,
+                  marginTop: 0,
                   animation: 'auth-fadeUp 600ms 160ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
                 }}
               >
