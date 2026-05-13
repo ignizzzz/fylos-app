@@ -87,6 +87,8 @@ export default function AuthShell({
         <div className="absolute top-[12px] left-1/2 transform -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-50 pointer-events-none hidden sm:block shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)]" />
 
         <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap');
+
           @keyframes auth-fadeUp {
             from { opacity: 0; transform: translateY(8px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -232,13 +234,13 @@ export default function AuthShell({
                 {title && (
                   <h1
                     style={{
-                      fontFamily: '"Nunito", sans-serif',
-                      fontSize: 24,
-                      fontWeight: 800,
+                      fontFamily: '"Playfair Display", "Georgia", serif',
+                      fontSize: 30,
+                      fontWeight: 700,
                       color: TAuth.text,
-                      letterSpacing: '-0.015em',
+                      letterSpacing: '-0.01em',
                       lineHeight: 1.15,
-                      marginBottom: subtitle ? 6 : 0,
+                      marginBottom: subtitle ? 8 : 0,
                     }}
                   >
                     {title}
@@ -252,6 +254,7 @@ export default function AuthShell({
                       lineHeight: 1.5,
                       maxWidth: 300,
                       margin: '0 auto',
+                      fontFamily: 'Inter, -apple-system, sans-serif',
                     }}
                   >
                     {subtitle}
@@ -316,12 +319,13 @@ export function AuthInput({
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          height: 52,
-          padding: '0 16px',
-          background: TAuth.coralInput,
-          border: error ? `1px solid ${TAuth.coral}` : '1px solid transparent',
-          borderRadius: 14,
-          transition: 'border-color 180ms ease, background 180ms ease',
+          height: 54,
+          padding: '0 18px',
+          background: '#FFFFFF',
+          border: error ? `1px solid ${TAuth.coral}` : '1px solid rgba(60,30,15,0.04)',
+          borderRadius: 16,
+          boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)',
+          transition: 'border-color 180ms ease, box-shadow 180ms ease',
         }}
       >
         {icon && (
@@ -330,7 +334,7 @@ export function AuthInput({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: TAuth.coral,
+              color: '#9C8E84',
               flexShrink: 0,
             }}
           >
@@ -445,37 +449,28 @@ function GoogleIcon({ size = 18 }) {
   );
 }
 
-function SsoButton({ icon, label, onClick, ariaLabel }) {
+function SsoButton({ icon, onClick, ariaLabel }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={ariaLabel || label}
+      aria-label={ariaLabel}
       style={{
-        flex: 1,
-        height: 48,
-        background: TAuth.coralInput,
-        border: '1px solid transparent',
-        borderRadius: 14,
+        width: 54,
+        height: 54,
+        background: '#FFFFFF',
+        border: '1px solid rgba(60,30,15,0.04)',
+        borderRadius: '50%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 7,
         cursor: 'pointer',
         fontFamily: 'inherit',
-        transition: 'background 180ms ease, transform 120ms ease',
+        boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)',
+        transition: 'transform 120ms ease, box-shadow 180ms ease',
       }}
     >
       {icon}
-      <span
-        style={{
-          fontSize: 12.5,
-          color: TAuth.text,
-          fontWeight: 600,
-        }}
-      >
-        {label}
-      </span>
     </button>
   );
 }
@@ -489,7 +484,7 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          marginBottom: 14,
+          marginBottom: 18,
         }}
       >
         <div style={{ flex: 1, height: 1, background: TAuth.divider }} />
@@ -500,29 +495,27 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
             fontWeight: 600,
             letterSpacing: '0.06em',
             textTransform: 'lowercase',
+            fontFamily: 'Inter, -apple-system, sans-serif',
           }}
         >
           {label}
         </span>
         <div style={{ flex: 1, height: 1, background: TAuth.divider }} />
       </div>
-      {/* Buttons */}
-      <div style={{ display: 'flex', gap: 10 }}>
+      {/* Circular icon-only buttons, centered */}
+      <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
         <SsoButton
-          icon={<AppleIcon />}
-          label="Apple"
+          icon={<AppleIcon size={20} />}
           ariaLabel="Continue with Apple"
           onClick={onApple}
         />
         <SsoButton
-          icon={<GoogleIcon />}
-          label="Google"
+          icon={<GoogleIcon size={20} />}
           ariaLabel="Continue with Google"
           onClick={onGoogle}
         />
         <SsoButton
-          icon={<MessageSquare size={17} color={TAuth.coral} strokeWidth={2.2} />}
-          label="Text"
+          icon={<MessageSquare size={19} color={TAuth.coral} strokeWidth={2.2} />}
           ariaLabel="Continue with SMS"
           onClick={onPhone}
         />
