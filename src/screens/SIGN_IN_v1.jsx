@@ -88,6 +88,12 @@ export default function SignIn() {
           </span>
         </span>
       }
+      secondaryActions={
+        <AuthSsoRow
+          onApple={() => alert('Apple SSO — wire me up')}
+          onGoogle={() => alert('Google SSO — wire me up')}
+        />
+      }
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <AuthInput
@@ -124,12 +130,6 @@ export default function SignIn() {
         >
           Prefer a password?
         </button>
-
-        <AuthSsoRow
-          onApple={() => alert('Apple SSO — wire me up')}
-          onGoogle={() => alert('Google SSO — wire me up')}
-          onPhone={() => navigate('/sign-in-phone')}
-        />
       </div>
     </AuthShell>
   );

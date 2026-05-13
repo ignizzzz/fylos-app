@@ -71,6 +71,7 @@ export default function AuthShell({
   title,
   subtitle,
   children,
+  secondaryActions,
   footer,
 }) {
   return (
@@ -273,15 +274,33 @@ export default function AuthShell({
               {children}
             </div>
 
-            {/* Footer cross-link — sits right under the form. */}
+            {/* Secondary actions (e.g. SSO row) — pinned to the bottom
+                of the middle region via margin-top: auto, so the form
+                stays high and the alternative paths sit near the home
+                indicator where the thumb naturally rests. */}
+            {secondaryActions && (
+              <div
+                style={{
+                  marginTop: 'auto',
+                  paddingTop: 24,
+                  animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+                }}
+              >
+                {secondaryActions}
+              </div>
+            )}
+
+            {/* Footer cross-link — below secondary actions if any,
+                otherwise pushed down with margin-top: auto. */}
             {footer && (
               <div
                 style={{
                   textAlign: 'center',
-                  marginTop: 22,
+                  marginTop: secondaryActions ? 18 : 'auto',
+                  paddingTop: secondaryActions ? 0 : 24,
                   fontSize: 12.5,
                   color: TAuth.textTertiary,
-                  animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+                  animation: 'auth-fadeUp 600ms 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
                 }}
               >
                 {footer}
@@ -502,7 +521,8 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
         </span>
         <div style={{ flex: 1, height: 1, background: TAuth.divider }} />
       </div>
-      {/* Circular icon-only buttons, centered */}
+      {/* Circular icon-only buttons, centered. Phone is opt-in via
+          `onPhone` — when absent (most flows for now) we ship two. */}
       <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
         <SsoButton
           icon={<AppleIcon size={20} />}
@@ -514,11 +534,13 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
           ariaLabel="Continue with Google"
           onClick={onGoogle}
         />
-        <SsoButton
-          icon={<MessageSquare size={19} color={TAuth.coral} strokeWidth={2.2} />}
-          ariaLabel="Continue with SMS"
-          onClick={onPhone}
-        />
+        {onPhone && (
+          <SsoButton
+            icon={<MessageSquare size={19} color={TAuth.coral} strokeWidth={2.2} />}
+            ariaLabel="Continue with SMS"
+            onClick={onPhone}
+          />
+        )}
       </div>
     </div>
   );

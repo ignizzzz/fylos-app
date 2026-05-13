@@ -57,6 +57,12 @@ export default function CreateAccountV2() {
           </span>
         </span>
       }
+      secondaryActions={
+        <AuthSsoRow
+          onApple={() => alert('Apple SSO — wire me up')}
+          onGoogle={() => alert('Google SSO — wire me up')}
+        />
+      }
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <AuthInput
@@ -128,12 +134,6 @@ export default function CreateAccountV2() {
           <span style={{ color: TAuth.coral, fontWeight: 600 }}>Terms</span> &{' '}
           <span style={{ color: TAuth.coral, fontWeight: 600 }}>Privacy</span>.
         </p>
-
-        <AuthSsoRow
-          onApple={() => alert('Apple SSO — wire me up')}
-          onGoogle={() => alert('Google SSO — wire me up')}
-          onPhone={() => navigate('/sign-in-phone')}
-        />
       </div>
     </AuthShell>
   );
