@@ -166,18 +166,18 @@ export default function AuthShell({
               onClick={onHelp}
               aria-label="Help"
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                background: TAuth.coralSoft,
+                background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
+                padding: 6,
+                margin: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: TAuth.coralDark,
               }}
             >
-              <HelpCircle size={18} color={TAuth.coralDark} strokeWidth={2.2} />
+              <HelpCircle size={22} strokeWidth={2} />
             </button>
           ) : (
             <div style={{ width: 36 }} />
@@ -224,12 +224,13 @@ export default function AuthShell({
           </div>
 
           {/* Content group — title, form, secondary actions, footer.
-              Small but visible gaps between groups; never crammed. */}
+              Slightly more breathing room above the title so the welcome
+              line doesn't crowd the brand lockup. */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              paddingTop: 36,
+              paddingTop: 52,
             }}
           >
             {(eyebrow || title || subtitle) && (
