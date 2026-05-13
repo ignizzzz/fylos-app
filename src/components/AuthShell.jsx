@@ -174,14 +174,14 @@ export default function AuthShell({
           }}
         >
           {/* Top group — bilingual brand lockup + tagline below it,
-              hugged near the top of the scroll area (no flex-grow). */}
+              with comfortable breathing room from the header. */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: 10,
-              paddingTop: 12,
+              gap: 14,
+              paddingTop: 20,
               animation: 'auth-fadeIn 600ms ease-out both',
             }}
           >
@@ -216,12 +216,12 @@ export default function AuthShell({
           </div>
 
           {/* Content group — title, form, secondary actions, footer.
-              Compact spacing so the whole screen doesn't feel airy. */}
+              Small but visible gaps between groups; never crammed. */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              paddingTop: 26,
+              paddingTop: 36,
             }}
           >
             {(eyebrow || title || subtitle) && (
@@ -281,7 +281,7 @@ export default function AuthShell({
             {/* Form slot */}
             <div
               style={{
-                marginTop: 14,
+                marginTop: 18,
                 animation: 'auth-fadeUp 600ms 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
               }}
             >
@@ -292,7 +292,7 @@ export default function AuthShell({
             {secondaryActions && (
               <div
                 style={{
-                  marginTop: 18,
+                  marginTop: 22,
                   animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
                 }}
               >
@@ -305,7 +305,7 @@ export default function AuthShell({
               <div
                 style={{
                   textAlign: 'center',
-                  marginTop: secondaryActions ? 14 : 18,
+                  marginTop: secondaryActions ? 16 : 22,
                   fontSize: 12.5,
                   color: TAuth.textTertiary,
                   animation: 'auth-fadeUp 600ms 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
