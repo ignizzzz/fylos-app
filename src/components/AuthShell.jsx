@@ -61,8 +61,10 @@ export function FylosWordmark({ text = 'FYLOS', fontSize = 28 }) {
   );
 }
 
-/* Bilingual brand lockup — ΦΙΛΟΣ above FYLOS, same Nunito, same size. */
-export function FylosBilingualLockup({ fontSize = 32, gap = 6 }) {
+/* Bilingual brand lockup — handwritten watercolor φίλος above the
+   typeset FYLOS wordmark. The Greek line uses the actual onboarding
+   asset so the etymology reads in its hand-painted brand voice. */
+export function FylosBilingualLockup({ fontSize = 32, gap = 10 }) {
   return (
     <div
       style={{
@@ -72,7 +74,15 @@ export function FylosBilingualLockup({ fontSize = 32, gap = 6 }) {
         gap,
       }}
     >
-      <FylosWordmark text="ΦΙΛΟΣ" fontSize={fontSize} />
+      <img
+        src="/onboarding/philos.png"
+        alt="φίλος"
+        style={{
+          height: fontSize * 1.15,
+          width: 'auto',
+          display: 'block',
+        }}
+      />
       <FylosWordmark text="FYLOS" fontSize={fontSize} />
     </div>
   );
