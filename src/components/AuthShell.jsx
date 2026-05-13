@@ -173,16 +173,15 @@ export default function AuthShell({
             minHeight: 0,
           }}
         >
-          {/* Top zone — hosts the bilingual brand lockup (ΦΙΛΟΣ + FYLOS).
-              Swaps to a hero image if heroSrc is provided later. */}
+          {/* Top group — bilingual brand lockup + tagline below it,
+              hugged near the top of the scroll area (no flex-grow). */}
           <div
             style={{
-              flex: 1,
-              minHeight: 100,
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              paddingTop: 8,
+              gap: 10,
+              paddingTop: 12,
               animation: 'auth-fadeIn 600ms ease-out both',
             }}
           >
@@ -197,16 +196,32 @@ export default function AuthShell({
                 }}
               />
             ) : (
-              <FylosBilingualLockup fontSize={32} />
+              <>
+                <FylosBilingualLockup fontSize={32} />
+                {tagline && (
+                  <div
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: TAuth.coral,
+                      letterSpacing: '0.02em',
+                      fontFamily: 'Inter, -apple-system, sans-serif',
+                    }}
+                  >
+                    {tagline}
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          {/* Bottom zone — title, form, secondary actions, footer. */}
+          {/* Content group — title, form, secondary actions, footer.
+              Compact spacing so the whole screen doesn't feel airy. */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
-              paddingTop: 12,
+              paddingTop: 26,
             }}
           >
             {(eyebrow || title || subtitle) && (
@@ -266,7 +281,7 @@ export default function AuthShell({
             {/* Form slot */}
             <div
               style={{
-                marginTop: 16,
+                marginTop: 14,
                 animation: 'auth-fadeUp 600ms 240ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
               }}
             >
@@ -277,7 +292,7 @@ export default function AuthShell({
             {secondaryActions && (
               <div
                 style={{
-                  marginTop: 20,
+                  marginTop: 18,
                   animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
                 }}
               >
@@ -290,7 +305,7 @@ export default function AuthShell({
               <div
                 style={{
                   textAlign: 'center',
-                  marginTop: secondaryActions ? 16 : 22,
+                  marginTop: secondaryActions ? 14 : 18,
                   fontSize: 12.5,
                   color: TAuth.textTertiary,
                   animation: 'auth-fadeUp 600ms 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
