@@ -74,7 +74,7 @@ export default function SignIn() {
   return (
     <AuthShell
       onHelp={() => alert('Help — coming soon')}
-      title="Καλώς ήρθες."
+      title="Look who's back."
       subtitle="Drop your email. We'll send a one-tap link."
       footer={
         <span>
