@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChevronLeft, MessageSquare, Loader2, HelpCircle } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────────────────
@@ -102,6 +102,11 @@ export default function AuthShell({
   secondaryActions,
   footer,
 }) {
+  const [helpOpen, setHelpOpen] = useState(false);
+  const handleHelpClick = () => {
+    setHelpOpen(true);
+    if (typeof onHelp === 'function') onHelp();
+  };
   return (
     <div className="min-h-screen bg-[#F0F0F2] flex items-center justify-center sm:p-8 font-sans antialiased">
       <div
@@ -163,7 +168,7 @@ export default function AuthShell({
           )}
           {onHelp ? (
             <button
-              onClick={onHelp}
+              onClick={handleHelpClick}
               aria-label="Help"
               style={{
                 background: 'transparent',
@@ -223,14 +228,17 @@ export default function AuthShell({
             )}
           </div>
 
-          {/* Content group — title, form, secondary actions, footer.
-              Slightly more breathing room above the title so the welcome
-              line doesn't crowd the brand lockup. */}
+          {/* Middle zone — title + form. Flex-grows and centers its
+              content so the welcome line floats in the empty space
+              between the brand lockup and the bottom-pinned actions. */}
           <div
             style={{
+              flex: 1,
               display: 'flex',
               flexDirection: 'column',
-              paddingTop: 52,
+              justifyContent: 'center',
+              paddingTop: 32,
+              paddingBottom: 24,
             }}
           >
             {(eyebrow || title || subtitle) && (
@@ -296,35 +304,48 @@ export default function AuthShell({
             >
               {children}
             </div>
-
-            {/* Secondary actions (e.g. SSO row) */}
-            {secondaryActions && (
-              <div
-                style={{
-                  marginTop: 22,
-                  animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
-                }}
-              >
-                {secondaryActions}
-              </div>
-            )}
-
-            {/* Footer cross-link */}
-            {footer && (
-              <div
-                style={{
-                  textAlign: 'center',
-                  marginTop: secondaryActions ? 16 : 22,
-                  fontSize: 12.5,
-                  color: TAuth.textTertiary,
-                  animation: 'auth-fadeUp 600ms 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
-                }}
-              >
-                {footer}
-              </div>
-            )}
           </div>
+
+          {/* Bottom zone — SSO row + footer cross-link, pinned to the
+              bottom of the scroll area so the screen reads as a balanced
+              composition (brand top, form middle, alt-paths bottom). */}
+          {(secondaryActions || footer) && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                paddingBottom: 4,
+              }}
+            >
+              {secondaryActions && (
+                <div
+                  style={{
+                    animation: 'auth-fadeUp 600ms 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+                  }}
+                >
+                  {secondaryActions}
+                </div>
+              )}
+              {footer && (
+                <div
+                  style={{
+                    textAlign: 'center',
+                    marginTop: secondaryActions ? 16 : 0,
+                    fontSize: 12.5,
+                    color: TAuth.textTertiary,
+                    animation: 'auth-fadeUp 600ms 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
+                  }}
+                >
+                  {footer}
+                </div>
+              )}
+            </div>
+          )}
         </div>
+
+        {/* Help sheet — rendered inside the iPhone frame so it overlays
+            only the device surface, not the surrounding desktop chrome. */}
+        <AuthHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
       </div>
     </div>
   );
@@ -560,5 +581,172 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
         )}
       </div>
     </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   AuthHelpSheet — bottom sheet that pops up when the "?" is tapped.
+   Cream surface, coral accents, watercolor-soft shadow. Matches the
+   rest of the auth surface so it feels like an extension of the page,
+   not a generic system dialog.
+   ────────────────────────────────────────────────────────────────────── */
+export function AuthHelpSheet({ open, onClose }) {
+  if (!open) return null;
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(60,30,15,0.38)',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        zIndex: 200,
+        animation: 'authHelpFade 220ms ease both',
+      }}
+    >
+      <style>{`
+        @keyframes authHelpFade {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes authHelpSlide {
+          from { transform: translateY(100%); }
+          to   { transform: translateY(0); }
+        }
+      `}</style>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%',
+          background: TAuth.bg,
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
+          padding: '14px 24px 28px',
+          boxShadow: '0 -8px 28px rgba(60,30,15,0.18)',
+          animation: 'authHelpSlide 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+        }}
+      >
+        {/* Drag handle */}
+        <div
+          style={{
+            width: 44,
+            height: 4,
+            borderRadius: 2,
+            background: 'rgba(60,30,15,0.16)',
+            margin: '0 auto 18px',
+          }}
+        />
+
+        <h2
+          style={{
+            fontFamily: '"Playfair Display", "Georgia", serif',
+            fontSize: 24,
+            fontWeight: 700,
+            color: TAuth.text,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.15,
+            margin: 0,
+            textAlign: 'center',
+          }}
+        >
+          Need a hand?
+        </h2>
+        <p
+          style={{
+            fontSize: 13.5,
+            color: TAuth.textMuted,
+            lineHeight: 1.5,
+            margin: '6px auto 20px',
+            textAlign: 'center',
+            maxWidth: 280,
+            fontFamily: 'Inter, -apple-system, sans-serif',
+          }}
+        >
+          A real human is around. Pick what works for you.
+        </p>
+
+        {/* Action rows */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <HelpRow
+            label="Email us"
+            sub="help@fylos.app"
+            onClick={() => (window.location.href = 'mailto:help@fylos.app')}
+          />
+          <HelpRow
+            label="Read the FAQ"
+            sub="The short version of everything"
+            onClick={() => alert('FAQ — wire me up')}
+          />
+          <HelpRow
+            label="Chat with us"
+            sub="Mon–Fri, 9–6"
+            onClick={() => alert('Chat — wire me up')}
+          />
+        </div>
+
+        <button
+          onClick={onClose}
+          style={{
+            width: '100%',
+            height: 50,
+            marginTop: 18,
+            borderRadius: 25,
+            border: 'none',
+            background: TAuth.coral,
+            color: '#FFFFFF',
+            fontWeight: 700,
+            fontSize: 15,
+            fontFamily: 'inherit',
+            cursor: 'pointer',
+            boxShadow: '0 6px 18px rgba(232,93,42,0.30)',
+          }}
+        >
+          Got it
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function HelpRow({ label, sub, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        background: '#FFFFFF',
+        border: '1px solid rgba(60,30,15,0.04)',
+        borderRadius: 14,
+        padding: '12px 16px',
+        cursor: 'pointer',
+        fontFamily: 'inherit',
+        textAlign: 'left',
+        boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)',
+      }}
+    >
+      <span
+        style={{
+          fontSize: 14,
+          fontWeight: 700,
+          color: TAuth.text,
+          lineHeight: 1.3,
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          fontSize: 12,
+          color: TAuth.textTertiary,
+          marginTop: 2,
+        }}
+      >
+        {sub}
+      </span>
+    </button>
   );
 }
