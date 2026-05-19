@@ -43,6 +43,20 @@ export default function CreateAccountV2() {
   return (
     <AuthShell
       showHelp
+      helpTopics={[
+        {
+          q: 'Why these three things?',
+          a: "Name, email, and a password — that's all we need to make your spot here.",
+        },
+        {
+          q: 'What counts as a strong password?',
+          a: "Six characters minimum. Mix letters and numbers if you can — easier to remember, harder to guess.",
+        },
+        {
+          q: 'Do I need to verify my email?',
+          a: "Yes — we send a link right after sign-up. One quick tap and you're in.",
+        },
+      ]}
       title="Hi, friend."
       subtitle="Three quick things and you're set."
       footer={

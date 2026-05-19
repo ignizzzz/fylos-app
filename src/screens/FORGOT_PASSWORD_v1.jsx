@@ -73,6 +73,17 @@ export default function ForgotPassword() {
   return (
     <AuthShell
       onBack={() => navigate('/sign-in-password')}
+      showHelp
+      helpTopics={[
+        {
+          q: 'How does this work?',
+          a: "Drop your email and we send you a secure link. Tap it to set a new password.",
+        },
+        {
+          q: "Didn't get the link?",
+          a: "Wait a minute, then tap Resend. Check your spam folder while you're there.",
+        },
+      ]}
       tagline="A calmer way to care."
       title="Forgot it? No drama."
       subtitle="Drop your email and we'll send a reset link."

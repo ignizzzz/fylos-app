@@ -171,6 +171,21 @@ export default function SignInPhone() {
   return (
     <AuthShell
       onBack={() => navigate('/sign-in')}
+      showHelp
+      helpTopics={[
+        {
+          q: 'How does the code work?',
+          a: "We text a 6-digit code to your number. Type it in and you're signed in.",
+        },
+        {
+          q: 'Do I get charged?',
+          a: "Your carrier may charge standard SMS rates for the text.",
+        },
+        {
+          q: 'Prefer email?',
+          a: "Tap 'Use email instead' to switch to the one-tap link.",
+        },
+      ]}
       tagline="A calmer way to care."
       title="Got a phone?"
       subtitle="Drop your number and we'll text a six-digit code."

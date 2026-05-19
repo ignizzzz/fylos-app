@@ -23,6 +23,21 @@ export default function VerifyEmail() {
   return (
     <AuthShell
       onBack={() => navigate('/create-account')}
+      showHelp
+      helpTopics={[
+        {
+          q: 'Why am I here?',
+          a: "We just sent a verify link to your inbox. Tap it on this device and your account is live.",
+        },
+        {
+          q: 'Can I skip this?',
+          a: "Yes — tap 'I'll verify later'. Some features need a verified email though.",
+        },
+        {
+          q: 'Wrong email?',
+          a: "Tap 'Edit it' under the message — we'll restart with the right address.",
+        },
+      ]}
       tagline="A calmer way to care."
       title="One last tap."
       subtitle={`We sent a verify link to ${email}. Open it on this device and you're in.`}

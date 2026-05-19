@@ -91,8 +91,8 @@ export function FylosBilingualLockup({ fontSize = 32, gap = 10 }) {
 export default function AuthShell({
   onBack,
   showHelp = false,
-  helpTitle = 'Need a hand?',
-  helpBody = "Drop a line at hello@fylos.app — we usually get back within a day.",
+  helpTitle = 'How can we help?',
+  helpTopics = [],
   heroSrc,
   heroAlt = '',
   heroHeight = 240,
@@ -242,7 +242,7 @@ export default function AuthShell({
             style={{
               display: 'flex',
               flexDirection: 'column',
-              paddingTop: 32,
+              paddingTop: 52,
             }}
           >
             {(eyebrow || title || subtitle) && (
@@ -349,7 +349,12 @@ export default function AuthShell({
 
         {/* Help sheet — rendered inside the iPhone frame so it overlays
             only the device surface, not the surrounding desktop chrome. */}
-        <AuthHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
+        <AuthHelpSheet
+          open={helpOpen}
+          onClose={() => setHelpOpen(false)}
+          title={helpTitle}
+          topics={helpTopics}
+        />
       </div>
     </div>
   );
@@ -600,7 +605,7 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
    rest of the auth surface so it feels like an extension of the page,
    not a generic system dialog.
    ────────────────────────────────────────────────────────────────────── */
-export function AuthHelpSheet({ open, onClose }) {
+export function AuthHelpSheet({ open, onClose, title = 'How can we help?', topics = [] }) {
   if (!open) return null;
   return (
     <div
@@ -661,102 +666,107 @@ export function AuthHelpSheet({ open, onClose }) {
             textAlign: 'center',
           }}
         >
-          Need a hand?
+          {title}
         </h2>
-        <p
+
+        {/* FAQ topics — Q in bold, A below, one per white card */}
+        {topics.length > 0 && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+              marginTop: 18,
+            }}
+          >
+            {topics.map((t, i) => (
+              <HelpTopic key={i} q={t.q} a={t.a} />
+            ))}
+          </div>
+        )}
+
+        {/* Contact footer — quiet line + email button */}
+        <div
           style={{
-            fontSize: 13.5,
-            color: TAuth.textMuted,
-            lineHeight: 1.5,
-            margin: '6px auto 20px',
+            marginTop: topics.length > 0 ? 22 : 18,
+            paddingTop: topics.length > 0 ? 18 : 0,
+            borderTop: topics.length > 0 ? `1px dashed ${TAuth.divider}` : 'none',
             textAlign: 'center',
-            maxWidth: 280,
-            fontFamily: 'Inter, -apple-system, sans-serif',
           }}
         >
-          A real human is around. Pick what works for you.
-        </p>
-
-        {/* Action rows */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <HelpRow
-            label="Email us"
-            sub="help@fylos.app"
-            onClick={() => (window.location.href = 'mailto:help@fylos.app')}
-          />
-          <HelpRow
-            label="Read the FAQ"
-            sub="The short version of everything"
-            onClick={() => alert('FAQ — wire me up')}
-          />
-          <HelpRow
-            label="Chat with us"
-            sub="Mon–Fri, 9–6"
-            onClick={() => alert('Chat — wire me up')}
-          />
+          <p
+            style={{
+              fontSize: 13,
+              color: TAuth.textMuted,
+              lineHeight: 1.5,
+              margin: '0 0 12px',
+              fontFamily: 'Inter, -apple-system, sans-serif',
+            }}
+          >
+            Need more help? We're here.
+          </p>
+          <a
+            href="mailto:hello@fylos.me"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              minWidth: 180,
+              height: 46,
+              padding: '0 22px',
+              borderRadius: 23,
+              background: TAuth.coral,
+              color: '#FFFFFF',
+              fontSize: 14.5,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Mail size={16} strokeWidth={2.4} />
+            Email us
+          </a>
         </div>
-
-        <button
-          onClick={onClose}
-          style={{
-            width: '100%',
-            height: 50,
-            marginTop: 18,
-            borderRadius: 25,
-            border: 'none',
-            background: TAuth.coral,
-            color: '#FFFFFF',
-            fontWeight: 700,
-            fontSize: 15,
-            fontFamily: 'inherit',
-            cursor: 'pointer',
-            boxShadow: '0 6px 18px rgba(232,93,42,0.30)',
-          }}
-        >
-          Got it
-        </button>
       </div>
     </div>
   );
 }
 
-function HelpRow({ label, sub, onClick }) {
+function HelpTopic({ q, a }) {
   return (
-    <button
-      onClick={onClick}
+    <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',
         background: '#FFFFFF',
         border: '1px solid rgba(60,30,15,0.04)',
         borderRadius: 14,
         padding: '12px 16px',
-        cursor: 'pointer',
-        fontFamily: 'inherit',
-        textAlign: 'left',
         boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)',
       }}
     >
-      <span
+      <div
         style={{
-          fontSize: 14,
+          fontSize: 13.5,
           fontWeight: 700,
           color: TAuth.text,
-          lineHeight: 1.3,
+          lineHeight: 1.35,
+          marginBottom: 4,
+          fontFamily: 'Inter, -apple-system, sans-serif',
         }}
       >
-        {label}
-      </span>
-      <span
+        {q}
+      </div>
+      <div
         style={{
-          fontSize: 12,
-          color: TAuth.textTertiary,
-          marginTop: 2,
+          fontSize: 12.5,
+          color: TAuth.textMuted,
+          lineHeight: 1.5,
+          fontFamily: 'Inter, -apple-system, sans-serif',
         }}
       >
-        {sub}
-      </span>
-    </button>
+        {a}
+      </div>
+    </div>
   );
 }

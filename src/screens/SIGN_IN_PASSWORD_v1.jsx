@@ -43,6 +43,20 @@ export default function SignInPassword() {
     <AuthShell
       onBack={() => navigate('/sign-in')}
       showHelp
+      helpTopics={[
+        {
+          q: 'Forgot your password?',
+          a: "Tap 'Forgot it?' under the password field — we'll email a reset link.",
+        },
+        {
+          q: 'Prefer no password at all?',
+          a: "Tap 'Prefer a link?' under Sign in — we'll email a magic link instead.",
+        },
+        {
+          q: "Why are Apple and Google here?",
+          a: "If you used one of them to make your account, tap it to sign in without typing anything.",
+        },
+      ]}
       title="Welcome back."
       subtitle="Email and password. Old school but it works."
       footer={

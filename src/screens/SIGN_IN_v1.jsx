@@ -74,6 +74,20 @@ export default function SignIn() {
   return (
     <AuthShell
       showHelp
+      helpTopics={[
+        {
+          q: 'What is a one-tap link?',
+          a: "We email a secure link to you. Tap it and you're in — no password to remember.",
+        },
+        {
+          q: 'How long does it take?',
+          a: "Usually under a minute. If it's slower, check your spam folder.",
+        },
+        {
+          q: 'Can I use a password instead?',
+          a: "Yes — tap 'Prefer a password?' below the email field.",
+        },
+      ]}
       title="Look who's back."
       subtitle="Drop your email. We'll send a one-tap link."
       footer={
