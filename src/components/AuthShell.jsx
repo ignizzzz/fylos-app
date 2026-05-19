@@ -515,28 +515,34 @@ function GoogleIcon({ size = 18 }) {
   );
 }
 
-function SsoButton({ icon, onClick, ariaLabel }) {
+function SsoButton({ icon, label, onClick, ariaLabel }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel || label}
       style={{
-        width: 54,
-        height: 54,
+        width: '100%',
+        height: 52,
         background: '#FFFFFF',
         border: '1px solid rgba(60,30,15,0.04)',
-        borderRadius: '50%',
+        borderRadius: 16,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: 10,
         cursor: 'pointer',
         fontFamily: 'inherit',
+        fontSize: 14.5,
+        fontWeight: 600,
+        color: TAuth.text,
         boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)',
         transition: 'transform 120ms ease, box-shadow 180ms ease',
+        padding: '0 16px',
       }}
     >
       {icon}
+      <span>{label}</span>
     </button>
   );
 }
@@ -550,7 +556,7 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          marginBottom: 18,
+          marginBottom: 14,
         }}
       >
         <div style={{ flex: 1, height: 1, background: TAuth.divider }} />
@@ -568,23 +574,23 @@ export function AuthSsoRow({ onApple, onGoogle, onPhone, label = 'or' }) {
         </span>
         <div style={{ flex: 1, height: 1, background: TAuth.divider }} />
       </div>
-      {/* Circular icon-only buttons, centered. Phone is opt-in via
-          `onPhone` — when absent (most flows for now) we ship two. */}
-      <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
+      {/* Full-width stacked SSO buttons — Apple first, then Google.
+          Fills the bottom of the screen with visual weight. */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         <SsoButton
-          icon={<AppleIcon size={20} />}
-          ariaLabel="Continue with Apple"
+          icon={<AppleIcon size={18} />}
+          label="Continue with Apple"
           onClick={onApple}
         />
         <SsoButton
-          icon={<GoogleIcon size={20} />}
-          ariaLabel="Continue with Google"
+          icon={<GoogleIcon size={18} />}
+          label="Continue with Google"
           onClick={onGoogle}
         />
         {onPhone && (
           <SsoButton
-            icon={<MessageSquare size={19} color={TAuth.coral} strokeWidth={2.2} />}
-            ariaLabel="Continue with SMS"
+            icon={<MessageSquare size={17} color={TAuth.coral} strokeWidth={2.2} />}
+            label="Continue with SMS"
             onClick={onPhone}
           />
         )}
