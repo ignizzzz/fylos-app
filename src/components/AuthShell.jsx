@@ -125,8 +125,9 @@ export default function AuthShell({
           flexDirection: 'column',
         }}
       >
-        {/* Dynamic Island */}
-        <div className="absolute top-[12px] left-1/2 transform -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-50 pointer-events-none hidden sm:block shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)]" />
+        {/* Dynamic Island — z-[300] keeps it above every overlay/sheet
+            so the device chrome always reads as part of the surface. */}
+        <div className="absolute top-[12px] left-1/2 transform -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-[300] pointer-events-none hidden sm:block shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)]" />
 
         <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap');
@@ -804,151 +805,128 @@ export function AuthDocSheet({ open, onClose, title, sections = [] }) {
   if (!open) return null;
   return (
     <div
-      onClick={onClose}
       style={{
         position: 'absolute',
         inset: 0,
-        background: 'rgba(60,30,15,0.42)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        background: TAuth.bg,
         zIndex: 200,
-        padding: 22,
-        animation: 'authHelpFade 220ms ease both',
+        display: 'flex',
+        flexDirection: 'column',
+        animation: 'authDocFade 240ms ease both',
       }}
     >
       <style>{`
-        @keyframes authDocPop {
-          from { opacity: 0; transform: scale(0.92) translateY(8px); }
-          to   { opacity: 1; transform: scale(1) translateY(0); }
+        @keyframes authDocFade {
+          from { opacity: 0; transform: translateY(6px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
+
+      {/* Header — mirrors AuthShell's header so it feels like a normal
+          screen, not a floating card. Back arrow on the left, title
+          centered, X on the right. */}
       <div
-        onClick={(e) => e.stopPropagation()}
         style={{
-          width: '100%',
-          maxWidth: 320,
-          maxHeight: '78vh',
-          background: TAuth.bg,
-          borderRadius: 22,
-          boxShadow:
-            '0 1px 2px rgba(60,30,15,0.06), 0 22px 48px rgba(60,30,15,0.22)',
-          animation:
-            'authDocPop 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both',
           display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
+          alignItems: 'center',
+          padding: '52px 16px 12px',
+          position: 'relative',
+          zIndex: 1,
+          flexShrink: 0,
         }}
       >
-        {/* Title — pinned, with a hairline divider beneath */}
-        <div
+        <button
+          onClick={onClose}
+          aria-label="Back"
           style={{
-            padding: '20px 22px 14px',
-            borderBottom: `1px solid ${TAuth.divider}`,
-            flexShrink: 0,
-            position: 'relative',
+            width: 36,
+            height: 36,
+            borderRadius: '50%',
+            background: TAuth.coralSoft,
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          <h2
-            style={{
-              fontFamily: '"Playfair Display", "Georgia", serif',
-              fontSize: 22,
-              fontWeight: 700,
-              color: TAuth.text,
-              letterSpacing: '-0.01em',
-              lineHeight: 1.15,
-              margin: 0,
-              textAlign: 'center',
-            }}
-          >
-            {title}
-          </h2>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            style={{
-              position: 'absolute',
-              top: 14,
-              right: 14,
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 4,
-              color: TAuth.textTertiary,
-              display: 'flex',
-            }}
-          >
-            <X size={18} strokeWidth={2.2} />
-          </button>
-        </div>
+          <ChevronLeft size={18} color={TAuth.coralDark} />
+        </button>
 
-        {/* Scrollable content */}
-        <div
+        <h2
           style={{
             flex: 1,
-            overflowY: 'auto',
-            padding: '16px 22px 14px',
+            textAlign: 'center',
+            fontFamily: '"Playfair Display", "Georgia", serif',
+            fontSize: 20,
+            fontWeight: 700,
+            color: TAuth.text,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.2,
+            margin: 0,
+            padding: '0 8px',
           }}
         >
-          {sections.map((section, i) => (
-            <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
-              <h3
+          {title}
+        </h2>
+
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 6,
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: TAuth.coralDark,
+          }}
+        >
+          <X size={22} strokeWidth={2} />
+        </button>
+      </div>
+
+      {/* Scrollable content */}
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '8px 24px 28px',
+        }}
+      >
+        {sections.map((section, i) => (
+          <div key={i} style={{ marginTop: i === 0 ? 4 : 18 }}>
+            <h3
+              style={{
+                fontFamily: 'Inter, -apple-system, sans-serif',
+                fontSize: 14,
+                fontWeight: 700,
+                color: TAuth.text,
+                margin: '0 0 6px',
+                lineHeight: 1.3,
+              }}
+            >
+              {section.heading}
+            </h3>
+            {section.paragraphs.map((p, j) => (
+              <p
+                key={j}
                 style={{
+                  fontSize: 13.5,
+                  color: TAuth.textMuted,
+                  lineHeight: 1.6,
+                  margin: '0 0 8px',
                   fontFamily: 'Inter, -apple-system, sans-serif',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: TAuth.text,
-                  margin: '0 0 6px',
-                  lineHeight: 1.3,
                 }}
               >
-                {section.heading}
-              </h3>
-              {section.paragraphs.map((p, j) => (
-                <p
-                  key={j}
-                  style={{
-                    fontSize: 12.5,
-                    color: TAuth.textMuted,
-                    lineHeight: 1.55,
-                    margin: '0 0 6px',
-                    fontFamily: 'Inter, -apple-system, sans-serif',
-                  }}
-                >
-                  {p}
-                </p>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* Close — sticky at the bottom */}
-        <div
-          style={{
-            padding: '12px 22px 18px',
-            borderTop: `1px solid ${TAuth.divider}`,
-            flexShrink: 0,
-          }}
-        >
-          <button
-            onClick={onClose}
-            style={{
-              width: '100%',
-              height: 44,
-              borderRadius: 22,
-              background: TAuth.coral,
-              color: '#FFFFFF',
-              fontSize: 14,
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
-              fontFamily: 'inherit',
-            }}
-          >
-            Close
-          </button>
-        </div>
+                {p}
+              </p>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );
