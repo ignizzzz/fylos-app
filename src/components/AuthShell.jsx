@@ -847,15 +847,19 @@ export function AuthDocSheet({
             '0 1px 2px rgba(60,30,15,0.06), 0 22px 48px rgba(60,30,15,0.22)',
           animation:
             'authDocPop 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        {/* Single scroll container — title, sections, link, Close all
-            scroll together. Nothing pinned, no ghost-text overlap. */}
+        {/* Pinned title — solid cream so scroll content disappears
+            completely behind it (no ghost text). */}
         <div
           style={{
-            maxHeight: '78vh',
-            overflowY: 'auto',
-            padding: '22px 22px 20px',
+            flexShrink: 0,
+            padding: '20px 22px 14px',
+            background: TAuth.bg,
+            position: 'relative',
+            zIndex: 2,
           }}
         >
           <h2
@@ -866,13 +870,24 @@ export function AuthDocSheet({
               color: TAuth.text,
               letterSpacing: '-0.01em',
               lineHeight: 1.15,
-              margin: '0 0 14px',
+              margin: 0,
               textAlign: 'center',
             }}
           >
             {title}
           </h2>
+        </div>
 
+        {/* Scrollable middle */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '4px 22px 14px',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
           {sections.map((section, i) => (
             <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
               <h3
@@ -903,9 +918,20 @@ export function AuthDocSheet({
               ))}
             </div>
           ))}
+        </div>
 
+        {/* Pinned bottom — full version link + Close button */}
+        <div
+          style={{
+            flexShrink: 0,
+            padding: '12px 22px 18px',
+            background: TAuth.bg,
+            position: 'relative',
+            zIndex: 2,
+          }}
+        >
           {fullVersionUrl && (
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <div style={{ textAlign: 'center', marginBottom: 12 }}>
               <a
                 href={fullVersionUrl}
                 target="_blank"
@@ -926,14 +952,11 @@ export function AuthDocSheet({
               </a>
             </div>
           )}
-
           <button
             onClick={onClose}
             style={{
-              display: 'block',
               width: '100%',
               height: 44,
-              marginTop: 18,
               borderRadius: 22,
               background: TAuth.coral,
               color: '#FFFFFF',
