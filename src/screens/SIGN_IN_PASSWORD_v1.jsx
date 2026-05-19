@@ -46,11 +46,11 @@ export default function SignInPassword() {
       helpTopics={[
         {
           q: 'Forgot your password?',
-          a: "Tap 'Forgot it?' under the password field — we'll email a reset link.",
+          a: "Tap 'Forgot it?' under the password field. We'll email a reset link.",
         },
         {
           q: 'Prefer no password at all?',
-          a: "Tap 'Prefer a link?' under Sign in — we'll email a magic link instead.",
+          a: "Tap 'Prefer a link?' under Sign in. We'll email a magic link instead.",
         },
         {
           q: "Why are Apple and Google here?",
@@ -72,8 +72,8 @@ export default function SignInPassword() {
       }
       secondaryActions={
         <AuthSsoRow
-          onApple={() => alert('Apple SSO — wire me up')}
-          onGoogle={() => alert('Google SSO — wire me up')}
+          onApple={() => alert('Apple sign-in coming soon.')}
+          onGoogle={() => alert('Google sign-in coming soon.')}
         />
       }
     >

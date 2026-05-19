@@ -46,15 +46,15 @@ export default function CreateAccountV2() {
       helpTopics={[
         {
           q: 'Why these three things?',
-          a: "Name, email, and a password — that's all we need to make your spot here.",
+          a: "Name, email, and a password. That's all we need to make your spot here.",
         },
         {
           q: 'What counts as a strong password?',
-          a: "Six characters minimum. Mix letters and numbers if you can — easier to remember, harder to guess.",
+          a: "Six characters minimum. Mix letters and numbers if you can. Easier to remember, harder to guess.",
         },
         {
           q: 'Do I need to verify my email?',
-          a: "Yes — we send a link right after sign-up. One quick tap and you're in.",
+          a: "Yes. We send a link right after sign-up. One quick tap and you're in.",
         },
       ]}
       title="Hi, friend."
@@ -72,8 +72,8 @@ export default function CreateAccountV2() {
       }
       secondaryActions={
         <AuthSsoRow
-          onApple={() => alert('Apple SSO — wire me up')}
-          onGoogle={() => alert('Google SSO — wire me up')}
+          onApple={() => alert('Apple sign-in coming soon.')}
+          onGoogle={() => alert('Google sign-in coming soon.')}
         />
       }
     >

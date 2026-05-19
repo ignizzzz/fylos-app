@@ -77,7 +77,7 @@ export default function SignIn() {
       helpTopics={[
         {
           q: 'What is a one-tap link?',
-          a: "We email a secure link to you. Tap it and you're in — no password to remember.",
+          a: "We email a secure link to you. Tap it, and you're in. No password to remember.",
         },
         {
           q: 'How long does it take?',
@@ -85,7 +85,7 @@ export default function SignIn() {
         },
         {
           q: 'Can I use a password instead?',
-          a: "Yes — tap 'Prefer a password?' below the email field.",
+          a: "Yes. Tap 'Prefer a password?' below the email field.",
         },
       ]}
       title="Look who's back."
@@ -103,8 +103,8 @@ export default function SignIn() {
       }
       secondaryActions={
         <AuthSsoRow
-          onApple={() => alert('Apple SSO — wire me up')}
-          onGoogle={() => alert('Google SSO — wire me up')}
+          onApple={() => alert('Apple sign-in coming soon.')}
+          onGoogle={() => alert('Google sign-in coming soon.')}
         />
       }
     >

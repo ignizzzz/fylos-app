@@ -31,11 +31,11 @@ export default function VerifyEmail() {
         },
         {
           q: 'Can I skip this?',
-          a: "Yes — tap 'I'll verify later'. Some features need a verified email though.",
+          a: "Yes. Tap 'I'll verify later'. Some features need a verified email though.",
         },
         {
           q: 'Wrong email?',
-          a: "Tap 'Edit it' under the message — we'll restart with the right address.",
+          a: "Tap 'Edit it' under the message. We'll restart with the right address.",
         },
       ]}
       tagline="A calmer way to care."

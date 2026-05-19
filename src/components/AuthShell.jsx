@@ -728,6 +728,25 @@ export function AuthHelpSheet({ open, onClose, title = 'How can we help?', topic
             <Mail size={16} strokeWidth={2.4} />
             Email us
           </a>
+
+          <button
+            onClick={onClose}
+            style={{
+              display: 'block',
+              margin: '14px auto 0',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 13,
+              fontWeight: 500,
+              color: TAuth.textTertiary,
+              fontFamily: 'inherit',
+              padding: '6px 14px',
+              letterSpacing: '0.02em',
+            }}
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
