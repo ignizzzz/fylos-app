@@ -834,12 +834,16 @@ export function AuthDocSheet({
           to   { opacity: 1; transform: scale(1) translateY(0); }
         }
       `}</style>
+      <style>{`
+        .auth-doc-scroll::-webkit-scrollbar { display: none; }
+      `}</style>
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
+          position: 'relative',
           width: '100%',
           maxWidth: 320,
-          maxHeight: '78vh',
+          height: '78vh',
           background: TAuth.bg,
           borderRadius: 22,
           overflow: 'hidden',
@@ -849,124 +853,137 @@ export function AuthDocSheet({
             'authDocPop 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both',
         }}
       >
-        {/* Single scrollable container. Title at top and the action
-            block at the bottom use position: sticky with a translucent
-            cream + backdrop-blur, so content slides behind them
-            frosted-glass style — visible but softened. */}
+        {/* Scroll layer — fills the card, scrollbar hidden, mask
+            gradient fades content softly at top and bottom so it
+            disappears organically behind the floating title and Close
+            block (no hard edges, no straight line). */}
         <div
+          className="auth-doc-scroll"
           style={{
-            maxHeight: '78vh',
+            position: 'absolute',
+            inset: 0,
             overflowY: 'auto',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            padding: '66px 22px 116px',
+            maskImage:
+              'linear-gradient(to bottom, transparent 0, black 56px, black calc(100% - 90px), transparent 100%)',
+            WebkitMaskImage:
+              'linear-gradient(to bottom, transparent 0, black 56px, black calc(100% - 90px), transparent 100%)',
           }}
         >
-          <div
-            style={{
-              position: 'sticky',
-              top: 0,
-              zIndex: 2,
-              padding: '20px 22px 12px',
-              background: 'transparent',
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: '"Playfair Display", "Georgia", serif',
-                fontSize: 22,
-                fontWeight: 700,
-                color: TAuth.text,
-                letterSpacing: '-0.01em',
-                lineHeight: 1.15,
-                margin: 0,
-                textAlign: 'center',
-              }}
-            >
-              {title}
-            </h2>
-          </div>
-
-          <div style={{ padding: '4px 22px 14px' }}>
-            {sections.map((section, i) => (
-              <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
-                <h3
+          {sections.map((section, i) => (
+            <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
+              <h3
+                style={{
+                  fontFamily: 'Inter, -apple-system, sans-serif',
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  color: TAuth.text,
+                  margin: '0 0 6px',
+                  lineHeight: 1.3,
+                }}
+              >
+                {section.heading}
+              </h3>
+              {section.paragraphs.map((p, j) => (
+                <p
+                  key={j}
                   style={{
-                    fontFamily: 'Inter, -apple-system, sans-serif',
-                    fontSize: 13.5,
-                    fontWeight: 700,
-                    color: TAuth.text,
+                    fontSize: 13,
+                    color: TAuth.textMuted,
+                    lineHeight: 1.55,
                     margin: '0 0 6px',
-                    lineHeight: 1.3,
+                    fontFamily: 'Inter, -apple-system, sans-serif',
                   }}
                 >
-                  {section.heading}
-                </h3>
-                {section.paragraphs.map((p, j) => (
-                  <p
-                    key={j}
-                    style={{
-                      fontSize: 13,
-                      color: TAuth.textMuted,
-                      lineHeight: 1.55,
-                      margin: '0 0 6px',
-                      fontFamily: 'Inter, -apple-system, sans-serif',
-                    }}
-                  >
-                    {p}
-                  </p>
-                ))}
-              </div>
-            ))}
-          </div>
+                  {p}
+                </p>
+              ))}
+            </div>
+          ))}
+        </div>
 
-          <div
+        {/* Floating title — absolute layer above the scroll mask, no
+            background, no blur, just the text. */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            padding: '20px 22px 10px',
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+        >
+          <h2
             style={{
-              position: 'sticky',
-              bottom: 0,
-              zIndex: 2,
-              padding: '12px 22px 18px',
-              background: 'transparent',
+              fontFamily: '"Playfair Display", "Georgia", serif',
+              fontSize: 22,
+              fontWeight: 700,
+              color: TAuth.text,
+              letterSpacing: '-0.01em',
+              lineHeight: 1.15,
+              margin: 0,
+              textAlign: 'center',
             }}
           >
-            {fullVersionUrl && (
-              <div style={{ textAlign: 'center', marginBottom: 12 }}>
-                <a
-                  href={fullVersionUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    color: TAuth.coral,
-                    fontSize: 12.5,
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  Read the full version
-                  <ExternalLink size={13} strokeWidth={2.2} />
-                </a>
-              </div>
-            )}
-            <button
-              onClick={onClose}
-              style={{
-                width: '100%',
-                height: 44,
-                borderRadius: 22,
-                background: TAuth.coral,
-                color: '#FFFFFF',
-                fontSize: 14,
-                fontWeight: 700,
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
-                fontFamily: 'inherit',
-              }}
-            >
-              Close
-            </button>
-          </div>
+            {title}
+          </h2>
+        </div>
+
+        {/* Floating bottom block — Read the full version + Close */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '10px 22px 18px',
+            zIndex: 2,
+          }}
+        >
+          {fullVersionUrl && (
+            <div style={{ textAlign: 'center', marginBottom: 12 }}>
+              <a
+                href={fullVersionUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  color: TAuth.coral,
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Read the full version
+                <ExternalLink size={13} strokeWidth={2.2} />
+              </a>
+            </div>
+          )}
+          <button
+            onClick={onClose}
+            style={{
+              width: '100%',
+              height: 44,
+              borderRadius: 22,
+              background: TAuth.coral,
+              color: '#FFFFFF',
+              fontSize: 14,
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
+              fontFamily: 'inherit',
+            }}
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
