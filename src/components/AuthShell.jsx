@@ -808,72 +808,94 @@ export function AuthDocSheet({ open, onClose, title, sections = [] }) {
       style={{
         position: 'absolute',
         inset: 0,
-        background: 'rgba(60,30,15,0.38)',
+        background: 'rgba(60,30,15,0.42)',
         display: 'flex',
-        alignItems: 'flex-end',
+        alignItems: 'center',
         justifyContent: 'center',
         zIndex: 200,
+        padding: 22,
         animation: 'authHelpFade 220ms ease both',
       }}
     >
+      <style>{`
+        @keyframes authDocPop {
+          from { opacity: 0; transform: scale(0.92) translateY(8px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+      `}</style>
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          maxHeight: '86vh',
+          maxWidth: 320,
+          maxHeight: '78vh',
           background: TAuth.bg,
-          borderTopLeftRadius: 28,
-          borderTopRightRadius: 28,
-          boxShadow: '0 -8px 28px rgba(60,30,15,0.18)',
+          borderRadius: 22,
+          boxShadow:
+            '0 1px 2px rgba(60,30,15,0.06), 0 22px 48px rgba(60,30,15,0.22)',
           animation:
-            'authHelpSlide 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+            'authDocPop 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both',
           display: 'flex',
           flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
-        {/* Drag handle */}
+        {/* Title — pinned, with a hairline divider beneath */}
         <div
           style={{
-            width: 44,
-            height: 4,
-            borderRadius: 2,
-            background: 'rgba(60,30,15,0.16)',
-            margin: '14px auto 14px',
+            padding: '20px 22px 14px',
+            borderBottom: `1px solid ${TAuth.divider}`,
             flexShrink: 0,
-          }}
-        />
-
-        <h2
-          style={{
-            fontFamily: '"Playfair Display", "Georgia", serif',
-            fontSize: 24,
-            fontWeight: 700,
-            color: TAuth.text,
-            letterSpacing: '-0.01em',
-            lineHeight: 1.15,
-            margin: 0,
-            textAlign: 'center',
-            paddingBottom: 12,
-            flexShrink: 0,
+            position: 'relative',
           }}
         >
-          {title}
-        </h2>
+          <h2
+            style={{
+              fontFamily: '"Playfair Display", "Georgia", serif',
+              fontSize: 22,
+              fontWeight: 700,
+              color: TAuth.text,
+              letterSpacing: '-0.01em',
+              lineHeight: 1.15,
+              margin: 0,
+              textAlign: 'center',
+            }}
+          >
+            {title}
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{
+              position: 'absolute',
+              top: 14,
+              right: 14,
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 4,
+              color: TAuth.textTertiary,
+              display: 'flex',
+            }}
+          >
+            <X size={18} strokeWidth={2.2} />
+          </button>
+        </div>
 
         {/* Scrollable content */}
         <div
           style={{
             flex: 1,
             overflowY: 'auto',
-            padding: '6px 24px 18px',
+            padding: '16px 22px 14px',
           }}
         >
           {sections.map((section, i) => (
-            <div key={i} style={{ marginTop: i === 0 ? 0 : 16 }}>
+            <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
               <h3
                 style={{
                   fontFamily: 'Inter, -apple-system, sans-serif',
-                  fontSize: 13.5,
+                  fontSize: 13,
                   fontWeight: 700,
                   color: TAuth.text,
                   margin: '0 0 6px',
@@ -886,10 +908,10 @@ export function AuthDocSheet({ open, onClose, title, sections = [] }) {
                 <p
                   key={j}
                   style={{
-                    fontSize: 13,
+                    fontSize: 12.5,
                     color: TAuth.textMuted,
                     lineHeight: 1.55,
-                    margin: '0 0 8px',
+                    margin: '0 0 6px',
                     fontFamily: 'Inter, -apple-system, sans-serif',
                   }}
                 >
@@ -900,10 +922,10 @@ export function AuthDocSheet({ open, onClose, title, sections = [] }) {
           ))}
         </div>
 
-        {/* Close — sticky at the bottom of the sheet */}
+        {/* Close — sticky at the bottom */}
         <div
           style={{
-            padding: '12px 24px 22px',
+            padding: '12px 22px 18px',
             borderTop: `1px solid ${TAuth.divider}`,
             flexShrink: 0,
           }}
@@ -912,11 +934,11 @@ export function AuthDocSheet({ open, onClose, title, sections = [] }) {
             onClick={onClose}
             style={{
               width: '100%',
-              height: 48,
-              borderRadius: 24,
+              height: 44,
+              borderRadius: 22,
               background: TAuth.coral,
               color: '#FFFFFF',
-              fontSize: 14.5,
+              fontSize: 14,
               fontWeight: 700,
               border: 'none',
               cursor: 'pointer',
