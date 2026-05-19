@@ -334,7 +334,7 @@ export default function AuthShell({
                 <div
                   style={{
                     textAlign: 'center',
-                    marginTop: secondaryActions ? 16 : 0,
+                    marginTop: secondaryActions ? 16 : 28,
                     fontSize: 12.5,
                     color: TAuth.textTertiary,
                     animation: 'auth-fadeUp 600ms 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both',
