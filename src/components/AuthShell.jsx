@@ -865,9 +865,7 @@ export function AuthDocSheet({
               top: 0,
               zIndex: 2,
               padding: '20px 22px 12px',
-              background: 'rgba(242, 239, 230, 0.18)',
-              backdropFilter: 'blur(22px) saturate(160%)',
-              WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+              background: 'transparent',
             }}
           >
             <h2
@@ -925,9 +923,7 @@ export function AuthDocSheet({
               bottom: 0,
               zIndex: 2,
               padding: '12px 22px 18px',
-              background: 'rgba(242, 239, 230, 0.18)',
-              backdropFilter: 'blur(22px) saturate(160%)',
-              WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+              background: 'transparent',
             }}
           >
             {fullVersionUrl && (
