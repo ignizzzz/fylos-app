@@ -75,7 +75,7 @@ export default function VerifyEmail() {
         <AuthCta onClick={resend}>Resend the link</AuthCta>
 
         <button
-          onClick={() => navigate('/add-pet')}
+          onClick={() => navigate('/welcome')}
           style={{
             background: 'none',
             border: 'none',
