@@ -103,6 +103,7 @@ export default function AuthShell({
   children,
   secondaryActions,
   footer,
+  overlays,
 }) {
   const [helpOpen, setHelpOpen] = useState(false);
 
@@ -355,6 +356,10 @@ export default function AuthShell({
           title={helpTitle}
           topics={helpTopics}
         />
+
+        {/* Extra sheets / overlays — rendered inside the iPhone frame
+            so absolute positioning attaches to the device surface. */}
+        {overlays}
       </div>
     </div>
   );
@@ -785,6 +790,143 @@ function HelpTopic({ q, a }) {
         }}
       >
         {a}
+      </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   AuthDocSheet — bottom sheet for long-form content (Terms, Privacy).
+   Same cream + coral language as the help sheet, but with a scrollable
+   body for sections + paragraphs and a sticky close at the bottom.
+   ────────────────────────────────────────────────────────────────────── */
+export function AuthDocSheet({ open, onClose, title, sections = [] }) {
+  if (!open) return null;
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(60,30,15,0.38)',
+        display: 'flex',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        zIndex: 200,
+        animation: 'authHelpFade 220ms ease both',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxHeight: '86vh',
+          background: TAuth.bg,
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
+          boxShadow: '0 -8px 28px rgba(60,30,15,0.18)',
+          animation:
+            'authHelpSlide 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {/* Drag handle */}
+        <div
+          style={{
+            width: 44,
+            height: 4,
+            borderRadius: 2,
+            background: 'rgba(60,30,15,0.16)',
+            margin: '14px auto 14px',
+            flexShrink: 0,
+          }}
+        />
+
+        <h2
+          style={{
+            fontFamily: '"Playfair Display", "Georgia", serif',
+            fontSize: 24,
+            fontWeight: 700,
+            color: TAuth.text,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.15,
+            margin: 0,
+            textAlign: 'center',
+            paddingBottom: 12,
+            flexShrink: 0,
+          }}
+        >
+          {title}
+        </h2>
+
+        {/* Scrollable content */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '6px 24px 18px',
+          }}
+        >
+          {sections.map((section, i) => (
+            <div key={i} style={{ marginTop: i === 0 ? 0 : 16 }}>
+              <h3
+                style={{
+                  fontFamily: 'Inter, -apple-system, sans-serif',
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  color: TAuth.text,
+                  margin: '0 0 6px',
+                  lineHeight: 1.3,
+                }}
+              >
+                {section.heading}
+              </h3>
+              {section.paragraphs.map((p, j) => (
+                <p
+                  key={j}
+                  style={{
+                    fontSize: 13,
+                    color: TAuth.textMuted,
+                    lineHeight: 1.55,
+                    margin: '0 0 8px',
+                    fontFamily: 'Inter, -apple-system, sans-serif',
+                  }}
+                >
+                  {p}
+                </p>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Close — sticky at the bottom of the sheet */}
+        <div
+          style={{
+            padding: '12px 24px 22px',
+            borderTop: `1px solid ${TAuth.divider}`,
+            flexShrink: 0,
+          }}
+        >
+          <button
+            onClick={onClose}
+            style={{
+              width: '100%',
+              height: 48,
+              borderRadius: 24,
+              background: TAuth.coral,
+              color: '#FFFFFF',
+              fontSize: 14.5,
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
+              fontFamily: 'inherit',
+            }}
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
