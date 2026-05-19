@@ -15,16 +15,23 @@ SSO and manual paths converge on the same in-app completion step.
 
 ---
 
+## One file rules them all
+
+The entire auth flow — shell, primitives, sheets, every screen — lives
+in **`src/screens/FYLOS_AUTH_v1.jsx`**. That's the only file Panagiotis
+needs to open. Named exports per screen.
+
 ## Routes
 
-| Route | File | Purpose |
+| Route | Exported component | Purpose |
 | --- | --- | --- |
-| `/sign-in` | `src/screens/SIGN_IN_v1.jsx` | Magic-link primary + Apple/Google. Top-level entry, no back button. |
-| `/sign-in-password` | `src/screens/SIGN_IN_PASSWORD_v1.jsx` | Classic email + password. SSO row included so users can still bail to a provider. |
-| `/sign-in-phone` | `src/screens/SIGN_IN_PHONE_v1.jsx` | Phone + SMS OTP. Two internal steps: number → 6-digit code. |
-| `/create-account` | `src/screens/69_CREATE_ACCOUNT_v2.jsx` | **Two-step wizard.** Step 1 = first name + last name + SSO. Step 2 = email + password ×2 + Terms/Privacy. |
-| `/forgot-password` | `src/screens/FORGOT_PASSWORD_v1.jsx` | Email → reset link. Reachable via "Forgot it?" on `/sign-in-password`. |
-| `/verify-email` | `src/screens/VERIFY_EMAIL_v1.jsx` | Post-signup confirmation. Reads email from router state. |
+| `/sign-in` | `SignIn` | Magic-link primary + Apple/Google. Top-level entry, no back button. |
+| `/sign-in-password` | `SignInPassword` | Classic email + password. SSO row included so users can still bail to a provider. |
+| `/sign-in-phone` | `SignInPhone` | Phone + SMS OTP. Two internal steps: number → 6-digit code. |
+| `/create-account` | `CreateAccountV2` | **Two-step wizard.** Step 1 = first name + last name + SSO. Step 2 = email + password ×2 + Terms/Privacy. |
+| `/forgot-password` | `ForgotPassword` | Email → reset link. Reachable via "Forgot it?" on `/sign-in-password`. |
+| `/verify-email` | `VerifyEmail` | Post-signup confirmation. Reads email from router state. |
+| `/welcome` | `ProfileCompletion` | Post-auth profile-completion harness (popup + multi-step sheet). |
 
 Top-level entries (`/sign-in`, `/create-account`) have **no back button**
 — after the onboarding plays once, there's nothing to go back to. Sub-
@@ -34,7 +41,7 @@ screens keep their back button.
 
 ## Shared building blocks
 
-All live in **`src/components/AuthShell.jsx`**.
+All live in **`src/screens/FYLOS_AUTH_v1.jsx`** alongside the screens.
 
 | Export | What it is |
 | --- | --- |
@@ -150,17 +157,12 @@ The existing `/add-pet` flow (and everything after) is unchanged.
 
 ---
 
-## Files touched in this round
+## Files
 
 ```
-src/components/AuthShell.jsx
-src/screens/SIGN_IN_v1.jsx
-src/screens/SIGN_IN_PASSWORD_v1.jsx
-src/screens/SIGN_IN_PHONE_v1.jsx
-src/screens/FORGOT_PASSWORD_v1.jsx
-src/screens/VERIFY_EMAIL_v1.jsx
-src/screens/69_CREATE_ACCOUNT_v2.jsx
-src/App.jsx   (routes wired)
+src/screens/FYLOS_AUTH_v1.jsx   ← everything: shell, primitives, sheets, 7 screens
+src/App.jsx                     ← routes wired
+FYLOS_AUTH_FLOW.md              ← this brief
 ```
 
 Brand asset reused from onboarding: `public/onboarding/philos.png`.
