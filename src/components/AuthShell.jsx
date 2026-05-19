@@ -235,17 +235,14 @@ export default function AuthShell({
             )}
           </div>
 
-          {/* Middle zone — title + form. Flex-grows and centers its
-              content so the welcome line floats in the empty space
-              between the brand lockup and the bottom-pinned actions. */}
+          {/* Middle zone — title + form, stacked right under the brand
+              lockup. No flex-grow so the alt-paths block below sits
+              naturally right under the last form element. */}
           <div
             style={{
-              flex: 1,
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'center',
               paddingTop: 32,
-              paddingBottom: 24,
             }}
           >
             {(eyebrow || title || subtitle) && (
@@ -313,16 +310,14 @@ export default function AuthShell({
             </div>
           </div>
 
-          {/* Bottom zone — SSO row + footer cross-link, pinned to the
-              bottom of the scroll area so the screen reads as a balanced
-              composition (brand top, form middle, alt-paths bottom). */}
+          {/* Alt-paths block — SSO + footer flowing right under the form,
+              no bottom-docking. Empty space falls naturally at the
+              bottom of the frame. */}
           {(secondaryActions || footer) && (
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                marginTop: 'auto',
-                paddingTop: 32,
                 paddingBottom: 4,
               }}
             >
