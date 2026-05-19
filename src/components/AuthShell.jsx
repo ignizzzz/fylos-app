@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, MessageSquare, Loader2, HelpCircle, X, Mail } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Loader2, HelpCircle, X, Mail, ExternalLink } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────────────────
    AuthShell — shared wrapper for /sign-in and /create-account.
@@ -801,132 +801,153 @@ function HelpTopic({ q, a }) {
    Same cream + coral language as the help sheet, but with a scrollable
    body for sections + paragraphs and a sticky close at the bottom.
    ────────────────────────────────────────────────────────────────────── */
-export function AuthDocSheet({ open, onClose, title, sections = [] }) {
+export function AuthDocSheet({
+  open,
+  onClose,
+  title,
+  sections = [],
+  fullVersionUrl,
+}) {
   if (!open) return null;
   return (
     <div
+      onClick={onClose}
       style={{
         position: 'absolute',
         inset: 0,
-        background: TAuth.bg,
-        zIndex: 200,
+        background: 'rgba(60,30,15,0.42)',
         display: 'flex',
-        flexDirection: 'column',
-        animation: 'authDocFade 240ms ease both',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 200,
+        padding: 22,
+        animation: 'authDocFade 220ms ease both',
       }}
     >
       <style>{`
         @keyframes authDocFade {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes authDocPop {
+          from { opacity: 0; transform: scale(0.94) translateY(6px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
         }
       `}</style>
-
-      {/* Header — mirrors AuthShell's header so it feels like a normal
-          screen, not a floating card. Back arrow on the left, title
-          centered, X on the right. */}
       <div
+        onClick={(e) => e.stopPropagation()}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '52px 16px 12px',
-          position: 'relative',
-          zIndex: 1,
-          flexShrink: 0,
+          width: '100%',
+          maxWidth: 320,
+          maxHeight: '78vh',
+          background: TAuth.bg,
+          borderRadius: 22,
+          overflow: 'hidden',
+          boxShadow:
+            '0 1px 2px rgba(60,30,15,0.06), 0 22px 48px rgba(60,30,15,0.22)',
+          animation:
+            'authDocPop 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both',
         }}
       >
-        <button
-          onClick={onClose}
-          aria-label="Back"
+        {/* Single scroll container — title, sections, link, Close all
+            scroll together. Nothing pinned, no ghost-text overlap. */}
+        <div
           style={{
-            width: 36,
-            height: 36,
-            borderRadius: '50%',
-            background: TAuth.coralSoft,
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            maxHeight: '78vh',
+            overflowY: 'auto',
+            padding: '22px 22px 20px',
           }}
         >
-          <ChevronLeft size={18} color={TAuth.coralDark} />
-        </button>
+          <h2
+            style={{
+              fontFamily: '"Playfair Display", "Georgia", serif',
+              fontSize: 22,
+              fontWeight: 700,
+              color: TAuth.text,
+              letterSpacing: '-0.01em',
+              lineHeight: 1.15,
+              margin: '0 0 14px',
+              textAlign: 'center',
+            }}
+          >
+            {title}
+          </h2>
 
-        <h2
-          style={{
-            flex: 1,
-            textAlign: 'center',
-            fontFamily: '"Playfair Display", "Georgia", serif',
-            fontSize: 20,
-            fontWeight: 700,
-            color: TAuth.text,
-            letterSpacing: '-0.01em',
-            lineHeight: 1.2,
-            margin: 0,
-            padding: '0 8px',
-          }}
-        >
-          {title}
-        </h2>
-
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 6,
-            margin: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: TAuth.coralDark,
-          }}
-        >
-          <X size={22} strokeWidth={2} />
-        </button>
-      </div>
-
-      {/* Scrollable content */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '8px 24px 28px',
-        }}
-      >
-        {sections.map((section, i) => (
-          <div key={i} style={{ marginTop: i === 0 ? 4 : 18 }}>
-            <h3
-              style={{
-                fontFamily: 'Inter, -apple-system, sans-serif',
-                fontSize: 14,
-                fontWeight: 700,
-                color: TAuth.text,
-                margin: '0 0 6px',
-                lineHeight: 1.3,
-              }}
-            >
-              {section.heading}
-            </h3>
-            {section.paragraphs.map((p, j) => (
-              <p
-                key={j}
+          {sections.map((section, i) => (
+            <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
+              <h3
                 style={{
-                  fontSize: 13.5,
-                  color: TAuth.textMuted,
-                  lineHeight: 1.6,
-                  margin: '0 0 8px',
                   fontFamily: 'Inter, -apple-system, sans-serif',
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  color: TAuth.text,
+                  margin: '0 0 6px',
+                  lineHeight: 1.3,
                 }}
               >
-                {p}
-              </p>
-            ))}
-          </div>
-        ))}
+                {section.heading}
+              </h3>
+              {section.paragraphs.map((p, j) => (
+                <p
+                  key={j}
+                  style={{
+                    fontSize: 13,
+                    color: TAuth.textMuted,
+                    lineHeight: 1.55,
+                    margin: '0 0 6px',
+                    fontFamily: 'Inter, -apple-system, sans-serif',
+                  }}
+                >
+                  {p}
+                </p>
+              ))}
+            </div>
+          ))}
+
+          {fullVersionUrl && (
+            <div style={{ textAlign: 'center', marginTop: 16 }}>
+              <a
+                href={fullVersionUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  color: TAuth.coral,
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Read the full version
+                <ExternalLink size={13} strokeWidth={2.2} />
+              </a>
+            </div>
+          )}
+
+          <button
+            onClick={onClose}
+            style={{
+              display: 'block',
+              width: '100%',
+              height: 44,
+              marginTop: 18,
+              borderRadius: 22,
+              background: TAuth.coral,
+              color: '#FFFFFF',
+              fontSize: 14,
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
+              fontFamily: 'inherit',
+            }}
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );

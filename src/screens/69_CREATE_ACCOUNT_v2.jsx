@@ -295,12 +295,14 @@ export default function CreateAccountV2() {
             onClose={() => setTermsOpen(false)}
             title="Terms"
             sections={TERMS_SECTIONS}
+            fullVersionUrl="https://fylos.me/terms"
           />
           <AuthDocSheet
             open={privacyOpen}
             onClose={() => setPrivacyOpen(false)}
             title="Privacy"
             sections={PRIVACY_SECTIONS}
+            fullVersionUrl="https://fylos.me/privacy"
           />
         </>
       }
