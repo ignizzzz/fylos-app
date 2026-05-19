@@ -847,129 +847,130 @@ export function AuthDocSheet({
             '0 1px 2px rgba(60,30,15,0.06), 0 22px 48px rgba(60,30,15,0.22)',
           animation:
             'authDocPop 320ms cubic-bezier(0.34, 1.4, 0.64, 1) both',
-          display: 'flex',
-          flexDirection: 'column',
         }}
       >
-        {/* Pinned title — solid cream so scroll content disappears
-            completely behind it (no ghost text). */}
+        {/* Single scrollable container. Title at top and the action
+            block at the bottom use position: sticky with a translucent
+            cream + backdrop-blur, so content slides behind them
+            frosted-glass style — visible but softened. */}
         <div
           style={{
-            flexShrink: 0,
-            padding: '20px 22px 14px',
-            background: TAuth.bg,
-            position: 'relative',
-            zIndex: 2,
+            maxHeight: '78vh',
+            overflowY: 'auto',
           }}
         >
-          <h2
+          <div
             style={{
-              fontFamily: '"Playfair Display", "Georgia", serif',
-              fontSize: 22,
-              fontWeight: 700,
-              color: TAuth.text,
-              letterSpacing: '-0.01em',
-              lineHeight: 1.15,
-              margin: 0,
-              textAlign: 'center',
+              position: 'sticky',
+              top: 0,
+              zIndex: 2,
+              padding: '20px 22px 12px',
+              background: 'rgba(242, 239, 230, 0.78)',
+              backdropFilter: 'blur(14px) saturate(140%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(140%)',
             }}
           >
-            {title}
-          </h2>
-        </div>
+            <h2
+              style={{
+                fontFamily: '"Playfair Display", "Georgia", serif',
+                fontSize: 22,
+                fontWeight: 700,
+                color: TAuth.text,
+                letterSpacing: '-0.01em',
+                lineHeight: 1.15,
+                margin: 0,
+                textAlign: 'center',
+              }}
+            >
+              {title}
+            </h2>
+          </div>
 
-        {/* Scrollable middle */}
-        <div
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: '4px 22px 14px',
-            position: 'relative',
-            zIndex: 1,
-          }}
-        >
-          {sections.map((section, i) => (
-            <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
-              <h3
-                style={{
-                  fontFamily: 'Inter, -apple-system, sans-serif',
-                  fontSize: 13.5,
-                  fontWeight: 700,
-                  color: TAuth.text,
-                  margin: '0 0 6px',
-                  lineHeight: 1.3,
-                }}
-              >
-                {section.heading}
-              </h3>
-              {section.paragraphs.map((p, j) => (
-                <p
-                  key={j}
+          <div style={{ padding: '4px 22px 14px' }}>
+            {sections.map((section, i) => (
+              <div key={i} style={{ marginTop: i === 0 ? 0 : 14 }}>
+                <h3
                   style={{
-                    fontSize: 13,
-                    color: TAuth.textMuted,
-                    lineHeight: 1.55,
-                    margin: '0 0 6px',
                     fontFamily: 'Inter, -apple-system, sans-serif',
+                    fontSize: 13.5,
+                    fontWeight: 700,
+                    color: TAuth.text,
+                    margin: '0 0 6px',
+                    lineHeight: 1.3,
                   }}
                 >
-                  {p}
-                </p>
-              ))}
-            </div>
-          ))}
-        </div>
+                  {section.heading}
+                </h3>
+                {section.paragraphs.map((p, j) => (
+                  <p
+                    key={j}
+                    style={{
+                      fontSize: 13,
+                      color: TAuth.textMuted,
+                      lineHeight: 1.55,
+                      margin: '0 0 6px',
+                      fontFamily: 'Inter, -apple-system, sans-serif',
+                    }}
+                  >
+                    {p}
+                  </p>
+                ))}
+              </div>
+            ))}
+          </div>
 
-        {/* Pinned bottom — full version link + Close button */}
-        <div
-          style={{
-            flexShrink: 0,
-            padding: '12px 22px 18px',
-            background: TAuth.bg,
-            position: 'relative',
-            zIndex: 2,
-          }}
-        >
-          {fullVersionUrl && (
-            <div style={{ textAlign: 'center', marginBottom: 12 }}>
-              <a
-                href={fullVersionUrl}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  color: TAuth.coral,
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  fontFamily: 'inherit',
-                }}
-              >
-                Read the full version
-                <ExternalLink size={13} strokeWidth={2.2} />
-              </a>
-            </div>
-          )}
-          <button
-            onClick={onClose}
+          <div
             style={{
-              width: '100%',
-              height: 44,
-              borderRadius: 22,
-              background: TAuth.coral,
-              color: '#FFFFFF',
-              fontSize: 14,
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
-              fontFamily: 'inherit',
+              position: 'sticky',
+              bottom: 0,
+              zIndex: 2,
+              padding: '12px 22px 18px',
+              background: 'rgba(242, 239, 230, 0.78)',
+              backdropFilter: 'blur(14px) saturate(140%)',
+              WebkitBackdropFilter: 'blur(14px) saturate(140%)',
             }}
           >
-            Close
-          </button>
+            {fullVersionUrl && (
+              <div style={{ textAlign: 'center', marginBottom: 12 }}>
+                <a
+                  href={fullVersionUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    color: TAuth.coral,
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  Read the full version
+                  <ExternalLink size={13} strokeWidth={2.2} />
+                </a>
+              </div>
+            )}
+            <button
+              onClick={onClose}
+              style={{
+                width: '100%',
+                height: 44,
+                borderRadius: 22,
+                background: TAuth.coral,
+                color: '#FFFFFF',
+                fontSize: 14,
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 6px 18px rgba(232,93,42,0.28)',
+                fontFamily: 'inherit',
+              }}
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
