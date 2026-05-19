@@ -42,7 +42,7 @@ export default function CreateAccountV2() {
 
   return (
     <AuthShell
-      onHelp={() => alert('Help — coming soon')}
+      showHelp
       title="Hi, friend."
       subtitle="Three quick things and you're set."
       footer={

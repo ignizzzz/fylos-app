@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronLeft, MessageSquare, Loader2, HelpCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, MessageSquare, Loader2, HelpCircle, X, Mail } from 'lucide-react';
 
 /* ──────────────────────────────────────────────────────────────────────
    AuthShell — shared wrapper for /sign-in and /create-account.
@@ -90,7 +90,9 @@ export function FylosBilingualLockup({ fontSize = 32, gap = 10 }) {
 
 export default function AuthShell({
   onBack,
-  onHelp,
+  showHelp = false,
+  helpTitle = 'Need a hand?',
+  helpBody = "Drop a line at hello@fylos.app — we usually get back within a day.",
   heroSrc,
   heroAlt = '',
   heroHeight = 240,
@@ -103,10 +105,15 @@ export default function AuthShell({
   footer,
 }) {
   const [helpOpen, setHelpOpen] = useState(false);
-  const handleHelpClick = () => {
-    setHelpOpen(true);
-    if (typeof onHelp === 'function') onHelp();
-  };
+
+  // ESC to close help
+  useEffect(() => {
+    if (!helpOpen) return undefined;
+    const handler = (e) => e.key === 'Escape' && setHelpOpen(false);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [helpOpen]);
+
   return (
     <div className="min-h-screen bg-[#F0F0F2] flex items-center justify-center sm:p-8 font-sans antialiased">
       <div
@@ -166,9 +173,9 @@ export default function AuthShell({
           ) : (
             <div style={{ width: 36 }} />
           )}
-          {onHelp ? (
+          {showHelp ? (
             <button
-              onClick={handleHelpClick}
+              onClick={() => setHelpOpen(true)}
               aria-label="Help"
               style={{
                 background: 'transparent',
@@ -314,6 +321,8 @@ export default function AuthShell({
               style={{
                 display: 'flex',
                 flexDirection: 'column',
+                marginTop: 'auto',
+                paddingTop: 32,
                 paddingBottom: 4,
               }}
             >

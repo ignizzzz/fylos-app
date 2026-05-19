@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import AuthShell, { AuthInput, AuthCta, TAuth } from '../components/AuthShell';
+import AuthShell, { AuthInput, AuthCta, AuthSsoRow, TAuth } from '../components/AuthShell';
 
 /* ──────────────────────────────────────────────────────────────────────
    SIGN_IN_PASSWORD_v1.jsx
@@ -42,7 +42,7 @@ export default function SignInPassword() {
   return (
     <AuthShell
       onBack={() => navigate('/sign-in')}
-      tagline="A calmer way to care."
+      showHelp
       title="Welcome back."
       subtitle="Email and password. Old school but it works."
       footer={
@@ -55,6 +55,12 @@ export default function SignInPassword() {
             Create account
           </span>
         </span>
+      }
+      secondaryActions={
+        <AuthSsoRow
+          onApple={() => alert('Apple SSO — wire me up')}
+          onGoogle={() => alert('Google SSO — wire me up')}
+        />
       }
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
