@@ -906,6 +906,9 @@ const THEME = {
 
 const GlobalStyles = () => (
   <style dangerouslySetInnerHTML={{ __html: `
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap');
+    @keyframes fy-orbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    @keyframes fy-orbGlow { 0%, 100% { opacity: 0.45; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.08); } }
     :root {
       --color-accent: #E85D2A;
       --color-accent-hover: #D04A1C;
@@ -3876,10 +3879,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
       if (wasCompleted) next.delete(id);
       else {
         next.add(id);
-        // Mascot reacts to task completion
-        setMascotTapped(true);
-        setMascotMessage('Nice one!');
-        setTimeout(() => { setMascotTapped(false); setMascotMessage(null); }, 1500);
       }
       return next;
     });
@@ -4062,29 +4061,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const nextBooking = filteredBookings[0];
   const allTasksDone = filteredReminders.length > 0 && filteredReminders.every(r => completedReminders.has(r.id) || r.action !== 'complete');
 
-  // Smart mascot — reactive to context
+  // Time of day drives the warm orb in the greeting (replaces the old mascot)
   const hour = new Date().getHours();
-  const [mascotTapped, setMascotTapped] = useState(false);
-  const [mascotMessage, setMascotMessage] = useState(null);
-
-  const getMascotState = () => {
-    if (mascotTapped) return { step: 3, msg: null }; // celebrating on tap
-    if (allTasksDone) return { step: 3, msg: 'All done! Great job!' };
-    if (visibleHealthAlert) return { step: 2, msg: 'Don\'t forget the vaccine!' }; // worried/thoughtful
-    if (hour >= 22 || hour < 6) return { step: 2, msg: 'Time to rest...' };
-    if (hour >= 18) return { step: 1, msg: 'How was your day?' };
-    if (nextBooking) return { step: 1, msg: 'Walk coming up!' };
-    return { step: 0, msg: null };
-  };
-  const mascotState = getMascotState();
-  const mascotStep = mascotState.step;
-  const timeLabel = hour >= 22 || hour < 6 ? 'Rest well' : hour >= 18 ? 'Wind down with' : hour >= 12 ? 'What\'s the plan for' : 'Good start with';
-
-  const handleMascotTap = () => {
-    setMascotTapped(true);
-    setMascotMessage(mascotState.msg || 'Woof!');
-    setTimeout(() => { setMascotTapped(false); setMascotMessage(null); }, 2000);
-  };
 
   const remainingCount = filteredReminders.filter(r => !completedReminders.has(r.id) && r.action === 'complete').length;
 
@@ -4096,7 +4074,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
         <div className="pt-3 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <h2 className="text-[24px] font-bold text-[#111] tracking-[-0.4px] leading-[1.15]">{calmGreeting}, {MOCK_USER.name}.</h2>
+              <h2 style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: 27, fontWeight: 700, color: '#111', letterSpacing: '-0.01em', lineHeight: 1.12 }}>{calmGreeting}, {MOCK_USER.name}.</h2>
               <div className="flex items-center gap-2 mt-2">
                 {/* Pet avatars — circular carousel, max 3 visible */}
                 {MOCK_DASHBOARD_PETS.length > 1 ? (() => {
@@ -4145,22 +4123,31 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 <p className="text-[13px] text-[#A09A94]">{selectedPet.name} · 18°C, great for walks</p>
               </div>
             </div>
-            <div className="shrink-0 relative ml-3 mt-0.5" onClick={handleMascotTap} style={{ cursor: 'pointer' }}>
-              {mascotMessage && (
-                <div className="absolute -bottom-7 right-0 z-10 whitespace-nowrap" style={{ animation: 'homeReveal 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
-                  <div className="px-2.5 py-1 rounded-[10px] text-[10px] font-semibold text-[#6E6058]" style={{ background: '#F3EFEB', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-                    {mascotMessage}
-                  </div>
-                </div>
-              )}
-              <div style={{
-                transform: `scale(0.38) ${mascotTapped ? 'translateY(-4px)' : ''}`,
-                transformOrigin: 'top right',
-                animation: 'homeMascotWave 3s ease-in-out infinite',
-                transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              }}>
-                <AddPetMascot step={mascotStep} petType={selectedPet.type?.toLowerCase() || 'dog'} petName={selectedPet.name} focusedField={null} scrollProgress={0} />
-              </div>
+            {/* Warm time-of-day orb — replaces the old 3D mascot. Soft
+                watercolor-ish coral sphere with a gentle float + glow.
+                Built to be animated further later. */}
+            <div className="shrink-0 ml-3 mt-1 relative" style={{ width: 52, height: 52 }} aria-hidden="true">
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: -8,
+                  borderRadius: '50%',
+                  background:
+                    'radial-gradient(circle, rgba(232,93,42,0.18), transparent 70%)',
+                  animation: 'fy-orbGlow 4.5s ease-in-out infinite',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: '50%',
+                  background:
+                    'radial-gradient(circle at 36% 32%, #FFD7A6, #E85D2A)',
+                  boxShadow: '0 8px 20px rgba(232,93,42,0.24)',
+                  animation: 'fy-orbFloat 5s ease-in-out infinite',
+                }}
+              />
             </div>
           </div>
         </div>
