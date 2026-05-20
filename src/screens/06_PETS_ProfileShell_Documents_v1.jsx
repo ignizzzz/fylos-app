@@ -4329,39 +4329,36 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             ))}
           </div>
 
-          {/* ═══ 7. SERVICES ═══ */}
+          {/* ═══ 7. EXPLORE — surfaces the app's depth (flat tiles) ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.32s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-[15px] font-semibold text-[#111]">Services</h3>
-              <button onClick={() => onNavigate('services')} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">Browse all</button>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
+            <h3 className="text-[15px] font-semibold text-[#111] mb-3">Explore</h3>
+            <div className="grid grid-cols-4 gap-2.5">
               {[
-                { label: 'Walking', icon: PawPrint, color: '#E85D2A' },
-                { label: 'Sitting', icon: Home, color: '#A09A94' },
-                { label: 'Grooming', icon: Scissors, color: '#A09A94' },
-                { label: 'Vet', icon: Stethoscope, color: '#A09A94' },
-              ].map((svc, i) => (
-                <button key={i} onClick={() => onNavigate('services')} className="flex flex-col items-center gap-1.5 py-2.5 rounded-[14px] active:scale-[0.96] transition-transform" style={{ background: '#F3EFEB' }}>
-                  <svc.icon size={18} style={{ color: svc.color }} />
-                  <span className="text-[11px] font-semibold text-[#6E6058]">{svc.label}</span>
+                { label: 'Health', icon: Stethoscope, onClick: () => onOpenHealthRecords?.() },
+                { label: 'Services', icon: PawPrint, onClick: () => onNavigate('services') },
+                { label: 'Journal', icon: BookOpen, onClick: () => onNavigate('journal') },
+                { label: 'Vault', icon: Folder, onClick: () => onNavigate('vault') },
+              ].map((e, i) => (
+                <button key={i} onClick={e.onClick} className="flex flex-col items-center gap-1.5 py-3 rounded-[14px] active:scale-[0.96] transition-transform" style={{ background: '#F3EFEB' }}>
+                  <e.icon size={18} className="text-[#E85D2A]" strokeWidth={1.9} />
+                  <span className="text-[11px] font-semibold text-[#6E6058]">{e.label}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* ═══ 8. SUGGESTED ═══ */}
+          {/* ═══ 8. SUGGESTED — single contextual nudge (if any) ═══ */}
           {filteredSuggestions.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.36s cubic-bezier(0.22,1,0.36,1) both' }}>
               {filteredSuggestions.slice(0, 1).map(s => (
-                <div key={s.id} className="rounded-[16px] p-4 flex items-center gap-3 active:scale-[0.98] transition-transform cursor-pointer" style={{ background: '#F3EFEB' }}>
-                  <div className="w-10 h-10 rounded-[12px] bg-[#EDE8E2] flex items-center justify-center shrink-0">{renderLegacyIcon(s.icon, 18, 'text-[#8E8580]')}</div>
+                <button key={s.id} onClick={() => onNavigate('services')} className="w-full text-left rounded-[16px] p-4 flex items-center gap-3 bg-white border border-[rgba(0,0,0,0.04)] active:scale-[0.98] transition-transform cursor-pointer" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}>
+                  <div className="w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: 'rgba(232,93,42,0.08)' }}>{renderLegacyIcon(s.icon, 18, 'text-[#E85D2A]')}</div>
                   <div className="flex-1 min-w-0">
                     <span className="text-[14px] font-semibold text-[#111] truncate block">{s.title}</span>
                     <span className="text-[12px] text-[#A09A94] truncate block">{s.context}</span>
                   </div>
-                  <button onClick={() => onNavigate('services')} className="text-[12px] font-semibold text-[#E85D2A] flex items-center gap-1 shrink-0">Book <ArrowRight size={12} /></button>
-                </div>
+                  <span className="text-[12px] font-semibold text-[#E85D2A] flex items-center gap-1 shrink-0">Book <ArrowRight size={12} /></span>
+                </button>
               ))}
             </div>
           )}
