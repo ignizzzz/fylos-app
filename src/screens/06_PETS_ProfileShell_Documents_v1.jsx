@@ -4072,10 +4072,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
 
         {/* ═══ 1. GREETING + INLINE PET SELECTOR ═══ */}
         <div className="pt-3 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
-          <div className="flex items-start justify-between">
-            <div className="flex-1 min-w-0">
-              <h2 style={{ fontFamily: '"Playfair Display", Georgia, serif', fontSize: 27, fontWeight: 700, color: '#111', letterSpacing: '-0.01em', lineHeight: 1.12 }}>{calmGreeting}, {MOCK_USER.name}.</h2>
-              <div className="flex items-center gap-2 mt-2">
+          <h2 className="text-[24px] font-bold text-[#111] tracking-[-0.4px] leading-[1.15]">{calmGreeting}, {MOCK_USER.name}.</h2>
+          <div className="flex items-center gap-2 mt-2">
                 {/* Pet avatars — circular carousel, max 3 visible */}
                 {MOCK_DASHBOARD_PETS.length > 1 ? (() => {
                   const pets = MOCK_DASHBOARD_PETS;
@@ -4121,39 +4119,58 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   );
                 })() : null}
                 <p className="text-[13px] text-[#A09A94]">{selectedPet.name} · 18°C, great for walks</p>
-              </div>
-            </div>
-            {/* Warm time-of-day orb — replaces the old 3D mascot. Soft
-                watercolor-ish coral sphere with a gentle float + glow.
-                Built to be animated further later. */}
-            <div className="shrink-0 ml-3 mt-1 relative" style={{ width: 52, height: 52 }} aria-hidden="true">
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: -8,
-                  borderRadius: '50%',
-                  background:
-                    'radial-gradient(circle, rgba(232,93,42,0.18), transparent 70%)',
-                  animation: 'fy-orbGlow 4.5s ease-in-out infinite',
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  borderRadius: '50%',
-                  background:
-                    'radial-gradient(circle at 36% 32%, #FFD7A6, #E85D2A)',
-                  boxShadow: '0 8px 20px rgba(232,93,42,0.24)',
-                  animation: 'fy-orbFloat 5s ease-in-out infinite',
-                }}
-              />
-            </div>
           </div>
         </div>
 
         {/* ═══ CROSSFADE WRAPPER ═══ */}
         <div className={`flex-1 flex flex-col transition-all duration-[350ms] ${isFading ? 'opacity-0 scale-[0.98] translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
+
+          {/* ═══ 2. WELLBEING SNAPSHOT — selected pet's day at a glance ═══ */}
+          {(() => {
+            const careTotal = filteredReminders.filter(r => r.action === 'complete').length;
+            const careDone = careTotal - remainingCount;
+            const pct = careTotal > 0 ? careDone / careTotal : 0;
+            const R = 22;
+            const C = 2 * Math.PI * R;
+            const statusLine =
+              careTotal === 0
+                ? 'Nothing scheduled — enjoy the day'
+                : remainingCount === 0
+                ? 'All caught up. Nice.'
+                : `${careDone} of ${careTotal} done · on track`;
+            return (
+              <div
+                className="rounded-[20px] bg-white border border-[rgba(0,0,0,0.04)] px-4 py-4 mb-5 flex items-center gap-4"
+                style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 10px 28px rgba(60,30,15,0.05)', animation: 'homeReveal 0.4s 0.08s cubic-bezier(0.22,1,0.36,1) both' }}
+              >
+                {/* Progress ring */}
+                <div className="relative shrink-0" style={{ width: 56, height: 56 }}>
+                  <svg width="56" height="56" viewBox="0 0 56 56" style={{ transform: 'rotate(-90deg)' }}>
+                    <circle cx="28" cy="28" r={R} fill="none" stroke="#F0EAE3" strokeWidth="5" />
+                    <circle
+                      cx="28" cy="28" r={R} fill="none" stroke="#E85D2A" strokeWidth="5"
+                      strokeLinecap="round" strokeDasharray={C}
+                      strokeDashoffset={C * (1 - pct)}
+                      style={{ transition: 'stroke-dashoffset 600ms cubic-bezier(0.22,1,0.36,1)' }}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <img src={selectedPet.avatar} alt={selectedPet.name} className="w-[38px] h-[38px] rounded-full object-cover" />
+                  </div>
+                </div>
+                {/* Status */}
+                <div className="flex-1 min-w-0">
+                  <div className="text-[15px] font-bold text-[#111] leading-tight">{selectedPet.name}'s day</div>
+                  <div className="text-[12.5px] text-[#A09A94] mt-0.5">{statusLine}</div>
+                </div>
+                {/* Streak badge */}
+                <div className="shrink-0 flex flex-col items-center justify-center px-3 py-1.5 rounded-[14px]" style={{ background: '#FFF5F0' }}>
+                  <span className="text-[16px] font-extrabold text-[#E85D2A] leading-none tabular-nums">45</span>
+                  <span className="text-[9px] font-semibold text-[#E85D2A] uppercase tracking-[0.08em] mt-0.5">day streak</span>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* ═══ 3. SAFETY — always first: active alert + report button ═══ */}
           <div className="mb-4" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
@@ -4290,26 +4307,27 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* ═══ 6. STREAK + QUICK ACTIONS ═══ */}
-          <div className="flex items-center gap-3 mb-5" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <div className="flex items-center gap-1.5 px-3 py-2 rounded-full" style={{ background: '#FFF5F0' }}>
-              <Activity size={13} className="text-[#E85D2A]" />
-              <span className="text-[11px] font-bold text-[#E85D2A]">45-day streak</span>
-            </div>
-            <div className="flex-1" />
-            <button onClick={() => onNavigate('services')} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.92] transition-transform" style={{ background: '#F3EFEB' }}>
-              <PawPrint size={16} className="text-[#E85D2A]" />
-            </button>
-            <button onClick={() => { window.location.href = '/photo-gallery'; }} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.92] transition-transform" style={{ background: '#F3EFEB' }}>
-              <Camera size={16} className="text-[#A09A94]" />
-            </button>
-            <button onClick={() => setMedSheetOpen(true)} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.92] transition-transform" style={{ background: '#F3EFEB' }}>
-              <Pill size={16} className="text-[#A09A94]" />
-            </button>
+          {/* ═══ 6. QUICK LOG — fast tappable actions (white cards) ═══ */}
+          <div className="grid grid-cols-4 gap-2.5 mb-6" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
+            {[
+              { label: 'Log', icon: Plus, onClick: openQuickLogModal },
+              { label: 'Photo', icon: Camera, onClick: () => { window.location.href = '/photo-gallery'; } },
+              { label: 'Meds', icon: Pill, onClick: () => setMedSheetOpen(true) },
+              { label: 'Walk', icon: PawPrint, onClick: () => onNavigate('services') },
+            ].map((a, i) => (
+              <button
+                key={i}
+                onClick={a.onClick}
+                className="flex flex-col items-center justify-center gap-2 py-3.5 rounded-[16px] bg-white border border-[rgba(0,0,0,0.04)] active:scale-[0.95] transition-transform"
+                style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}
+              >
+                <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center" style={{ background: 'rgba(232,93,42,0.08)' }}>
+                  <a.icon size={16} className="text-[#E85D2A]" strokeWidth={2} />
+                </div>
+                <span className="text-[11px] font-semibold text-[#6E6058]">{a.label}</span>
+              </button>
+            ))}
           </div>
-
-          {/* ═══ DIVIDER ═══ */}
-          <div className="h-[1px] bg-[#EDE8E2] mb-5" />
 
           {/* ═══ 7. SERVICES ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.32s cubic-bezier(0.22,1,0.36,1) both' }}>
