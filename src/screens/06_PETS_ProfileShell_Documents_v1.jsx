@@ -4070,56 +4070,60 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
     <ScreenContainer>
       <div className="px-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
 
-        {/* ═══ 1. GREETING + INLINE PET SELECTOR ═══ */}
+        {/* ═══ 1. GREETING (date + coral name) + PET SELECTOR (right) ═══ */}
         <div className="pt-3 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
-          <h2 className="text-[24px] font-bold text-[#111] tracking-[-0.4px] leading-[1.15]">{calmGreeting}, {MOCK_USER.name}.</h2>
-          <div className="flex items-center gap-2 mt-2">
-                {/* Pet avatars — circular carousel, max 3 visible */}
-                {MOCK_DASHBOARD_PETS.length > 1 ? (() => {
-                  const pets = MOCK_DASHBOARD_PETS;
-                  const currentIdx = pets.findIndex(p => p.id === selectedPetId);
-                  const idx = currentIdx >= 0 ? currentIdx : 0;
-                  // Get 3 visible: previous, current, next (wrapping)
-                  const getWrapped = (i) => pets[((i % pets.length) + pets.length) % pets.length];
-                  const visible = pets.length <= 3
-                    ? pets.map((p, i) => ({ pet: p, pos: i === idx ? 'center' : 'side' }))
-                    : [
-                        { pet: getWrapped(idx - 1), pos: 'left' },
-                        { pet: getWrapped(idx), pos: 'center' },
-                        { pet: getWrapped(idx + 1), pos: 'right' },
-                      ];
-                  const handleNav = (dir) => {
-                    const nextIdx = ((idx + dir) % pets.length + pets.length) % pets.length;
-                    handlePetSelect(pets[nextIdx].id);
-                  };
-                  return (
-                    <div className="flex items-center gap-0 mr-1.5">
-                      {visible.map(({ pet, pos }) => {
-                        const isCenter = pos === 'center';
-                        return (
-                          <button
-                            key={pet.id}
-                            onClick={() => isCenter ? null : handleNav(pos === 'left' ? -1 : 1)}
-                            className="shrink-0 active:scale-[0.85] transition-all duration-300"
-                            style={{ marginLeft: isCenter ? '0' : '-4px', zIndex: isCenter ? 2 : 1 }}
-                          >
-                            <img
-                              src={pet.avatar}
-                              alt={pet.name}
-                              className={`rounded-full object-cover transition-all duration-300 ${
-                                isCenter
-                                  ? 'w-[30px] h-[30px] ring-[2px] ring-[#E85D2A] ring-offset-[1.5px] ring-offset-[#F7F5F2]'
-                                  : 'w-[22px] h-[22px] opacity-30'
-                              }`}
-                            />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  );
-                })() : null}
-                <p className="text-[13px] text-[#A09A94]">{selectedPet.name} · 18°C, great for walks</p>
+          <div className="flex items-center justify-between gap-3">
+            {/* Left — date label + greeting with coral name */}
+            <div className="flex-1 min-w-0">
+              <div className="text-[11px] font-semibold text-[#A09A94] uppercase tracking-[0.14em] mb-1.5">
+                {(() => {
+                  const d = new Date();
+                  const wd = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+                  const mon = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+                  return `${wd} · ${d.getDate()} ${mon}`;
+                })()}
+              </div>
+              <h2 className="text-[26px] font-bold text-[#111] tracking-[-0.5px] leading-[1.08]">
+                {calmGreeting}, <span style={{ color: '#E85D2A' }}>{MOCK_USER.name}.</span>
+              </h2>
+            </div>
+
+            {/* Right — overlapping pet avatars (active ringed coral) + add */}
+            <div className="shrink-0 flex items-center">
+              {MOCK_DASHBOARD_PETS.slice(0, 3).map((pet, i) => {
+                const isActive = pet.id === selectedPetId;
+                return (
+                  <button
+                    key={pet.id}
+                    onClick={() => handlePetSelect(pet.id)}
+                    className="shrink-0 rounded-full active:scale-[0.9] transition-transform"
+                    style={{ marginLeft: i === 0 ? 0 : -10, zIndex: isActive ? 4 : 3 - i }}
+                    aria-label={`Select ${pet.name}`}
+                  >
+                    <img
+                      src={pet.avatar}
+                      alt={pet.name}
+                      className={`w-[42px] h-[42px] rounded-full object-cover transition-all duration-300 ${
+                        isActive
+                          ? 'ring-[2.5px] ring-[#E85D2A] ring-offset-2 ring-offset-[#F7F5F2]'
+                          : 'border-2 border-white'
+                      }`}
+                      style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.14)' }}
+                    />
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => onNavigate('pets')}
+                className="shrink-0 ml-2 w-[42px] h-[42px] rounded-full border-[1.5px] border-dashed border-[#CFC7BE] flex items-center justify-center active:scale-[0.9] transition-transform"
+                aria-label="Add pet"
+              >
+                <Plus size={16} className="text-[#A09A94]" />
+              </button>
+            </div>
           </div>
+
+          <p className="text-[13px] text-[#A09A94] mt-3">{selectedPet.name} · 18°C, great for walks</p>
         </div>
 
         {/* ═══ CROSSFADE WRAPPER ═══ */}
