@@ -4172,66 +4172,77 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             );
           })()}
 
-          {/* ═══ 3. SAFETY — always first: active alert + report button ═══ */}
-          <div className="mb-4" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
-            {/* Active safety alert (only if exists) */}
-            <button
-              onClick={() => onNavigate('danger-reports')}
-              className="flex items-center gap-2 w-full py-2 mb-2 active:opacity-70 transition-opacity"
-            >
-              <div className="w-[6px] h-[6px] rounded-full bg-[#FF3B30] animate-pulse shrink-0" />
-              <span className="text-[12px] font-medium text-[#FF3B30]">Safety alert nearby</span>
-              <span className="text-[12px] text-[#A09A94]">· Seefeld</span>
-              <ArrowRight size={11} className="text-[#A09A94] ml-auto shrink-0" />
-            </button>
+          {/* ═══ 3. NEEDS ATTENTION — safety + health alerts, one zone ═══ */}
+          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Needs attention</h3>
+            <div className="flex flex-col gap-2">
+              {/* Safety alert */}
+              <button
+                onClick={() => onNavigate('danger-reports')}
+                className="flex items-center gap-3 w-full px-3.5 py-3 rounded-[16px] active:scale-[0.98] transition-transform"
+                style={{ background: '#FFF1EE' }}
+              >
+                <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(255,59,48,0.12)' }}>
+                  <AlertCircle size={15} className="text-[#FF3B30]" />
+                </div>
+                <div className="flex-1 min-w-0 text-left">
+                  <span className="text-[13px] font-semibold text-[#111] block">Safety alert nearby</span>
+                  <span className="text-[11px] text-[#A09A94] block">Seefeld · Tap to view reports</span>
+                </div>
+                <ArrowRight size={14} className="text-[#A09A94] shrink-0" />
+              </button>
 
+              {/* Vaccine overdue */}
+              {visibleHealthAlert && (
+                <button
+                  onClick={handleHealthAlertAction}
+                  className="flex items-center gap-3 w-full px-3.5 py-3 rounded-[16px] active:scale-[0.98] transition-transform"
+                  style={{ background: '#FFF5F0' }}
+                >
+                  <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(232,93,42,0.14)' }}>
+                    <AlertTriangle size={15} className="text-[#E85D2A]" />
+                  </div>
+                  <div className="flex-1 min-w-0 text-left">
+                    <span className="text-[13px] font-semibold text-[#111] block">DHPP vaccine overdue</span>
+                    <span className="text-[11px] text-[#A09A94] block">2 days late · Tap to review</span>
+                  </div>
+                  <ArrowRight size={14} className="text-[#E85D2A] shrink-0" />
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* ═══ VACCINE ALERT — inline pill (if exists) ═══ */}
-          {visibleHealthAlert && (
-            <button
-              onClick={handleHealthAlertAction}
-              className="flex items-center gap-2.5 w-full px-4 py-3 mb-5 rounded-[14px] bg-[#FFF5F0] active:scale-[0.98] transition-transform"
-              style={{ animation: 'homeReveal 0.4s 0.13s cubic-bezier(0.22,1,0.36,1) both' }}
-            >
-              <div className="w-[32px] h-[32px] rounded-full bg-[#E85D2A]/15 flex items-center justify-center shrink-0">
-                <AlertTriangle size={14} className="text-[#E85D2A]" />
-              </div>
-              <div className="flex-1 min-w-0 text-left">
-                <span className="text-[13px] font-semibold text-[#111]">DHPP vaccine overdue</span>
-                <span className="text-[11px] text-[#A09A94] block">2 days late · Tap to review</span>
-              </div>
-              <ArrowRight size={14} className="text-[#E85D2A] shrink-0" />
-            </button>
-          )}
-
-          {/* ═══ 4. NEXT BOOKING — compact card ═══ */}
-          {nextBooking && (
-            <div
-              onClick={() => onNavigate('services')}
-              className="bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] px-4 py-3.5 mb-5 active:scale-[0.985] transition-transform cursor-pointer flex items-center"
-              style={{ animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}
-            >
-              <div className="flex-1 min-w-0">
-                <span className="text-[15px] font-bold text-[#111] leading-tight block">{nextBooking.service}</span>
-                <span className="text-[12px] text-[#A09A94] mt-0.5 block">{nextBooking.walkerName} · {formatDateTime(nextBooking.date)}</span>
-              </div>
-              <div className={`flex items-center gap-1 shrink-0 ml-3 px-2.5 py-1 rounded-full ${nextBooking.status === 'Confirmed' ? 'bg-[#EEF7F1]' : 'bg-[#FFF5F0]'}`}>
-                <span className={`text-[11px] font-semibold ${nextBooking.status === 'Confirmed' ? 'text-[#3F8D63]' : 'text-[#E85D2A]'}`}>{nextBooking.status}</span>
-                <ChevronRight size={12} className={nextBooking.status === 'Confirmed' ? 'text-[#3F8D63]' : 'text-[#E85D2A]'} />
-              </div>
-            </div>
-          )}
-
-          {/* ═══ 5. TODAY'S TASKS — flat list (includes logged entries) ═══ */}
-          {filteredReminders.length > 0 && (
-            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
+          {/* ═══ 4. TODAY — next booking + task schedule, one zone ═══ */}
+          {(nextBooking || filteredReminders.length > 0) && (
+            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
               <div className="flex items-center justify-between mb-3">
-                <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Today · {remainingCount} remaining</div>
+                <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Today · {remainingCount} remaining</h3>
                 <button onClick={openQuickLogModal} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
                   <Plus size={14} className="text-[#A09A94]" />
                 </button>
               </div>
+
+              {/* Next booking — white card with walk icon */}
+              {nextBooking && (
+                <div
+                  onClick={() => onNavigate('services')}
+                  className="bg-white border border-[rgba(0,0,0,0.04)] rounded-[16px] px-4 py-3.5 mb-3 active:scale-[0.985] transition-transform cursor-pointer flex items-center gap-3"
+                  style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}
+                >
+                  <div className="w-[38px] h-[38px] rounded-[12px] flex items-center justify-center shrink-0" style={{ background: 'rgba(232,93,42,0.08)' }}>
+                    <PawPrint size={17} className="text-[#E85D2A]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[14px] font-bold text-[#111] leading-tight block">{nextBooking.service}</span>
+                    <span className="text-[12px] text-[#A09A94] mt-0.5 block truncate">{nextBooking.walkerName} · {formatDateTime(nextBooking.date)}</span>
+                  </div>
+                  <div className={`flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-full ${nextBooking.status === 'Confirmed' ? 'bg-[#EEF7F1]' : 'bg-[#FFF5F0]'}`}>
+                    <span className={`text-[11px] font-semibold ${nextBooking.status === 'Confirmed' ? 'text-[#3F8D63]' : 'text-[#E85D2A]'}`}>{nextBooking.status}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Task schedule */}
               <div>
                 {filteredReminders.map((r) => {
                   const Icon = getTimelineIcon(r.type);
