@@ -4205,7 +4205,13 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               + chevron). Calendar-y, ultra minimal. ═══ */}
           {filteredBookings.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <h3 className="text-[16px] font-bold text-[#111] tracking-[-0.2px] mb-2.5">Booked</h3>
+              <div className="flex items-center gap-3 mb-3">
+                <h3 className="text-[15px] font-bold text-[#111] tracking-[-0.1px] shrink-0">Booked</h3>
+                <div className="flex-1 h-px bg-[#E5DDD2]" />
+                <span className="text-[11px] font-medium text-[#A09A94] tabular-nums shrink-0">
+                  {filteredBookings.length} upcoming
+                </span>
+              </div>
               {(() => {
                 const visibleBookings = bookedExpanded
                   ? filteredBookings
@@ -4298,12 +4304,13 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           {/* ═══ 4b. TODAY — task schedule (bookings moved above) ═══ */}
           {filteredReminders.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-[16px] font-bold text-[#111] tracking-[-0.2px]">
-                  Today
-                  <span className="text-[12.5px] font-medium text-[#A09A94] ml-1.5">· {remainingCount} remaining</span>
-                </h3>
-                <button onClick={openQuickLogModal} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <h3 className="text-[15px] font-bold text-[#111] tracking-[-0.1px] shrink-0">Today</h3>
+                <div className="flex-1 h-px bg-[#E5DDD2]" />
+                <span className="text-[11px] font-medium text-[#A09A94] tabular-nums shrink-0">
+                  {remainingCount} remaining
+                </span>
+                <button onClick={openQuickLogModal} className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
                   <Plus size={14} className="text-[#A09A94]" />
                 </button>
               </div>
@@ -4440,35 +4447,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* ═══ 9. NEARBY FRIENDS ═══ */}
-          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.4s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-[15px] font-semibold text-[#111]">Nearby</h3>
-              <button className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">See all</button>
-            </div>
-            <div className="flex gap-3 overflow-x-auto -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
-              {[
-                { name: 'Milo', distance: '200m', avatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=100&h=100&fit=crop' },
-                { name: 'Luna', distance: '350m', avatar: 'https://images.unsplash.com/photo-1601979031925-424e53b6caaa?w=100&h=100&fit=crop' },
-                { name: 'Max', distance: '500m', avatar: 'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?w=100&h=100&fit=crop' },
-              ].map((f, i) => (
-                <div key={i} className="flex flex-col items-center gap-1 min-w-[60px]">
-                  <div className="relative">
-                    <img src={f.avatar} alt={f.name} className="w-[44px] h-[44px] rounded-full object-cover border-2 border-white shadow-sm" />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-[#34C759] border-[1.5px] border-white" />
-                  </div>
-                  <span className="text-[11px] font-semibold text-[#111]">{f.name}</span>
-                  <span className="text-[10px] text-[#A09A94]">{f.distance}</span>
-                </div>
-              ))}
-              <div className="flex flex-col items-center justify-center gap-1 min-w-[60px]">
-                <div className="w-[44px] h-[44px] rounded-full border-[1.5px] border-dashed border-[#DDD8D2] flex items-center justify-center">
-                  <Plus size={15} className="text-[#C4B5A6]" />
-                </div>
-                <span className="text-[10px] font-medium text-[#C4B5A6]">More</span>
-              </div>
-            </div>
-          </div>
+          {/* Nearby section removed at the user's request. */}
 
           <div className="h-6" />
         </div>
