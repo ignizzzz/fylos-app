@@ -573,9 +573,33 @@ const MOCK_DASHBOARD_PETS = [
   { id: 'p4', name: 'Milo', type: 'Dog', breed: 'Beagle', age: 4, weight: 14, avatar: 'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=300&h=300&fit=crop' },
   { id: 'p5', name: 'Luna', type: 'Cat', breed: 'Persian', age: 6, weight: 4.5, avatar: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop' }
 ];
+// Booking shapes:
+// · individual  → walker/sitter with their own photo (single avatar)
+// · business    → company; if `staff.photo` exists we overlap a small
+//                 staff avatar on top of the business avatar; otherwise
+//                 we show the business avatar alone.
+// Business avatar uses `logo` URL if set, else `initials` over `color`.
 const MOCK_BOOKINGS = [
-  { id: 'b1', petId: 'p1', walkerName: 'Sofia L.', walkerRating: '4.9', walkerAvatar: null, service: '90 min Walk', date: '2026-02-16T09:00:00Z', status: 'Confirmed' },
-  { id: 'b2', petId: 'p2', walkerName: 'Sarah M.', walkerRating: '4.8', walkerAvatar: 'https://i.pravatar.cc/150?u=sarah', service: 'Cat Sitting', date: '2026-02-18T14:00:00Z', status: 'Pending' }
+  {
+    id: 'b1', petId: 'p1', kind: 'individual', status: 'Confirmed',
+    service: 'Grooming',
+    individual: { name: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker' },
+    date: '2026-02-16T10:00:00Z', dayLabel: 'Monday, 10:00',
+  },
+  {
+    id: 'b2', petId: 'p1', kind: 'business', status: 'Confirmed',
+    service: 'Grooming',
+    business: { name: 'Bright Paws', logo: null, initials: 'BP', color: '#1F3A3D' },
+    staff: { name: 'Elena', photo: 'https://i.pravatar.cc/150?u=elena_groomer' },
+    date: '2026-02-18T15:30:00Z', dayLabel: 'Wednesday, 15:30 · with Elena',
+  },
+  {
+    id: 'b3', petId: 'p1', kind: 'business', status: 'Confirmed',
+    service: 'Vet visit',
+    business: { name: 'Lakeshore Vet', logo: null, initials: 'LV', color: '#2563EB' },
+    staff: { name: 'Dr. Reza Patel', photo: 'https://i.pravatar.cc/150?u=dr_reza' },
+    date: '2026-02-20T09:00:00Z', dayLabel: 'Friday, 09:00 · Dr. Reza Patel',
+  },
 ];
 const MOCK_REMINDERS = [
   {
@@ -4172,35 +4196,75 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               bell inbox (top-right of header). Only live safety surfaces
               here, as the slim ribbon above the greeting. */}
 
-          {/* ═══ 4. TODAY — next booking + task schedule, one zone ═══ */}
-          {(nextBooking || filteredReminders.length > 0) && (
+          {/* ═══ 4a. BOOKED — upcoming appointments. Avatar logic:
+              · individual → single photo
+              · business + staff with photo → business avatar + small
+                staff avatar overlapping bottom-right
+              · business only → business avatar (logo URL or initials
+                on a colored disc) ═══ */}
+          {filteredBookings.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Booked</h3>
+              <div className="flex flex-col gap-2">
+                {filteredBookings.map((b) => {
+                  const providerName = b.kind === 'individual' ? b.individual.name : b.business.name;
+                  const renderAvatar = () => {
+                    if (b.kind === 'individual') {
+                      return (
+                        <img src={b.individual.photo} alt={b.individual.name}
+                          className="w-[42px] h-[42px] rounded-full object-cover shrink-0" />
+                      );
+                    }
+                    const businessNode = b.business.logo ? (
+                      <img src={b.business.logo} alt={b.business.name}
+                        className="w-[42px] h-[42px] rounded-full object-cover" />
+                    ) : (
+                      <div className="w-[42px] h-[42px] rounded-full flex items-center justify-center text-white font-bold text-[12px] tracking-[0.04em]"
+                        style={{ background: b.business.color || '#1F3A3D', fontFamily: 'Inter, -apple-system, sans-serif' }}>
+                        {b.business.initials}
+                      </div>
+                    );
+                    if (b.staff?.photo) {
+                      return (
+                        <div className="relative shrink-0" style={{ width: 54, height: 42 }}>
+                          {businessNode}
+                          <img src={b.staff.photo} alt={b.staff.name}
+                            className="absolute w-[26px] h-[26px] rounded-full object-cover"
+                            style={{ right: 0, bottom: -2, border: '2px solid #FFF5F0' }} />
+                        </div>
+                      );
+                    }
+                    return <div className="shrink-0">{businessNode}</div>;
+                  };
+                  return (
+                    <button key={b.id}
+                      onClick={() => onNavigate('services')}
+                      className="w-full text-left rounded-[14px] flex items-center gap-3 px-3 py-2.5 active:scale-[0.985] transition-transform"
+                      style={{ background: '#FFF5F0' }}>
+                      {renderAvatar()}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[14px] font-bold text-[#111] leading-tight truncate">
+                          {b.service} · {providerName}
+                        </div>
+                        <div className="text-[12px] text-[#A09A94] mt-0.5 truncate">{b.dayLabel}</div>
+                      </div>
+                      <ChevronRight size={14} className="text-[#A09A94] shrink-0" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* ═══ 4b. TODAY — task schedule (bookings moved above) ═══ */}
+          {filteredReminders.length > 0 && (
+            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Today · {remainingCount} remaining</h3>
                 <button onClick={openQuickLogModal} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
                   <Plus size={14} className="text-[#A09A94]" />
                 </button>
               </div>
-
-              {/* Next booking — white card with walk icon */}
-              {nextBooking && (
-                <div
-                  onClick={() => onNavigate('services')}
-                  className="bg-white border border-[rgba(0,0,0,0.04)] rounded-[16px] px-4 py-3.5 mb-3 active:scale-[0.985] transition-transform cursor-pointer flex items-center gap-3"
-                  style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}
-                >
-                  <div className="w-[38px] h-[38px] rounded-[12px] flex items-center justify-center shrink-0" style={{ background: 'rgba(232,93,42,0.08)' }}>
-                    <PawPrint size={17} className="text-[#E85D2A]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[14px] font-bold text-[#111] leading-tight block">{nextBooking.service}</span>
-                    <span className="text-[12px] text-[#A09A94] mt-0.5 block truncate">{nextBooking.walkerName} · {formatDateTime(nextBooking.date)}</span>
-                  </div>
-                  <div className={`flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-full ${nextBooking.status === 'Confirmed' ? 'bg-[#EEF7F1]' : 'bg-[#FFF5F0]'}`}>
-                    <span className={`text-[11px] font-semibold ${nextBooking.status === 'Confirmed' ? 'text-[#3F8D63]' : 'text-[#E85D2A]'}`}>{nextBooking.status}</span>
-                  </div>
-                </div>
-              )}
 
               {/* Task schedule */}
               <div>
