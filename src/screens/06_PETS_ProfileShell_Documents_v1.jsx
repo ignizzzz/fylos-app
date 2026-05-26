@@ -3894,6 +3894,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   // critical alerts. Dismissable; everything else lives in the bell inbox.
   const [safetyRibbonDismissed, setSafetyRibbonDismissed] = useState(false);
   const safetyLive = true; // Placeholder; wire to real proximity/recency check.
+  // "Booked" section shows the first 2 upcoming appointments; rest behind
+  // a "Show X more" toggle so the home doesn't dump 10 bookings at once.
+  const [bookedExpanded, setBookedExpanded] = useState(false);
   const dismissTimeoutRef = useRef(null);
   const greeting = useTimeBasedGreeting();
   const calmGreeting = greeting.replace('Good morning', 'Morning').replace('Good afternoon', 'Afternoon').replace('Good evening', 'Evening');
@@ -4202,11 +4205,17 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               + chevron). Calendar-y, ultra minimal. ═══ */}
           {filteredBookings.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">Booked</h3>
+              <h3 className="text-[16px] font-bold text-[#111] tracking-[-0.2px] mb-2.5">Booked</h3>
+              {(() => {
+                const visibleBookings = bookedExpanded
+                  ? filteredBookings
+                  : filteredBookings.slice(0, 2);
+                const hiddenCount = filteredBookings.length - 2;
+                return (<>
               <div>
-                {filteredBookings.map((b, idx) => {
+                {visibleBookings.map((b, idx) => {
                   const d = new Date(`${b.date}T${b.time}:00`);
-                  const prev = idx > 0 ? new Date(`${filteredBookings[idx - 1].date}T${filteredBookings[idx - 1].time}:00`) : null;
+                  const prev = idx > 0 ? new Date(`${visibleBookings[idx - 1].date}T${visibleBookings[idx - 1].time}:00`) : null;
                   const showHeader = !prev || prev.toDateString() !== d.toDateString();
                   const dayHeader = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
                   const providerName = b.kind === 'individual' ? b.individual.name : b.business.name;
@@ -4268,6 +4277,21 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   );
                 })}
               </div>
+              {hiddenCount > 0 && (
+                <button
+                  onClick={() => setBookedExpanded(v => !v)}
+                  className="flex items-center gap-1.5 mt-3 active:opacity-70 transition-opacity"
+                >
+                  <span className="text-[12.5px] font-semibold text-[#E85D2A]">
+                    {bookedExpanded ? 'Show less' : `Show ${hiddenCount} more`}
+                  </span>
+                  {bookedExpanded
+                    ? <ChevronUp size={14} className="text-[#E85D2A]" />
+                    : <ChevronDown size={14} className="text-[#E85D2A]" />}
+                </button>
+              )}
+              </>);
+              })()}
             </div>
           )}
 
@@ -4275,7 +4299,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           {filteredReminders.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Today · {remainingCount} remaining</h3>
+                <h3 className="text-[16px] font-bold text-[#111] tracking-[-0.2px]">
+                  Today
+                  <span className="text-[12.5px] font-medium text-[#A09A94] ml-1.5">· {remainingCount} remaining</span>
+                </h3>
                 <button onClick={openQuickLogModal} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
                   <Plus size={14} className="text-[#A09A94]" />
                 </button>
