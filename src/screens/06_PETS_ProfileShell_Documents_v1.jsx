@@ -584,21 +584,21 @@ const MOCK_BOOKINGS = [
     id: 'b1', petId: 'p1', kind: 'individual', status: 'Confirmed',
     service: 'Grooming',
     individual: { name: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker' },
-    date: '2026-02-16T10:00:00Z', dayLabel: 'Monday, 10:00',
+    date: '2026-02-16', time: '10:00',
   },
   {
     id: 'b2', petId: 'p1', kind: 'business', status: 'Confirmed',
     service: 'Grooming',
     business: { name: 'Bright Paws', logo: null, initials: 'BP', color: '#1F3A3D' },
     staff: { name: 'Elena', photo: 'https://i.pravatar.cc/150?u=elena_groomer' },
-    date: '2026-02-18T15:30:00Z', dayLabel: 'Wednesday, 15:30 · with Elena',
+    date: '2026-02-18', time: '15:30',
   },
   {
     id: 'b3', petId: 'p1', kind: 'business', status: 'Confirmed',
     service: 'Vet visit',
     business: { name: 'Lakeshore Vet', logo: null, initials: 'LV', color: '#2563EB' },
     staff: { name: 'Dr. Reza Patel', photo: 'https://i.pravatar.cc/150?u=dr_reza' },
-    date: '2026-02-20T09:00:00Z', dayLabel: 'Friday, 09:00 · Dr. Reza Patel',
+    date: '2026-02-20', time: '09:00',
   },
 ];
 const MOCK_REMINDERS = [
@@ -4196,60 +4196,75 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               bell inbox (top-right of header). Only live safety surfaces
               here, as the slim ribbon above the greeting. */}
 
-          {/* ═══ 4a. BOOKED — upcoming appointments. Avatar logic:
-              · individual → single photo
-              · business + staff with photo → business avatar + small
-                staff avatar overlapping bottom-right
-              · business only → business avatar (logo URL or initials
-                on a colored disc) ═══ */}
+          {/* ═══ 4a. BOOKED — grouped-by-day flat rows. No card chrome:
+              just a small uppercase day header followed by tappable rows
+              (avatar + service · provider + optional staff line + time
+              + chevron). Calendar-y, ultra minimal. ═══ */}
           {filteredBookings.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Booked</h3>
-              <div className="flex flex-col gap-2">
-                {filteredBookings.map((b) => {
+              <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2">Booked</h3>
+              <div>
+                {filteredBookings.map((b, idx) => {
+                  const d = new Date(`${b.date}T${b.time}:00`);
+                  const prev = idx > 0 ? new Date(`${filteredBookings[idx - 1].date}T${filteredBookings[idx - 1].time}:00`) : null;
+                  const showHeader = !prev || prev.toDateString() !== d.toDateString();
+                  const dayHeader = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
                   const providerName = b.kind === 'individual' ? b.individual.name : b.business.name;
+                  const staffLine = b.kind !== 'individual' && b.staff
+                    ? (b.staff.name.startsWith('Dr.') ? b.staff.name : `with ${b.staff.name}`)
+                    : null;
+
                   const renderAvatar = () => {
                     if (b.kind === 'individual') {
                       return (
                         <img src={b.individual.photo} alt={b.individual.name}
-                          className="w-[42px] h-[42px] rounded-full object-cover shrink-0" />
+                          className="w-[40px] h-[40px] rounded-full object-cover shrink-0" />
                       );
                     }
                     const businessNode = b.business.logo ? (
                       <img src={b.business.logo} alt={b.business.name}
-                        className="w-[42px] h-[42px] rounded-full object-cover" />
+                        className="w-[40px] h-[40px] rounded-full object-cover" />
                     ) : (
-                      <div className="w-[42px] h-[42px] rounded-full flex items-center justify-center text-white font-bold text-[12px] tracking-[0.04em]"
+                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center text-white font-bold text-[11.5px] tracking-[0.04em]"
                         style={{ background: b.business.color || '#1F3A3D', fontFamily: 'Inter, -apple-system, sans-serif' }}>
                         {b.business.initials}
                       </div>
                     );
                     if (b.staff?.photo) {
                       return (
-                        <div className="relative shrink-0" style={{ width: 54, height: 42 }}>
+                        <div className="relative shrink-0" style={{ width: 50, height: 40 }}>
                           {businessNode}
                           <img src={b.staff.photo} alt={b.staff.name}
-                            className="absolute w-[26px] h-[26px] rounded-full object-cover"
-                            style={{ right: 0, bottom: -2, border: '2px solid #FFF5F0' }} />
+                            className="absolute w-[22px] h-[22px] rounded-full object-cover"
+                            style={{ right: 0, bottom: -1, border: '2px solid #F7F5F2' }} />
                         </div>
                       );
                     }
                     return <div className="shrink-0">{businessNode}</div>;
                   };
+
                   return (
-                    <button key={b.id}
-                      onClick={() => onNavigate('services')}
-                      className="w-full text-left rounded-[14px] flex items-center gap-3 px-3 py-2.5 active:scale-[0.985] transition-transform"
-                      style={{ background: '#FFF5F0' }}>
-                      {renderAvatar()}
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[14px] font-bold text-[#111] leading-tight truncate">
-                          {b.service} · {providerName}
+                    <React.Fragment key={b.id}>
+                      {showHeader && (
+                        <div className={`text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.16em] ${idx === 0 ? 'mt-1' : 'mt-4'} mb-1.5`}>
+                          {dayHeader}
                         </div>
-                        <div className="text-[12px] text-[#A09A94] mt-0.5 truncate">{b.dayLabel}</div>
-                      </div>
-                      <ChevronRight size={14} className="text-[#A09A94] shrink-0" />
-                    </button>
+                      )}
+                      <button
+                        onClick={() => onNavigate('services')}
+                        className="w-full text-left flex items-center gap-3 py-2.5 active:opacity-70 transition-opacity"
+                      >
+                        {renderAvatar()}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[14px] font-bold text-[#111] leading-tight truncate">{b.service} · {providerName}</div>
+                          {staffLine && (
+                            <div className="text-[12px] text-[#A09A94] mt-0.5 truncate">{staffLine}</div>
+                          )}
+                        </div>
+                        <span className="text-[12.5px] text-[#A09A94] tabular-nums shrink-0">{b.time}</span>
+                        <ChevronRight size={13} className="text-[#C4B5A6] shrink-0 ml-0.5" />
+                      </button>
+                    </React.Fragment>
                   );
                 })}
               </div>
