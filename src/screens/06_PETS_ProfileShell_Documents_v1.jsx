@@ -4239,12 +4239,18 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                       </div>
                     );
                     if (b.staff?.photo) {
+                      // Wrapper stays at 40px (same as individual avatars)
+                      // so every booking row's text starts at the same x.
+                      // The staff thumbnail is absolutely positioned and is
+                      // allowed to overflow to the right via the visible
+                      // gap, keeping the overlap effect without nudging the
+                      // content column.
                       return (
-                        <div className="relative shrink-0" style={{ width: 50, height: 40 }}>
+                        <div className="relative shrink-0" style={{ width: 40, height: 40 }}>
                           {businessNode}
                           <img src={b.staff.photo} alt={b.staff.name}
                             className="absolute w-[22px] h-[22px] rounded-full object-cover"
-                            style={{ right: 0, bottom: -1, border: '2px solid #F7F5F2' }} />
+                            style={{ right: -6, bottom: -2, border: '2px solid #F7F5F2' }} />
                         </div>
                       );
                     }
