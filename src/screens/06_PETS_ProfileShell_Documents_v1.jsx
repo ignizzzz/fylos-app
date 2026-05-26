@@ -4205,7 +4205,13 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               + chevron). Calendar-y, ultra minimal. ═══ */}
           {filteredBookings.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
-              {/* Title removed — sections separated by a thin divider only. */}
+              {/* Soft section title — small uppercase muted, count in coral on the right. */}
+              <div className="flex items-end justify-between mb-3">
+                <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Booked</h3>
+                <span className="text-[11px] font-semibold text-[#E85D2A] tabular-nums">
+                  {filteredBookings.length} upcoming
+                </span>
+              </div>
               {(() => {
                 const visibleBookings = bookedExpanded
                   ? filteredBookings
@@ -4303,15 +4309,16 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* —— thin divider between sections —— */}
-          {filteredBookings.length > 0 && filteredReminders.length > 0 && (
-            <div className="h-px bg-[#EDE8E2] mb-5" />
-          )}
-
           {/* ═══ 4b. TODAY — task schedule (bookings moved above) ═══ */}
           {filteredReminders.length > 0 && (
             <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
-              {/* Title removed — the bottom FAB carries the "log" action. */}
+              {/* Soft section title — small uppercase muted, count in coral on the right. */}
+              <div className="flex items-end justify-between mb-3">
+                <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Today</h3>
+                <span className="text-[11px] font-semibold text-[#E85D2A] tabular-nums">
+                  {remainingCount} remaining
+                </span>
+              </div>
 
               {/* Task schedule */}
               <div>
@@ -4389,9 +4396,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* —— thin divider between sections —— */}
-          <div className="h-px bg-[#EDE8E2] mb-5" />
-
           {/* ═══ 6. QUICK LOG — fast tappable actions (white cards) ═══ */}
           <div className="grid grid-cols-4 gap-2.5 mb-6" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
             {[
@@ -4414,9 +4418,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             ))}
           </div>
 
-          {/* —— thin divider between sections —— */}
-          <div className="h-px bg-[#EDE8E2] mb-5" />
-
           {/* ═══ 7. EXPLORE — flat tiles, no title (sections divided by line) ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.32s cubic-bezier(0.22,1,0.36,1) both' }}>
             <div className="grid grid-cols-4 gap-2.5">
@@ -4433,11 +4434,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               ))}
             </div>
           </div>
-
-          {/* —— thin divider between sections —— */}
-          {filteredSuggestions.length > 0 && (
-            <div className="h-px bg-[#EDE8E2] mb-5" />
-          )}
 
           {/* ═══ 8. SUGGESTED — single contextual nudge (if any) ═══ */}
           {filteredSuggestions.length > 0 && (
