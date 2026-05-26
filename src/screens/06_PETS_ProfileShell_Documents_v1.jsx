@@ -909,6 +909,7 @@ const GlobalStyles = () => (
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap');
     @keyframes fy-orbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
     @keyframes fy-orbGlow { 0%, 100% { opacity: 0.45; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.08); } }
+    @keyframes fy-livePulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,59,48,0.45); } 50% { opacity: 0.85; box-shadow: 0 0 0 5px rgba(255,59,48,0); } }
     :root {
       --color-accent: #E85D2A;
       --color-accent-hover: #D04A1C;
@@ -3865,6 +3866,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const [isFading, setIsFading] = useState(false);
   const [displayPetId, setDisplayPetId] = useState(MOCK_DASHBOARD_PETS[0].id);
   const [dismissedHealthAlerts, setDismissedHealthAlerts] = useState(new Set());
+  // Slim safety ribbon (above greeting) — appears only for live geo-time-
+  // critical alerts. Dismissable; everything else lives in the bell inbox.
+  const [safetyRibbonDismissed, setSafetyRibbonDismissed] = useState(false);
+  const safetyLive = true; // Placeholder; wire to real proximity/recency check.
   const dismissTimeoutRef = useRef(null);
   const greeting = useTimeBasedGreeting();
   const calmGreeting = greeting.replace('Good morning', 'Morning').replace('Good afternoon', 'Afternoon').replace('Good evening', 'Evening');
@@ -4070,6 +4075,40 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
     <ScreenContainer>
       <div className="px-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
 
+        {/* ═══ 0. SAFETY RIBBON — slim banner for live geo-critical alerts.
+            Hidden by default; renders only when there's an active threat
+            and the user hasn't dismissed it. Everything non-live goes to
+            the bell inbox instead. ═══ */}
+        {safetyLive && !safetyRibbonDismissed && (
+          <div
+            className="flex items-center gap-2.5 px-3.5 py-2.5 mb-3 rounded-[14px]"
+            style={{
+              background: 'rgba(255,59,48,0.08)',
+              border: '1px solid rgba(255,59,48,0.18)',
+              animation: 'homeReveal 0.4s cubic-bezier(0.22,1,0.36,1) both',
+            }}
+          >
+            <span
+              className="shrink-0 w-[8px] h-[8px] rounded-full"
+              style={{ background: '#FF3B30', animation: 'fy-livePulse 1.6s ease-in-out infinite' }}
+            />
+            <button
+              onClick={() => onNavigate('danger-reports')}
+              className="flex-1 min-w-0 text-left active:opacity-70"
+            >
+              <span className="text-[12.5px] font-semibold text-[#111]">Safety alert nearby</span>
+              <span className="text-[12.5px] text-[#A09A94]"> · Seefeld · 2 recent reports</span>
+            </button>
+            <button
+              onClick={() => setSafetyRibbonDismissed(true)}
+              aria-label="Dismiss safety alert"
+              className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform"
+            >
+              <X size={14} className="text-[#A09A94]" />
+            </button>
+          </div>
+        )}
+
         {/* ═══ 1. GREETING (date + coral name) + PET SELECTOR (right) ═══ */}
         <div className="pt-3 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
           <div className="flex items-center justify-between gap-3">
@@ -4129,55 +4168,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
         <div className={`flex-1 flex flex-col transition-all duration-[350ms] ${isFading ? 'opacity-0 scale-[0.98] translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
 
 
-          {/* ═══ 3. NEEDS ATTENTION — consolidated white card with rows ═══ */}
-          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Needs attention</h3>
-            <div
-              className="rounded-[18px] bg-white border border-[rgba(0,0,0,0.04)] overflow-hidden"
-              style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 10px 28px rgba(60,30,15,0.05)' }}
-            >
-              {/* Safety row */}
-              <button
-                onClick={() => onNavigate('danger-reports')}
-                className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-[#FAF7F2] transition-colors text-left"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="text-[14px] font-semibold text-[#111] leading-tight">Safety alert nearby</div>
-                  <div className="text-[12px] text-[#A09A94] mt-0.5">Seefeld · 2 recent reports</div>
-                </div>
-                <span
-                  className="shrink-0 px-2 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.06em]"
-                  style={{ background: 'rgba(255,59,48,0.10)', color: '#FF3B30' }}
-                >
-                  Live
-                </span>
-                <ChevronRight size={14} className="text-[#C4B5A6] shrink-0 ml-0.5" />
-              </button>
-
-              {/* Vaccine row */}
-              {visibleHealthAlert && (
-                <>
-                  <div className="h-[1px] bg-[#EDE8E2] mx-4" />
-                  <button
-                    onClick={handleHealthAlertAction}
-                    className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-[#FAF7F2] transition-colors text-left"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[14px] font-semibold text-[#111] leading-tight">DHPP vaccine overdue</div>
-                      <div className="text-[12px] text-[#A09A94] mt-0.5">{selectedPet.name} · last shot Mar 2024</div>
-                    </div>
-                    <span
-                      className="shrink-0 px-2 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.06em]"
-                      style={{ background: 'rgba(232,93,42,0.10)', color: '#E85D2A' }}
-                    >
-                      2d late
-                    </span>
-                    <ChevronRight size={14} className="text-[#C4B5A6] shrink-0 ml-0.5" />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
+          {/* Needs Attention section removed — non-live alerts live in the
+              bell inbox (top-right of header). Only live safety surfaces
+              here, as the slim ribbon above the greeting. */}
 
           {/* ═══ 4. TODAY — next booking + task schedule, one zone ═══ */}
           {(nextBooking || filteredReminders.length > 0) && (
@@ -8184,6 +8177,20 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
 
 // --- STEPS 30-35 (SETTINGS, NOTIFICATIONS, SEARCH, COMING SOON, ANIMATIONS) ---
 const APP_NOTIFICATIONS = [
+  {
+    id: 'inbox_safety_001', category: 'safety', type: 'safety-alert', priority: 'critical',
+    sender: { name: 'FYLOS Safety', icon: AlertCircle },
+    title: 'Safety alert nearby', body: 'Seefeld · 2 recent reports in the last 6 hours. Stay aware on walks.',
+    actions: [{ id: 'view_reports', label: 'View reports', type: 'primary' }, { id: 'dismiss', label: 'Dismiss', type: 'secondary' }],
+    read: false, archived: false, timeGroup: 'Today', timeAgo: '12m'
+  },
+  {
+    id: 'inbox_health_dhpp', category: 'health', type: 'vaccination-overdue', priority: 'high',
+    sender: { name: 'FYLOS Health', icon: AlertTriangle },
+    title: 'DHPP vaccine overdue', body: "Leo's DHPP booster is 2 days late. Book a vet visit to keep him protected.",
+    actions: [{ id: 'book_vet', label: 'Book vet', type: 'primary' }],
+    read: false, archived: false, timeGroup: 'Today', timeAgo: '2d'
+  },
   {
     id: 'inbox_002', category: 'health', type: 'medication-reminder', priority: 'critical',
     sender: { name: 'FYLOS Health', icon: HeartPulse },
