@@ -4260,17 +4260,17 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                         {renderAvatar()}
                         <div className="flex-1 min-w-0">
                           <div className="text-[14px] font-bold text-[#111] leading-tight truncate">{b.service} · {providerName}</div>
-                          {staffLine && (
-                            <div className="text-[12px] text-[#A09A94] mt-0.5 truncate">{staffLine}</div>
-                          )}
                         </div>
                         <span className="text-[12.5px] text-[#A09A94] tabular-nums shrink-0">{b.time}</span>
                         <ChevronRight size={13} className="text-[#C4B5A6] shrink-0 ml-0.5" />
                       </button>
-                      {/* Coral day label sits underneath as a "card footer"
-                          without any actual frame around the booking. */}
-                      <div className="text-[11.5px] font-semibold text-[#E85D2A] mt-1.5 ml-[52px]">
+                      {/* Coral day label sits underneath, flush-left with the
+                          avatar. Staff line, if any, follows inline in muted. */}
+                      <div className="text-[11.5px] font-semibold text-[#E85D2A] mt-1 leading-tight">
                         {dayLabel}
+                        {staffLine && (
+                          <span className="ml-1.5 font-medium text-[#A09A94]">· {staffLine}</span>
+                        )}
                       </div>
                     </div>
                   );
