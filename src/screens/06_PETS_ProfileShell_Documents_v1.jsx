@@ -4123,58 +4123,11 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           </div>
 
-          <p className="text-[13px] text-[#A09A94] mt-3">{selectedPet.name} · 18°C, great for walks</p>
         </div>
 
         {/* ═══ CROSSFADE WRAPPER ═══ */}
         <div className={`flex-1 flex flex-col transition-all duration-[350ms] ${isFading ? 'opacity-0 scale-[0.98] translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
 
-          {/* ═══ 2. WELLBEING SNAPSHOT — selected pet's day at a glance ═══ */}
-          {(() => {
-            const careTotal = filteredReminders.filter(r => r.action === 'complete').length;
-            const careDone = careTotal - remainingCount;
-            const pct = careTotal > 0 ? careDone / careTotal : 0;
-            const R = 22;
-            const C = 2 * Math.PI * R;
-            const statusLine =
-              careTotal === 0
-                ? 'Nothing scheduled — enjoy the day'
-                : remainingCount === 0
-                ? 'All caught up. Nice.'
-                : `${careDone} of ${careTotal} done · on track`;
-            return (
-              <div
-                className="rounded-[20px] bg-white border border-[rgba(0,0,0,0.04)] px-4 py-4 mb-5 flex items-center gap-4"
-                style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 10px 28px rgba(60,30,15,0.05)', animation: 'homeReveal 0.4s 0.08s cubic-bezier(0.22,1,0.36,1) both' }}
-              >
-                {/* Progress ring */}
-                <div className="relative shrink-0" style={{ width: 56, height: 56 }}>
-                  <svg width="56" height="56" viewBox="0 0 56 56" style={{ transform: 'rotate(-90deg)' }}>
-                    <circle cx="28" cy="28" r={R} fill="none" stroke="#F0EAE3" strokeWidth="5" />
-                    <circle
-                      cx="28" cy="28" r={R} fill="none" stroke="#E85D2A" strokeWidth="5"
-                      strokeLinecap="round" strokeDasharray={C}
-                      strokeDashoffset={C * (1 - pct)}
-                      style={{ transition: 'stroke-dashoffset 600ms cubic-bezier(0.22,1,0.36,1)' }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <img src={selectedPet.avatar} alt={selectedPet.name} className="w-[38px] h-[38px] rounded-full object-cover" />
-                  </div>
-                </div>
-                {/* Status */}
-                <div className="flex-1 min-w-0">
-                  <div className="text-[15px] font-bold text-[#111] leading-tight">{selectedPet.name}'s day</div>
-                  <div className="text-[12.5px] text-[#A09A94] mt-0.5">{statusLine}</div>
-                </div>
-                {/* Streak badge */}
-                <div className="shrink-0 flex flex-col items-center justify-center px-3 py-1.5 rounded-[14px]" style={{ background: '#FFF5F0' }}>
-                  <span className="text-[16px] font-extrabold text-[#E85D2A] leading-none tabular-nums">45</span>
-                  <span className="text-[9px] font-semibold text-[#E85D2A] uppercase tracking-[0.08em] mt-0.5">day streak</span>
-                </div>
-              </div>
-            );
-          })()}
 
           {/* ═══ 3. NEEDS ATTENTION — safety + health alerts, one zone ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
