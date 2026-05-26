@@ -4213,11 +4213,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 const hiddenCount = filteredBookings.length - 2;
                 return (<>
               <div>
-                {visibleBookings.map((b, idx) => {
+                {visibleBookings.map((b) => {
                   const d = new Date(`${b.date}T${b.time}:00`);
-                  const prev = idx > 0 ? new Date(`${visibleBookings[idx - 1].date}T${visibleBookings[idx - 1].time}:00`) : null;
-                  const showHeader = !prev || prev.toDateString() !== d.toDateString();
-                  const dayHeader = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
+                  // "Monday, Feb 16" — title case, day-first
+                  const dayLabel = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
                   const providerName = b.kind === 'individual' ? b.individual.name : b.business.name;
                   const staffLine = b.kind !== 'individual' && b.staff
                     ? (b.staff.name.startsWith('Dr.') ? b.staff.name : `with ${b.staff.name}`)
@@ -4253,15 +4252,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   };
 
                   return (
-                    <React.Fragment key={b.id}>
-                      {showHeader && (
-                        <div className={`text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.16em] ${idx === 0 ? 'mt-1' : 'mt-4'} mb-1.5`}>
-                          {dayHeader}
-                        </div>
-                      )}
+                    <div key={b.id} className="mb-4 last:mb-0">
                       <button
                         onClick={() => onNavigate('services')}
-                        className="w-full text-left flex items-center gap-3 py-2.5 active:opacity-70 transition-opacity"
+                        className="w-full text-left flex items-center gap-3 active:opacity-70 transition-opacity"
                       >
                         {renderAvatar()}
                         <div className="flex-1 min-w-0">
@@ -4273,7 +4267,12 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                         <span className="text-[12.5px] text-[#A09A94] tabular-nums shrink-0">{b.time}</span>
                         <ChevronRight size={13} className="text-[#C4B5A6] shrink-0 ml-0.5" />
                       </button>
-                    </React.Fragment>
+                      {/* Coral day label sits underneath as a "card footer"
+                          without any actual frame around the booking. */}
+                      <div className="text-[11.5px] font-semibold text-[#E85D2A] mt-1.5 ml-[52px]">
+                        {dayLabel}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
