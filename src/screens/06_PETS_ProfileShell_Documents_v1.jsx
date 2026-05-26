@@ -4075,13 +4075,12 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
     <ScreenContainer>
       <div className="px-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
 
-        {/* ═══ 0. SAFETY RIBBON — slim banner for live geo-critical alerts.
-            Hidden by default; renders only when there's an active threat
-            and the user hasn't dismissed it. Everything non-live goes to
-            the bell inbox instead. ═══ */}
+        {/* ═══ 0. SAFETY RIBBON — single-line slim banner. Just enough
+            signal to make the user tap; full detail lives behind the
+            tap (danger-reports). Dismissable via X. ═══ */}
         {safetyLive && !safetyRibbonDismissed && (
           <div
-            className="flex items-center gap-2.5 px-3.5 py-2.5 mb-3 rounded-[14px]"
+            className="flex items-center gap-2.5 px-3 py-1.5 mb-2.5 rounded-full"
             style={{
               background: 'rgba(255,59,48,0.08)',
               border: '1px solid rgba(255,59,48,0.18)',
@@ -4089,22 +4088,23 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             }}
           >
             <span
-              className="shrink-0 w-[8px] h-[8px] rounded-full"
+              className="shrink-0 w-[7px] h-[7px] rounded-full"
               style={{ background: '#FF3B30', animation: 'fy-livePulse 1.6s ease-in-out infinite' }}
             />
             <button
               onClick={() => onNavigate('danger-reports')}
-              className="flex-1 min-w-0 text-left active:opacity-70"
+              className="flex-1 min-w-0 text-left active:opacity-70 truncate"
             >
-              <span className="text-[12.5px] font-semibold text-[#111]">Safety alert nearby</span>
-              <span className="text-[12.5px] text-[#A09A94]"> · Seefeld · 2 recent reports</span>
+              <span className="text-[12.5px] font-semibold text-[#111] whitespace-nowrap">Safety alert</span>
+              <span className="text-[12.5px] text-[#A09A94] whitespace-nowrap"> · Nearby · Seefeld</span>
             </button>
+            <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
             <button
               onClick={() => setSafetyRibbonDismissed(true)}
               aria-label="Dismiss safety alert"
-              className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform"
+              className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform ml-0.5"
             >
-              <X size={14} className="text-[#A09A94]" />
+              <X size={12} className="text-[#A09A94]" />
             </button>
           </div>
         )}
