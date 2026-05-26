@@ -4252,27 +4252,30 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   };
 
                   return (
-                    <div key={b.id} className="mb-4 last:mb-0">
-                      <button
-                        onClick={() => onNavigate('services')}
-                        className="w-full text-left flex items-center gap-3 active:opacity-70 transition-opacity"
-                      >
-                        {renderAvatar()}
-                        <div className="flex-1 min-w-0">
-                          <div className="text-[14px] font-bold text-[#111] leading-tight truncate">{b.service} · {providerName}</div>
+                    <button
+                      key={b.id}
+                      onClick={() => onNavigate('services')}
+                      className="w-full text-left flex items-center gap-3 mb-4 last:mb-0 active:opacity-70 transition-opacity"
+                    >
+                      {renderAvatar()}
+                      {/* Two-line content column to the right of the avatar:
+                          title on top, coral day label (+ optional muted
+                          staff line) right under it. Avatar is centered
+                          vertically against the two lines. */}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[14px] font-bold text-[#111] leading-tight truncate">
+                          {b.service} · {providerName}
                         </div>
-                        <span className="text-[12.5px] text-[#A09A94] tabular-nums shrink-0">{b.time}</span>
-                        <ChevronRight size={13} className="text-[#C4B5A6] shrink-0 ml-0.5" />
-                      </button>
-                      {/* Coral day label sits underneath, flush-left with the
-                          avatar. Staff line, if any, follows inline in muted. */}
-                      <div className="text-[11.5px] font-semibold text-[#E85D2A] mt-1 leading-tight">
-                        {dayLabel}
-                        {staffLine && (
-                          <span className="ml-1.5 font-medium text-[#A09A94]">· {staffLine}</span>
-                        )}
+                        <div className="text-[11.5px] font-semibold text-[#E85D2A] mt-0.5 leading-tight truncate">
+                          {dayLabel}
+                          {staffLine && (
+                            <span className="ml-1.5 font-medium text-[#A09A94]">· {staffLine}</span>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                      <span className="text-[12.5px] text-[#A09A94] tabular-nums shrink-0">{b.time}</span>
+                      <ChevronRight size={13} className="text-[#C4B5A6] shrink-0 ml-0.5" />
+                    </button>
                   );
                 })}
               </div>
