@@ -4129,42 +4129,52 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
         <div className={`flex-1 flex flex-col transition-all duration-[350ms] ${isFading ? 'opacity-0 scale-[0.98] translate-y-2' : 'opacity-100 scale-100 translate-y-0'}`} style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}>
 
 
-          {/* ═══ 3. NEEDS ATTENTION — safety + health alerts, one zone ═══ */}
+          {/* ═══ 3. NEEDS ATTENTION — consolidated white card with rows ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
             <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Needs attention</h3>
-            <div className="flex flex-col gap-2">
-              {/* Safety alert */}
+            <div
+              className="rounded-[18px] bg-white border border-[rgba(0,0,0,0.04)] overflow-hidden"
+              style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 10px 28px rgba(60,30,15,0.05)' }}
+            >
+              {/* Safety row */}
               <button
                 onClick={() => onNavigate('danger-reports')}
-                className="flex items-center gap-3 w-full px-3.5 py-3 rounded-[16px] active:scale-[0.98] transition-transform"
-                style={{ background: '#FFF1EE' }}
+                className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-[#FAF7F2] transition-colors text-left"
               >
-                <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(255,59,48,0.12)' }}>
-                  <AlertCircle size={15} className="text-[#FF3B30]" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[14px] font-semibold text-[#111] leading-tight">Safety alert nearby</div>
+                  <div className="text-[12px] text-[#A09A94] mt-0.5">Seefeld · 2 recent reports</div>
                 </div>
-                <div className="flex-1 min-w-0 text-left">
-                  <span className="text-[13px] font-semibold text-[#111] block">Safety alert nearby</span>
-                  <span className="text-[11px] text-[#A09A94] block">Seefeld · Tap to view reports</span>
-                </div>
-                <ArrowRight size={14} className="text-[#A09A94] shrink-0" />
+                <span
+                  className="shrink-0 px-2 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.06em]"
+                  style={{ background: 'rgba(255,59,48,0.10)', color: '#FF3B30' }}
+                >
+                  Live
+                </span>
+                <ChevronRight size={14} className="text-[#C4B5A6] shrink-0 ml-0.5" />
               </button>
 
-              {/* Vaccine overdue */}
+              {/* Vaccine row */}
               {visibleHealthAlert && (
-                <button
-                  onClick={handleHealthAlertAction}
-                  className="flex items-center gap-3 w-full px-3.5 py-3 rounded-[16px] active:scale-[0.98] transition-transform"
-                  style={{ background: '#FFF5F0' }}
-                >
-                  <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(232,93,42,0.14)' }}>
-                    <AlertTriangle size={15} className="text-[#E85D2A]" />
-                  </div>
-                  <div className="flex-1 min-w-0 text-left">
-                    <span className="text-[13px] font-semibold text-[#111] block">DHPP vaccine overdue</span>
-                    <span className="text-[11px] text-[#A09A94] block">2 days late · Tap to review</span>
-                  </div>
-                  <ArrowRight size={14} className="text-[#E85D2A] shrink-0" />
-                </button>
+                <>
+                  <div className="h-[1px] bg-[#EDE8E2] mx-4" />
+                  <button
+                    onClick={handleHealthAlertAction}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-[#FAF7F2] transition-colors text-left"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[14px] font-semibold text-[#111] leading-tight">DHPP vaccine overdue</div>
+                      <div className="text-[12px] text-[#A09A94] mt-0.5">{selectedPet.name} · last shot Mar 2024</div>
+                    </div>
+                    <span
+                      className="shrink-0 px-2 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.06em]"
+                      style={{ background: 'rgba(232,93,42,0.10)', color: '#E85D2A' }}
+                    >
+                      2d late
+                    </span>
+                    <ChevronRight size={14} className="text-[#C4B5A6] shrink-0 ml-0.5" />
+                  </button>
+                </>
               )}
             </div>
           </div>
