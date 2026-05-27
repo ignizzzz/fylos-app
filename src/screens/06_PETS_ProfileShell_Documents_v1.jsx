@@ -4435,21 +4435,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           </div>
 
-          {/* ═══ 8. SUGGESTED — single contextual nudge (if any) ═══ */}
-          {filteredSuggestions.length > 0 && (
-            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.36s cubic-bezier(0.22,1,0.36,1) both' }}>
-              {filteredSuggestions.slice(0, 1).map(s => (
-                <button key={s.id} onClick={() => onNavigate('services')} className="w-full text-left rounded-[16px] p-4 flex items-center gap-3 bg-white border border-[rgba(0,0,0,0.04)] active:scale-[0.98] transition-transform cursor-pointer" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}>
-                  <div className="w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: 'rgba(232,93,42,0.08)' }}>{renderLegacyIcon(s.icon, 18, 'text-[#E85D2A]')}</div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[14px] font-semibold text-[#111] truncate block">{s.title}</span>
-                    <span className="text-[12px] text-[#A09A94] truncate block">{s.context}</span>
-                  </div>
-                  <span className="text-[12px] font-semibold text-[#E85D2A] flex items-center gap-1 shrink-0">Book <ArrowRight size={12} /></span>
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Suggested card removed at the user's request. */}
 
           {/* Nearby section removed at the user's request. */}
 
