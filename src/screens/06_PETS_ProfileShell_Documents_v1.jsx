@@ -84,6 +84,7 @@ import {
   List,
   Clock3,
   Bone,
+  Footprints,
   PersonStanding,
   FileDown,
   Fingerprint,
@@ -4379,26 +4380,41 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             );
           })()}
 
-          {/* ═══ 6. QUICK LOG — fast tappable actions (white cards) ═══ */}
-          <div className="grid grid-cols-4 gap-2.5 mb-6" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
-            {[
-              { label: 'Log', icon: Plus, onClick: openQuickLogModal },
-              { label: 'Photo', icon: Camera, onClick: () => { window.location.href = '/photo-gallery'; } },
-              { label: 'Meds', icon: Pill, onClick: () => setMedSheetOpen(true) },
-              { label: 'Walk', icon: PawPrint, onClick: () => onNavigate('services') },
-            ].map((a, i) => (
-              <button
-                key={i}
-                onClick={a.onClick}
-                className="flex flex-col items-center justify-center gap-2 py-3.5 rounded-[16px] bg-white border border-[rgba(0,0,0,0.04)] active:scale-[0.95] transition-transform"
-                style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}
-              >
-                <div className="w-[34px] h-[34px] rounded-full flex items-center justify-center" style={{ background: 'rgba(232,93,42,0.08)' }}>
-                  <a.icon size={16} className="text-[#E85D2A]" strokeWidth={2} />
-                </div>
-                <span className="text-[11px] font-semibold text-[#6E6058]">{a.label}</span>
-              </button>
-            ))}
+          {/* ═══ 6. LOG — 3 pill quick-actions + "More options" link ═══ */}
+          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Log</h3>
+            <div className="grid grid-cols-3 gap-2.5">
+              {[
+                { label: 'Walk', icon: Footprints, type: 'walk' },
+                { label: 'Meal', icon: Bone, type: 'meal' },
+                { label: 'Meds', icon: Pill, type: 'medication' },
+              ].map((a, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    setSelectedQuickLogType(a.type);
+                    setQuickLogTime(new Date().toTimeString().slice(0, 5));
+                    setQuickLogTimeChanged(false);
+                    setQuickLogDoneNow(true);
+                    setQuickLogCustomTitle('');
+                    setQuickLogStep('details');
+                    setQuickLogModalOpen(true);
+                  }}
+                  className="flex items-center justify-center gap-1.5 py-2.5 rounded-full active:scale-[0.96] transition-transform"
+                  style={{ background: '#F3EFEB' }}
+                >
+                  <a.icon size={15} className="text-[#6E6058]" strokeWidth={1.8} />
+                  <span className="text-[13px] font-semibold text-[#111]">+ {a.label}</span>
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={openQuickLogModal}
+              className="flex items-center gap-1 mt-3 active:opacity-70 transition-opacity"
+            >
+              <span className="text-[12.5px] font-semibold text-[#E85D2A]">More options</span>
+              <ChevronRight size={13} className="text-[#E85D2A]" />
+            </button>
           </div>
 
           {/* ═══ 7. EXPLORE — flat tiles, no title (sections divided by line) ═══ */}
