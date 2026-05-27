@@ -4309,92 +4309,29 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* ═══ 4b. TODAY — task schedule (bookings moved above) ═══ */}
-          {filteredReminders.length > 0 && (
-            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
-              {/* Soft section title — small uppercase muted, count in coral on the right. */}
-              <div className="flex items-end justify-between mb-3">
-                <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Today</h3>
-                <span className="text-[11px] font-semibold text-[#E85D2A] tabular-nums">
-                  {remainingCount} remaining
-                </span>
+          {/* ═══ 4b. NEXT UP — single coral-soft card showing the next
+              pending care item for today (or nothing if everything's
+              done / nothing scheduled). Replaces the full Today list. ═══ */}
+          {(() => {
+            const nextUp = filteredReminders.find(r => r.action === 'complete' && !completedReminders.has(r.id));
+            if (!nextUp) return null;
+            return (
+              <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
+                <button
+                  onClick={() => handleCompleteReminder(nextUp.id)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px] active:scale-[0.99] transition-transform"
+                  style={{ background: '#FFEDE3' }}
+                >
+                  <span className="w-[22px] h-[22px] rounded-full border-[1.5px] border-[#D4CCC4] inline-flex items-center justify-center shrink-0" />
+                  <div className="flex-1 min-w-0 text-left">
+                    <div className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-[#E85D2A]">Next up</div>
+                    <div className="text-[14px] font-bold text-[#111] mt-0.5 truncate">{nextUp.title}</div>
+                  </div>
+                  <span className="text-[12px] text-[#A09A94] tabular-nums shrink-0">{nextUp.time}</span>
+                </button>
               </div>
-
-              {/* Task schedule */}
-              <div>
-                {filteredReminders.map((r) => {
-                  const Icon = getTimelineIcon(r.type);
-                  const isDone = completedReminders.has(r.id);
-                  const canSwipe = r.action === 'complete' && !isDone;
-                  const isExpandable = r.action === 'expand';
-                  return (
-                    <div key={r.id} className="relative overflow-hidden">
-                      {/* Swipe reveal background */}
-                      {canSwipe && (
-                        <div className="absolute inset-0 bg-[#E85D2A] flex items-center pl-4">
-                          <Check size={16} className="text-white" strokeWidth={2.5} />
-                          <span className="text-white text-[12px] font-semibold ml-1.5">Done</span>
-                        </div>
-                      )}
-                      <div
-                        className={`relative flex items-center gap-3 py-3 border-b border-[#EDE8E2] transition-all duration-200 ${isDone ? 'opacity-40' : ''}`}
-                        style={{ touchAction: canSwipe ? 'pan-y' : 'auto', background: '#F7F5F2' }}
-                        onTouchStart={canSwipe ? (e) => {
-                          const startX = e.touches[0].clientX;
-                          const el = e.currentTarget;
-                          el._startX = startX;
-                          el._moved = false;
-                        } : undefined}
-                        onTouchMove={canSwipe ? (e) => {
-                          const el = e.currentTarget;
-                          const dx = e.touches[0].clientX - (el._startX || 0);
-                          if (dx > 0 && dx < 120) {
-                            el.style.transform = `translateX(${dx}px)`;
-                            el.style.transition = 'none';
-                            el._moved = true;
-                          }
-                        } : undefined}
-                        onTouchEnd={canSwipe ? (e) => {
-                          const el = e.currentTarget;
-                          const dx = parseInt(el.style.transform?.replace(/[^0-9-]/g, '') || '0');
-                          if (dx > 70) {
-                            el.style.transition = 'transform 0.3s cubic-bezier(0.22,1,0.36,1)';
-                            el.style.transform = 'translateX(100%)';
-                            setTimeout(() => handleCompleteReminder(r.id), 250);
-                          } else {
-                            el.style.transition = 'transform 0.3s cubic-bezier(0.22,1,0.36,1)';
-                            el.style.transform = 'translateX(0)';
-                          }
-                        } : undefined}
-                      >
-                        {r.action === 'complete' ? (
-                          <button
-                            onClick={() => handleCompleteReminder(r.id)}
-                            className={`w-[22px] h-[22px] rounded-full border-[1.5px] inline-flex items-center justify-center transition-all duration-200 shrink-0 ${isDone ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#D4CCC4] active:scale-90'}`}
-                          >
-                            {isDone && <Check size={11} className="text-white" strokeWidth={3} />}
-                          </button>
-                        ) : (
-                          <div className="w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0 bg-[#EDE8E2]">
-                            <Icon size={11} className="text-[#8E8580]" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <span className={`text-[14px] font-medium ${isDone ? 'text-[#A09A94] line-through' : 'text-[#111]'}`}>{r.title}</span>
-                        </div>
-                        <span className="text-[12px] text-[#A09A94] tabular-nums shrink-0">{r.time}</span>
-                        {isExpandable && (
-                          <button onClick={() => handleToggleHomeExpand(r.id)} className="ml-1 shrink-0">
-                            <ChevronRight size={14} className="text-[#C4BBB3]" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ═══ 6. QUICK LOG — fast tappable actions (white cards) ═══ */}
           <div className="grid grid-cols-4 gap-2.5 mb-6" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
