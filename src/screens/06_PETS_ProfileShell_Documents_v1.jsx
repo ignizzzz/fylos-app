@@ -934,6 +934,12 @@ const GlobalStyles = () => (
     @keyframes fy-orbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
     @keyframes fy-orbGlow { 0%, 100% { opacity: 0.45; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.08); } }
     @keyframes fy-livePulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,59,48,0.45); } 50% { opacity: 0.85; box-shadow: 0 0 0 5px rgba(255,59,48,0); } }
+    @keyframes nextUpDone {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      40%  { opacity: 1; transform: translateY(0) scale(1); }
+      70%  { opacity: 0.6; transform: translateY(-2px) scale(0.985); }
+      100% { opacity: 0; transform: translateY(-6px) scale(0.97); }
+    }
     :root {
       --color-accent: #E85D2A;
       --color-accent-hover: #D04A1C;
@@ -3894,6 +3900,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   // critical alerts. Dismissable; everything else lives in the bell inbox.
   const [safetyRibbonDismissed, setSafetyRibbonDismissed] = useState(false);
   const safetyLive = true; // Placeholder; wire to real proximity/recency check.
+  // Holds the NEXT UP item id during its "just done → fade out" animation
+  // so the user sees the checkmark land before the card unmounts.
+  const [nextUpDoneId, setNextUpDoneId] = useState(null);
   // "Booked" section shows the first 2 upcoming appointments; rest behind
   // a "Show X more" toggle so the home doesn't dump 10 bookings at once.
   const [bookedExpanded, setBookedExpanded] = useState(false);
@@ -4309,23 +4318,60 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
           )}
 
-          {/* ═══ 4b. NEXT UP — single coral-soft card showing the next
-              pending care item for today (or nothing if everything's
-              done / nothing scheduled). Replaces the full Today list. ═══ */}
+          {/* ═══ 4b. NEXT UP — single coral-soft card. Only surfaces
+              important types (medication, health). Tap fills the
+              checkbox; the card holds briefly so the action reads,
+              then fades out and reveals the next pending item. ═══ */}
           {(() => {
-            const nextUp = filteredReminders.find(r => r.action === 'complete' && !completedReminders.has(r.id));
+            const importantTypes = ['medication', 'health'];
+            const justDone = nextUpDoneId
+              ? filteredReminders.find(r => r.id === nextUpDoneId)
+              : null;
+            const pending = filteredReminders.find(r =>
+              r.action === 'complete' &&
+              importantTypes.includes(r.type) &&
+              !completedReminders.has(r.id)
+            );
+            const nextUp = justDone || pending;
             if (!nextUp) return null;
+            const isJustDone = !!justDone;
+
+            const handleTap = () => {
+              if (isJustDone) return; // already animating out
+              handleCompleteReminder(nextUp.id);
+              setNextUpDoneId(nextUp.id);
+              setTimeout(() => setNextUpDoneId(null), 850);
+            };
+
             return (
-              <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div
+                key={nextUp.id}
+                className="mb-6"
+                style={{
+                  animation: isJustDone
+                    ? 'nextUpDone 850ms cubic-bezier(0.22, 1, 0.36, 1) forwards'
+                    : 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both',
+                }}
+              >
                 <button
-                  onClick={() => handleCompleteReminder(nextUp.id)}
+                  onClick={handleTap}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px] active:scale-[0.99] transition-transform"
                   style={{ background: '#FFEDE3' }}
                 >
-                  <span className="w-[22px] h-[22px] rounded-full border-[1.5px] border-[#D4CCC4] inline-flex items-center justify-center shrink-0" />
+                  <span
+                    className={`w-[22px] h-[22px] rounded-full border-[1.5px] inline-flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      isJustDone ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#D4CCC4]'
+                    }`}
+                  >
+                    {isJustDone && <Check size={12} className="text-white" strokeWidth={3} />}
+                  </span>
                   <div className="flex-1 min-w-0 text-left">
                     <div className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-[#E85D2A]">Next up</div>
-                    <div className="text-[14px] font-bold text-[#111] mt-0.5 truncate">{nextUp.title}</div>
+                    <div className={`text-[14px] font-bold mt-0.5 truncate transition-colors duration-200 ${
+                      isJustDone ? 'text-[#A09A94] line-through' : 'text-[#111]'
+                    }`}>
+                      {nextUp.title}
+                    </div>
                   </div>
                   <span className="text-[12px] text-[#A09A94] tabular-nums shrink-0">{nextUp.time}</span>
                 </button>
