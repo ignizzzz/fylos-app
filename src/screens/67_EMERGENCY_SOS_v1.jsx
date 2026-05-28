@@ -1,144 +1,458 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ChevronLeft,
   Phone,
-  MapPin,
-  Heart,
-  AlertCircle,
-  ChevronRight,
-  ChevronDown,
-  Plus,
   X,
-  Shield,
-  Info
+  Info,
+  Wind,
+  Droplet,
+  FlaskConical,
+  Thermometer,
+  Activity,
+  Bug,
+  Flame,
+  HeartPulse,
+  AlertTriangle,
 } from 'lucide-react';
 
 /**
  * 67_EMERGENCY_SOS_v1.jsx
- * Emergency SOS screen -- large pulsing SOS button, emergency contacts
- * quick-dial cards, active alerts, first aid guide, countdown timer.
+ * First aid screen for pet owners.
+ *
+ * Design principles:
+ *   1. Calling the vet is the primary action everywhere. The grid of
+ *      "situations" is secondary; tapping any card opens a sheet that
+ *      starts with "Call your vet now".
+ *   2. We are NOT a veterinary service. The copy describes observations
+ *      and conservative things-you-can-do-while-you-wait, never diagnoses,
+ *      drug names, dosages, or specific treatments.
+ *   3. Disclaimers sit both at the top (visible at-a-glance) and the
+ *      bottom (full legal text). The detail sheet repeats the disclaimer
+ *      at its top so it is visible even after navigating in.
  */
 
-const MOCK_ALERTS = [
-  { id: 1, location: 'Seefeld Park', time: '12 min ago', type: 'Poison bait' },
-  { id: 2, location: 'Bellevue area', time: '45 min ago', type: 'Suspicious food' },
-  { id: 3, location: 'Zurichberg trail', time: '2h ago', type: 'Poison bait' },
+const PRIMARY_VET = {
+  name: 'Tierklinik Zürich',
+  phone: '+41 44 635 81 11',
+  hours: '24/7 emergency line',
+};
+
+// Eight common situations. Language is deliberately conservative:
+// · "What you might see" instead of diagnostic terms
+// · "While you call" instead of "treatment" or "what to do"
+// · "Avoid" instead of "don't ever" — and the items are about
+//   *preventing additional harm*, not stand-ins for treatment.
+const SITUATIONS = [
+  {
+    id: 'choking',
+    title: 'Choking',
+    icon: Wind,
+    signs: [
+      'Sudden gagging or pawing at the mouth',
+      'Loud, panicked breathing, or no sound of airflow',
+      'Blue or pale gums',
+    ],
+    whileYouCall: [
+      'Stay calm — a panicked pet may bite reflexively',
+      'Look in the mouth gently. Only remove an object if you can clearly see it and reach it easily',
+      'Keep your pet as still as possible',
+    ],
+    avoid: [
+      'Blind finger sweeps — they can push the object deeper',
+      'Giving water or food',
+      'Techniques you have seen online but were never shown by a professional',
+    ],
+  },
+  {
+    id: 'bleeding',
+    title: 'Heavy bleeding',
+    icon: Droplet,
+    signs: [
+      'Blood that does not slow after a minute of steady pressure',
+      'Blood soaking through cloth',
+      'Pale gums or weakness',
+    ],
+    whileYouCall: [
+      'Press firmly on the wound with a clean cloth',
+      'Leave the cloth in place even if it soaks through — add layers if needed',
+      'Keep your pet warm and as still as possible',
+    ],
+    avoid: [
+      'Removing the cloth to peek at the wound',
+      'Applying ointments or human medications',
+      'Removing anything embedded in the wound',
+    ],
+  },
+  {
+    id: 'poisoning',
+    title: 'Suspected poisoning',
+    icon: FlaskConical,
+    signs: [
+      'You saw your pet eat something potentially dangerous',
+      'Sudden drooling, vomiting, tremors, or unsteady walking',
+    ],
+    whileYouCall: [
+      'Note what was eaten and roughly how much',
+      'Save the packaging or a small sample of the substance',
+      'Note the time it happened',
+    ],
+    avoid: [
+      'Trying to make your pet vomit without your vet’s instruction — some substances cause more damage coming back up',
+      'Home remedies you read about',
+    ],
+  },
+  {
+    id: 'heat',
+    title: 'Heat distress',
+    icon: Thermometer,
+    signs: [
+      'Heavy panting, drooling',
+      'Very red or very pale gums',
+      'Wobbly walking or collapse',
+    ],
+    whileYouCall: [
+      'Move to a cool, shaded place',
+      'Offer small sips of cool water — only if your pet is fully alert',
+      'Wet the ears, paws, and belly with cool (not ice-cold) water',
+    ],
+    avoid: [
+      'Ice or ice-cold water — it can cause shock',
+      'Forcing water if your pet is not fully alert',
+    ],
+  },
+  {
+    id: 'seizure',
+    title: 'Seizure',
+    icon: Activity,
+    signs: [
+      'Sudden stiffness, loss of awareness',
+      'Paddling movements, drooling',
+      'Loss of bladder or bowel control',
+    ],
+    whileYouCall: [
+      'Stay calm and move furniture or objects out of the way',
+      'Time how long the seizure lasts',
+      'Speak softly — do not touch the head or mouth',
+    ],
+    avoid: [
+      'Restraining your pet',
+      'Putting hands near the mouth',
+      'Giving food, water, or any medication',
+    ],
+    afterNote: 'Call your vet even if the seizure stops on its own.',
+  },
+  {
+    id: 'allergic',
+    title: 'Sudden allergic reaction',
+    icon: Bug,
+    signs: [
+      'Swelling of face, eyes, or lips',
+      'Hives or raised bumps on the skin',
+      'Vomiting, weakness, difficulty breathing',
+    ],
+    whileYouCall: [
+      'Note what your pet ate or what stung them, if you saw',
+      'Keep them calm and still',
+    ],
+    avoid: [
+      'Giving human allergy medication without your vet confirming the right type and dose for your specific pet',
+    ],
+  },
+  {
+    id: 'burn',
+    title: 'Burns or scalds',
+    icon: Flame,
+    signs: [
+      'Red, blistered, or peeling skin',
+      'Singed fur',
+      'Painful reactions when touched',
+    ],
+    whileYouCall: [
+      'Gently run cool — not ice-cold — water over the area for several minutes',
+      'Cover loosely with a clean, damp cloth',
+    ],
+    avoid: [
+      'Butter, oils, or ointments',
+      'Ice or popping blisters',
+      'Removing anything stuck to the skin',
+    ],
+  },
+  {
+    id: 'breathing',
+    title: 'Not breathing',
+    icon: HeartPulse,
+    signs: [
+      'No visible chest movement',
+      'Limp, unresponsive',
+      'Blue or pale gums',
+    ],
+    whileYouCall: [
+      'Place your pet on their right side on a firm surface',
+      'Check if the airway looks clear of obvious objects',
+      'Watch closely for any chest movement',
+    ],
+    avoid: [
+      'Untrained CPR techniques — they can cause harm if done incorrectly',
+    ],
+    afterNote: 'CPR varies by pet size and species. Ask your vet on the phone to guide you — many practices have a hotline that talks you through it.',
+  },
 ];
 
-const MOCK_CONTACTS = [
-  { id: 1, name: 'Tierklinik Zurich', phone: '+41 44 635 81 11' },
-];
+// ───────────────────────────────────────────────────────────────────
+// Reusable bits
+// ───────────────────────────────────────────────────────────────────
 
-const FIRST_AID = [
-  { id: 'toxic', title: 'My pet ate something toxic', icon: AlertCircle,
-    steps: ['Do NOT induce vomiting unless told by a vet', 'Note the substance, amount, and time ingested', 'Call your vet or poison control immediately', 'Bring packaging or a photo of the substance'] },
-  { id: 'choking', title: 'My pet is choking', icon: Info,
-    steps: ['Stay calm and restrain your pet gently', 'Open mouth carefully and look for the object', 'Sweep mouth with finger if object is visible', 'If stuck, perform modified Heimlich maneuver', 'Rush to vet if you cannot dislodge it'] },
-  { id: 'bleeding', title: 'My pet is bleeding', icon: Heart,
-    steps: ['Apply firm pressure with a clean cloth', 'Elevate the wound above heart level if possible', 'Do not remove the cloth -- add layers if needed', 'Go to the nearest vet clinic immediately'] },
-  { id: 'bitten', title: 'My pet was bitten', icon: Shield,
-    steps: ['Clean the area gently with warm water', 'Check for swelling, redness, or puncture wounds', 'Do not apply ointment without vet guidance', 'Schedule a vet visit as soon as possible'] },
-];
+const Disclaimer = ({ inline = false }) => (
+  <div
+    className={`flex items-start gap-2 rounded-[12px] ${inline ? 'px-3 py-2' : 'px-3.5 py-2.5'}`}
+    style={{ background: '#FFF8EE', border: '1px solid #F0E4CC' }}
+  >
+    <Info size={14} className="text-[#B07A3A] shrink-0 mt-[1px]" strokeWidth={2} />
+    <p className={`${inline ? 'text-[11px]' : 'text-[11.5px]'} leading-[1.45] text-[#6E5A3A]`}>
+      General guidance only — not medical advice. Always contact a licensed
+      veterinarian as your first step.
+    </p>
+  </div>
+);
 
-/* ── Accordion ── */
-const Accordion = ({ title, steps, icon: Icon }) => {
-  const [open, setOpen] = useState(false);
+const CallVetCard = ({ onCall }) => (
+  <div className="rounded-[16px] p-4" style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}>
+    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#A09A94] mb-1.5">Your vet</div>
+    <div className="text-[15px] font-bold text-[#111]">{PRIMARY_VET.name}</div>
+    <div className="text-[12px] text-[#6E6058] mt-0.5">{PRIMARY_VET.hours}</div>
+    <button
+      onClick={onCall}
+      className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-[12px] active:scale-[0.98] transition-transform"
+      style={{
+        background: '#FF3B30',
+        boxShadow: '0 2px 10px rgba(255,59,48,0.18)',
+      }}
+    >
+      <Phone size={16} className="text-white" strokeWidth={2.2} />
+      <span className="text-[14px] font-bold text-white">Call now</span>
+    </button>
+    <div className="text-[10.5px] text-[#A09A94] text-center mt-2 leading-[1.4]">
+      Outside Switzerland or have a different vet? Update in Settings → Connected services.
+    </div>
+  </div>
+);
+
+const SituationCard = ({ situation, onTap }) => (
+  <button
+    onClick={() => onTap(situation.id)}
+    className="flex flex-col items-start gap-2 px-3 py-3 rounded-[14px] active:scale-[0.97] transition-transform text-left"
+    style={{ background: '#F3EFEB' }}
+  >
+    <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+      <situation.icon size={15} className="text-[#111]" strokeWidth={1.9} />
+    </span>
+    <span className="text-[12.5px] font-semibold text-[#111] leading-[1.3]">{situation.title}</span>
+  </button>
+);
+
+// ───────────────────────────────────────────────────────────────────
+// Detail sheet — opens when a situation card is tapped
+// ───────────────────────────────────────────────────────────────────
+
+const DetailSheet = ({ situation, onClose, onCall }) => {
+  // Lock body scroll while open
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, []);
+
+  // ESC to close
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  if (!situation) return null;
+  const Icon = situation.icon;
+
   return (
-    <div className="rounded-[20px] overflow-hidden" style={{ marginBottom: 10, backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-      <button onClick={() => setOpen(!open)} style={{
-        width: '100%', display: 'flex', alignItems: 'center', gap: 12,
-        padding: '16px 20px', border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left'
-      }}>
-        {Icon && (
-          <div style={{
-            width: 34, height: 34, borderRadius: 9999, background: '#FFEBEA',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-          }}>
-            <Icon size={18} color="#FF3B30" />
-          </div>
-        )}
-        <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: '#111' }}>{title}</span>
-        <ChevronDown size={18} color="#A09A94" style={{
-          transition: 'transform 200ms', transform: open ? 'rotate(180deg)' : 'rotate(0deg)'
-        }} />
-      </button>
-      <div style={{
-        maxHeight: open ? 300 : 0, opacity: open ? 1 : 0, overflow: 'hidden',
-        transition: 'max-height 300ms ease, opacity 200ms ease'
-      }}>
-        <div style={{ padding: '0 20px 16px 66px' }}>
-          {steps.map((s, i) => (
-            <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: i < steps.length - 1 ? 8 : 0 }}>
-              <span style={{
-                width: 22, height: 22, borderRadius: 9999, background: '#EDE8E2',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 11, fontWeight: 700, color: '#6E6058', flexShrink: 0, marginTop: 1
-              }}>
-                {i + 1}
-              </span>
-              <span style={{ fontSize: 13, lineHeight: '18px', color: '#6E6058' }}>{s}</span>
+    <div className="absolute inset-0 z-[200]" style={{ animation: 'fa-fade 0.2s ease both' }}>
+      {/* Backdrop */}
+      <div onClick={onClose} className="absolute inset-0" style={{ background: 'rgba(20,15,10,0.32)' }} />
+
+      {/* Sheet */}
+      <div
+        className="absolute bottom-0 left-0 right-0 bg-[#F7F5F2] rounded-t-[28px] flex flex-col overflow-hidden"
+        style={{
+          maxHeight: '88%',
+          animation: 'fa-slide 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
+          boxShadow: '0 -8px 24px rgba(0,0,0,0.08)',
+        }}
+      >
+        {/* Drag handle + header */}
+        <div className="pt-2.5 pb-2 flex flex-col items-center shrink-0">
+          <div className="w-9 h-1 rounded-full bg-[#D4CCC4]" />
+        </div>
+        <div className="px-5 pb-3 flex items-center gap-3 shrink-0">
+          <span className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+            <Icon size={18} className="text-[#111]" strokeWidth={1.9} />
+          </span>
+          <h2 className="flex-1 text-[18px] font-bold text-[#111]">{situation.title}</h2>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-white/0 hover:bg-black/[0.04] flex items-center justify-center active:scale-95 transition-all"
+            aria-label="Close"
+          >
+            <X size={18} className="text-[#6E6058]" strokeWidth={2} />
+          </button>
+        </div>
+
+        {/* Top alert: always "call vet now" */}
+        <div className="px-5 shrink-0">
+          <div
+            className="flex items-start gap-2 rounded-[12px] px-3.5 py-3"
+            style={{ background: '#FFF0F0', border: '1px solid #FFD6D2' }}
+          >
+            <AlertTriangle size={15} className="text-[#FF3B30] shrink-0 mt-[1px]" strokeWidth={2.2} />
+            <div className="flex-1">
+              <p className="text-[12.5px] font-bold text-[#111] leading-[1.4]">Call your vet now.</p>
+              <p className="text-[11.5px] text-[#6E6058] leading-[1.45] mt-0.5">
+                The notes below are general support while you wait. They are not a substitute
+                for veterinary care.
+              </p>
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* Scrollable body */}
+        <div className="flex-1 overflow-y-auto px-5 pt-4 pb-32" style={{ scrollbarWidth: 'none' }}>
+          {situation.signs && (
+            <section className="mb-5">
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#A09A94] mb-2">
+                What you might see
+              </h3>
+              <ul className="space-y-1.5">
+                {situation.signs.map((s, i) => (
+                  <li key={i} className="flex gap-2.5 items-start">
+                    <span className="w-1 h-1 rounded-full bg-[#6E6058] mt-2 shrink-0" />
+                    <span className="text-[13px] leading-[1.5] text-[#3A3530]">{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {situation.whileYouCall && (
+            <section className="mb-5">
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#A09A94] mb-2">
+                While you call
+              </h3>
+              <ul className="space-y-1.5">
+                {situation.whileYouCall.map((s, i) => (
+                  <li key={i} className="flex gap-2.5 items-start">
+                    <span className="w-1 h-1 rounded-full bg-[#6E6058] mt-2 shrink-0" />
+                    <span className="text-[13px] leading-[1.5] text-[#3A3530]">{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {situation.avoid && (
+            <section className="mb-5">
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#A09A94] mb-2">
+                Avoid
+              </h3>
+              <ul className="space-y-1.5">
+                {situation.avoid.map((s, i) => (
+                  <li key={i} className="flex gap-2.5 items-start">
+                    <span className="w-1 h-1 rounded-full bg-[#FF3B30] mt-2 shrink-0" />
+                    <span className="text-[13px] leading-[1.5] text-[#3A3530]">{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {situation.afterNote && (
+            <div
+              className="rounded-[12px] px-3.5 py-3 mb-5"
+              style={{ background: '#FFF8EE', border: '1px solid #F0E4CC' }}
+            >
+              <p className="text-[12.5px] leading-[1.5] text-[#6E5A3A]">{situation.afterNote}</p>
+            </div>
+          )}
+
+          <Disclaimer inline />
+        </div>
+
+        {/* Sticky call CTA */}
+        <div
+          className="px-5 pt-3 pb-5 shrink-0"
+          style={{
+            background: 'linear-gradient(to top, #F7F5F2 70%, rgba(247,245,242,0))',
+          }}
+        >
+          <button
+            onClick={onCall}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-[14px] active:scale-[0.98] transition-transform"
+            style={{
+              background: '#FF3B30',
+              boxShadow: '0 4px 14px rgba(255,59,48,0.22)',
+            }}
+          >
+            <Phone size={16} className="text-white" strokeWidth={2.2} />
+            <span className="text-[14.5px] font-bold text-white">Call vet now</span>
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-/* ── Main Screen ── */
-const EmergencySOS = () => {
-  const [contacts, setContacts] = useState(MOCK_CONTACTS);
-  const [showAddContact, setShowAddContact] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newPhone, setNewPhone] = useState('');
-  const [sosCountdown, setSosCountdown] = useState(null);
-  const scrollRef = useRef(null);
+// ───────────────────────────────────────────────────────────────────
+// Main screen
+// ───────────────────────────────────────────────────────────────────
 
-  const handleAddContact = () => {
-    if (!newName.trim() || !newPhone.trim()) return;
-    setContacts(prev => [...prev, { id: Date.now(), name: newName.trim(), phone: newPhone.trim() }]);
-    setNewName(''); setNewPhone(''); setShowAddContact(false);
-  };
+const FirstAidScreen = () => {
+  const [selectedId, setSelectedId] = useState(null);
+  const selected = SITUATIONS.find((s) => s.id === selectedId);
 
-  // SOS countdown timer
-  useEffect(() => {
-    if (sosCountdown === null || sosCountdown <= 0) return;
-    const id = setTimeout(() => setSosCountdown(c => c - 1), 1000);
-    return () => clearTimeout(id);
-  }, [sosCountdown]);
-
-  const handleSOS = () => {
-    if (sosCountdown !== null) { setSosCountdown(null); return; }
-    setSosCountdown(5);
+  const callVet = () => {
+    const tel = PRIMARY_VET.phone.replace(/\s/g, '');
+    window.location.href = `tel:${tel}`;
   };
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        @keyframes sos-pulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,59,48,0.4); } 50% { transform: scale(1.06); box-shadow: 0 0 0 18px rgba(255,59,48,0); } }
-        @keyframes sos-ring { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.2); opacity: 0; } }
-        .sos-pulse { animation: sos-pulse 2s ease-in-out infinite; }
-        .sos-ring { animation: sos-ring 2s ease-out infinite; }
-        .sos-ring-delay { animation: sos-ring 2s ease-out 0.6s infinite; }
-        .wallet-scroll::-webkit-scrollbar { display: none; }
-        .wallet-scroll { scrollbar-width: none; }
-        input::placeholder { color: #A09A94; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @keyframes fa-fade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fa-slide {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
       `}</style>
 
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
         backgroundColor: '#EDE8E2', padding: 20,
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
       }}>
-        <div className="relative" style={{
-          width: 390, height: 844, borderRadius: 50, border: '8px solid #000',
-          overflow: 'hidden', backgroundColor: '#F7F5F2'
-        }}>
+        <div
+          className="relative"
+          style={{
+            width: 390, height: 844, borderRadius: 50, border: '8px solid #000',
+            overflow: 'hidden', backgroundColor: '#F7F5F2',
+          }}
+        >
           {/* Notch */}
-          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+          <div
+            className="absolute left-1/2 -translate-x-1/2 z-[100]"
+            style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }}
+          />
           {/* Home indicator */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
+          <div
+            className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
+            style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }}
+          />
 
           {/* Status bar */}
           <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
@@ -150,219 +464,65 @@ const EmergencySOS = () => {
             </div>
           </div>
 
-          {/* Scrollable content with canonical transparent header */}
-          <div ref={scrollRef} className="absolute inset-0 overflow-y-auto pb-[140px]" style={{ scrollbarWidth: 'none' }}>
-            <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
+          {/* Scrollable content */}
+          <div className="absolute inset-0 overflow-y-auto pb-10" style={{ scrollbarWidth: 'none' }}>
+            {/* Sticky header */}
+            <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 bg-[#F7F5F2]">
               <button
                 onClick={() => window.history.back()}
-                className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+                className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all"
               >
                 <ChevronLeft size={18} strokeWidth={2.2} color="#111" />
               </button>
-              <h1 className="text-[17px] font-semibold text-[#111]">Emergency</h1>
+              <h1 className="text-[17px] font-semibold text-[#111]">First aid</h1>
             </div>
-            <div className="px-5" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-              {/* Large pulsing SOS button */}
-              <div className="rounded-[20px] p-6"
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}>
+            <div className="px-5 pt-1 pb-6 flex flex-col gap-3">
+              {/* Top disclaimer */}
+              <Disclaimer />
 
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {/* Ripple rings */}
-                  <div className="sos-ring" style={{ position: 'absolute', width: 88, height: 88, borderRadius: 9999, border: '2px solid rgba(255,59,48,0.3)', pointerEvents: 'none' }} />
-                  <div className="sos-ring-delay" style={{ position: 'absolute', width: 88, height: 88, borderRadius: 9999, border: '2px solid rgba(255,59,48,0.2)', pointerEvents: 'none' }} />
-                  <button onClick={handleSOS} className="sos-pulse active:scale-[0.95] transition-all duration-[120ms]" style={{
-                    width: 88, height: 88, borderRadius: 9999,
-                    background: '#FF3B30', border: 'none', cursor: 'pointer',
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2
-                  }}>
-                    {sosCountdown !== null && sosCountdown > 0 ? (
-                      <span style={{ fontSize: 28, fontWeight: 700, color: '#FFFFFF' }}>{sosCountdown}</span>
-                    ) : (
-                      <>
-                        <Phone size={28} color="#FFFFFF" />
-                        <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.9)', letterSpacing: 1 }}>SOS</span>
-                      </>
-                    )}
-                  </button>
-                </div>
+              {/* Primary action — call vet */}
+              <CallVetCard onCall={callVet} />
 
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 17, fontWeight: 600, color: '#111' }}>Emergency Vet</div>
-                  <div style={{ fontSize: 13, color: '#6E6058', marginTop: 2 }}>Tierklinik Zurich -- 24h</div>
-                </div>
-
-                {sosCountdown !== null && sosCountdown > 0 ? (
-                  <button onClick={() => setSosCountdown(null)}
-                    className="active:scale-[0.97] transition-all duration-[120ms]"
-                    style={{
-                      width: '100%', padding: '14px 0', background: '#EDE8E2', color: '#111',
-                      border: 'none', borderRadius: 14, fontSize: 16, fontWeight: 600, cursor: 'pointer'
-                    }}>
-                    Cancel
-                  </button>
-                ) : (
-                  <button className="active:scale-[0.97] transition-all duration-[120ms]" style={{
-                    width: '100%', padding: '14px 0',
-                    background: '#FF3B30', color: '#FFFFFF',
-                    border: 'none', borderRadius: 14, fontSize: 16, fontWeight: 600, cursor: 'pointer'
-                  }}>
-                    Call Now
-                  </button>
-                )}
-              </div>
-
-              {/* Quick Actions */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-                {[
-                  { Icon: AlertCircle, label: 'Poison Control', sub: '+41 44 251 51 51', color: '#E85D2A' },
-                  { Icon: MapPin, label: 'Nearest Clinic', sub: '1.2 km', color: '#E85D2A' },
-                  { Icon: Heart, label: 'First Aid Guide', sub: '', color: '#FF3B30' }
-                ].map(({ Icon, label, sub, color }, i) => (
-                  <button key={i} className="active:scale-[0.97] transition-all duration-[120ms]"
-                    style={{
-                      borderRadius: 20, padding: 16,
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, textAlign: 'center',
-                      backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2',
-                      cursor: 'pointer'
-                    }}>
-                    <div style={{
-                      width: 34, height: 34, borderRadius: 9999, background: `${color}10`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>
-                      <Icon size={18} color={color} />
-                    </div>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: '#111', lineHeight: '16px' }}>{label}</span>
-                    {sub && <span style={{ fontSize: 11, color: '#A09A94', lineHeight: '14px' }}>{sub}</span>}
-                  </button>
-                ))}
-              </div>
-
-              {/* Active Alerts */}
-              <div className="rounded-[20px] p-5" style={{ backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: 'rgba(255,149,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <AlertCircle size={16} color="#FF9500" />
-                    </div>
-                    <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>Active Alerts</span>
-                  </div>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#FF3B30', background: '#FFEBEA', padding: '4px 10px', borderRadius: 9999 }}>
-                    3 within 2 km
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {MOCK_ALERTS.map(a => (
-                    <div key={a.id} style={{
-                      display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px',
-                      background: '#EDE8E2', borderRadius: 12
-                    }}>
-                      <div style={{
-                        width: 32, height: 32, borderRadius: 9999, background: 'rgba(255,149,0,0.08)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-                      }}>
-                        <AlertCircle size={16} color="#FF9500" />
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>{a.type}</div>
-                        <div style={{ fontSize: 13, color: '#A09A94' }}>{a.location}</div>
-                      </div>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: '#A09A94', flexShrink: 0 }}>{a.time}</span>
-                    </div>
+              {/* Section: common situations */}
+              <div className="mt-2">
+                <h2 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#A09A94] mb-2.5 px-0.5">
+                  Common situations
+                </h2>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {SITUATIONS.map((s) => (
+                    <SituationCard key={s.id} situation={s} onTap={setSelectedId} />
                   ))}
                 </div>
-                <button onClick={() => window.location.href = '/danger-reports'}
-                  className="active:scale-[0.97] transition-all duration-[120ms]"
-                  style={{
-                    marginTop: 14, width: '100%', padding: '12px 0',
-                    background: '#F7F5F2', border: '1px solid #EDE8E2', borderRadius: 14,
-                    fontSize: 15, fontWeight: 600, color: '#E85D2A', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                  }}>
-                  <MapPin size={16} /> View Map
-                </button>
               </div>
 
-              {/* First Aid Guide */}
-              <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#A09A94', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10, paddingLeft: 4 }}>
-                  First Aid Guide
-                </div>
-                {FIRST_AID.map(item => (
-                  <Accordion key={item.id} title={item.title} steps={item.steps} icon={item.icon} />
-                ))}
-              </div>
-
-              {/* Emergency Contacts */}
-              <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#A09A94', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10, paddingLeft: 4 }}>
-                  Your Emergency Contacts
-                </div>
-                <div className="rounded-[20px] overflow-hidden" style={{ backgroundColor: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-                  {contacts.map((c, i) => (
-                    <div key={c.id} style={{
-                      display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px',
-                      borderBottom: i < contacts.length - 1 || showAddContact ? '1px dashed #CFCFD4' : 'none'
-                    }}>
-                      <div style={{
-                        width: 34, height: 34, borderRadius: 9999, background: 'rgba(232,93,42,0.08)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
-                      }}>
-                        <Phone size={16} color="#E85D2A" />
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>{c.name}</div>
-                        <div style={{ fontSize: 13, color: '#6E6058' }}>{c.phone}</div>
-                      </div>
-                      <ChevronRight size={18} color="#A09A94" />
-                    </div>
-                  ))}
-
-                  {showAddContact ? (
-                    <div style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Clinic / Contact name"
-                        className="w-full h-[52px] px-4 rounded-[16px] text-[16px] text-[#111] placeholder:text-[#A09A94] focus:outline-none focus:border-[#E85D2A] focus:ring-4 focus:ring-[#E85D2A]/10 transition-all duration-200"
-                        style={{ fontFamily: 'inherit', boxSizing: 'border-box', backgroundColor: '#F7F5F2', border: '1px solid #EDE8E2' }} />
-                      <input value={newPhone} onChange={e => setNewPhone(e.target.value)} placeholder="Phone number"
-                        className="w-full h-[52px] px-4 rounded-[16px] text-[16px] text-[#111] placeholder:text-[#A09A94] focus:outline-none focus:border-[#E85D2A] focus:ring-4 focus:ring-[#E85D2A]/10 transition-all duration-200"
-                        style={{ fontFamily: 'inherit', boxSizing: 'border-box', backgroundColor: '#F7F5F2', border: '1px solid #EDE8E2' }} />
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <button onClick={() => setShowAddContact(false)}
-                          className="active:scale-[0.97] transition-all duration-[120ms]"
-                          style={{ flex: 1, padding: '14px 0', background: '#EDE8E2', border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 600, color: '#6E6058', cursor: 'pointer', textAlign: 'center' }}>
-                          Cancel
-                        </button>
-                        <button onClick={handleAddContact}
-                          className="active:scale-[0.97] transition-all duration-[120ms]"
-                          style={{ flex: 1, padding: '14px 0', background: '#111', border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 600, color: '#FFFFFF', cursor: 'pointer', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button onClick={() => setShowAddContact(true)}
-                      className="active:scale-[0.97] transition-all duration-[120ms]"
-                      style={{
-                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                        padding: '14px 0', background: 'none', border: 'none', cursor: 'pointer',
-                        fontSize: 15, fontWeight: 600, color: '#E85D2A'
-                      }}>
-                      <Plus size={16} /> Add Contact
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Disclaimer */}
-              <div style={{ padding: '0 12px', textAlign: 'center', fontSize: 13, color: '#A09A94', lineHeight: '18px' }}>
-                In case of life-threatening emergency, go to the nearest veterinary clinic immediately.
+              {/* Footer legal disclaimer (long form) */}
+              <div className="mt-3 px-1">
+                <p className="text-[11px] leading-[1.55] text-[#A09A94]">
+                  FYLOS is not a veterinary service and does not provide medical advice,
+                  diagnosis, or treatment. The information shown on this screen is general
+                  guidance to help you act safely while you contact a licensed veterinarian.
+                  If your pet shows signs of distress, contact your veterinarian or an
+                  emergency animal hospital immediately. By using this guidance, you
+                  acknowledge that you are responsible for decisions regarding your pet’s
+                  care.
+                </p>
               </div>
             </div>
           </div>
+
+          {/* Detail sheet (overlay) */}
+          {selected && (
+            <DetailSheet
+              situation={selected}
+              onClose={() => setSelectedId(null)}
+              onCall={callVet}
+            />
+          )}
         </div>
       </div>
     </>
   );
 };
 
-export default EmergencySOS;
+export default FirstAidScreen;

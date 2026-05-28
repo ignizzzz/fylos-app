@@ -49,6 +49,7 @@ import {
   Wind,
   ArrowRight,
   Phone,
+  LifeBuoy,
   ShieldAlert,
   QrCode,
   ExternalLink,
@@ -580,6 +581,30 @@ const MOCK_DASHBOARD_PETS = [
 //                 staff avatar on top of the business avatar; otherwise
 //                 we show the business avatar alone.
 // Business avatar uses `logo` URL if set, else `initials` over `color`.
+// Active service in progress — drives the green "live" banner above the
+// greeting and the green "live" dot on each pet avatar.
+//
+// `petIds` is an array because a walker almost always takes the whole
+// household together (3 dogs = 3 dogs, not 1). The banner names every
+// pet in the service; individual avatars get a green pulsing dot.
+// When null, the banner is hidden.
+const MOCK_ACTIVE_SERVICE = {
+  petIds: ['p1', 'p2', 'p3'], // walking all three pets together
+  serviceLabel: 'Walk',
+  provider: { name: 'Lukas F.', photo: 'https://i.pravatar.cc/150?img=12' },
+  startedAtMs: Date.now() - 12 * 60 * 1000, // started 12 minutes ago
+};
+
+// Most recent update from a provider (message + optional photo). Drives
+// the "Latest from your team" row below the greeting. When null, hidden.
+const MOCK_RECENT_UPDATE = {
+  petId: 'p1',
+  from: { name: 'Lukas', photo: 'https://i.pravatar.cc/150?img=12' },
+  message: "Leo's having fun at the park!",
+  thumbnail: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=200&h=200&fit=crop',
+  receivedAtMs: Date.now() - 5 * 60 * 1000, // 5 minutes ago
+};
+
 const MOCK_BOOKINGS = [
   {
     id: 'b1', petId: 'p1', kind: 'individual', status: 'Confirmed',
@@ -611,6 +636,18 @@ const MOCK_REMINDERS = [
     subtitle: 'Apoquel (16mg)',
     time: '08:00',
     action: 'complete'
+  },
+  {
+    id: 'r1a',
+    petId: 'p1',
+    type: 'health',
+    title: 'DHPP Vaccine',
+    subtitle: 'Annual booster due today',
+    time: '11:00',
+    action: 'expand',
+    details: 'Annual DHPP booster — Dr. Reza Patel',
+    detailsMeta: ['Vet: Lakeshore Vet Clinic', 'Last given: May 2025'],
+    expandActionLabel: 'Open record'
   },
   {
     id: 'r2',
@@ -3880,7 +3917,8 @@ const LaunchBanner = React.memo(({ feature, daysUntilLaunch, onDismiss, onJoinWa
   );
 });
 
-const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords }) => {
+const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords, onOpenBookings }) => {
+  const homeNavigate = useNavigate();
   const [selectedPetId, setSelectedPetId] = useState(MOCK_DASHBOARD_PETS[0].id);
   const [medSheetOpen, setMedSheetOpen] = useState(false);
   const [quickLogModalOpen, setQuickLogModalOpen] = useState(false);
@@ -3904,6 +3942,15 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   // Holds the NEXT UP item id during its "just done → fade out" animation
   // so the user sees the checkmark land before the card unmounts.
   const [nextUpDoneId, setNextUpDoneId] = useState(null);
+  // NEXT UP carousel — when multiple important items exist today, we show
+  // them one at a time. Index tracks which one is currently visible.
+  // Drag (finger on mobile, click+drag on desktop) or tap a dot to navigate.
+  const [nextUpIndex, setNextUpIndex] = useState(0);
+  const [nextUpDragX, setNextUpDragX] = useState(0);
+  const [nextUpDragging, setNextUpDragging] = useState(false);
+  const nextUpTouchStartX = useRef(null);
+  const nextUpTouchStartY = useRef(null);
+  const nextUpTouchMoved = useRef(false);
   // "Booked" section shows the first 2 upcoming appointments; rest behind
   // a "Show X more" toggle so the home doesn't dump 10 bookings at once.
   const [bookedExpanded, setBookedExpanded] = useState(false);
@@ -4085,6 +4132,25 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
       };
     })
     .filter((row) => isTodayTimelineLabel(row.time));
+
+  // Which pets have pending important tasks (meds + health) for today.
+  // We render a small coral dot on the avatar of any non-active pet that
+  // has something pending — so a multi-pet household doesn't miss a task
+  // on the other pet's timeline.
+  const petsWithPendingTasks = (() => {
+    const set = new Set();
+    const allEntries = [...quickLogEntries, ...MOCK_REMINDERS];
+    for (const entry of allEntries) {
+      if (completedReminders.has(entry.id)) continue;
+      const type = getTimelineType(entry);
+      if (!['medication', 'health'].includes(type)) continue;
+      const time = normalizeTimelineTime(entry.time);
+      if (!isTodayTimelineLabel(time)) continue;
+      set.add(entry.petId);
+    }
+    return set;
+  })();
+
   const filteredSuggestions = MOCK_SUGGESTIONS.filter(s => s.petId === displayPetId);
   const getHomeBookingStatusMeta = (status) => {
     if (status === 'Confirmed') return { label: 'Confirmed', className: 'bg-[#EEF7F1] text-[#3F8D63] border-[#D7EBDD]' };
@@ -4146,6 +4212,63 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           </div>
         )}
 
+        {/* ═══ 0b. LIVE SERVICE BANNER — shows when a walk/sitting is
+            in progress and includes the currently-viewed pet. Names ALL
+            pets in the service (a walker usually takes the whole pack
+            together). Tap → open bookings. ═══ */}
+        {MOCK_ACTIVE_SERVICE && MOCK_ACTIVE_SERVICE.petIds?.includes(displayPetId) && (() => {
+          const active = MOCK_ACTIVE_SERVICE;
+          const minutes = Math.max(1, Math.floor((Date.now() - active.startedAtMs) / 60000));
+          const verb = /walk/i.test(active.serviceLabel) ? 'walking' : /sitt/i.test(active.serviceLabel) ? 'sitting' : 'with';
+          // Build natural-language list of pet names. We name pets only
+          // when 1, or 2 with short names; otherwise we fall back to the
+          // brand-flavoured collective "your fylos" (Greek φίλος = friend,
+          // matching the brand wordmark form) — the pack is your friends.
+          // Keeps the banner one line on any iPhone width regardless of
+          // how long the pet names are.
+          const petsInService = MOCK_DASHBOARD_PETS.filter(p => active.petIds.includes(p.id));
+          const names = petsInService.map(p => p.name);
+          const joined = names.join(' & ');
+          let nameList;
+          if (names.length === 0) {
+            nameList = 'your fylos';
+          } else if (names.length === 1) {
+            nameList = names[0];
+          } else if (names.length === 2 && joined.length <= 18) {
+            nameList = joined;
+          } else {
+            nameList = 'your fylos';
+          }
+          return (
+            <button
+              onClick={() => onOpenBookings?.()}
+              className="w-full flex items-center gap-2.5 px-3 py-1.5 mb-2.5 rounded-full active:opacity-90 transition-opacity"
+              style={{
+                background: '#EEF7F1',
+                border: '1px solid #D7EBDD',
+                animation: 'homeReveal 0.4s cubic-bezier(0.22,1,0.36,1) both',
+              }}
+            >
+              <span
+                className="shrink-0 w-[7px] h-[7px] rounded-full"
+                style={{ background: '#3F8D63', animation: 'fy-livePulse 1.6s ease-in-out infinite' }}
+              />
+              <img
+                src={active.provider.photo}
+                alt={active.provider.name}
+                className="w-5 h-5 rounded-full object-cover shrink-0"
+              />
+              <div className="flex-1 min-w-0 text-left truncate">
+                <span className="text-[12.5px] font-semibold text-[#111] whitespace-nowrap">
+                  {active.provider.name.split(' ')[0]} is {verb} {nameList}
+                </span>
+                <span className="text-[12.5px] text-[#3F8D63] whitespace-nowrap"> · {minutes} min</span>
+              </div>
+              <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+            </button>
+          );
+        })()}
+
         {/* ═══ 1. GREETING (date + coral name) + PET SELECTOR (right) ═══ */}
         <div className="pt-3 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
           <div className="flex items-center justify-between gap-3">
@@ -4164,17 +4287,24 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               </h2>
             </div>
 
-            {/* Right — overlapping pet avatars (active ringed coral) + add */}
+            {/* Right — overlapping pet avatars + add. Dot semantics:
+                · Green pulsing dot → pet is in an active service NOW
+                · Coral static dot  → pet has pending tasks today
+                Live wins if both apply. Selected pet gets a coral ring
+                regardless; dots overlay independently. */}
             <div className="shrink-0 flex items-center">
               {MOCK_DASHBOARD_PETS.slice(0, 3).map((pet, i) => {
                 const isActive = pet.id === selectedPetId;
+                const isLive = !!(MOCK_ACTIVE_SERVICE?.petIds?.includes(pet.id));
+                const hasPending = !isActive && !isLive && petsWithPendingTasks.has(pet.id);
+                const showDot = isLive || hasPending;
                 return (
                   <button
                     key={pet.id}
                     onClick={() => handlePetSelect(pet.id)}
-                    className="shrink-0 rounded-full active:scale-[0.9] transition-transform"
+                    className="relative shrink-0 rounded-full active:scale-[0.9] transition-transform"
                     style={{ marginLeft: i === 0 ? 0 : -10, zIndex: isActive ? 4 : 3 - i }}
-                    aria-label={`Select ${pet.name}`}
+                    aria-label={`Select ${pet.name}${isLive ? ' (live service)' : hasPending ? ' (pending tasks)' : ''}`}
                   >
                     <img
                       src={pet.avatar}
@@ -4186,6 +4316,17 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                       }`}
                       style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.14)' }}
                     />
+                    {showDot && (
+                      <span
+                        className="absolute top-0 right-0 w-[10px] h-[10px] rounded-full"
+                        style={{
+                          background: isLive ? '#3F8D63' : '#E85D2A',
+                          animation: isLive ? 'fy-livePulse 1.6s ease-in-out infinite' : undefined,
+                          boxShadow: '0 0 0 2px #F7F5F2',
+                        }}
+                        aria-hidden="true"
+                      />
+                    )}
                   </button>
                 );
               })}
@@ -4209,20 +4350,76 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               bell inbox (top-right of header). Only live safety surfaces
               here, as the slim ribbon above the greeting. */}
 
+          {/* ═══ 3b. LATEST UPDATE — single edge-to-edge row showing the
+              most recent message/photo from a walker/sitter. Quiet,
+              floating (no background). Tap → open inbox. ═══ */}
+          {MOCK_RECENT_UPDATE && MOCK_RECENT_UPDATE.petId === displayPetId && (() => {
+            const update = MOCK_RECENT_UPDATE;
+            const mins = Math.max(1, Math.floor((Date.now() - update.receivedAtMs) / 60000));
+            const timeLabel = mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)}h`;
+            return (
+              <button
+                onClick={() => onOpenInbox?.()}
+                className="w-full flex items-center gap-3 mb-5 active:opacity-70 transition-opacity"
+                style={{ animation: 'homeReveal 0.4s 0.12s cubic-bezier(0.22,1,0.36,1) both' }}
+              >
+                {update.thumbnail ? (
+                  <img
+                    src={update.thumbnail}
+                    alt=""
+                    className="w-10 h-10 rounded-[10px] object-cover shrink-0"
+                    style={{ boxShadow: '0 1px 3px rgba(60,30,15,0.08)' }}
+                  />
+                ) : (
+                  <img
+                    src={update.from.photo}
+                    alt={update.from.name}
+                    className="w-10 h-10 rounded-full object-cover shrink-0"
+                  />
+                )}
+                <div className="flex-1 min-w-0 text-left">
+                  <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.14em]">
+                    {update.from.name} · {timeLabel} ago
+                  </div>
+                  <div className="text-[12.5px] text-[#111] mt-0.5 truncate">{update.message}</div>
+                </div>
+                <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+              </button>
+            );
+          })()}
+
           {/* ═══ 4a. BOOKED — grouped-by-day flat rows. No card chrome:
               just a small uppercase day header followed by tappable rows
               (avatar + service · provider + optional staff line + time
-              + chevron). Calendar-y, ultra minimal. ═══ */}
-          {filteredBookings.length > 0 && (
-            <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
+              + chevron). Calendar-y, ultra minimal. Empty state below
+              keeps the section anchored so first-launch users see it. */}
+          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
               {/* Soft section title — small uppercase muted, count in coral on the right. */}
               <div className="flex items-end justify-between mb-3">
                 <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Booked</h3>
-                <span className="text-[11px] font-semibold text-[#E85D2A] tabular-nums">
-                  {filteredBookings.length} upcoming
-                </span>
+                {filteredBookings.length > 0 && (
+                  <span className="text-[11px] font-semibold text-[#E85D2A] tabular-nums">
+                    {filteredBookings.length} upcoming
+                  </span>
+                )}
               </div>
-              {(() => {
+              {filteredBookings.length === 0 ? (
+                <button
+                  onClick={() => onOpenBookings?.()}
+                  className="w-full flex items-center gap-3 px-3.5 py-3 rounded-[14px] active:scale-[0.99] transition-transform"
+                  style={{ background: '#F3EFEB' }}
+                >
+                  <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0">
+                    <Calendar size={14} className="text-[#A09A94]" strokeWidth={1.9} />
+                  </span>
+                  <div className="flex-1 text-left min-w-0">
+                    <div className="text-[13px] font-semibold text-[#111]">No bookings yet</div>
+                    <div className="text-[11.5px] text-[#6E6058] mt-0.5">Find a walker or sitter for {selectedPet.name}</div>
+                  </div>
+                  <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+                </button>
+              ) : null}
+              {filteredBookings.length > 0 && (() => {
                 const visibleBookings = bookedExpanded
                   ? filteredBookings
                   : filteredBookings.slice(0, 2);
@@ -4317,36 +4514,122 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               </>);
               })()}
             </div>
-          )}
 
-          {/* ═══ 4b. NEXT UP — single coral-soft card. Only surfaces
-              important types (medication, health). Tap fills the
-              checkbox; the card holds briefly so the action reads,
-              then fades out and reveals the next pending item. ═══ */}
+          {/* ═══ 4b. NEXT UP — carousel of important pending items
+              (medication + health). Shows one at a time, sorted by
+              time (overdue first). Tap = complete + advance. Swipe
+              left/right or tap dots to navigate between items. ═══ */}
           {(() => {
             const importantTypes = ['medication', 'health'];
+            const allPending = filteredReminders
+              .filter(r => importantTypes.includes(r.type) && !completedReminders.has(r.id))
+              .sort((a, b) => {
+                // Overdue items ("2d ago", "4d ago") come first; then time-of-day order.
+                const aOverdue = typeof a.time === 'string' && /ago|overdue/i.test(a.time);
+                const bOverdue = typeof b.time === 'string' && /ago|overdue/i.test(b.time);
+                if (aOverdue && !bOverdue) return -1;
+                if (!aOverdue && bOverdue) return 1;
+                return String(a.time).localeCompare(String(b.time));
+              });
+
             const justDone = nextUpDoneId
               ? filteredReminders.find(r => r.id === nextUpDoneId)
               : null;
-            const pending = filteredReminders.find(r =>
-              r.action === 'complete' &&
-              importantTypes.includes(r.type) &&
-              !completedReminders.has(r.id)
-            );
-            const nextUp = justDone || pending;
-            if (!nextUp) return null;
+
+            // Empty state — quiet positive note instead of hiding.
+            // First-launch users without any reminders still see this
+            // section and understand what NEXT UP is for.
+            if (!justDone && allPending.length === 0) {
+              return (
+                <div
+                  className="mb-6 flex items-center gap-2.5 px-4 py-3 rounded-[14px]"
+                  style={{
+                    background: '#F3EFEB',
+                    animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both',
+                  }}
+                >
+                  <span className="w-7 h-7 rounded-full bg-white flex items-center justify-center shrink-0">
+                    <Check size={14} className="text-[#3F8D63]" strokeWidth={2.4} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[12.5px] font-semibold text-[#111]">You're all set for today</div>
+                    <div className="text-[11px] text-[#A09A94] mt-0.5">No meds or vaccines pending</div>
+                  </div>
+                </div>
+              );
+            }
+
+            const total = allPending.length;
+            const currentIdx = total > 0 ? Math.min(nextUpIndex, total - 1) : 0;
+            const current = justDone || allPending[currentIdx];
+            if (!current) return null;
+
             const isJustDone = !!justDone;
+            const hasMore = total > 1;
+
+            const goToIdx = (idx) => {
+              if (total === 0) return;
+              const wrapped = ((idx % total) + total) % total;
+              setNextUpIndex(wrapped);
+            };
 
             const handleTap = () => {
               if (isJustDone) return; // already animating out
-              handleCompleteReminder(nextUp.id);
-              setNextUpDoneId(nextUp.id);
+              // Every item in the carousel uses the checkbox to acknowledge.
+              // Tap marks done and animates out so the next pending appears.
+              handleCompleteReminder(current.id);
+              setNextUpDoneId(current.id);
               setTimeout(() => setNextUpDoneId(null), 850);
+            };
+
+            const onPointerDown = (e) => {
+              // Only handle primary (left) mouse button; allow any touch/pen.
+              if (e.pointerType === 'mouse' && e.button !== 0) return;
+              if (!hasMore) return;
+              try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+              nextUpTouchStartX.current = e.clientX;
+              nextUpTouchStartY.current = e.clientY;
+              nextUpTouchMoved.current = false;
+              setNextUpDragging(true);
+            };
+            const onPointerMove = (e) => {
+              if (nextUpTouchStartX.current == null) return;
+              const dx = e.clientX - nextUpTouchStartX.current;
+              const dy = e.clientY - nextUpTouchStartY.current;
+              if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) {
+                nextUpTouchMoved.current = true;
+                // Mild rubber-band: limit to ±140px so it feels bounded.
+                const clamped = Math.max(-140, Math.min(140, dx));
+                setNextUpDragX(clamped);
+              }
+            };
+            const finishDrag = (clientX) => {
+              if (nextUpTouchStartX.current == null) return;
+              const dx = (clientX ?? nextUpTouchStartX.current) - nextUpTouchStartX.current;
+              nextUpTouchStartX.current = null;
+              nextUpTouchStartY.current = null;
+              setNextUpDragging(false);
+              if (nextUpTouchMoved.current && Math.abs(dx) > 50 && hasMore) {
+                // Pass threshold → advance/retreat. Defer dragX reset to
+                // the next frame so the new card animates from the drag
+                // offset back to 0 (smoother than instant snap).
+                goToIdx(currentIdx + (dx < 0 ? 1 : -1));
+                requestAnimationFrame(() => setNextUpDragX(0));
+              } else {
+                // Snap back to center.
+                setNextUpDragX(0);
+              }
+            };
+            const onPointerUp = (e) => finishDrag(e.clientX);
+            const onPointerCancel = () => {
+              nextUpTouchStartX.current = null;
+              nextUpTouchStartY.current = null;
+              setNextUpDragging(false);
+              setNextUpDragX(0);
             };
 
             return (
               <div
-                key={nextUp.id}
                 className="mb-6"
                 style={{
                   animation: isJustDone
@@ -4355,9 +4638,27 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 }}
               >
                 <button
-                  onClick={handleTap}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px] active:scale-[0.99] transition-transform"
-                  style={{ background: '#FFEDE3' }}
+                  key={current.id}
+                  onClick={() => {
+                    if (nextUpTouchMoved.current) { nextUpTouchMoved.current = false; return; }
+                    handleTap();
+                  }}
+                  onPointerDown={onPointerDown}
+                  onPointerMove={onPointerMove}
+                  onPointerUp={onPointerUp}
+                  onPointerCancel={onPointerCancel}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px]"
+                  style={{
+                    background: '#FFEDE3',
+                    touchAction: hasMore ? 'pan-y' : 'auto',
+                    transform: `translateX(${nextUpDragX}px)`,
+                    transition: nextUpDragging
+                      ? 'none'
+                      : 'transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)',
+                    cursor: hasMore ? (nextUpDragging ? 'grabbing' : 'grab') : 'pointer',
+                    userSelect: 'none',
+                    touchCallout: 'none',
+                  }}
                 >
                   <span
                     className={`w-[22px] h-[22px] rounded-full border-[1.5px] inline-flex items-center justify-center shrink-0 transition-all duration-200 ${
@@ -4371,23 +4672,43 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                     <div className={`text-[14px] font-bold mt-0.5 truncate transition-colors duration-200 ${
                       isJustDone ? 'text-[#A09A94] line-through' : 'text-[#111]'
                     }`}>
-                      {nextUp.title}
+                      {current.title}
                     </div>
                   </div>
-                  <span className="text-[12px] text-[#A09A94] tabular-nums shrink-0">{nextUp.time}</span>
+                  <span className="text-[12px] text-[#A09A94] tabular-nums shrink-0">{current.time}</span>
                 </button>
+                {hasMore && !isJustDone && (
+                  <div className="flex items-center justify-center gap-1.5 mt-2.5" aria-label={`${currentIdx + 1} of ${total} items`}>
+                    {allPending.map((p, i) => (
+                      <button
+                        key={p.id}
+                        onClick={(e) => { e.stopPropagation(); goToIdx(i); }}
+                        aria-label={`Show item ${i + 1}`}
+                        className="p-1.5 -m-1.5"
+                      >
+                        <span
+                          className={`block rounded-full transition-all duration-200 ${
+                            i === currentIdx
+                              ? 'w-4 h-1.5 bg-[#E85D2A]'
+                              : 'w-1.5 h-1.5 bg-[#E0D8CF]'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })()}
 
-          {/* ═══ 6. LOG — 3 pill quick-actions + "More options" link ═══ */}
+          {/* ═══ 6. TRACK — 3 pill quick-actions (Meds · Walk · Note) ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Log</h3>
+            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Track</h3>
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { label: 'Walk', icon: Footprints, type: 'walk' },
-                { label: 'Meal', icon: Bone, type: 'meal' },
                 { label: 'Meds', icon: Pill, type: 'medication' },
+                { label: 'Walk', icon: Footprints, type: 'walk' },
+                { label: 'Note', icon: FileText, type: 'note' },
               ].map((a, i) => (
                 <button
                   key={i}
@@ -4408,23 +4729,22 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 </button>
               ))}
             </div>
-            <button
-              onClick={openQuickLogModal}
-              className="flex items-center gap-1 mt-3 active:opacity-70 transition-opacity"
-            >
-              <span className="text-[12.5px] font-semibold text-[#E85D2A]">More options</span>
-              <ChevronRight size={13} className="text-[#E85D2A]" />
-            </button>
           </div>
 
-          {/* ═══ 7. EXPLORE — flat tiles, no title (sections divided by line) ═══ */}
+          {/* ═══ 7. EXPLORE — quick entries + secondary actions.
+              Has its own section title so it visually splits from Track
+              above. Treatments differentiate: deep-nav tiles → emergency
+              pills → dark Pro card → edge-to-edge Invite row.
+              ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.32s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <div className="grid grid-cols-4 gap-2.5">
+            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Explore</h3>
+
+            {/* 7a. Deep navigation tiles — uniform, neutral utility */}
+            <div className="grid grid-cols-3 gap-2.5 mb-3">
               {[
+                { label: 'Bookings', icon: Calendar, onClick: () => onOpenBookings?.() },
+                { label: 'Calendar', icon: CalendarDays, onClick: () => onNavigate('journal') },
                 { label: 'Health', icon: Stethoscope, onClick: () => onOpenHealthRecords?.() },
-                { label: 'Services', icon: PawPrint, onClick: () => onNavigate('services') },
-                { label: 'Journal', icon: BookOpen, onClick: () => onNavigate('journal') },
-                { label: 'Vault', icon: Folder, onClick: () => onNavigate('vault') },
               ].map((e, i) => (
                 <button key={i} onClick={e.onClick} className="flex flex-col items-center gap-1.5 py-3 rounded-[14px] active:scale-[0.96] transition-transform" style={{ background: '#F3EFEB' }}>
                   <e.icon size={18} className="text-[#E85D2A]" strokeWidth={1.9} />
@@ -4432,6 +4752,60 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 </button>
               ))}
             </div>
+
+            {/* 7b. Emergency quick-actions — two compact pills, one for the
+                  vet hotline (tap → call) and one for first-aid steps.
+                  More direct than a single "Emergency SOS" gateway row. */}
+            <div className="grid grid-cols-2 gap-2.5 mb-3">
+              <button
+                onClick={() => homeNavigate('/emergency')}
+                className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[14px] active:scale-[0.97] transition-transform"
+                style={{ background: '#F3EFEB' }}
+              >
+                <Phone size={14} className="text-[#111] shrink-0" strokeWidth={1.9} />
+                <span className="text-[12.5px] font-semibold text-[#111] truncate">Vet hotline</span>
+              </button>
+              <button
+                onClick={() => homeNavigate('/emergency')}
+                className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[14px] active:scale-[0.97] transition-transform"
+                style={{ background: '#F3EFEB' }}
+              >
+                <LifeBuoy size={14} className="text-[#111] shrink-0" strokeWidth={1.9} />
+                <span className="text-[12.5px] font-semibold text-[#111] truncate">First aid</span>
+              </button>
+            </div>
+
+            {/* 7c. Become a Pro — compact dark editorial card. Coral
+                  eyebrow, white headline, coral CTA link. No decoration. */}
+            <button
+              onClick={() => homeNavigate('/pro-registration')}
+              className="w-full text-left rounded-[14px] mb-1 active:scale-[0.99] transition-transform"
+              style={{ background: '#2A1A12', padding: '13px 16px' }}
+            >
+              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#E85D2A] mb-1.5">
+                Earn with Fylos
+              </div>
+              <div className="text-[15px] font-bold text-white leading-[1.28] mb-2">
+                Love dogs? Become a walker or sitter.
+              </div>
+              <div className="flex items-center gap-1 text-[12px] font-semibold text-[#E85D2A]">
+                <span>Apply in 3 minutes</span>
+                <ArrowRight size={12} strokeWidth={2.4} />
+              </div>
+            </button>
+
+            {/* 7d. Invite — edge-to-edge floating row, centered as a group.
+                  No background, no border; reads as a quiet aside. */}
+            <button
+              onClick={() => homeNavigate('/invite')}
+              className="w-full flex items-center justify-center gap-2.5 py-2.5 active:opacity-70 transition-opacity"
+            >
+              <Gift size={14} className="text-[#A09A94] shrink-0" strokeWidth={1.8} />
+              <span className="text-[12.5px] text-[#6E6058]">
+                Invite a friend — get <span className="font-bold text-[#E85D2A]">10 CHF</span> each
+              </span>
+              <ArrowRight size={13} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+            </button>
           </div>
 
           {/* Suggested card removed at the user's request. */}
@@ -9213,6 +9587,11 @@ export default function App() {
             setServicesRoute('home');
             setPushedScreen('vault_health_records');
           }}
+          onOpenBookings={() => {
+            setActiveTab('services');
+            setDisplayTab('services');
+            setServicesRoute('bookings');
+          }}
         />
       );
       case 'services':
@@ -9235,6 +9614,11 @@ export default function App() {
             setDisplayTab('vault');
             setServicesRoute('home');
             setPushedScreen('vault_health_records');
+          }}
+          onOpenBookings={() => {
+            setActiveTab('services');
+            setDisplayTab('services');
+            setServicesRoute('bookings');
           }}
         />
       );
