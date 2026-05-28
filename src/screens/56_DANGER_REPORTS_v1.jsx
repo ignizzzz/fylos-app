@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Directional scroll collapse — same as Activity tab pattern
 function useDirectionalCollapse(maxProgress, opts = {}) {
@@ -581,7 +582,16 @@ function FeedCard({ report, onTap }) {
 
 // ---------------- Main component ----------------
 export default function DangerReportsScreen() {
-  const [viewMode, setViewMode] = useState('map'); // map | feed
+  // Read deep-link state from the safety popup on the home dashboard:
+  //   · state.view === 'map'           → start in map mode (already default)
+  //   · state.action === 'add-info'    → open the report submission form
+  //                                       pre-filled with the alert category
+  //   · state.category                 → category id to pre-select
+  //   · state.focusId                  → alert id to pan/highlight on map
+  const location = useLocation();
+  const incomingState = (location && location.state) || {};
+
+  const [viewMode, setViewMode] = useState(incomingState.view === 'feed' ? 'feed' : 'map'); // map | feed
   const { progress: collapseProgress, handleScroll: handleScrollCollapse } = useDirectionalCollapse(96, { showFactor: 2.5 });
   const clamp01 = (v) => Math.max(0, Math.min(1, v));
   // Chips collapse first (0-48), then tabs collapse (48-96)
@@ -589,10 +599,16 @@ export default function DangerReportsScreen() {
   const tabsHidden = clamp01((collapseProgress - 48) / 48);
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedReport, setSelectedReport] = useState(null);
-  const [reportFormOpen, setReportFormOpen] = useState(false);
-  const [reportFormStep, setReportFormStep] = useState('category');
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [formLocation, setFormLocation] = useState('Current location · Seefeld');
+  // If we arrived via "Confirm → Yes, add details" the form opens
+  // immediately, on the details step, with the alert's category already
+  // selected. Otherwise the form starts closed at the category step.
+  const incomingAddInfo = incomingState.action === 'add-info' && !!incomingState.category;
+  const [reportFormOpen, setReportFormOpen] = useState(incomingAddInfo);
+  const [reportFormStep, setReportFormStep] = useState(incomingAddInfo ? 'details' : 'category');
+  const [selectedCategory, setSelectedCategory] = useState(incomingAddInfo ? incomingState.category : null);
+  const [formLocation, setFormLocation] = useState(
+    incomingState.area ? `${incomingState.area} · reported area` : 'Current location · Seefeld'
+  );
   const [formDescription, setFormDescription] = useState('');
   const [formSeverity, setFormSeverity] = useState('High');
   const [formPhoto, setFormPhoto] = useState(null); // data URL string or null

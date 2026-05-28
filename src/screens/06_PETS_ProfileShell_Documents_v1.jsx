@@ -26,6 +26,8 @@ import {
   Settings,
   Star,
   MapPin,
+  CheckCircle,
+  Ban,
   Pencil,
   Copy,
   Trash2,
@@ -581,19 +583,118 @@ const MOCK_DASHBOARD_PETS = [
 //                 staff avatar on top of the business avatar; otherwise
 //                 we show the business avatar alone.
 // Business avatar uses `logo` URL if set, else `initials` over `color`.
+// Live safety alerts near the user. Drives the slim ribbon at the top
+// of the dashboard. Tapping the ribbon opens a popup carousel — one
+// card per alert, swipe or pagination dots to navigate. Empty array
+// hides the ribbon entirely.
+const MOCK_LIVE_SAFETY_ALERTS = [
+  {
+    id: 'sa_001',
+    category: 'poison',
+    categoryLabel: 'Poison bait',
+    severity: 'Critical',
+    title: 'Poison bait reported',
+    area: 'Seefeld park',
+    distanceMeters: 320,
+    reportedAtMs: Date.now() - 12 * 60 * 1000,
+    description: "Saw small white pellets scattered near the south entrance. Some looked like meat treats. Avoid the area with pets.",
+    thumbnail: null, // null → uses the placeholder pattern
+    confirmedCount: 3,
+  },
+  {
+    id: 'sa_002',
+    category: 'aggressive',
+    categoryLabel: 'Aggressive dog',
+    severity: 'High',
+    title: 'Off-leash aggressive dog',
+    area: 'Bellevue lake path',
+    distanceMeters: 880,
+    reportedAtMs: Date.now() - 45 * 60 * 1000,
+    description: "Large unleashed dog acting aggressively toward smaller dogs near the lakeside bench area.",
+    thumbnail: null,
+    confirmedCount: 1,
+  },
+];
+
 // Active service in progress — drives the green "live" banner above the
-// greeting and the green "live" dot on each pet avatar.
+// greeting and the green "live" dot on each pet avatar. Tapping the
+// banner opens a popup with all the live details below.
 //
-// `petIds` is an array because a walker almost always takes the whole
-// household together (3 dogs = 3 dogs, not 1). The banner names every
-// pet in the service; individual avatars get a green pulsing dot.
-// When null, the banner is hidden.
-const MOCK_ACTIVE_SERVICE = {
-  petIds: ['p1', 'p2', 'p3'], // walking all three pets together
-  serviceLabel: 'Walk',
-  provider: { name: 'Lukas F.', photo: 'https://i.pravatar.cc/150?img=12' },
-  startedAtMs: Date.now() - 12 * 60 * 1000, // started 12 minutes ago
+// Two mock scenarios are defined: a walker out on a walk, and a sitter
+// in the home. Toggle `MOCK_ACTIVE_SERVICE` at the bottom to switch
+// which one drives the dashboard. `petIds` is an array because both
+// services typically cover the whole household at once.
+
+const MOCK_ACTIVE_WALKING = {
+  type: 'walk',
+  petIds: ['p1', 'p2', 'p3'],
+  serviceLabel: '90 min Walk',
+  durationMin: 90,
+  provider: {
+    name: 'Lukas F.',
+    photo: 'https://i.pravatar.cc/150?img=12',
+    rating: 4.9,
+    phone: '+41 79 123 4567',
+  },
+  startedAtMs: Date.now() - 12 * 60 * 1000,
+  walkedKm: 1.2,
+  currentArea: 'Bellevue area',
+  currentAreaDetail: '320m from home',
+  updates: [
+    {
+      text: "Just past Bellevue — all three are loving it.",
+      photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=240&fit=crop',
+      receivedAtMs: Date.now() - 2 * 60 * 1000,
+    },
+    {
+      text: "Quick water break at the fountain. Leo is pacing himself today.",
+      photo: null,
+      receivedAtMs: Date.now() - 7 * 60 * 1000,
+    },
+    {
+      text: "Just headed out — Leo is eager, Zyon a bit sleepy, Bella in the middle.",
+      photo: null,
+      receivedAtMs: Date.now() - 11 * 60 * 1000,
+    },
+  ],
 };
+
+const MOCK_ACTIVE_SITTING = {
+  type: 'sitting',
+  petIds: ['p1', 'p2', 'p3'],
+  serviceLabel: '4h Sitting',
+  durationMin: 240, // 4 hours
+  provider: {
+    name: 'Maria S.',
+    photo: 'https://i.pravatar.cc/150?u=maria',
+    rating: 4.8,
+    phone: '+41 79 456 7890',
+  },
+  startedAtMs: Date.now() - 83 * 60 * 1000, // 1h 23m in
+  currentArea: 'At your home',
+  currentAreaDetail: 'Living room area',
+  updates: [
+    {
+      text: "Just fed Leo and Zyon. Bella saved hers for later — totally normal for her.",
+      photo: null,
+      receivedAtMs: Date.now() - 4 * 60 * 1000,
+    },
+    {
+      text: "Bella napping on the couch like a tiny loaf.",
+      photo: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=240&fit=crop',
+      receivedAtMs: Date.now() - 28 * 60 * 1000,
+    },
+    {
+      text: "Everyone's settled in. Quiet, calm vibes.",
+      photo: null,
+      receivedAtMs: Date.now() - 65 * 60 * 1000,
+    },
+  ],
+};
+
+// Toggle which scenario drives the demo. Swap to MOCK_ACTIVE_WALKING
+// to see the walker variant of the live popup.
+const MOCK_ACTIVE_SERVICE = MOCK_ACTIVE_SITTING;
 
 // Most recent update from a provider (message + optional photo). Drives
 // the "Latest from your team" row below the greeting. When null, hidden.
@@ -718,7 +819,63 @@ const MOCK_SUGGESTIONS = [
   { id: 's2', petId: 'p2', title: 'Annual Checkup', context: 'Tao is due next month', icon: '🏥' }
 ];
 
+// Saved medications per pet — drives the picker in the Meds quick-log
+// popup. Owner can also pick "+ Add new" to enter a one-off med.
+const MOCK_SAVED_MEDS = {
+  p1: [
+    { id: 'apoquel', name: 'Apoquel', dose: '16mg', schedule: 'Daily · 08:00' },
+    { id: 'nexgard', name: 'NexGard', dose: '1 chewable', schedule: 'Monthly' },
+  ],
+  p2: [
+    { id: 'omega3', name: 'Omega-3', dose: '1 capsule', schedule: 'Daily' },
+  ],
+  p3: [
+    { id: 'frontline', name: 'Frontline', dose: '1 pipette', schedule: 'Monthly' },
+  ],
+  p4: [],
+  p5: [],
+};
+
+// Preset duration chips for the Walk quick-log.
+const WALK_DURATIONS = [15, 30, 45, 60, 90];
+
+// Tag chips for Note quick-log. Sitting alongside the textarea so the
+// owner can categorise the entry with a single tap.
+const NOTE_TAGS = ['Health', 'Behavior', 'Food', 'Mood', 'Other'];
+
+// Owner's primary vet. Powers the Vet hotline popup on the dashboard.
+//   · object → show name + phone + status (open / closed) + Call now
+//   · null   → show "Add my vet" + "Find vets nearby"
+//
+// `statusNow.isOpen` decides the dot colour + whether we surface a
+// "Find emergency vet" secondary button (most vets are not 24/7, so
+// outside hours the owner needs a real fallback). `isEmergencyLine`
+// is the rare case of a clinic that IS 24/7 — shown as a coral badge.
+const MOCK_USER_VET = {
+  name: 'Tierklinik Zürich',
+  phone: '+41 44 635 81 11',
+  hours: 'Mon–Fri 8:00–18:00',
+  statusNow: { isOpen: true, label: 'Open until 18:00' },
+  isEmergencyLine: false,
+};
+// Swap any of these in for testing other states:
+// const MOCK_USER_VET = null; // ← empty state (no vet on file)
+// const MOCK_USER_VET = { name: 'Tierklinik Zürich', phone: '+41 44 635 81 11',
+//   hours: 'Mon–Fri 8:00–18:00',
+//   statusNow: { isOpen: false, label: 'Closed · Opens Mon 8:00' },
+//   isEmergencyLine: false };
+// const MOCK_USER_VET = { name: 'Tierspital Notfall', phone: '+41 44 635 87 00',
+//   hours: '24/7 emergency line',
+//   statusNow: { isOpen: true, label: 'Available now' },
+//   isEmergencyLine: true };
+
 const MOCK_BOOKINGS_LIST = [
+  // First three entries mirror what shows on the dashboard's Booked
+  // section. Tapping any of them on the dashboard deep-links here with
+  // the row pre-expanded; tapping a collapsed row toggles it open.
+  { id: 'b1', status: 'confirmed', provider: { id: 'provider_sofia', name: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker', rating: 4.9 }, service: { id: 'service_groom', label: 'Grooming', duration: 60 }, dateTime: { date: '2026-02-16', time: '10:00', endTime: '11:00', start: '2026-02-16T10:00:00+01:00', formatted: 'Mon, Feb 16 · 10:00-11:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 65.00, helper: 'In a few days', confirmedAt: '2026-02-12T09:15:00Z' },
+  { id: 'b2', status: 'confirmed', provider: { id: 'provider_brightpaws_elena', name: 'Bright Paws · Elena', photo: 'https://i.pravatar.cc/150?u=elena_groomer', rating: 4.8 }, service: { id: 'service_groom_business', label: 'Grooming', duration: 90 }, dateTime: { date: '2026-02-18', time: '15:30', endTime: '17:00', start: '2026-02-18T15:30:00+01:00', formatted: 'Wed, Feb 18 · 15:30-17:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 85.00, helper: 'In a week', confirmedAt: '2026-02-12T11:00:00Z' },
+  { id: 'b3', status: 'confirmed', provider: { id: 'provider_lakeshore_reza', name: 'Lakeshore Vet · Dr. Reza Patel', photo: 'https://i.pravatar.cc/150?u=dr_reza', rating: 4.9 }, service: { id: 'service_vet', label: 'Vet visit', duration: 30 }, dateTime: { date: '2026-02-20', time: '09:00', endTime: '09:30', start: '2026-02-20T09:00:00+01:00', formatted: 'Fri, Feb 20 · 09:00-09:30' }, pet: { id: 'pet_001', name: 'Leo' }, total: 120.00, helper: 'Annual checkup', confirmedAt: '2026-02-10T15:00:00Z' },
   { id: 'booking_123', status: 'confirmed', provider: { id: 'provider_001', name: 'Lukas F.', photo: 'https://i.pravatar.cc/150?img=12', rating: 4.9 }, service: { id: 'service_90min', label: '90 min Walk', duration: 90 }, dateTime: { date: '2026-02-24', time: '14:00', endTime: '15:30', start: '2026-02-24T14:00:00+01:00', formatted: 'Mon, Feb 24 · 14:00-15:30' }, pet: { id: 'pet_001', name: 'Leo' }, total: 95.00, helper: 'In 2 days', confirmedAt: '2026-02-22T14:35:00Z' },
   { id: 'booking_124', status: 'pending', provider: { id: 'provider_002', name: 'Maria S.', photo: 'https://i.pravatar.cc/150?u=maria', rating: 4.8 }, service: { id: 'service_60min_sitting', label: '60 min Sitting', duration: 60 }, dateTime: { date: '2026-02-26', time: '10:00', endTime: '11:00', start: '2026-02-26T10:00:00+01:00', formatted: 'Wed, Feb 26 · 10:00-11:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 65.00, helper: 'Waiting for response... Expires in 18h', requestedAt: '2026-02-22T16:00:00Z' },
   { id: 'booking_125', status: 'in-progress', provider: { id: 'provider_004', name: 'Elena R.', photo: 'https://i.pravatar.cc/150?u=elena', rating: 5.0 }, service: { id: 'service_60min_sitting', label: '60 min Sitting', duration: 60 }, dateTime: { date: '2026-02-23', time: '19:00', endTime: '20:00', start: '2026-02-23T19:00:00+01:00', formatted: 'Today · 19:00-20:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 60.00, helper: 'Started 15 minutes ago', requestedAt: '2026-02-21T16:00:00Z' },
@@ -3732,7 +3889,17 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
 };
 
 // --- DASHBOARD HOME SCREEN ---
-const useTimeBasedGreeting = () => { const h = new Date().getHours(); if (h < 12) return 'Good morning'; if (h < 18) return 'Good afternoon'; return 'Good evening'; };
+// Brand-voice greeting — matches the conversational tone used in
+// onboarding / auth ("Hi, friend.", "Look who's back.", "Got a phone?").
+// Time-of-day aware so it feels alive across the day, but never
+// formal ("Good morning, Mr. Brown" is the opposite of the brand).
+const useTimeBasedGreeting = () => {
+  const h = new Date().getHours();
+  if (h < 11) return 'Morning';     // 5–11 — early start
+  if (h < 17) return 'Hi';          // 11–17 — midday, matches "Hi, friend."
+  if (h < 21) return 'Evening';     // 17–21 — winding down
+  return 'Hey';                     // 21–5 — late, casual
+};
 const formatDateTime = (iso) => { const d = new Date(iso); return `${d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' })} · ${d.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12:false })}`; };
 
 const getDaysUntilDate = (dateValue) => {
@@ -3917,7 +4084,1329 @@ const LaunchBanner = React.memo(({ feature, daysUntilLaunch, onDismiss, onJoinWa
   );
 });
 
-const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords, onOpenBookings }) => {
+// Centered popup carousel that surfaces nearby safety alerts.
+// · Smooth peek-style transition: cards live in a horizontal flex track,
+//   the wrapper translates so adjacent cards slide in from the edges.
+// · Photo sits inside a white-padded frame so it reads as a contained
+//   element, not full-bleed across the card.
+// · 3 quick-actions per card (Got it · On map · Confirm) and a bottom
+//   row with confirmation count + "More info" link.
+const SafetyAlertPopup = ({ alerts, onClose, onMoreInfo, onAcknowledge, onConfirm, onOpenMap }) => {
+  const [index, setIndex] = useState(0);
+  const [dragX, setDragX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+  const touchMoved = useRef(false);
+
+  useEffect(() => {
+    if (!alerts || alerts.length === 0) return undefined;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [alerts, onClose]);
+
+  if (!alerts || alerts.length === 0) return null;
+
+  const total = alerts.length;
+  const currentIdx = Math.min(index, total - 1);
+  const hasMore = total > 1;
+
+  const goTo = (i) => {
+    const wrapped = ((i % total) + total) % total;
+    setIndex(wrapped);
+  };
+
+  // Only start *tracking* a potential drag on pointerdown — we don't
+  // capture the pointer or set the dragging state yet, because doing so
+  // would swallow click events on the action buttons inside the card.
+  // Promote to a real drag (capture + dragging state) only once the
+  // pointer has moved more than 6px horizontally.
+  const onPointerDown = (e) => {
+    if (!hasMore) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    touchStartX.current = e.clientX;
+    touchStartY.current = e.clientY;
+    touchMoved.current = false;
+  };
+  const onPointerMove = (e) => {
+    if (touchStartX.current == null) return;
+    const dx = e.clientX - touchStartX.current;
+    const dy = e.clientY - touchStartY.current;
+    if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) {
+      if (!touchMoved.current) {
+        // First crossing of the threshold → we're now in a real drag.
+        touchMoved.current = true;
+        setDragging(true);
+        try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+      }
+      // Dampen drag at the edges so it feels like resistance, not a wall.
+      let clamped = dx;
+      if ((currentIdx === 0 && dx > 0) || (currentIdx === total - 1 && dx < 0)) {
+        clamped = dx * 0.35;
+      }
+      setDragX(clamped);
+    }
+  };
+  const onPointerUp = (e) => {
+    if (touchStartX.current == null) return;
+    const dx = e.clientX - touchStartX.current;
+    touchStartX.current = null;
+    touchStartY.current = null;
+    if (touchMoved.current) {
+      // Real drag — settle the carousel.
+      setDragging(false);
+      if (Math.abs(dx) > 50 && hasMore) {
+        goTo(currentIdx + (dx < 0 ? 1 : -1));
+      }
+      setDragX(0);
+    }
+    // If not moved, this was a tap on something inside the card; let
+    // the button's onClick fire normally.
+  };
+  const onPointerCancel = () => {
+    touchStartX.current = null;
+    touchStartY.current = null;
+    if (touchMoved.current) {
+      setDragging(false);
+      setDragX(0);
+    }
+  };
+
+  return (
+    <div className="absolute inset-0 z-[200] flex flex-col items-center justify-center px-5" style={{ animation: 'authDocFade 0.2s ease both' }}>
+      {/* Backdrop */}
+      <div onClick={onClose} className="absolute inset-0" style={{ background: 'rgba(20,15,10,0.36)' }} />
+
+      {/* Popup wrapper — fixed card shape with overflow hidden. Inside,
+          a flex track holds all alerts; we translate the track so the
+          adjacent card peeks in from the edges during drag. */}
+      <div
+        className="relative w-full max-w-[320px] bg-white rounded-[20px] overflow-hidden select-none"
+        style={{
+          boxShadow: '0 8px 32px rgba(60,30,15,0.18), 0 0 0 1px rgba(60,30,15,0.06)',
+          animation: 'authDocPop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+          touchAction: hasMore ? 'pan-y' : 'auto',
+        }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerCancel}
+      >
+        {/* Carousel track */}
+        <div
+          style={{
+            display: 'flex',
+            width: `${total * 100}%`,
+            transform: `translateX(calc(${-currentIdx * (100 / total)}% + ${dragX}px))`,
+            transition: dragging ? 'none' : 'transform 0.36s cubic-bezier(0.22, 1, 0.36, 1)',
+          }}
+        >
+          {alerts.map((alert) => {
+            const minutes = Math.max(1, Math.floor((Date.now() - alert.reportedAtMs) / 60000));
+            const timeAgo = minutes < 60 ? `${minutes} min ago` : `${Math.floor(minutes / 60)}h ago`;
+            const distanceLabel = alert.distanceMeters < 1000
+              ? `${alert.distanceMeters}m away`
+              : `${(alert.distanceMeters / 1000).toFixed(1)}km away`;
+
+            return (
+              <div key={alert.id} style={{ flex: `0 0 ${100 / total}%`, minWidth: 0 }}>
+                {/* Header */}
+                <div className="pt-4 px-4 pb-3 flex items-start gap-3">
+                  <span className="w-9 h-9 rounded-full bg-[#FFEBEA] flex items-center justify-center shrink-0">
+                    <AlertTriangle size={17} className="text-[#FF3B30]" strokeWidth={2.2} />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[15.5px] font-bold text-[#111] leading-[1.2]">{alert.title}</div>
+                    <div className="text-[11px] text-[#A09A94] mt-0.5">Reported {timeAgo}</div>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    aria-label="Close"
+                    className="w-8 h-8 -mt-1 -mr-1 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all shrink-0"
+                  >
+                    <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+                  </button>
+                </div>
+
+                {/* Photo — sits inside a white-padded frame so it reads as
+                    a contained element, not full-bleed. */}
+                <div className="px-3 pb-3">
+                  {alert.thumbnail ? (
+                    <img src={alert.thumbnail} alt="" className="w-full h-[120px] object-cover rounded-[12px]" />
+                  ) : (
+                    <div
+                      className="w-full h-[120px] relative flex items-end px-3 py-2 rounded-[12px] overflow-hidden"
+                      style={{
+                        background: 'repeating-linear-gradient(135deg, #EDE7DE 0 12px, #F3EFEB 12px 24px)',
+                      }}
+                    >
+                      <span className="text-[10px] font-mono text-[#A09A94] bg-[#F7F5F2]/70 px-1.5 py-0.5 rounded">Reporter photo</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Body */}
+                <div className="px-4 pb-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <MapPin size={13} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                    <span className="text-[12.5px] font-semibold text-[#111]">{alert.area}</span>
+                    <span className="text-[11.5px] text-[#A09A94]">· {distanceLabel}</span>
+                  </div>
+                  {alert.description && (
+                    <p className="text-[12.5px] leading-[1.5] text-[#3A3530]">{alert.description}</p>
+                  )}
+                </div>
+
+                {/* 3 quick-actions */}
+                <div className="px-4 pb-2.5 grid grid-cols-3 gap-2">
+                  {[
+                    { id: 'got-it',  label: 'Got it',  icon: Check,       onClick: () => onAcknowledge?.(alert) },
+                    { id: 'map',     label: 'On map',  icon: MapPin,      onClick: () => onOpenMap?.(alert) },
+                    { id: 'confirm', label: 'Confirm', icon: CheckCircle, onClick: () => onConfirm?.(alert) },
+                  ].map((a) => (
+                    <button
+                      key={a.id}
+                      onClick={a.onClick}
+                      className="flex flex-col items-center gap-1 py-2 rounded-[12px] active:scale-[0.97] transition-transform"
+                      style={{ background: '#F3EFEB' }}
+                    >
+                      <a.icon size={15} className="text-[#111]" strokeWidth={1.9} />
+                      <span className="text-[11.5px] font-semibold text-[#111]">{a.label}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Bottom row: confirmation count + More info link */}
+                <div className="px-4 pb-3.5 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-[11.5px] text-[#6E6058]">
+                    <CheckCircle size={12} className="text-[#3F8D63] shrink-0" strokeWidth={2.2} />
+                    <span><span className="font-semibold text-[#111]">{alert.confirmedCount}</span> confirmed</span>
+                  </div>
+                  <button
+                    onClick={() => onMoreInfo?.(alert)}
+                    className="flex items-center gap-1 text-[12px] font-semibold text-[#E85D2A] active:opacity-70 transition-opacity"
+                  >
+                    <span>More info</span>
+                    <ArrowRight size={12} strokeWidth={2.4} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Pagination dots — visible only when there are multiple alerts */}
+      {hasMore && (
+        <div className="relative flex items-center justify-center gap-1.5 mt-3" aria-label={`Alert ${currentIdx + 1} of ${total}`}>
+          {alerts.map((a, i) => (
+            <button
+              key={a.id}
+              onClick={() => goTo(i)}
+              aria-label={`Show alert ${i + 1}`}
+              className="p-1.5 -m-1.5"
+            >
+              <span
+                className={`block rounded-full transition-all duration-200 ${
+                  i === currentIdx
+                    ? 'w-4 h-1.5 bg-[#E85D2A]'
+                    : 'w-1.5 h-1.5 bg-white/70'
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Centered popup that surfaces everything happening during an active
+// walk/sitting. Opens when the slim green "LIVE" banner is tapped.
+// Shows: walker info, pets in the service, time + distance progress,
+// the most recent update + photo, and quick actions (Message, Call,
+// Live map). X / backdrop dismiss; ribbon stays.
+const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap, onFullWalk }) => {
+  // Carousel state for the walker's messages — peek-style slide track,
+  // same physics as the safety-alert carousel.
+  const [msgIndex, setMsgIndex] = useState(0);
+  const [msgDragX, setMsgDragX] = useState(0);
+  const [msgDragging, setMsgDragging] = useState(false);
+  const msgTouchStartX = useRef(null);
+  const msgTouchStartY = useRef(null);
+  const msgTouchMoved = useRef(false);
+
+  useEffect(() => {
+    if (!service) return undefined;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [service, onClose]);
+
+  if (!service) return null;
+
+  const minutesElapsed = Math.max(1, Math.floor((Date.now() - service.startedAtMs) / 60000));
+  const totalMin = service.durationMin || 60;
+  const remaining = Math.max(0, totalMin - minutesElapsed);
+  const progressPct = Math.min(100, Math.round((minutesElapsed / totalMin) * 100));
+
+  const fmtTime = (ms) => new Date(ms).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+  const startedLabel = fmtTime(service.startedAtMs);
+  const endsLabel = fmtTime(service.startedAtMs + totalMin * 60000);
+
+  const isSitting = service.type === 'sitting' || /sitt/i.test(service.serviceLabel);
+  const isWalking = service.type === 'walk' || /walk/i.test(service.serviceLabel);
+  const verb = isWalking ? 'Walking' : isSitting ? 'Sitting' : 'On the job';
+  const petsInService = pets.filter(p => service.petIds.includes(p.id));
+  const names = petsInService.map(p => p.name);
+  const petsLabel = names.length === 0 ? '' :
+    names.length === 1 ? names[0] :
+    names.length === 2 ? `${names[0]} & ${names[1]}` :
+    names.length === 3 ? `${names[0]}, ${names[1]} & ${names[2]}` :
+    `${names.length} pets`;
+
+  const updates = service.updates || [];
+  const latestUpdateMs = updates[0]?.receivedAtMs;
+  const updateAgo = latestUpdateMs
+    ? Math.max(1, Math.floor((Date.now() - latestUpdateMs) / 60000))
+    : null;
+  const fmtAgo = (ms) => {
+    const m = Math.max(1, Math.floor((Date.now() - ms) / 60000));
+    return m < 60 ? `${m} min ago` : `${Math.floor(m / 60)}h ${m % 60}m ago`;
+  };
+
+  return (
+    <div className="absolute inset-0 z-[200] flex items-center justify-center px-5" style={{ animation: 'authDocFade 0.2s ease both' }}>
+      <div onClick={onClose} className="absolute inset-0" style={{ background: 'rgba(20,15,10,0.36)' }} />
+
+      <div
+        className="relative w-full max-w-[330px] bg-white rounded-[20px] overflow-hidden"
+        style={{
+          boxShadow: '0 8px 32px rgba(60,30,15,0.18), 0 0 0 1px rgba(60,30,15,0.06)',
+          animation: 'authDocPop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+          maxHeight: '88%',
+        }}
+      >
+        {isSitting ? (
+          /* Sitting: no top "header zone" at all. Showing a fake graphic
+             or a placeholder schedule felt dishonest — the home isn't
+             a location to track and the schedule isn't a real thing.
+             Just a slim LIVE strip with the close button. */
+          <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span
+                className="w-[7px] h-[7px] rounded-full bg-[#3F8D63]"
+                style={{ animation: 'fy-livePulse 1.6s ease-in-out infinite' }}
+              />
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3F8D63]">Live · {verb}</span>
+            </div>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="w-8 h-8 -mt-1 -mr-1 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all"
+            >
+              <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+            </button>
+          </div>
+        ) : (
+          /* Walking: tappable 150px map preview opens the full walk
+             screen. CSS-only mock; production uses a static map snapshot. */
+          <div
+            onClick={onFullWalk}
+            role="button"
+            tabIndex={0}
+            className="relative w-full h-[150px] overflow-hidden cursor-pointer active:brightness-95 transition-[filter]"
+            style={{ background: 'linear-gradient(135deg, #E8EFE0 0%, #DCE6D2 60%, #CCD9C0 100%)' }}
+          >
+            {/* Subtle street grid */}
+            <div
+              className="absolute inset-0 opacity-60 pointer-events-none"
+              style={{
+                backgroundImage:
+                  'linear-gradient(rgba(140,120,100,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(140,120,100,0.14) 1px, transparent 1px)',
+                backgroundSize: '24px 24px',
+              }}
+            />
+            {/* Diagonal main road */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: '180%',
+                height: '7px',
+                background: 'rgba(255,255,255,0.78)',
+                top: '40%',
+                left: '-40%',
+                transform: 'rotate(-12deg)',
+                boxShadow: '0 0 0 1px rgba(140,120,100,0.18)',
+              }}
+            />
+            {/* Pulsing pin marker */}
+            <div className="absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+              <span className="relative inline-flex items-center justify-center">
+                <span
+                  className="absolute w-9 h-9 rounded-full"
+                  style={{ background: 'rgba(232,93,42,0.28)', animation: 'fy-livePulse 2s ease-in-out infinite' }}
+                />
+                <span
+                  className="relative w-3.5 h-3.5 rounded-full bg-[#E85D2A] border-[2.5px] border-white"
+                  style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.25)' }}
+                />
+              </span>
+            </div>
+            {/* Top-left LIVE pill */}
+            <div className="absolute top-2.5 left-2.5 flex items-center gap-1 bg-white/92 backdrop-blur-sm px-2 py-1 rounded-full pointer-events-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3F8D63]" style={{ animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-[#3F8D63]">Live · {verb}</span>
+            </div>
+            {/* Top-right X (stops propagation so it doesn't trigger Full walk) */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onClose(); }}
+              aria-label="Close"
+              className="absolute top-2.5 right-2.5 w-7 h-7 bg-white/92 backdrop-blur-sm rounded-full flex items-center justify-center active:scale-90 transition-transform"
+            >
+              <X size={14} className="text-[#111]" strokeWidth={2.2} />
+            </button>
+            {/* Bottom-left location pill */}
+            <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 bg-white/92 backdrop-blur-sm px-2 py-1 rounded-full pointer-events-none">
+              <MapPin size={10} className="text-[#E85D2A]" strokeWidth={2.2} />
+              <span className="text-[10px] font-semibold text-[#111]">{service.currentArea || 'Live location'}</span>
+              {service.currentAreaDetail && (
+                <span className="text-[10px] text-[#6E6058]">· {service.currentAreaDetail}</span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Scrollable body. Header height differs by service type
+            (150px tappable map for walking, ~50px slim strip for
+            sitting) so the inner max-height adapts. */}
+        <div className="overflow-y-auto pt-3" style={{ scrollbarWidth: 'none', maxHeight: isSitting ? 'calc(88vh - 110px)' : 'calc(88vh - 210px)' }}>
+          {/* Walker row */}
+          <div className="px-4 mb-3 flex items-center gap-3">
+            <img
+              src={service.provider.photo}
+              alt={service.provider.name}
+              className="w-12 h-12 rounded-full object-cover shrink-0"
+              style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.12)' }}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[15px] font-bold text-[#111] truncate">{service.provider.name}</span>
+                {service.provider.rating != null && (
+                  <span className="flex items-center gap-0.5 shrink-0">
+                    <Star size={11} className="fill-[#E85D2A] text-[#E85D2A]" />
+                    <span className="text-[12px] font-semibold text-[#111]">{service.provider.rating}</span>
+                  </span>
+                )}
+              </div>
+              <div className="text-[12px] text-[#6E6058] mt-0.5 truncate">
+                {service.serviceLabel} · {petsLabel}
+              </div>
+            </div>
+          </div>
+
+          {/* Pet avatars row — caption flips for sitting vs walking */}
+          {petsInService.length > 0 && (
+            <div className="px-4 mb-3 flex items-center gap-1.5">
+              <div className="flex">
+                {petsInService.map((pet, i) => (
+                  <img
+                    key={pet.id}
+                    src={pet.avatar}
+                    alt={pet.name}
+                    className="w-7 h-7 rounded-full object-cover border-2 border-white"
+                    style={{ marginLeft: i === 0 ? 0 : -8, boxShadow: '0 1px 3px rgba(60,30,15,0.1)' }}
+                  />
+                ))}
+              </div>
+              <span className="text-[11.5px] text-[#6E6058]">
+                {isSitting ? 'All three settled in at home' : 'All three are out together'}
+              </span>
+            </div>
+          )}
+
+          {/* Progress bar — copy adjusts to service type */}
+          <div className="px-4 mb-3">
+            <div className="h-[5px] rounded-full overflow-hidden" style={{ background: '#F3EFEB' }}>
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${progressPct}%`, background: '#3F8D63' }}
+              />
+            </div>
+            <div className="flex items-center justify-between mt-1.5">
+              <span className="text-[11px] font-semibold text-[#111]">
+                {isSitting ? `${minutesElapsed} min in` : `${minutesElapsed} min walked`}
+              </span>
+              <span className="text-[11px] text-[#A09A94]">~{remaining} min left</span>
+            </div>
+          </div>
+
+          {/* Stats — for walking we show Walked km; for sitting we
+              swap that out for "Time in" since indoor distance isn't
+              meaningful. Started / Ends stay the same. */}
+          <div className="px-4 mb-3 grid grid-cols-3 gap-2">
+            {(isSitting
+              ? [
+                  { label: 'Started', value: startedLabel },
+                  {
+                    label: 'Time in',
+                    value: minutesElapsed >= 60
+                      ? `${Math.floor(minutesElapsed / 60)}h ${minutesElapsed % 60}m`
+                      : `${minutesElapsed}m`,
+                  },
+                  { label: 'Ends', value: `~${endsLabel}` },
+                ]
+              : [
+                  { label: 'Started', value: startedLabel },
+                  { label: 'Walked', value: `${service.walkedKm} km` },
+                  { label: 'Ends', value: `~${endsLabel}` },
+                ]
+            ).map((s) => (
+              <div key={s.label} className="rounded-[12px] py-2 px-2.5 text-center" style={{ background: '#F3EFEB' }}>
+                <div className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-[#A09A94]">{s.label}</div>
+                <div className="text-[13px] font-bold text-[#111] mt-0.5 tabular-nums">{s.value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Walker's messages — shown one at a time. Swipe left/right
+              or tap a dot to navigate between them. Keeps the popup
+              compact even after a long walk. */}
+          {(() => {
+            const msgTotal = updates.length;
+            if (msgTotal === 0) return null;
+            const currentMsgIdx = Math.min(msgIndex, msgTotal - 1);
+            const msgHasMore = msgTotal > 1;
+
+            const msgGoTo = (i) => {
+              const wrapped = ((i % msgTotal) + msgTotal) % msgTotal;
+              setMsgIndex(wrapped);
+            };
+
+            const onMsgPointerDown = (e) => {
+              if (!msgHasMore) return;
+              if (e.pointerType === 'mouse' && e.button !== 0) return;
+              msgTouchStartX.current = e.clientX;
+              msgTouchStartY.current = e.clientY;
+              msgTouchMoved.current = false;
+            };
+            const onMsgPointerMove = (e) => {
+              if (msgTouchStartX.current == null) return;
+              const dx = e.clientX - msgTouchStartX.current;
+              const dy = e.clientY - msgTouchStartY.current;
+              if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) {
+                if (!msgTouchMoved.current) {
+                  msgTouchMoved.current = true;
+                  setMsgDragging(true);
+                  try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+                }
+                let clamped = dx;
+                if ((currentMsgIdx === 0 && dx > 0) || (currentMsgIdx === msgTotal - 1 && dx < 0)) {
+                  clamped = dx * 0.35;
+                }
+                setMsgDragX(clamped);
+              }
+            };
+            const onMsgPointerUp = (e) => {
+              if (msgTouchStartX.current == null) return;
+              const dx = e.clientX - msgTouchStartX.current;
+              msgTouchStartX.current = null;
+              msgTouchStartY.current = null;
+              if (msgTouchMoved.current) {
+                setMsgDragging(false);
+                if (Math.abs(dx) > 50 && msgHasMore) {
+                  msgGoTo(currentMsgIdx + (dx < 0 ? 1 : -1));
+                }
+                setMsgDragX(0);
+              }
+            };
+            const onMsgPointerCancel = () => {
+              msgTouchStartX.current = null;
+              msgTouchStartY.current = null;
+              if (msgTouchMoved.current) {
+                setMsgDragging(false);
+                setMsgDragX(0);
+              }
+            };
+
+            return (
+              <div className="px-4 mb-3">
+                {/* Section header — name + position indicator */}
+                <h4 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#A09A94] mb-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#3F8D63]" style={{ animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
+                  <span>Latest from {service.provider.name.split(' ')[0]}</span>
+                  {msgHasMore && (
+                    <>
+                      <span className="text-[#CFC7BE] font-normal">·</span>
+                      <span className="text-[#6E6058] font-semibold normal-case tracking-normal tabular-nums">
+                        {currentMsgIdx + 1} of {msgTotal}
+                      </span>
+                    </>
+                  )}
+                </h4>
+
+                {/* Carousel track */}
+                <div
+                  className="rounded-[14px] overflow-hidden select-none"
+                  style={{
+                    border: '1px solid #EDE8E2',
+                    boxShadow: '0 1px 2px rgba(60,30,15,0.03)',
+                    touchAction: msgHasMore ? 'pan-y' : 'auto',
+                  }}
+                  onPointerDown={onMsgPointerDown}
+                  onPointerMove={onMsgPointerMove}
+                  onPointerUp={onMsgPointerUp}
+                  onPointerCancel={onMsgPointerCancel}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      width: `${msgTotal * 100}%`,
+                      transform: `translateX(calc(${-currentMsgIdx * (100 / msgTotal)}% + ${msgDragX}px))`,
+                      transition: msgDragging ? 'none' : 'transform 0.36s cubic-bezier(0.22, 1, 0.36, 1)',
+                    }}
+                  >
+                    {updates.map((u) => (
+                      <div
+                        key={u.receivedAtMs}
+                        style={{ flex: `0 0 ${100 / msgTotal}%`, minWidth: 0 }}
+                        className="bg-white"
+                      >
+                        {/* Top strip — walker avatar + name + timestamp */}
+                        <div className="flex items-center gap-2 px-3 pt-2.5 pb-1.5">
+                          <img
+                            src={service.provider.photo}
+                            alt={service.provider.name}
+                            className="w-5 h-5 rounded-full object-cover shrink-0"
+                          />
+                          <span className="text-[11px] font-semibold text-[#111]">{service.provider.name.split(' ')[0]}</span>
+                          <span className="text-[10.5px] text-[#A09A94] ml-auto">{fmtAgo(u.receivedAtMs)}</span>
+                        </div>
+                        {/* Content area — fixed 190px so every card (and
+                            the whole popup) stays the same size whether
+                            this update has a photo or is text-only.
+                            Text-only just shows the message in the same
+                            simple style as a caption, vertically centred
+                            in the available space — no panel, no quote
+                            glyph, just the message. */}
+                        <div className="h-[190px]">
+                          {u.photo ? (
+                            <>
+                              <img src={u.photo} alt="" className="w-full h-[130px] object-cover" />
+                              {u.text && (
+                                <p className="text-[12.5px] leading-[1.5] text-[#1A1410] px-3 pt-2 pb-3">
+                                  {u.text}
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            <div className="h-full flex items-center px-3">
+                              <p className="text-[12.5px] leading-[1.55] text-[#1A1410]">{u.text}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Pagination dots */}
+                {msgHasMore && (
+                  <div className="flex items-center justify-center gap-1.5 mt-2.5" aria-label={`Message ${currentMsgIdx + 1} of ${msgTotal}`}>
+                    {updates.map((u, i) => (
+                      <button
+                        key={u.receivedAtMs}
+                        onClick={() => msgGoTo(i)}
+                        aria-label={`Show message ${i + 1}`}
+                        className="p-1.5 -m-1.5"
+                      >
+                        <span
+                          className={`block rounded-full transition-all duration-200 ${
+                            i === currentMsgIdx
+                              ? 'w-4 h-1.5 bg-[#E85D2A]'
+                              : 'w-1.5 h-1.5 bg-[#E0D8CF]'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Actions — 2 quick buttons. Walking handles "open full"
+              via the tappable map at the top; sitting needs an explicit
+              bottom link since it has no header zone. */}
+          <div className={`px-4 grid grid-cols-2 gap-2 ${isSitting ? 'pb-2.5' : 'pb-4'}`}>
+            {[
+              { id: 'message', label: 'Message', icon: MessageCircle, onClick: onMessage },
+              { id: 'call',    label: 'Call',    icon: Phone,         onClick: onCall },
+            ].map((a) => (
+              <button
+                key={a.id}
+                onClick={a.onClick}
+                className="flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform"
+                style={{ background: '#F3EFEB' }}
+              >
+                <a.icon size={15} className="text-[#111]" strokeWidth={1.9} />
+                <span className="text-[12.5px] font-semibold text-[#111]">{a.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Bottom link to the full session screen — sitting only. */}
+          {isSitting && (
+            <div className="px-4 pb-3.5 flex justify-end">
+              <button
+                onClick={onFullWalk}
+                className="flex items-center gap-1 text-[12px] font-semibold text-[#E85D2A] active:opacity-70 transition-opacity"
+              >
+                <span>Full session</span>
+                <ArrowRight size={12} strokeWidth={2.4} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Follow-up after the user taps "Confirm" on a safety alert. Asks if
+// they want to enrich the report with a photo or note. "Yes, add
+// details" hands off to /danger-reports with the alert's category so
+// the submit form opens pre-filled.
+// Vet hotline popup — opens from the "Vet hotline" pill in Explore.
+// Tiny, single-purpose popup:
+//   · If the owner has set a vet → name + phone + Call now button
+//   · If they haven't            → Add my vet + Find vets nearby
+const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="absolute inset-0 z-[200] flex items-center justify-center px-5" style={{ animation: 'authDocFade 0.2s ease both' }}>
+      <div onClick={onClose} className="absolute inset-0" style={{ background: 'rgba(20,15,10,0.36)' }} />
+      <div
+        className="relative w-full max-w-[300px] bg-white rounded-[20px] overflow-hidden"
+        style={{
+          boxShadow: '0 8px 32px rgba(60,30,15,0.18), 0 0 0 1px rgba(60,30,15,0.06)',
+          animation: 'authDocPop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+        }}
+      >
+        {/* Header */}
+        <div className="px-4 pt-3.5 pb-1 flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Phone size={11} className="text-[#E85D2A]" strokeWidth={2.4} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A09A94]">Vet hotline</span>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="w-7 h-7 -mt-1 -mr-1 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all"
+          >
+            <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+          </button>
+        </div>
+
+        {vet ? (
+          /* Has vet — name, phone, status, Call now */
+          (() => {
+            const isOpen = !!vet.statusNow?.isOpen;
+            const statusLabel = vet.statusNow?.label;
+            const showEmergencyFallback = !isOpen && !vet.isEmergencyLine;
+            return (
+              <div className="px-4 pt-2 pb-4">
+                <div className="text-[17px] font-bold text-[#111] leading-tight">{vet.name}</div>
+                <div className="text-[15px] font-semibold text-[#111] tabular-nums mt-1.5">{vet.phone}</div>
+                {vet.hours && (
+                  <div className="text-[11.5px] text-[#A09A94] mt-0.5">{vet.hours}</div>
+                )}
+
+                {/* Status pill — green dot when open, gray when closed.
+                    24/7 emergency lines get a coral "Emergency" tag. */}
+                {statusLabel && (
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <span
+                      className="inline-block w-1.5 h-1.5 rounded-full"
+                      style={{ background: isOpen ? '#3F8D63' : '#A09A94' }}
+                    />
+                    <span className={`text-[11.5px] font-semibold ${isOpen ? 'text-[#3F8D63]' : 'text-[#A09A94]'}`}>
+                      {statusLabel}
+                    </span>
+                    {vet.isEmergencyLine && (
+                      <span className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-[#E85D2A] ml-1 px-1.5 py-0.5 rounded-full" style={{ background: '#FFEDE3' }}>
+                        Emergency
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <button
+                  onClick={onCall}
+                  className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-[14px] text-white active:scale-[0.98] transition-transform"
+                  style={{ background: '#E85D2A', boxShadow: '0 2px 10px rgba(232,93,42,0.22)' }}
+                >
+                  <Phone size={15} strokeWidth={2.4} />
+                  <span className="text-[14.5px] font-bold">Call now</span>
+                </button>
+
+                {/* When the vet is closed (and not a 24/7 emergency
+                    line), surface a secondary fallback so the owner
+                    isn't stuck calling a closed clinic in an emergency. */}
+                {showEmergencyFallback && (
+                  <button
+                    onClick={onFindNearby}
+                    className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-[14px] text-[#111] active:scale-[0.98] transition-transform"
+                    style={{ background: '#F3EFEB' }}
+                  >
+                    <Search size={13} className="text-[#111]" strokeWidth={2.2} />
+                    <span className="text-[12.5px] font-semibold">Find emergency vet</span>
+                  </button>
+                )}
+
+                <button
+                  onClick={onAddVet}
+                  className="text-[11px] text-[#A09A94] mt-2.5 mx-auto block active:opacity-70 hover:text-[#6E6058]"
+                >
+                  Change vet
+                </button>
+              </div>
+            );
+          })()
+        ) : (
+          /* No vet — add yours or find nearby */
+          <div className="px-4 pt-2 pb-4">
+            <h3 className="text-[16px] font-bold text-[#111]">No vet on file</h3>
+            <p className="text-[12.5px] text-[#6E6058] mt-1 mb-3.5 leading-[1.5]">
+              Add yours so a single tap calls them when it counts — or find one nearby.
+            </p>
+            <button
+              onClick={onAddVet}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-[14px] mb-2 text-white active:scale-[0.98] transition-transform"
+              style={{ background: '#E85D2A', boxShadow: '0 2px 10px rgba(232,93,42,0.22)' }}
+            >
+              <Plus size={15} strokeWidth={2.4} />
+              <span className="text-[14px] font-bold">Add my vet</span>
+            </button>
+            <button
+              onClick={onFindNearby}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-[14px] text-[#111] active:scale-[0.98] transition-transform"
+              style={{ background: '#F3EFEB' }}
+            >
+              <Search size={14} className="text-[#111]" strokeWidth={2.2} />
+              <span className="text-[13px] font-semibold">Find vets nearby</span>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Quick-log popup driven by the Track pills on the dashboard. Supports
+// three types — medication, walk, note — each with its own step-by-step
+// flow. Pet step is skipped when the owner has a single pet. Save just
+// closes the popup in this demo; production wires it to the timeline.
+const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepChange }) => {
+  const isMultiSelect = type === 'walk' || type === 'medication';
+  const totalSteps = type === 'note' ? 2 : 3;
+  const skipPetStep = pets.length <= 1;
+  const initialStep = skipPetStep ? 2 : 1;
+
+  const [step, setStep] = useState(initialStep);
+  const [selectedPetIds, setSelectedPetIds] = useState(pets.length === 1 ? [pets[0].id] : []);
+  // Medication step state
+  const [selectedMedId, setSelectedMedId] = useState(null);
+  const [customMedName, setCustomMedName] = useState('');
+  const [customMedDose, setCustomMedDose] = useState('');
+  const [addingNewMed, setAddingNewMed] = useState(false);
+  // Walk step state
+  const [walkDuration, setWalkDuration] = useState(30);
+  // Note step state
+  const [noteText, setNoteText] = useState('');
+  const [noteTag, setNoteTag] = useState(null);
+  // Common — time + extra note
+  const [logTime, setLogTime] = useState(() => {
+    const d = new Date();
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  });
+  const [extraNote, setExtraNote] = useState('');
+
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  const typeMeta = {
+    medication: { label: 'Log meds',  step1Title: 'Who took it?',       step2Title: "What's the med?", step3Title: 'When?' },
+    walk:       { label: 'Log walk',  step1Title: 'Who went?',          step2Title: 'How long?',       step3Title: 'When?' },
+    note:       { label: 'Add note',  step1Title: 'Which one?',         step2Title: "What's up?",      step3Title: null    },
+  }[type] || {};
+
+  const togglePet = (id) => {
+    setSelectedPetIds((prev) => {
+      if (isMultiSelect) return prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id];
+      return [id];
+    });
+  };
+
+  // For multi-select, hitting Next on pet step needs ≥1 pet. For single,
+  // selecting a pet immediately advances (cleaner UX, one less tap).
+  const onPetTap = (id) => {
+    togglePet(id);
+    if (!isMultiSelect && step === 1) {
+      setTimeout(() => setStep(2), 120);
+    }
+  };
+
+  const canAdvancePet = selectedPetIds.length > 0;
+  const canAdvanceMeds = addingNewMed
+    ? customMedName.trim().length > 0
+    : selectedMedId !== null;
+  const canAdvanceNote = noteText.trim().length > 0;
+  const canSave = (() => {
+    if (type === 'medication') return canAdvanceMeds && logTime;
+    if (type === 'walk') return walkDuration > 0 && logTime;
+    if (type === 'note') return canAdvanceNote;
+    return false;
+  })();
+
+  const handleNext = () => {
+    if (step === 1 && !canAdvancePet) return;
+    if (step === 2 && type === 'medication' && !canAdvanceMeds) return;
+    if (step === 2 && type === 'note' && !canAdvanceNote) return;
+    setStep(step + 1);
+  };
+
+  const handleBack = () => {
+    if (step === initialStep) return;
+    setStep(step - 1);
+  };
+
+  const handleSave = () => {
+    onSave?.({
+      type,
+      petIds: selectedPetIds,
+      med: type === 'medication'
+        ? (addingNewMed
+            ? { name: customMedName.trim(), dose: customMedDose.trim() || null }
+            : (savedMedsByPet[selectedPetIds[0]] || []).find((m) => m.id === selectedMedId))
+        : null,
+      walkDuration: type === 'walk' ? walkDuration : null,
+      note: type === 'note' ? { text: noteText.trim(), tag: noteTag } : null,
+      logTime,
+      extraNote: extraNote.trim() || null,
+    });
+    onClose();
+  };
+
+  // Step indicator dots
+  const visibleStepCount = totalSteps - (skipPetStep ? 1 : 0);
+  const visibleStepIndex = step - initialStep;
+
+  return (
+    <div className="absolute inset-0 z-[200] flex items-center justify-center px-5" style={{ animation: 'authDocFade 0.2s ease both' }}>
+      <div onClick={onClose} className="absolute inset-0" style={{ background: 'rgba(20,15,10,0.36)' }} />
+      <div
+        className="relative w-full max-w-[330px] bg-white rounded-[20px] overflow-hidden flex flex-col"
+        style={{
+          boxShadow: '0 8px 32px rgba(60,30,15,0.18), 0 0 0 1px rgba(60,30,15,0.06)',
+          animation: 'authDocPop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+          maxHeight: '88%',
+        }}
+      >
+        {/* Header — back + step dots + label + X */}
+        <div className="px-4 pt-3.5 pb-2.5 flex items-center justify-between shrink-0">
+          {step > initialStep ? (
+            <button
+              onClick={handleBack}
+              aria-label="Back"
+              className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all"
+            >
+              <ChevronLeft size={16} className="text-[#111]" strokeWidth={2.2} />
+            </button>
+          ) : (
+            <span className="w-7" />
+          )}
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: visibleStepCount }).map((_, i) => (
+              <span
+                key={i}
+                className={`block rounded-full transition-all duration-200 ${
+                  i === visibleStepIndex
+                    ? 'w-4 h-1.5 bg-[#E85D2A]'
+                    : 'w-1.5 h-1.5 bg-[#E0D8CF]'
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all"
+          >
+            <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="px-5 pb-4 overflow-y-auto flex-1" style={{ scrollbarWidth: 'none' }}>
+          {/* Step 1 — pick a pet (or pack) */}
+          {step === 1 && (
+            <>
+              <h3 className="text-[18px] font-bold text-[#111] mb-1">{typeMeta.step1Title}</h3>
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <p className="text-[12.5px] text-[#6E6058]">
+                  {isMultiSelect ? 'Tap to include. Pick one or more.' : 'Tap one to continue.'}
+                </p>
+                {isMultiSelect && pets.length > 1 && (
+                  <button
+                    onClick={() => {
+                      const allIds = pets.map((p) => p.id);
+                      const allSelected = allIds.every((id) => selectedPetIds.includes(id));
+                      setSelectedPetIds(allSelected ? [] : allIds);
+                    }}
+                    className="text-[11.5px] font-bold text-[#E85D2A] active:opacity-70 shrink-0"
+                  >
+                    {pets.every((p) => selectedPetIds.includes(p.id)) ? 'Clear all' : 'Select all'}
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-3 gap-2.5">
+                {pets.map((pet) => {
+                  const isSelected = selectedPetIds.includes(pet.id);
+                  return (
+                    <button
+                      key={pet.id}
+                      onClick={() => onPetTap(pet.id)}
+                      className="flex flex-col items-center gap-1.5 py-2.5 rounded-[14px] transition-all active:scale-[0.97]"
+                      style={{
+                        background: isSelected ? '#FFEDE3' : '#F3EFEB',
+                        boxShadow: isSelected ? 'inset 0 0 0 1.5px #E85D2A' : 'none',
+                      }}
+                    >
+                      <img src={pet.avatar} alt={pet.name} className="w-11 h-11 rounded-full object-cover" style={{ boxShadow: '0 1px 3px rgba(60,30,15,0.10)' }} />
+                      <span className="text-[11.5px] font-semibold text-[#111]">{pet.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {/* Step 2 — type-specific picker */}
+          {step === 2 && type === 'medication' && (
+            <>
+              <h3 className="text-[18px] font-bold text-[#111] mb-1">{typeMeta.step2Title}</h3>
+              <p className="text-[12.5px] text-[#6E6058] mb-4">Tap a saved one, or add new.</p>
+              {!addingNewMed ? (
+                <div className="space-y-2">
+                  {selectedPetIds.length === 1 && (savedMedsByPet[selectedPetIds[0]] || []).map((med) => {
+                    const isSelected = selectedMedId === med.id;
+                    return (
+                      <button
+                        key={med.id}
+                        onClick={() => setSelectedMedId(med.id)}
+                        className="w-full text-left px-3.5 py-3 rounded-[12px] flex items-center gap-3 active:scale-[0.99] transition-transform"
+                        style={{
+                          background: isSelected ? '#FFEDE3' : '#F3EFEB',
+                          boxShadow: isSelected ? 'inset 0 0 0 1.5px #E85D2A' : 'none',
+                        }}
+                      >
+                        <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0">
+                          <Pill size={14} className="text-[#111]" strokeWidth={1.9} />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[13.5px] font-semibold text-[#111] truncate">{med.name}</div>
+                          <div className="text-[11px] text-[#6E6058] truncate">{med.dose} · {med.schedule}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                  {selectedPetIds.length > 1 && (
+                    <p className="text-[12px] text-[#A09A94] px-1 py-2">Pack medication — add a new entry for everyone.</p>
+                  )}
+                  <button
+                    onClick={() => setAddingNewMed(true)}
+                    className="w-full flex items-center gap-2 px-3.5 py-3 rounded-[12px] active:scale-[0.99] transition-transform"
+                    style={{ background: '#F3EFEB' }}
+                  >
+                    <Plus size={15} className="text-[#E85D2A]" strokeWidth={2.4} />
+                    <span className="text-[13px] font-semibold text-[#E85D2A]">Add new</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  <div>
+                    <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94]">Medication name</label>
+                    <input
+                      type="text"
+                      autoFocus
+                      value={customMedName}
+                      onChange={(e) => setCustomMedName(e.target.value)}
+                      placeholder="e.g. Apoquel"
+                      className="w-full mt-1 px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94]">Dose (optional)</label>
+                    <input
+                      type="text"
+                      value={customMedDose}
+                      onChange={(e) => setCustomMedDose(e.target.value)}
+                      placeholder="e.g. 16mg or 1 tablet"
+                      className="w-full mt-1 px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94]"
+                    />
+                  </div>
+                  <button
+                    onClick={() => { setAddingNewMed(false); setCustomMedName(''); setCustomMedDose(''); }}
+                    className="text-[12px] font-semibold text-[#A09A94] active:opacity-70"
+                  >
+                    ← Pick from saved
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {step === 2 && type === 'walk' && (
+            <>
+              <h3 className="text-[18px] font-bold text-[#111] mb-1">{typeMeta.step2Title}</h3>
+              <p className="text-[12.5px] text-[#6E6058] mb-4">Tap a duration. Custom works too.</p>
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {WALK_DURATIONS.map((d) => {
+                  const isSelected = walkDuration === d;
+                  return (
+                    <button
+                      key={d}
+                      onClick={() => setWalkDuration(d)}
+                      className="py-3 rounded-[12px] text-[13px] font-semibold transition-all active:scale-[0.97]"
+                      style={{
+                        background: isSelected ? '#FFEDE3' : '#F3EFEB',
+                        color: isSelected ? '#E85D2A' : '#111',
+                        boxShadow: isSelected ? 'inset 0 0 0 1.5px #E85D2A' : 'none',
+                      }}
+                    >
+                      {d}m
+                    </button>
+                  );
+                })}
+              </div>
+              <div>
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94]">Custom</label>
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    type="number"
+                    min="1"
+                    max="600"
+                    value={walkDuration}
+                    onChange={(e) => setWalkDuration(parseInt(e.target.value, 10) || 0)}
+                    className="flex-1 px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111]"
+                  />
+                  <span className="text-[12.5px] text-[#6E6058]">minutes</span>
+                </div>
+              </div>
+            </>
+          )}
+
+          {step === 2 && type === 'note' && (
+            <>
+              <h3 className="text-[18px] font-bold text-[#111] mb-1">{typeMeta.step2Title}</h3>
+              <p className="text-[12.5px] text-[#6E6058] mb-4">Anything worth remembering.</p>
+              <textarea
+                autoFocus
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                placeholder="e.g. Limping a bit on the left front paw after the walk…"
+                rows={4}
+                className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94] resize-none"
+              />
+              <div className="mt-3">
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94] mb-1.5 block">Tag (optional)</label>
+                <div className="flex flex-wrap gap-1.5">
+                  {NOTE_TAGS.map((tag) => {
+                    const isSelected = noteTag === tag;
+                    return (
+                      <button
+                        key={tag}
+                        onClick={() => setNoteTag((prev) => (prev === tag ? null : tag))}
+                        className="px-3 py-1.5 rounded-full text-[11.5px] font-semibold transition-all active:scale-[0.96]"
+                        style={{
+                          background: isSelected ? '#E85D2A' : '#F3EFEB',
+                          color: isSelected ? '#FFFFFF' : '#6E6058',
+                        }}
+                      >
+                        {tag}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Step 3 — time + optional note (only for meds and walk) */}
+          {step === 3 && (
+            <>
+              <h3 className="text-[18px] font-bold text-[#111] mb-1">{typeMeta.step3Title}</h3>
+              <p className="text-[12.5px] text-[#6E6058] mb-4">Defaults to right now. Tap to edit.</p>
+              <div className="mb-3">
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94] mb-1.5 block">Time</label>
+                <input
+                  type="time"
+                  value={logTime}
+                  onChange={(e) => setLogTime(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[15px] font-semibold text-[#111] tabular-nums"
+                />
+              </div>
+              <div>
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94] mb-1.5 block">Note (optional)</label>
+                <input
+                  type="text"
+                  value={extraNote}
+                  onChange={(e) => setExtraNote(e.target.value)}
+                  placeholder={type === 'medication' ? 'e.g. with food' : 'e.g. park, met other dogs'}
+                  className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94]"
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Sticky footer — Next / Save button */}
+        <div className="px-5 pt-2 pb-4 shrink-0 bg-white">
+          {step < totalSteps ? (
+            <button
+              onClick={handleNext}
+              disabled={
+                (step === 1 && !canAdvancePet) ||
+                (step === 2 && type === 'medication' && !canAdvanceMeds) ||
+                (step === 2 && type === 'note' && !canAdvanceNote)
+              }
+              className="w-full py-3 rounded-[14px] text-[14.5px] font-bold transition-all"
+              style={{
+                background: (
+                  (step === 1 && canAdvancePet) ||
+                  (step === 2 && type === 'medication' && canAdvanceMeds) ||
+                  (step === 2 && type === 'walk') ||
+                  (step === 2 && type === 'note' && canAdvanceNote)
+                ) ? '#E85D2A' : '#EDE8E2',
+                color: (
+                  (step === 1 && canAdvancePet) ||
+                  (step === 2 && type === 'medication' && canAdvanceMeds) ||
+                  (step === 2 && type === 'walk') ||
+                  (step === 2 && type === 'note' && canAdvanceNote)
+                ) ? '#FFFFFF' : '#A09A94',
+                boxShadow: (
+                  (step === 1 && canAdvancePet) ||
+                  (step === 2 && type === 'medication' && canAdvanceMeds) ||
+                  (step === 2 && type === 'walk') ||
+                  (step === 2 && type === 'note' && canAdvanceNote)
+                ) ? '0 2px 10px rgba(232,93,42,0.20)' : 'none',
+              }}
+            >
+              {type === 'note' && step === 2 ? 'Save note' : 'Next'}
+            </button>
+          ) : (
+            <button
+              onClick={handleSave}
+              disabled={!canSave}
+              className="w-full py-3 rounded-[14px] text-[14.5px] font-bold transition-all"
+              style={{
+                background: canSave ? '#E85D2A' : '#EDE8E2',
+                color: canSave ? '#FFFFFF' : '#A09A94',
+                boxShadow: canSave ? '0 2px 10px rgba(232,93,42,0.20)' : 'none',
+              }}
+            >
+              {typeMeta.label}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SafetyConfirmFollowupPopup = ({ onClose, onYes }) => {
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div className="absolute inset-0 z-[210] flex items-center justify-center px-5" style={{ animation: 'authDocFade 0.2s ease both' }}>
+      <div onClick={onClose} className="absolute inset-0" style={{ background: 'rgba(20,15,10,0.36)' }} />
+      <div
+        className="relative w-full max-w-[300px] bg-white rounded-[20px] p-5"
+        style={{
+          boxShadow: '0 8px 32px rgba(60,30,15,0.18), 0 0 0 1px rgba(60,30,15,0.06)',
+          animation: 'authDocPop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both',
+        }}
+      >
+        <div className="flex flex-col items-center text-center">
+          <span className="w-12 h-12 rounded-full bg-[#EEF7F1] flex items-center justify-center mb-3">
+            <CheckCircle size={22} className="text-[#3F8D63]" strokeWidth={2.2} />
+          </span>
+          <h3 className="text-[16px] font-bold text-[#111] mb-1.5">Thanks for confirming</h3>
+          <p className="text-[12.5px] leading-[1.5] text-[#6E6058] mb-4">
+            Other pet owners will know this alert is real. Want to add a photo or a note to help them more?
+          </p>
+          <div className="w-full flex gap-2.5">
+            <button
+              onClick={onClose}
+              className="flex-1 py-2.5 rounded-[12px] text-[13px] font-semibold text-[#111] active:scale-[0.98] transition-transform"
+              style={{ background: '#F3EFEB' }}
+            >
+              Not now
+            </button>
+            <button
+              onClick={onYes}
+              className="flex-1 py-2.5 rounded-[12px] text-[13px] font-bold text-white active:scale-[0.98] transition-transform"
+              style={{ background: '#E85D2A', boxShadow: '0 2px 8px rgba(232,93,42,0.22)' }}
+            >
+              Yes, add details
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords, onOpenBookings, onOpenBookingFocused, onPopupStateChange }) => {
   const homeNavigate = useNavigate();
   const [selectedPetId, setSelectedPetId] = useState(MOCK_DASHBOARD_PETS[0].id);
   const [medSheetOpen, setMedSheetOpen] = useState(false);
@@ -3939,6 +5428,30 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   // critical alerts. Dismissable; everything else lives in the bell inbox.
   const [safetyRibbonDismissed, setSafetyRibbonDismissed] = useState(false);
   const safetyLive = true; // Placeholder; wire to real proximity/recency check.
+  // Tap on the ribbon → popup with this specific alert (not the full
+  // safety feed). "More info" hands off to /danger-reports.
+  const [safetyPopupOpen, setSafetyPopupOpen] = useState(false);
+  // After "Confirm", we show a small follow-up: "Want to add details?".
+  // Stores the confirmed alert's category so we can pre-fill the form.
+  const [safetyConfirmFollowupOpen, setSafetyConfirmFollowupOpen] = useState(false);
+  const [confirmedAlertContext, setConfirmedAlertContext] = useState(null);
+  // Tap on the green "LIVE" banner → popup with walker info, progress,
+  // latest update, and quick actions. Backdrop / X dismiss.
+  const [liveServicePopupOpen, setLiveServicePopupOpen] = useState(false);
+  // Track pill that's currently open as a step-by-step popup.
+  // null when closed; one of 'medication' | 'walk' | 'note' when open.
+  const [trackPopupType, setTrackPopupType] = useState(null);
+  // Vet hotline popup (opens from the Explore "Vet hotline" pill).
+  const [vetHotlineOpen, setVetHotlineOpen] = useState(false);
+  // Aggregate: is ANY dashboard popup currently open? When true the
+  // underlying scroll, top-bar buttons, and bottom tabs are all locked.
+  const anyPopupOpen = safetyPopupOpen || safetyConfirmFollowupOpen || liveServicePopupOpen || trackPopupType !== null || vetHotlineOpen;
+  // Inform the parent App so it can fade out the global header + tab bar
+  // and prevent navigation away from the screen while a popup is open.
+  useEffect(() => {
+    onPopupStateChange?.(anyPopupOpen);
+    return () => { onPopupStateChange?.(false); };
+  }, [anyPopupOpen, onPopupStateChange]);
   // Holds the NEXT UP item id during its "just done → fade out" animation
   // so the user sees the checkmark land before the card unmounts.
   const [nextUpDoneId, setNextUpDoneId] = useState(null);
@@ -3956,7 +5469,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const [bookedExpanded, setBookedExpanded] = useState(false);
   const dismissTimeoutRef = useRef(null);
   const greeting = useTimeBasedGreeting();
-  const calmGreeting = greeting.replace('Good morning', 'Morning').replace('Good afternoon', 'Afternoon').replace('Good evening', 'Evening');
+  const calmGreeting = greeting; // legacy alias kept for clarity
   const selectedPet = MOCK_DASHBOARD_PETS.find(p => p.id === displayPetId) || MOCK_DASHBOARD_PETS[0];
   const healthAlerts = useHealthAlerts(displayPetId, true);
   const visibleHealthAlert = healthAlerts.find((alert) => !dismissedHealthAlerts.has(alert.id));
@@ -4175,7 +5688,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const remainingCount = filteredReminders.filter(r => !completedReminders.has(r.id) && r.action === 'complete').length;
 
   return (
-    <ScreenContainer>
+    <>
+    <ScreenContainer isLocked={anyPopupOpen}>
       <div className="px-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
 
         {/* ═══ 0. SAFETY RIBBON — single-line slim banner. Just enough
@@ -4195,11 +5709,11 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               style={{ background: '#FF3B30', animation: 'fy-livePulse 1.6s ease-in-out infinite' }}
             />
             <button
-              onClick={() => onNavigate('danger-reports')}
+              onClick={() => setSafetyPopupOpen(true)}
               className="flex-1 min-w-0 text-left active:opacity-70 truncate"
             >
               <span className="text-[12.5px] font-semibold text-[#111] whitespace-nowrap">Safety alert</span>
-              <span className="text-[12.5px] text-[#A09A94] whitespace-nowrap"> · Nearby · Seefeld</span>
+              <span className="text-[12.5px] text-[#A09A94] whitespace-nowrap"> · Nearby · {MOCK_LIVE_SAFETY_ALERTS[0]?.area?.split(' ')[0] || 'Seefeld'}{MOCK_LIVE_SAFETY_ALERTS.length > 1 ? ` +${MOCK_LIVE_SAFETY_ALERTS.length - 1}` : ''}</span>
             </button>
             <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
             <button
@@ -4241,7 +5755,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           }
           return (
             <button
-              onClick={() => onOpenBookings?.()}
+              onClick={() => setLiveServicePopupOpen(true)}
               className="w-full flex items-center gap-2.5 px-3 py-1.5 mb-2.5 rounded-full active:opacity-90 transition-opacity"
               style={{
                 background: '#EEF7F1',
@@ -4330,13 +5844,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   </button>
                 );
               })}
-              <button
-                onClick={() => onNavigate('pets')}
-                className="shrink-0 ml-2 w-[42px] h-[42px] rounded-full border-[1.5px] border-dashed border-[#CFC7BE] flex items-center justify-center active:scale-[0.9] transition-transform"
-                aria-label="Add pet"
-              >
-                <Plus size={16} className="text-[#A09A94]" />
-              </button>
+              {/* Add-pet shortcut removed — pet management lives in
+                  the Pets tab to keep the dashboard avatar row clean. */}
             </div>
           </div>
 
@@ -4350,43 +5859,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               bell inbox (top-right of header). Only live safety surfaces
               here, as the slim ribbon above the greeting. */}
 
-          {/* ═══ 3b. LATEST UPDATE — single edge-to-edge row showing the
-              most recent message/photo from a walker/sitter. Quiet,
-              floating (no background). Tap → open inbox. ═══ */}
-          {MOCK_RECENT_UPDATE && MOCK_RECENT_UPDATE.petId === displayPetId && (() => {
-            const update = MOCK_RECENT_UPDATE;
-            const mins = Math.max(1, Math.floor((Date.now() - update.receivedAtMs) / 60000));
-            const timeLabel = mins < 60 ? `${mins} min` : `${Math.floor(mins / 60)}h`;
-            return (
-              <button
-                onClick={() => onOpenInbox?.()}
-                className="w-full flex items-center gap-3 mb-5 active:opacity-70 transition-opacity"
-                style={{ animation: 'homeReveal 0.4s 0.12s cubic-bezier(0.22,1,0.36,1) both' }}
-              >
-                {update.thumbnail ? (
-                  <img
-                    src={update.thumbnail}
-                    alt=""
-                    className="w-10 h-10 rounded-[10px] object-cover shrink-0"
-                    style={{ boxShadow: '0 1px 3px rgba(60,30,15,0.08)' }}
-                  />
-                ) : (
-                  <img
-                    src={update.from.photo}
-                    alt={update.from.name}
-                    className="w-10 h-10 rounded-full object-cover shrink-0"
-                  />
-                )}
-                <div className="flex-1 min-w-0 text-left">
-                  <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.14em]">
-                    {update.from.name} · {timeLabel} ago
-                  </div>
-                  <div className="text-[12.5px] text-[#111] mt-0.5 truncate">{update.message}</div>
-                </div>
-                <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
-              </button>
-            );
-          })()}
+          {/* Latest update row removed — when a live service is active,
+              the green LIVE banner above already opens a popup with the
+              full message carousel, so a separate "latest update" row
+              would duplicate the same content. */}
 
           {/* ═══ 4a. BOOKED — grouped-by-day flat rows. No card chrome:
               just a small uppercase day header followed by tappable rows
@@ -4473,7 +5949,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   return (
                     <button
                       key={b.id}
-                      onClick={() => onNavigate('services')}
+                      onClick={() => (onOpenBookingFocused ? onOpenBookingFocused(b.id) : onOpenBookings?.())}
                       className="w-full text-left flex items-center gap-3 mb-4 last:mb-0 active:opacity-70 transition-opacity"
                     >
                       {renderAvatar()}
@@ -4712,15 +6188,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               ].map((a, i) => (
                 <button
                   key={i}
-                  onClick={() => {
-                    setSelectedQuickLogType(a.type);
-                    setQuickLogTime(new Date().toTimeString().slice(0, 5));
-                    setQuickLogTimeChanged(false);
-                    setQuickLogDoneNow(true);
-                    setQuickLogCustomTitle('');
-                    setQuickLogStep('details');
-                    setQuickLogModalOpen(true);
-                  }}
+                  onClick={() => setTrackPopupType(a.type)}
                   className="flex items-center justify-center gap-1.5 py-2.5 rounded-full active:scale-[0.96] transition-transform"
                   style={{ background: '#F3EFEB' }}
                 >
@@ -4758,7 +6226,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   More direct than a single "Emergency SOS" gateway row. */}
             <div className="grid grid-cols-2 gap-2.5 mb-3">
               <button
-                onClick={() => homeNavigate('/emergency')}
+                onClick={() => setVetHotlineOpen(true)}
                 className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[14px] active:scale-[0.97] transition-transform"
                 style={{ background: '#F3EFEB' }}
               >
@@ -4961,6 +6429,136 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
       )}
       <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; } .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}} />
     </ScreenContainer>
+
+      {/* Popups live OUTSIDE the ScreenContainer so they don't move with
+          the dashboard scroll position. They use absolute inset-0 and so
+          cover the iPhone frame area regardless of where the user has
+          scrolled to before opening them. */}
+
+      {/* Safety alert popup carousel — opens when the slim ribbon is tapped.
+          · X / backdrop  → close popup, ribbon stays so user can come back
+          · Got it        → close + silence ribbon (acknowledged)
+          · Confirm       → close + silence ribbon + open follow-up that
+                            asks if they want to add a photo or note
+          · On map        → close + navigate to /danger-reports focused on
+                            this alert in map view
+          · More info     → close + navigate to /danger-reports with the
+                            full detail of this report */}
+      {safetyPopupOpen && MOCK_LIVE_SAFETY_ALERTS.length > 0 && (
+        <SafetyAlertPopup
+          alerts={MOCK_LIVE_SAFETY_ALERTS}
+          onClose={() => setSafetyPopupOpen(false)}
+          onAcknowledge={() => {
+            setSafetyPopupOpen(false);
+            setSafetyRibbonDismissed(true);
+          }}
+          onConfirm={(alert) => {
+            setSafetyPopupOpen(false);
+            setSafetyRibbonDismissed(true);
+            setConfirmedAlertContext({
+              id: alert.id,
+              category: alert.category,
+              categoryLabel: alert.categoryLabel,
+              area: alert.area,
+            });
+            setSafetyConfirmFollowupOpen(true);
+          }}
+          onOpenMap={(alert) => {
+            setSafetyPopupOpen(false);
+            homeNavigate('/danger-reports', { state: { focusId: alert.id, view: 'map' } });
+          }}
+          onMoreInfo={(alert) => {
+            setSafetyPopupOpen(false);
+            homeNavigate('/danger-reports', { state: { focusId: alert.id } });
+          }}
+        />
+      )}
+
+      {/* Follow-up after Confirm — "Want to add a photo or note?" */}
+      {safetyConfirmFollowupOpen && (
+        <SafetyConfirmFollowupPopup
+          onClose={() => setSafetyConfirmFollowupOpen(false)}
+          onYes={() => {
+            setSafetyConfirmFollowupOpen(false);
+            homeNavigate('/danger-reports', {
+              state: {
+                action: 'add-info',
+                category: confirmedAlertContext?.category,
+                area: confirmedAlertContext?.area,
+                focusId: confirmedAlertContext?.id,
+              },
+            });
+          }}
+        />
+      )}
+
+      {/* Vet hotline popup — opens from the Explore "Vet hotline" pill.
+          Tiny, single-purpose: vet name + Call now (when set), or Add /
+          Find nearby (when not set). */}
+      {vetHotlineOpen && (
+        <VetHotlinePopup
+          vet={MOCK_USER_VET}
+          onClose={() => setVetHotlineOpen(false)}
+          onCall={() => {
+            const tel = (MOCK_USER_VET?.phone || '').replace(/\s/g, '');
+            if (tel) window.location.href = `tel:${tel}`;
+          }}
+          onAddVet={() => {
+            setVetHotlineOpen(false);
+            homeNavigate('/emergency');
+          }}
+          onFindNearby={() => {
+            setVetHotlineOpen(false);
+            homeNavigate('/emergency');
+          }}
+        />
+      )}
+
+      {/* Track quick-log popup — opens from the Meds / Walk / Note pills
+          in the Track section. Step-by-step flow per type. */}
+      {trackPopupType && (
+        <TrackLogPopup
+          type={trackPopupType}
+          pets={MOCK_DASHBOARD_PETS}
+          savedMedsByPet={MOCK_SAVED_MEDS}
+          onClose={() => setTrackPopupType(null)}
+          onSave={(entry) => {
+            // Demo: log to console. In production this writes to the
+            // pet's timeline + refreshes NEXT UP on the dashboard.
+            // eslint-disable-next-line no-console
+            console.log('Track log saved:', entry);
+          }}
+        />
+      )}
+
+      {/* Live service popup — opens when the green LIVE banner is tapped.
+          Shows walker info, progress, latest update, and quick actions.
+          "Full walk" hands off to the booking detail screen with map,
+          timeline, photo gallery, and extend/end controls. */}
+      {liveServicePopupOpen && MOCK_ACTIVE_SERVICE && (
+        <LiveServicePopup
+          service={MOCK_ACTIVE_SERVICE}
+          pets={MOCK_DASHBOARD_PETS}
+          onClose={() => setLiveServicePopupOpen(false)}
+          onMessage={() => {
+            setLiveServicePopupOpen(false);
+            onOpenBookings?.();
+          }}
+          onCall={() => {
+            const tel = (MOCK_ACTIVE_SERVICE.provider.phone || '').replace(/\s/g, '');
+            if (tel) window.location.href = `tel:${tel}`;
+          }}
+          onLiveMap={() => {
+            setLiveServicePopupOpen(false);
+            onOpenBookings?.();
+          }}
+          onFullWalk={() => {
+            setLiveServicePopupOpen(false);
+            onOpenBookings?.();
+          }}
+        />
+      )}
+    </>
   );
 };
 const ServicesSectionHeader = ({ title, actionLabel, onAction }) => (
@@ -7139,7 +8737,7 @@ const BookingStatusBadge = ({ status }) => {
   );
 };
 
-const BookingCard = ({ booking, onCancel, onOpenDetails }) => {
+const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onToggleExpand }) => {
   const getProviderFirstName = (fullName = '') => String(fullName).trim().split(/\s+/)[0] || 'Provider';
   const getBaseServiceLabel = (serviceLabel = '') => String(serviceLabel).replace(/^\d+\s*min\s+/i, '').trim() || 'Service';
   const formatShortDate = (dateInput) => {
@@ -7235,10 +8833,20 @@ const BookingCard = ({ booking, onCancel, onOpenDetails }) => {
     }
   };
 
+  // The card always shows its summary row; the helper line, divider,
+  // actions, and price collapse away when `isExpanded` is false so the
+  // list reads as a short table of bookings until the user opens one.
+  const handleHeaderClick = () => { if (onToggleExpand) onToggleExpand(); };
+
   return (
-    <div className="py-4 active:opacity-70 transition-opacity duration-150">
+    <div className={`py-4 transition-opacity duration-150 ${isExpanded ? '' : 'active:opacity-70'}`}>
       <div className="flex flex-col gap-3">
-        <div className="flex items-start gap-3">
+        {/* Summary row — always visible, the whole row is the toggle. */}
+        <button
+          type="button"
+          onClick={handleHeaderClick}
+          className="w-full text-left flex items-start gap-3 active:opacity-70 transition-opacity"
+        >
           <div className="w-8 h-8 rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0 self-center">
             <ServiceIcon size={14} className="text-[#6E6058]" strokeWidth={2.2} />
           </div>
@@ -7259,20 +8867,31 @@ const BookingCard = ({ booking, onCancel, onOpenDetails }) => {
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
             <BookingStatusBadge status={booking.status} />
+            <ChevronDown
+              size={16}
+              className="text-[#A09A94] transition-transform duration-200"
+              style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            />
           </div>
-        </div>
-        {getHelperText() && (
-          <p className="text-[12px] text-[#6E6058] flex items-center gap-1.5 pl-[44px] -mt-1">
-            {booking.status === 'in-progress' && <span className="w-2 h-2 rounded-full bg-[#E85D2A] animate-pulse" />}
-            {getHelperText()}
-          </p>
+        </button>
+
+        {/* Expanded section — helper line, divider, inline actions, price. */}
+        {isExpanded && (
+          <>
+            {getHelperText() && (
+              <p className="text-[12px] text-[#6E6058] flex items-center gap-1.5 pl-[44px] -mt-1">
+                {booking.status === 'in-progress' && <span className="w-2 h-2 rounded-full bg-[#E85D2A] animate-pulse" />}
+                {getHelperText()}
+              </p>
+            )}
+            <div className="mt-0 pt-1.5 border-t border-dashed border-[#CFCFD4]">
+              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 pl-0 pr-[12px]">
+                {renderActions()}
+                <span className="text-[14px] font-semibold text-[#111] whitespace-nowrap">CHF {Math.round(booking.total)}</span>
+              </div>
+            </div>
+          </>
         )}
-        <div className="mt-0 pt-1.5 border-t border-dashed border-[#CFCFD4]">
-          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 pl-0 pr-[12px]">
-            {renderActions()}
-            <span className="text-[14px] font-semibold text-[#111] whitespace-nowrap">CHF {Math.round(booking.total)}</span>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -7285,8 +8904,23 @@ const BookingSectionHeader = ({ title, count }) => (
   </div>
 );
 
-const BookingsScreen = ({ onOpenDetails, onBack }) => {
+const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClearFocus }) => {
   const [activeFilter, setActiveFilter] = useState('upcoming');
+  // Accordion: only one booking can be expanded at a time. The dashboard
+  // can deep-link here with a focused id to start that booking open.
+  const [expandedBookingId, setExpandedBookingId] = useState(focusedBookingId);
+  // If we land here with a focus id, expand that row and clear the
+  // upstream focus state so subsequent visits don't auto-expand it again.
+  useEffect(() => {
+    if (focusedBookingId) {
+      setExpandedBookingId(focusedBookingId);
+      // Defer clearing so the expand state has time to apply.
+      const t = setTimeout(() => onClearFocus?.(), 50);
+      return () => clearTimeout(t);
+    }
+    return undefined;
+  }, [focusedBookingId, onClearFocus]);
+  const toggleExpand = (id) => setExpandedBookingId((prev) => (prev === id ? null : id));
   const [cancelSheetOpen, setCancelSheetOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -7409,16 +9043,16 @@ const BookingsScreen = ({ onOpenDetails, onBack }) => {
       const x = sortBookings(cancelledBookings, 'cancelled');
       return (
         <div>
-          {u.length > 0 && (<section><BookingSectionHeader title="UPCOMING" count={u.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{u.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div></section>)}
-          {c.length > 0 && (<section><BookingSectionHeader title="COMPLETED" count={c.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{c.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div>{c.length > 2 && <div className="pt-6 flex justify-center pb-2"><button onClick={() => setActiveFilter('completed')} className="flex items-center gap-1.5 text-[14px] font-semibold text-[#111] active:opacity-70 transition-opacity">View All Completed →</button></div>}</section>)}
-          {x.length > 0 && (<section><BookingSectionHeader title="CANCELLED" count={x.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{x.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}</div></section>)}
+          {u.length > 0 && (<section><BookingSectionHeader title="UPCOMING" count={u.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{u.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div></section>)}
+          {c.length > 0 && (<section><BookingSectionHeader title="COMPLETED" count={c.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{c.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div>{c.length > 2 && <div className="pt-6 flex justify-center pb-2"><button onClick={() => setActiveFilter('completed')} className="flex items-center gap-1.5 text-[14px] font-semibold text-[#111] active:opacity-70 transition-opacity">View All Completed →</button></div>}</section>)}
+          {x.length > 0 && (<section><BookingSectionHeader title="CANCELLED" count={x.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{x.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div></section>)}
         </div>
       );
     }
 
     return (
       <div className="divide-y divide-dashed divide-[#CFCFD4]">
-        {bookingsToRender.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} />)}
+        {bookingsToRender.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}
       </div>
     );
   };
@@ -9572,7 +11206,14 @@ export default function App() {
       return <WalkingScreen onBack={() => navigateTo('services')} petsData={petsData} />;
     }
     if (displayTab === 'services' && servicesRoute === 'bookings') {
-      return <BookingsScreen onBack={() => navigateTo('services')} onOpenDetails={(booking) => { setBookingStatus(booking.status); navigateTo('booking_details'); }} />;
+      return (
+        <BookingsScreen
+          focusedBookingId={focusedBookingId}
+          onClearFocus={() => setFocusedBookingId(null)}
+          onBack={() => { setFocusedBookingId(null); navigateTo('services'); }}
+          onOpenDetails={(booking) => { setBookingStatus(booking.status); navigateTo('booking_details'); }}
+        />
+      );
     }
     
     switch (displayTab) {
@@ -9592,6 +11233,13 @@ export default function App() {
             setDisplayTab('services');
             setServicesRoute('bookings');
           }}
+          onOpenBookingFocused={(bookingId) => {
+            setFocusedBookingId(bookingId);
+            setActiveTab('services');
+            setDisplayTab('services');
+            setServicesRoute('bookings');
+          }}
+          onPopupStateChange={setDashboardPopupOpen}
         />
       );
       case 'services':
@@ -9620,6 +11268,13 @@ export default function App() {
             setDisplayTab('services');
             setServicesRoute('bookings');
           }}
+          onOpenBookingFocused={(bookingId) => {
+            setFocusedBookingId(bookingId);
+            setActiveTab('services');
+            setDisplayTab('services');
+            setServicesRoute('bookings');
+          }}
+          onPopupStateChange={setDashboardPopupOpen}
         />
       );
     }
@@ -9647,7 +11302,15 @@ export default function App() {
 
   const headerConfig = getHeaderConfig();
   const unreadAppNotifications = appNotifications.filter((n) => !n.read).length;
-  const overlayOpen = settingsOpen || inboxOpen || searchOpen || comingSoonOpen || animationsOpen;
+  // Reported by HomeScreen whenever ANY of its centered popups is open
+  // (safety alert, confirm follow-up, live service). Treated as another
+  // overlay so the top header buttons + bottom tab bar are disabled and
+  // visually faded for the duration of the popup.
+  const [dashboardPopupOpen, setDashboardPopupOpen] = useState(false);
+  const overlayOpen = settingsOpen || inboxOpen || searchOpen || comingSoonOpen || animationsOpen || dashboardPopupOpen;
+  // When the user taps a booking on the dashboard, we navigate to the
+  // bookings list and remember which row to start expanded.
+  const [focusedBookingId, setFocusedBookingId] = useState(null);
 
   return (
     <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center sm:p-8 font-sans antialiased selection:bg-[#E85D2A]/20 selection:text-[#E85D2A]">
