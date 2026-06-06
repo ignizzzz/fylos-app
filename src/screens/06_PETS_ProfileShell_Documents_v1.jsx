@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AddPetMascot } from './37_ADD_PET_v1';
 import JournalScreen from '../features/journal/JournalScreen';
 import ServicesTab from '../features/services/ServicesTab';
+import ProRegistration from './50_PRO_REGISTRATION_v1';
+import InviteFriends from './60_INVITE_FRIENDS_v1';
 import {
   Home,
   PawPrint,
@@ -5443,9 +5445,14 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const [trackPopupType, setTrackPopupType] = useState(null);
   // Vet hotline popup (opens from the Explore "Vet hotline" pill).
   const [vetHotlineOpen, setVetHotlineOpen] = useState(false);
+  // "Earn with fylos" provider onboarding — rendered as a full-screen
+  // overlay inside the dashboard so it works without a route change.
+  const [proRegOpen, setProRegOpen] = useState(false);
+  // "Invite a friend" referral screen — same overlay pattern.
+  const [inviteOpen, setInviteOpen] = useState(false);
   // Aggregate: is ANY dashboard popup currently open? When true the
   // underlying scroll, top-bar buttons, and bottom tabs are all locked.
-  const anyPopupOpen = safetyPopupOpen || safetyConfirmFollowupOpen || liveServicePopupOpen || trackPopupType !== null || vetHotlineOpen;
+  const anyPopupOpen = safetyPopupOpen || safetyConfirmFollowupOpen || liveServicePopupOpen || trackPopupType !== null || vetHotlineOpen || proRegOpen || inviteOpen;
   // Inform the parent App so it can fade out the global header + tab bar
   // and prevent navigation away from the screen while a popup is open.
   useEffect(() => {
@@ -6243,12 +6250,13 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               </button>
             </div>
 
-            {/* 7c. Become a Pro — compact dark editorial card. Coral
-                  eyebrow, white headline, coral CTA link. No decoration. */}
+            {/* 7c. Become a Pro — compact black editorial card. Coral
+                  eyebrow, white headline, coral CTA link. Opens the
+                  provider onboarding as an in-app overlay. */}
             <button
-              onClick={() => homeNavigate('/pro-registration')}
+              onClick={() => setProRegOpen(true)}
               className="w-full text-left rounded-[14px] mb-1 active:scale-[0.99] transition-transform"
-              style={{ background: '#2A1A12', padding: '13px 16px' }}
+              style={{ background: '#111111', padding: '13px 16px' }}
             >
               <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#E85D2A] mb-1.5">
                 Earn with Fylos
@@ -6263,9 +6271,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </button>
 
             {/* 7d. Invite — edge-to-edge floating row, centered as a group.
-                  No background, no border; reads as a quiet aside. */}
+                  No background, no border; reads as a quiet aside.
+                  Opens the referral screen as an in-app overlay. */}
             <button
-              onClick={() => homeNavigate('/invite')}
+              onClick={() => setInviteOpen(true)}
               className="w-full flex items-center justify-center gap-2.5 py-2.5 active:opacity-70 transition-opacity"
             >
               <Gift size={14} className="text-[#A09A94] shrink-0" strokeWidth={1.8} />
@@ -6490,6 +6499,18 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             });
           }}
         />
+      )}
+
+      {/* Earn with fylos — provider onboarding overlay. Full-screen
+          inside the dashboard frame so it opens instantly on tap with
+          no route change. onExit closes it back to the dashboard. */}
+      {proRegOpen && (
+        <ProRegistration embedded onExit={() => setProRegOpen(false)} />
+      )}
+
+      {/* Invite a friend — referral overlay (code, link, QR, tracking). */}
+      {inviteOpen && (
+        <InviteFriends embedded onExit={() => setInviteOpen(false)} />
       )}
 
       {/* Vet hotline popup — opens from the Explore "Vet hotline" pill.
