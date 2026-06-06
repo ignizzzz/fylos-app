@@ -166,7 +166,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
           </p>
         </div>
 
-        <div className="px-5 pb-16 flex flex-col gap-3.5">
+        <div className="px-5 pb-10 flex flex-col gap-3.5">
           {/* Voucher code — premium ticket. Coral-tinted top half carries
               the code; perforation; white bottom half carries the link. */}
           <div className="relative rounded-[18px] overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}>
@@ -317,10 +317,6 @@ const InviteFriends = ({ embedded = false, onExit }) => {
           </p>
         </div>
       </div>
-
-      {/* Bottom gradient fade — same canonical pattern as the top, so
-          content dissolves softly into the cream at the bottom edge too. */}
-      <div className="absolute bottom-0 left-0 w-full h-[88px] z-30 pointer-events-none bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2]/85 to-transparent" />
     </>
   );
 
