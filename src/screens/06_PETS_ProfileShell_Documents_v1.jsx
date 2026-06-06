@@ -875,9 +875,9 @@ const MOCK_BOOKINGS_LIST = [
   // First three entries mirror what shows on the dashboard's Booked
   // section. Tapping any of them on the dashboard deep-links here with
   // the row pre-expanded; tapping a collapsed row toggles it open.
-  { id: 'b1', status: 'confirmed', provider: { id: 'provider_sofia', name: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker', rating: 4.9 }, service: { id: 'service_groom', label: 'Grooming', duration: 60 }, dateTime: { date: '2026-02-16', time: '10:00', endTime: '11:00', start: '2026-02-16T10:00:00+01:00', formatted: 'Mon, Feb 16 · 10:00-11:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 65.00, helper: 'In a few days', confirmedAt: '2026-02-12T09:15:00Z' },
-  { id: 'b2', status: 'confirmed', provider: { id: 'provider_brightpaws_elena', name: 'Bright Paws · Elena', photo: 'https://i.pravatar.cc/150?u=elena_groomer', rating: 4.8 }, service: { id: 'service_groom_business', label: 'Grooming', duration: 90 }, dateTime: { date: '2026-02-18', time: '15:30', endTime: '17:00', start: '2026-02-18T15:30:00+01:00', formatted: 'Wed, Feb 18 · 15:30-17:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 85.00, helper: 'In a week', confirmedAt: '2026-02-12T11:00:00Z' },
-  { id: 'b3', status: 'confirmed', provider: { id: 'provider_lakeshore_reza', name: 'Lakeshore Vet · Dr. Reza Patel', photo: 'https://i.pravatar.cc/150?u=dr_reza', rating: 4.9 }, service: { id: 'service_vet', label: 'Vet visit', duration: 30 }, dateTime: { date: '2026-02-20', time: '09:00', endTime: '09:30', start: '2026-02-20T09:00:00+01:00', formatted: 'Fri, Feb 20 · 09:00-09:30' }, pet: { id: 'pet_001', name: 'Leo' }, total: 120.00, helper: 'Annual checkup', confirmedAt: '2026-02-10T15:00:00Z' },
+  { id: 'b1', status: 'confirmed', provider: { id: 'provider_sofia', name: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker', rating: 4.9 }, service: { id: 'service_groom', label: 'Grooming', duration: 60 }, dateTime: { date: '2026-02-16', time: '10:00', endTime: '11:00', start: '2026-02-16T10:00:00+01:00', formatted: 'Mon, Feb 16 · 10:00-11:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 65.00, location: 'Sofia’s studio · Niederdorf', notes: 'Full groom — wash, trim, nails.', helper: 'In a few days', confirmedAt: '2026-02-12T09:15:00Z' },
+  { id: 'b2', status: 'confirmed', provider: { id: 'provider_brightpaws_elena', name: 'Bright Paws · Elena', photo: 'https://i.pravatar.cc/150?u=elena_groomer', rating: 4.8 }, service: { id: 'service_groom_business', label: 'Grooming', duration: 90 }, dateTime: { date: '2026-02-18', time: '15:30', endTime: '17:00', start: '2026-02-18T15:30:00+01:00', formatted: 'Wed, Feb 18 · 15:30-17:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 85.00, location: 'Bright Paws · Seefeld', notes: 'Bath, blow-dry & style with Elena.', helper: 'In a week', confirmedAt: '2026-02-12T11:00:00Z' },
+  { id: 'b3', status: 'confirmed', provider: { id: 'provider_lakeshore_reza', name: 'Lakeshore Vet · Dr. Reza Patel', photo: 'https://i.pravatar.cc/150?u=dr_reza', rating: 4.9 }, service: { id: 'service_vet', label: 'Vet visit', duration: 30 }, dateTime: { date: '2026-02-20', time: '09:00', endTime: '09:30', start: '2026-02-20T09:00:00+01:00', formatted: 'Fri, Feb 20 · 09:00-09:30' }, pet: { id: 'pet_001', name: 'Leo' }, total: 120.00, location: 'Lakeshore Vet · Bellevue', notes: 'Annual checkup & vaccinations.', helper: 'Annual checkup', confirmedAt: '2026-02-10T15:00:00Z' },
   { id: 'booking_123', status: 'confirmed', provider: { id: 'provider_001', name: 'Lukas F.', photo: 'https://i.pravatar.cc/150?img=12', rating: 4.9 }, service: { id: 'service_90min', label: '90 min Walk', duration: 90 }, dateTime: { date: '2026-02-24', time: '14:00', endTime: '15:30', start: '2026-02-24T14:00:00+01:00', formatted: 'Mon, Feb 24 · 14:00-15:30' }, pet: { id: 'pet_001', name: 'Leo' }, total: 95.00, helper: 'In 2 days', confirmedAt: '2026-02-22T14:35:00Z' },
   { id: 'booking_124', status: 'pending', provider: { id: 'provider_002', name: 'Maria S.', photo: 'https://i.pravatar.cc/150?u=maria', rating: 4.8 }, service: { id: 'service_60min_sitting', label: '60 min Sitting', duration: 60 }, dateTime: { date: '2026-02-26', time: '10:00', endTime: '11:00', start: '2026-02-26T10:00:00+01:00', formatted: 'Wed, Feb 26 · 10:00-11:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 65.00, helper: 'Waiting for response... Expires in 18h', requestedAt: '2026-02-22T16:00:00Z' },
   { id: 'booking_125', status: 'in-progress', provider: { id: 'provider_004', name: 'Elena R.', photo: 'https://i.pravatar.cc/150?u=elena', rating: 5.0 }, service: { id: 'service_60min_sitting', label: '60 min Sitting', duration: 60 }, dateTime: { date: '2026-02-23', time: '19:00', endTime: '20:00', start: '2026-02-23T19:00:00+01:00', formatted: 'Today · 19:00-20:00' }, pet: { id: 'pet_001', name: 'Leo' }, total: 60.00, helper: 'Started 15 minutes ago', requestedAt: '2026-02-21T16:00:00Z' },
@@ -8745,16 +8745,19 @@ const BookingFilterTabs = ({ filters, activeFilter, onChange }) => (
 
 const BookingStatusBadge = ({ status }) => {
   const configs = {
-    'pending': { className: 'bg-[#E85D2A]/10 text-[#E85D2A]', label: 'Pending' },
-    'confirmed': { className: 'bg-[#E85D2A]/10 text-[#E85D2A]', label: 'Confirmed' },
-    'in-progress': { className: 'bg-[#E85D2A]/10 text-[#E85D2A]', label: 'In Progress' },
-    'completed': { className: 'bg-[#F3EFEB] text-[#A09A94]', label: 'Completed' },
-    'cancelled': { className: 'bg-[#F3EFEB] text-[#A09A94]', label: 'Cancelled' },
-    'declined': { className: 'bg-[#F3EFEB] text-[#A09A94]', label: 'Declined' }
+    'pending': { bg: '#FBF1E3', fg: '#B07A3A', label: 'Pending' },
+    'confirmed': { bg: '#EEF7F1', fg: '#3F8D63', label: 'Confirmed' },
+    'in-progress': { bg: '#FFEDE3', fg: '#E85D2A', label: 'Live', live: true },
+    'completed': { bg: '#F3EFEB', fg: '#A09A94', label: 'Completed' },
+    'cancelled': { bg: '#FBEDEC', fg: '#C0473C', label: 'Cancelled' },
+    'declined': { bg: '#FBEDEC', fg: '#C0473C', label: 'Declined' },
   };
-  const config = configs[status] || configs['completed'];
+  const c = configs[status] || configs['completed'];
   return (
-    <span className={`h-[20px] px-2.5 rounded-full text-[10px] font-semibold tracking-[0.02em] inline-flex items-center leading-none ${config.className}`}>{config.label}</span>
+    <span className="h-[20px] px-2 rounded-full text-[10px] font-bold tracking-[0.02em] inline-flex items-center gap-1 leading-none shrink-0" style={{ background: c.bg, color: c.fg }}>
+      {c.live && <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: c.fg }} />}
+      {c.label}
+    </span>
   );
 };
 
@@ -8820,36 +8823,31 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
   };
   const ServiceIcon = getBookingServiceIcon(booking.service?.label);
 
+  const actBase = 'flex-1 flex items-center justify-center gap-1.5 h-[40px] rounded-[12px] text-[13.5px] font-bold active:scale-[0.98] transition-transform';
+  const actPrimary = { background: '#E85D2A', color: '#FFFFFF', boxShadow: '0 2px 8px rgba(232,93,42,0.2)' };
+  const actSecondary = { background: '#F3EFEB', color: '#111' };
+  const actDanger = { background: '#FBEDEC', color: '#C0473C' };
   const renderActions = () => {
     switch (booking.status) {
       case 'confirmed':
-        return (<>
-          <Button variant="secondary" size="small" fullWidth icon={MessageCircle} className="!h-[36px] !rounded-[10px]">Message</Button>
-          <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F7F7F8] text-[14px] font-semibold text-[#111111] active:opacity-70">Details</button>
-        </>);
       case 'pending':
         return (<>
-          <Button variant="destructive" size="small" fullWidth className="!h-[36px] !rounded-[10px]" onClick={() => onCancel(booking.id)}>Cancel</Button>
-          <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F7F7F8] text-[14px] font-semibold text-[#111111] active:opacity-70">Details</button>
+          <button className={actBase} style={actPrimary}><MessageCircle size={15} strokeWidth={2.2} />Message</button>
+          <button onClick={() => onCancel(booking.id)} className={actBase} style={actDanger}>Cancel</button>
         </>);
       case 'in-progress':
         return (<>
-          <Button variant="primary" size="small" fullWidth icon={Navigation} className="!h-[36px] !rounded-[10px]">Track</Button>
-          <Button variant="secondary" size="small" fullWidth icon={MessageCircle} className="!h-[36px] !rounded-[10px]">Message</Button>
+          <button className={actBase} style={actPrimary}><Navigation size={15} strokeWidth={2.2} />Track</button>
+          <button className={actBase} style={actSecondary}><MessageCircle size={15} strokeWidth={2.2} />Message</button>
         </>);
       case 'completed':
         return (<>
-          <Button variant="primary" size="small" fullWidth className="!h-[36px] !rounded-[10px]">Review</Button>
-          <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F3EFEB] text-[14px] font-semibold text-[#111] active:opacity-70">Details</button>
+          <button className={actBase} style={actPrimary}><Star size={15} strokeWidth={2.2} />Review</button>
+          <button className={actBase} style={actSecondary}><RotateCcw size={15} strokeWidth={2.2} />Rebook</button>
         </>);
       case 'cancelled':
       case 'declined':
-        return (
-          <>
-            <Button variant="secondary" size="small" fullWidth className="!h-[36px] !rounded-[10px]" icon={RotateCcw}>Rebook</Button>
-            <button onClick={() => onOpenDetails && onOpenDetails(booking)} className="w-full h-[36px] rounded-[10px] bg-[#F3EFEB] text-[14px] font-semibold text-[#111] active:opacity-70">Details</button>
-          </>
-        );
+        return (<button className={actBase} style={actPrimary}><RotateCcw size={15} strokeWidth={2.2} />Book again</button>);
       default: return null;
     }
   };
@@ -8860,7 +8858,7 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
   const handleHeaderClick = () => { if (onToggleExpand) onToggleExpand(); };
 
   return (
-    <div className={`py-4 transition-opacity duration-150 ${isExpanded ? '' : 'active:opacity-70'}`}>
+    <div className={`px-4 py-4 transition-opacity duration-150 ${isExpanded ? '' : 'active:opacity-70'}`}>
       <div className="flex flex-col gap-3">
         {/* Summary row — always visible, the whole row is the toggle. */}
         <button
@@ -8868,50 +8866,80 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
           onClick={handleHeaderClick}
           className="w-full text-left flex items-start gap-3 active:opacity-70 transition-opacity"
         >
-          <div className="w-8 h-8 rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0 self-center">
-            <ServiceIcon size={14} className="text-[#6E6058]" strokeWidth={2.2} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 min-w-0">
-              <h4 className="font-semibold text-[14px] text-[#111] truncate">{booking.provider.name}</h4>
-              <span className="text-[#CFCFD4]">·</span>
-              <span className="flex items-center gap-0.5 shrink-0">
-                <span className="text-[13px] font-semibold text-[#111]">{booking.provider.rating}</span>
-                <Star size={11} className="fill-[#E85D2A] text-[#E85D2A]" />
-              </span>
+          {booking.provider?.photo ? (
+            <img src={booking.provider.photo} alt={booking.provider.name} className="w-10 h-10 rounded-full object-cover shrink-0 mt-0.5" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0 mt-0.5">
+              <ServiceIcon size={16} className="text-[#6E6058]" strokeWidth={2.2} />
             </div>
-            <p className="text-[13px] font-medium text-[#6E6058] mt-0.5 leading-tight truncate">{getBaseServiceLabel(booking.service.label)} with {getProviderFirstName(booking.provider.name)}</p>
-            <p className="text-[11px] text-[#A09A94] mt-1 flex items-center gap-1.5 leading-none whitespace-nowrap">
-              <Calendar size={12} className="text-[#A09A94]" />
-              <span className="whitespace-nowrap">{formatBookingDateLine(booking.dateTime)}</span>
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-2">
+              <h4 className="font-bold text-[14.5px] text-[#111] truncate">{booking.provider.name}</h4>
+              <ChevronDown size={16} className="text-[#A09A94] shrink-0 transition-transform duration-200" style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+            </div>
+            <p className="text-[12.5px] font-medium text-[#6E6058] mt-0.5 flex items-center gap-1.5 min-w-0">
+              <span className="truncate">{getBaseServiceLabel(booking.service.label)}</span>
+              <span className="text-[#CFCFD4] shrink-0">·</span>
+              <span className="shrink-0 inline-flex items-center gap-0.5"><Star size={11} className="fill-[#E85D2A] text-[#E85D2A]" /> {booking.provider.rating}</span>
             </p>
-          </div>
-          <div className="flex flex-col items-end gap-2 shrink-0">
-            <BookingStatusBadge status={booking.status} />
-            <ChevronDown
-              size={16}
-              className="text-[#A09A94] transition-transform duration-200"
-              style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            />
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className="text-[11px] text-[#A09A94] inline-flex items-center gap-1 min-w-0">
+                <Calendar size={11} className="text-[#A09A94] shrink-0" />
+                <span className="truncate">{formatBookingDateLine(booking.dateTime)}</span>
+              </span>
+              <BookingStatusBadge status={booking.status} />
+            </div>
           </div>
         </button>
 
-        {/* Expanded section — helper line, divider, inline actions, price. */}
+        {/* Expanded — the booking's actual details, then actions. */}
         {isExpanded && (
-          <>
+          <div className="pl-[52px] flex flex-col gap-3 mt-3">
+            <div className="rounded-[14px] px-3.5 py-3 flex flex-col gap-2.5" style={{ background: '#F7F5F2' }}>
+              <div className="flex items-center gap-2.5">
+                <Calendar size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                <span className="text-[12.5px] text-[#3A3530]">{formatBookingDateLine(booking.dateTime)}</span>
+              </div>
+              {booking.service?.duration && (
+                <div className="flex items-center gap-2.5">
+                  <Clock size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                  <span className="text-[12.5px] text-[#3A3530]">{booking.service.duration} min</span>
+                </div>
+              )}
+              {booking.location && (
+                <div className="flex items-center gap-2.5">
+                  <MapPin size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                  <span className="text-[12.5px] text-[#3A3530]">{booking.location}</span>
+                </div>
+              )}
+              {booking.pet?.name && (
+                <div className="flex items-center gap-2.5">
+                  <PawPrint size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                  <span className="text-[12.5px] text-[#3A3530]">For {booking.pet.name}</span>
+                </div>
+              )}
+              {booking.notes && (
+                <div className="flex items-start gap-2.5">
+                  <FileText size={14} className="text-[#A09A94] shrink-0 mt-[1px]" strokeWidth={2} />
+                  <span className="text-[12.5px] text-[#3A3530] leading-snug">{booking.notes}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between pt-2 mt-0.5 border-t border-[#E7E0D6]">
+                <span className="text-[12px] text-[#6E6058]">Total</span>
+                <span className="text-[15px] font-bold text-[#111]">CHF {Math.round(booking.total)}</span>
+              </div>
+            </div>
+
             {getHelperText() && (
-              <p className="text-[12px] text-[#6E6058] flex items-center gap-1.5 pl-[44px] -mt-1">
+              <p className="text-[12px] text-[#6E6058] flex items-center gap-1.5">
                 {booking.status === 'in-progress' && <span className="w-2 h-2 rounded-full bg-[#E85D2A] animate-pulse" />}
                 {getHelperText()}
               </p>
             )}
-            <div className="mt-0 pt-1.5 border-t border-dashed border-[#CFCFD4]">
-              <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 pl-0 pr-[12px]">
-                {renderActions()}
-                <span className="text-[14px] font-semibold text-[#111] whitespace-nowrap">CHF {Math.round(booking.total)}</span>
-              </div>
-            </div>
-          </>
+
+            <div className="flex gap-2">{renderActions()}</div>
+          </div>
         )}
       </div>
     </div>
@@ -8919,9 +8947,9 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
 };
 
 const BookingSectionHeader = ({ title, count }) => (
-  <div className="mt-4 mb-2 px-1 flex items-center justify-between">
-    <h3 className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em]">{title}</h3>
-    <span className="text-[12px] font-semibold text-[#A09A94]">{count}</span>
+  <div className="mt-5 mb-2.5 px-1 flex items-end justify-between">
+    <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">{title}</h3>
+    <span className="text-[11px] font-bold text-[#E85D2A] tabular-nums">{count}</span>
   </div>
 );
 
@@ -9064,15 +9092,15 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
       const x = sortBookings(cancelledBookings, 'cancelled');
       return (
         <div>
-          {u.length > 0 && (<section><BookingSectionHeader title="UPCOMING" count={u.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{u.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div></section>)}
-          {c.length > 0 && (<section><BookingSectionHeader title="COMPLETED" count={c.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{c.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div>{c.length > 2 && <div className="pt-6 flex justify-center pb-2"><button onClick={() => setActiveFilter('completed')} className="flex items-center gap-1.5 text-[14px] font-semibold text-[#111] active:opacity-70 transition-opacity">View All Completed →</button></div>}</section>)}
-          {x.length > 0 && (<section><BookingSectionHeader title="CANCELLED" count={x.length} /><div className="divide-y divide-dashed divide-[#CFCFD4]">{x.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div></section>)}
+          {u.length > 0 && (<section><BookingSectionHeader title="UPCOMING" count={u.length} /><div className="rounded-[18px] overflow-hidden divide-y divide-[#F0EAE2]" style={{ background: '#FFFFFF', boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}>{u.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div></section>)}
+          {c.length > 0 && (<section><BookingSectionHeader title="COMPLETED" count={c.length} /><div className="rounded-[18px] overflow-hidden divide-y divide-[#F0EAE2]" style={{ background: '#FFFFFF', boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}>{c.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div>{c.length > 2 && <div className="pt-6 flex justify-center pb-2"><button onClick={() => setActiveFilter('completed')} className="flex items-center gap-1.5 text-[14px] font-semibold text-[#111] active:opacity-70 transition-opacity">View All Completed →</button></div>}</section>)}
+          {x.length > 0 && (<section><BookingSectionHeader title="CANCELLED" count={x.length} /><div className="rounded-[18px] overflow-hidden divide-y divide-[#F0EAE2]" style={{ background: '#FFFFFF', boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}>{x.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}</div></section>)}
         </div>
       );
     }
 
     return (
-      <div className="divide-y divide-dashed divide-[#CFCFD4]">
+      <div className="rounded-[18px] overflow-hidden divide-y divide-[#F0EAE2]" style={{ background: '#FFFFFF', boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)' }}>
         {bookingsToRender.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancelRequest} onOpenDetails={onOpenDetails} isExpanded={expandedBookingId === b.id} onToggleExpand={() => toggleExpand(b.id)} />)}
       </div>
     );
@@ -9080,27 +9108,40 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
 
   return (
     <>
-      <div className="absolute inset-0 bg-[#F7F5F2] flex flex-col">
-        {onBack && (
-          <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
-            <div className="flex justify-between items-center w-full pointer-events-auto">
-              <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-                <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
-              </button>
-              <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Bookings</h2>
-              <button
-                type="button"
-                aria-label="Calendar"
-                onClick={() => setCalendarOpen(true)}
-                className="w-[44px] h-[44px] rounded-full flex items-center justify-center active:scale-[0.97] transition-all duration-200" style={{ background: '#F3EFEB' }}
-              >
-                <CalendarDays size={17} strokeWidth={1.5} color="#111" />
+      <div className="absolute inset-0" style={{ background: '#F7F5F2' }}>
+        {/* Scroll body — runs under the header, fading into the cream. */}
+        <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 150, paddingBottom: 40, scrollbarWidth: 'none' }} onScroll={handleBookingsScroll}>
+          {renderBookings()}
+        </div>
+
+        {/* Canonical gradient-fade header — content scrolls behind it. */}
+        <div className="absolute top-0 left-0 right-0 z-30 pt-14 px-5 pb-3 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 62%, rgba(247,245,242,0) 100%)' }}>
+          <div className="pointer-events-auto">
+            <div className="flex items-center justify-between mb-3.5">
+              {onBack ? (
+                <button onClick={onBack} className="w-9 h-9 flex items-center justify-center rounded-full active:scale-[0.95] transition-transform" style={{ background: '#F3EFEB' }} aria-label="Back">
+                  <ChevronLeft size={18} color="#111" strokeWidth={2.2} />
+                </button>
+              ) : <div className="w-9" />}
+              <h2 className="text-[17px] font-bold text-[#111]">Bookings</h2>
+              <button type="button" aria-label="Calendar" onClick={() => setCalendarOpen(true)} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-[0.95] transition-transform" style={{ background: '#F3EFEB' }}>
+                <CalendarDays size={16} strokeWidth={2} color="#111" />
               </button>
             </div>
-          </header>
-        )}
-        <div className="absolute inset-0 overflow-y-auto pt-[110px] pb-[40px] px-5" style={{ scrollbarWidth: 'none' }} onScroll={handleBookingsScroll}>
-          {renderBookings()}
+            <div className="flex gap-2 overflow-x-auto -mx-5 px-5" style={{ scrollbarWidth: 'none' }}>
+              {filters.map((f) => {
+                const on = activeFilter === f.id;
+                return (
+                  <button key={f.id} onClick={() => setActiveFilter(f.id)}
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold transition-all active:scale-[0.97]"
+                    style={{ background: on ? '#E85D2A' : '#F3EFEB', color: on ? '#FFFFFF' : '#6E6058' }}>
+                    {f.label}
+                    {f.count > 0 && <span className="text-[11px] font-bold" style={{ color: on ? 'rgba(255,255,255,0.8)' : '#A09A94' }}>{f.count}</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
         <CardModal isOpen={cancelSheetOpen} onClose={() => setCancelSheetOpen(false)} title="Cancel request?">
           <div className="space-y-6 pt-2">
@@ -9180,18 +9221,6 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
           </div>
         </CardModal>
       </div>
-      {onBack && (
-        <div
-          className="absolute top-[108px] left-0 w-full z-30 px-5 transition-[opacity,transform] duration-200"
-          style={{
-            opacity: 1 - chipsProgress,
-            transform: `translateY(${-10 * chipsProgress}px)`,
-            pointerEvents: chipsProgress > 0.96 ? 'none' : 'auto'
-          }}
-        >
-          <BookingFilterTabs filters={filters} activeFilter={activeFilter} onChange={setActiveFilter} />
-        </div>
-      )}
     </>
   );
 };
