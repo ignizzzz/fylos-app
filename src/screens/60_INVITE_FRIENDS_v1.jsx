@@ -241,33 +241,8 @@ const InviteFriends = ({ embedded = false, onExit }) => {
             ))}
           </div>
 
-          {/* Progress — milestone + stats in one clean card */}
+          {/* Stats — invited / joined / earned (flat 10 CHF per friend) */}
           <div className="rounded-[18px] p-4 mt-1" style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}>
-            {(() => {
-              const pct = Math.min(1, MILESTONE.current / MILESTONE.target);
-              const left = Math.max(0, MILESTONE.target - MILESTONE.current);
-              return (
-                <>
-                  <div className="flex items-center gap-2.5 mb-2.5">
-                    <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: '#FFEDE3' }}>
-                      <Trophy size={15} color={CORAL} strokeWidth={2} />
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[13px] font-bold text-[#111] leading-tight">
-                        {left > 0 ? `${left} more to unlock +${MILESTONE.bonus} CHF` : `Bonus unlocked! +${MILESTONE.bonus} CHF`}
-                      </div>
-                    </div>
-                    <span className="text-[11px] font-semibold text-[#A09A94] tabular-nums shrink-0">{MILESTONE.current}/{MILESTONE.target}</span>
-                  </div>
-                  <div className="relative h-[6px] rounded-full overflow-hidden" style={{ background: '#EDE8E2' }}>
-                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct * 100}%`, background: CORAL }} />
-                  </div>
-                </>
-              );
-            })()}
-
-            <div className="h-px my-3.5" style={{ background: '#F0EAE2' }} />
-
             <div className="flex items-center">
               {[
                 { k: 'Invited', v: `${REFERRAL.stats.invited}` },

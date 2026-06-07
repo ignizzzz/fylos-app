@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import InviteFriends from './60_INVITE_FRIENDS_v1';
 import {
   ChevronLeft, ChevronRight, MapPin, Star, Camera, Bell,
   CreditCard, Shield, Phone, Info, Calendar, PawPrint,
@@ -18,17 +19,17 @@ import {
 
 const MOCK_USER = {
   // Identity
-  firstName: 'Talita',
-  lastName: 'Kowalski',
-  username: 'talita.k',
-  initials: 'TK',
-  avatar: null,
-  bio: 'Dog mom to Leo & Luna — Zürich walks, playdates, always looking for new furry friends.',
+  firstName: 'Alex',
+  lastName: 'Mueller',
+  username: 'alex.m',
+  initials: 'AM',
+  avatar: 'https://i.pravatar.cc/240?u=alex_fylos',
+  bio: 'Dog parent to Leo & Luna in Zürich.',
   dobDisplay: 'Mar 12, 1995',
   gender: 'Private',
 
   // Contact
-  email: 'talita.k@email.com',
+  email: 'alex@example.com',
   emailVerified: true,
   phone: '+41 78 555 1234',
   phoneVerified: true,
@@ -68,7 +69,7 @@ const MOCK_USER = {
   // Family & pets
   pets: [
     { id: 'p1', name: 'Leo',  breed: 'Golden Retriever', photo: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=120&h=120' },
-    { id: 'p2', name: 'Luna', breed: 'Mixed',            photo: 'https://images.unsplash.com/photo-1537151608804-ea2f1ea14a15?auto=format&fit=crop&q=80&w=120&h=120' },
+    { id: 'p2', name: 'Luna', breed: 'Mixed',            photo: 'https://images.unsplash.com/photo-1494256997604-768d1f608cac?auto=format&fit=crop&q=80&w=200&h=200' },
   ],
   coOwners: [{ id: 'co1', name: 'Tom K.', relation: 'Partner', avatar: null }],
   familyMembers: [
@@ -105,24 +106,24 @@ const THEME = {
 
 /* ────────── Primitives ────────── */
 const SectionLabel = ({ children }) => (
-  <div className="text-[10.5px] font-medium text-[#8E8E93] tracking-[0.02em] mb-1.5 ml-3 mt-5">{children}</div>
+  <div className="text-[10.5px] font-bold uppercase text-[#A8A29C] tracking-[0.12em] mb-2 ml-1.5 mt-6">{children}</div>
 );
 
 const Card = ({ children }) => (
-  <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">{children}</div>
+  <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>{children}</div>
 );
 
 const Row = ({ icon: Icon, title, value, onClick, last, danger, verified, locked }) => (
   <div className="relative">
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left"
+      className="w-full flex items-center gap-3 px-3.5 py-[12px] active:bg-black/[0.02] transition-colors text-left"
     >
       <div
-        className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center"
+        className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center"
         style={{ backgroundColor: danger ? THEME.dangerTint : THEME.tint }}
       >
-        <Icon size={15} color={danger ? THEME.danger : THEME.coral} strokeWidth={2} />
+        <Icon size={16} color={danger ? THEME.danger : THEME.coral} strokeWidth={2} />
       </div>
       <div className="flex-1 min-w-0">
         <div
@@ -132,95 +133,82 @@ const Row = ({ icon: Icon, title, value, onClick, last, danger, verified, locked
           {title}
         </div>
       </div>
-      {verified && (
-        <span className="flex items-center gap-[3px] text-[11px] font-medium shrink-0 mr-0.5" style={{ color: THEME.success }}>
-          <Check size={11} strokeWidth={3} /> verified
+      {verified ? (
+        <span className="flex items-center gap-[3px] text-[10.5px] font-bold shrink-0 mr-1 px-2 py-[3px] rounded-full" style={{ color: '#2E8B57', background: '#E8F6EE' }}>
+          <Check size={10} strokeWidth={3} /> Verified
         </span>
-      )}
-      {locked && (
-        <span className="flex items-center gap-[3px] text-[11px] font-medium shrink-0 mr-0.5" style={{ color: THEME.muted }}>
-          <Lock size={10} strokeWidth={2.4} /> locked
+      ) : value ? (
+        <span className="flex items-center gap-1 text-[11.5px] font-semibold mr-1 shrink-0 truncate max-w-[150px] px-2.5 py-[3px] rounded-full" style={{ color: '#9A8F84', background: '#F4EFE9' }}>
+          {locked && <Lock size={9} strokeWidth={2.4} className="shrink-0" />}{value}
         </span>
-      )}
-      {value && (
-        <span className="text-[12.5px] font-medium mr-1 shrink-0 truncate max-w-[140px]" style={{ color: THEME.muted }}>
-          {value}
-        </span>
-      )}
+      ) : null}
       {!danger && <ChevronRight size={14} className="text-[#D4D4D8] shrink-0" strokeWidth={2.2} />}
     </button>
-    {!last && <div className="absolute bottom-0 left-[58px] right-0 h-px" style={{ background: THEME.divider }} />}
+    {!last && <div className="absolute bottom-0 left-[62px] right-0 h-px" style={{ background: THEME.divider }} />}
   </div>
 );
 
 /* ────────── Header (canonical transparent pattern) ────────── */
-const ProfileHeader = ({ onBack, onShare }) => (
-  <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
+const ProfileHeader = ({ onBack }) => (
+  <div className="pt-14 pb-5 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 56%, rgba(247,245,242,0) 100%)' }}>
     <button
       onClick={onBack}
-      className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+      className="absolute left-5 top-[52px] w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+      style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}
     >
       <ChevronLeft size={18} strokeWidth={2.2} color={THEME.txt} />
     </button>
-    <h1 className="text-[17px] font-semibold" style={{ color: THEME.txt }}>Profile</h1>
-    <button
-      onClick={onShare}
-      className="absolute right-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
-    >
-      <Share2 size={14} strokeWidth={2.2} color={THEME.txt} />
-    </button>
+    <h1 className="text-[17px] font-bold" style={{ color: THEME.txt }}>Profile</h1>
   </div>
 );
 
 /* ────────── Hero ────────── */
 const ProfileHero = ({ user, onChangePhoto }) => (
-  <div className="flex flex-col items-center pt-4 pb-5 px-6">
+  <div className="flex flex-col items-center pt-1 pb-5 px-6">
     <div className="relative mb-3">
       <div
-        className="flex items-center justify-center"
+        className="overflow-hidden flex items-center justify-center"
         style={{
-          width: 86, height: 86, borderRadius: 9999,
-          background: 'linear-gradient(145deg, #FF7240 0%, #E85D2A 100%)',
-          boxShadow: '0 10px 28px rgba(232,93,42,0.25)',
+          width: 88, height: 88, borderRadius: 9999,
+          background: user.avatar ? '#EDE8E2' : 'linear-gradient(145deg, #FF7240 0%, #E85D2A 100%)',
+          boxShadow: '0 10px 26px rgba(232,93,42,0.18)',
         }}
       >
-        <span className="text-white font-semibold text-[30px] tracking-tight">{user.initials}</span>
+        {user.avatar
+          ? <img src={user.avatar} alt="" className="w-full h-full object-cover" />
+          : <span className="text-white font-bold text-[30px] tracking-tight">{user.initials}</span>}
       </div>
       {user.idVerified && (
         <div
-          className="absolute bottom-0 left-0 w-[22px] h-[22px] rounded-full flex items-center justify-center"
-          style={{ background: THEME.success, border: `2.5px solid ${THEME.bg}`, boxShadow: '0 2px 6px rgba(0,192,96,0.3)' }}
+          className="absolute bottom-0 left-0 w-[23px] h-[23px] rounded-full flex items-center justify-center"
+          style={{ background: THEME.coral, border: `2.5px solid ${THEME.bg}`, boxShadow: '0 2px 6px rgba(232,93,42,0.3)' }}
         >
-          <Check size={11} color="white" strokeWidth={3.5} />
+          <Check size={12} color="white" strokeWidth={3.5} />
         </div>
       )}
       <button
         onClick={onChangePhoto}
         className="absolute -bottom-0.5 -right-0.5 w-7 h-7 rounded-full flex items-center justify-center active:scale-95 transition-all"
-        style={{ background: '#FFFFFF', border: `2px solid ${THEME.bg}`, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+        style={{ background: '#FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
       >
         <Camera size={12} strokeWidth={2.2} color={THEME.txt} />
       </button>
     </div>
 
     <div className="flex items-center gap-2 mb-1">
-      <h2 className="text-[20px] font-semibold tracking-tight" style={{ color: THEME.txt }}>
+      <h2 className="text-[22px] font-extrabold tracking-[-0.02em]" style={{ color: THEME.txt }}>
         {user.firstName} {user.lastName}
       </h2>
       <span
-        className="text-[9.5px] font-bold text-[#E85D2A] border px-1.5 py-[1px] rounded-[5px] tracking-[0.06em] leading-none"
-        style={{ borderColor: 'rgba(232,93,42,0.35)' }}
+        className="text-[9px] font-extrabold text-[#E85D2A] px-1.5 py-[2px] rounded-full tracking-[0.08em] leading-none"
+        style={{ background: '#FBE7DD' }}
       >
         FREE
       </span>
     </div>
 
-    <p className="text-[12.5px] mb-2" style={{ color: THEME.muted }}>
-      @{user.username} · {user.addressShort} · Since {user.memberSinceDisplay}
-    </p>
-
-    <p className="text-[12.5px] text-center px-2 leading-snug max-w-[280px]" style={{ color: THEME.mutedDark }}>
-      {user.bio}
+    <p className="text-[12.5px]" style={{ color: THEME.muted }}>
+      {user.addressShort} · Member since {user.memberSinceDisplay}
     </p>
   </div>
 );
@@ -250,11 +238,11 @@ const StatsStrip = ({ user }) => (
 
 /* ────────── Pets strip ────────── */
 const PetsStrip = ({ pets, onTapPet, onAddPet }) => (
-  <div className="px-4 mb-2">
-    <div className="bg-white rounded-[16px] border border-black/[0.04] p-3">
-      <div className="flex items-center justify-between mb-2.5">
-        <span className="text-[12px] font-semibold" style={{ color: THEME.muted }}>My pets · {pets.length}</span>
-        <button onClick={onAddPet} className="text-[11.5px] font-semibold" style={{ color: THEME.coral }}>+ Add pet</button>
+  <div className="px-4 mb-1">
+    <div className="bg-white rounded-[18px] p-3.5" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10.5px] font-bold uppercase tracking-[0.12em]" style={{ color: '#A8A29C' }}>My pets · {pets.length}</span>
+        <button onClick={onAddPet} className="text-[11.5px] font-bold" style={{ color: THEME.coral }}>+ Add pet</button>
       </div>
       <div className="flex gap-3 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {pets.map((p) => (
@@ -676,7 +664,7 @@ const InviteSheet = ({ user, onClose }) => {
   };
   return (
     <>
-      <SheetHeader title="Invite friends" subtitle="Earn 1 month Pro for each friend who joins." onClose={onClose} />
+      <SheetHeader title="Invite friends" subtitle="Earn CHF 10 in fee credit for each friend you invite." onClose={onClose} />
       <div className="flex flex-col items-center py-2 mb-2">
         <div className="w-32 h-32 rounded-[16px] flex items-center justify-center mb-3" style={{ backgroundColor: THEME.tint }}>
           <QrCode size={82} color={THEME.coral} strokeWidth={1.5} />
@@ -769,78 +757,273 @@ const FieldSheet = ({ field, user, onSave, onClose }) => {
   }
 };
 
-/* ────────── Overview ────────── */
-const ProfileOverview = ({ user, onRowTap, onLogout, onDeleteAccount, onBack, onShare }) => (
-  <div className="absolute inset-0 flex flex-col" style={{ backgroundColor: THEME.bg }}>
-    <div className="flex-1 overflow-y-auto up-scroll pb-[32px]">
-      <ProfileHeader onBack={onBack} onShare={onShare} />
-      <ProfileHero user={user} onChangePhoto={() => onRowTap('photo')} />
-      <StatsStrip user={user} />
-      <PetsStrip pets={user.pets} onTapPet={(id) => onRowTap('pet:' + id)} onAddPet={() => onRowTap('addpet')} />
+/* ────────── Profile overview ────────── */
+const Ring = ({ pct, size = 44, stroke = 5 }) => {
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, off = c * (1 - pct / 100);
+  return (
+    <svg width={size} height={size} className="shrink-0 -rotate-90">
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#F1EAE2" strokeWidth={stroke} />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#E85D2A" strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} />
+    </svg>
+  );
+};
 
-      <div className="px-4">
-        <SectionLabel>Personal</SectionLabel>
-        <Card>
-          <Row icon={User}     title="Full name"     value={`${user.firstName} ${user.lastName}`} onClick={() => onRowTap('name')} />
-          <Row icon={AtSign}   title="Username"      value={'@' + user.username}                  onClick={() => onRowTap('username')} />
-          <Row icon={Cake}     title="Date of birth" value={user.dobDisplay} locked                onClick={() => onRowTap('dob')} />
-          <Row icon={FileText} title="Bio"           value={user.bio.slice(0, 18) + '…'}          onClick={() => onRowTap('bio')} last />
-        </Card>
+const NEXT_STEP_LABEL = { address: 'Verify your home address', photo: 'Add a profile photo', bio: 'Write a short bio', phone: 'Verify your phone', email: 'Verify your email', id: 'Verify your identity', emergency: 'Add an emergency contact' };
 
-        <SectionLabel>Contact</SectionLabel>
-        <Card>
-          <Row icon={MailCheck}  title="Email"             value={user.email} verified={user.emailVerified} onClick={() => onRowTap('email')} />
-          <Row icon={Phone}      title="Phone"             value={user.phone} verified={user.phoneVerified} onClick={() => onRowTap('phone')} />
-          <Row icon={MapPin}     title="Home address"      value={user.addressShort} onClick={() => onRowTap('address')} />
-          <Row icon={HeartPulse} title="Emergency contact" value={user.emergencyContact.name} onClick={() => onRowTap('emergency')} last />
-        </Card>
+const ProfileOverviewMix = ({ user, onRowTap, onInvite, onLogout, onDeleteAccount, onBack }) => {
+  const softShadow = '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)';
+  const stepsLeft = (user.profileChecklist || []).filter((i) => !i.done).length;
+  const nextStep = (user.profileChecklist || []).find((i) => !i.done);
+  const nextLabel = nextStep ? (NEXT_STEP_LABEL[nextStep.key] || nextStep.label) : '';
+  const LineRow = ({ title, value, green, danger, onClick, last }) => (
+    <div className="relative">
+      <button onClick={onClick} className="w-full flex items-center justify-between gap-3 px-4 py-[13px] active:bg-black/[0.02] transition-colors text-left">
+        <span className="text-[14.5px] font-semibold shrink-0" style={{ color: danger ? THEME.danger : THEME.txt }}>{title}</span>
+        {!danger && (
+          <span className="flex items-center gap-1.5 min-w-0">
+            {value && <span className="text-[13px] font-medium truncate" style={{ color: green ? '#2E8B57' : THEME.muted }}>{value}</span>}
+            <ChevronRight size={15} className="text-[#CFC7BD] shrink-0" strokeWidth={2.2} />
+          </span>
+        )}
+      </button>
+      {!last && <div className="absolute bottom-0 left-4 right-0 h-px" style={{ background: THEME.divider }} />}
+    </div>
+  );
+  return (
+    <div className="absolute inset-0 flex flex-col" style={{ backgroundColor: THEME.bg }}>
+      <div className="flex-1 overflow-y-auto up-scroll pb-[32px]">
+        <ProfileHeader onBack={onBack} />
 
-        <SectionLabel>Verification</SectionLabel>
-        <Card>
-          <Row icon={ScanLine}        title="Identity & ID"    value="Verified" onClick={() => onRowTap('id-verify')} />
-          <Row icon={CircleUserRound} title="Profile complete" value={user.profileCompletePct + '%'} onClick={() => onRowTap('complete')} last />
-        </Card>
+        {/* ── Wallet card — stacked, fintech, no icons (ready for a future vet card) ── */}
+        <div className="px-4 pt-1 pb-6">
+          <div className="relative">
+            {/* wallet stack — hints future cards (e.g. a vet card) */}
+            <div className="absolute left-5 right-5 rounded-[18px]" style={{ bottom: -13, height: 44, background: '#EFCBB8' }} />
+            <div className="absolute left-3 right-3 rounded-[20px]" style={{ bottom: -6, height: 44, background: '#F4D5C5' }} />
+            <button onClick={() => onRowTap('photo')} className="relative block w-full text-left rounded-[22px] overflow-hidden p-5 active:scale-[0.99] transition-transform" style={{ background: 'linear-gradient(150deg, #EF6A3C 0%, #E85D2A 52%, #D44D1B 100%)', boxShadow: '0 18px 36px rgba(212,77,27,0.34)' }}>
+              <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(120% 90% at 14% 0%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 46%)' }} />
+              <div className="relative flex items-center" style={{ gap: 4, fontFamily: '"Nunito", system-ui, sans-serif' }}>
+                <span style={{ fontSize: 16, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.4px', lineHeight: 1 }}>FYLOS</span>
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#FFFFFF', opacity: 0.95 }} />
+              </div>
+              <div className="relative flex items-center gap-3.5 mt-6">
+                <div className="w-[48px] h-[48px] rounded-full overflow-hidden shrink-0" style={{ boxShadow: '0 0 0 3px rgba(255,255,255,0.5)' }}>
+                  {user.avatar ? <img src={user.avatar} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-white font-bold text-[18px]" style={{ background: 'rgba(255,255,255,0.2)' }}>{user.initials}</div>}
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-[20px] font-extrabold text-white tracking-[-0.01em] truncate leading-tight">{user.firstName} {user.lastName}</h2>
+                  <div className="text-[11.5px] text-white/80 mt-0.5">Fylos member · Free</div>
+                </div>
+              </div>
+              <div className="relative flex items-end justify-between mt-6">
+                <div>
+                  <div className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/65">Member since</div>
+                  <div className="text-[13px] font-bold text-white mt-1">{user.memberSinceDisplay}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/65">Member ID</div>
+                  <div className="text-[13px] font-bold text-white mt-1 tabular-nums tracking-[0.12em]">#74621</div>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
 
-        <SectionLabel>Family</SectionLabel>
-        <Card>
-          <Row icon={Users} title="Co-owners"     value={user.coOwners.length + (user.coOwners.length === 1 ? ' person' : ' people')} onClick={() => onRowTap('co-owners')} />
-          <Row icon={Heart} title="Family"        value={user.familyMembers.length + ' members'}  onClick={() => onRowTap('family')} />
-          <Row icon={Gift}  title="Invite friends" onClick={() => onRowTap('invite')} last />
-        </Card>
+        {/* Card info — stats + verified together, attached under the card */}
+        <div className="px-4 pb-4">
+          <div className="flex items-center py-1">
+            {[
+              { n: user.bookingsCount, l: 'Bookings' },
+              { n: user.pets.length, l: user.pets.length === 1 ? 'Pet' : 'Pets' },
+              { n: user.streakDays, l: 'Day streak' },
+            ].map((s, i) => (
+              <div key={s.l} className="flex-1 flex flex-col items-center" style={{ borderLeft: i ? `1px solid ${THEME.divider}` : 'none' }}>
+                <span className="text-[22px] font-extrabold leading-none tracking-[-0.01em]" style={{ color: THEME.coral }}>{s.n}</span>
+                <span className="text-[10.5px] font-medium mt-1.5" style={{ color: THEME.muted }}>{s.l}</span>
+              </div>
+            ))}
+          </div>
+          <div className="h-px mx-1 my-3" style={{ background: THEME.divider }} />
+          <div className="w-full flex items-center">
+            {[
+              { l: 'ID', icon: ShieldCheck, k: 'id-verify' },
+              { l: 'Email', icon: MailCheck, k: 'email' },
+              { l: 'Phone', icon: Phone, k: 'phone' },
+            ].map(({ l, icon: Icon, k }) => (
+              <button key={l} onClick={() => onRowTap(k)} className="flex-1 inline-flex items-center justify-center gap-1.5 py-0.5 active:opacity-60 transition-opacity">
+                <Icon size={14} color="#2E8B57" strokeWidth={2.2} />
+                <span className="text-[12px] font-semibold" style={{ color: THEME.mutedDark }}>{l}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-        <SectionLabel>Danger zone</SectionLabel>
-        <Card>
-          <Row icon={LogOut} title="Log out"        danger onClick={onLogout} />
-          <Row icon={Trash2} title="Delete account" danger onClick={onDeleteAccount} last />
-        </Card>
+        {/* Smart finish-profile nudge (ring + concrete next step) */}
+        {stepsLeft > 0 && (
+          <div className="px-4 pb-3">
+            <button onClick={() => onRowTap(nextStep ? (nextStep.key === 'id' ? 'id-verify' : nextStep.key) : 'complete')} className="w-full flex items-center gap-3.5 p-3.5 rounded-[18px] text-left active:scale-[0.99] transition-all" style={{ background: '#FFFFFF', boxShadow: softShadow }}>
+              <div className="relative flex items-center justify-center shrink-0">
+                <Ring pct={user.profileCompletePct} />
+                <span className="absolute text-[11px] font-extrabold" style={{ color: THEME.txt }}>{user.profileCompletePct}%</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-bold" style={{ color: THEME.txt }}>Finish your profile</div>
+                <div className="text-[12px] mt-0.5 truncate" style={{ color: THEME.muted }}>Next: {nextLabel}</div>
+              </div>
+              <span className="text-[11.5px] font-bold px-3 py-1.5 rounded-full shrink-0" style={{ background: THEME.tint, color: THEME.coral }}>Continue</span>
+            </button>
+          </div>
+        )}
 
-        <div className="text-center mt-5 mb-2">
-          <p className="text-[10.5px]" style={{ color: '#B8B0A8' }}>User ID #74621 · Manage preferences in Settings</p>
+        {/* My pets — rich cards */}
+        <div className="pb-2">
+          <div className="px-5 flex items-center justify-between mb-2">
+            <span className="text-[10.5px] font-bold uppercase tracking-[0.12em]" style={{ color: '#A8A29C' }}>My pets</span>
+            <button onClick={() => onRowTap('addpet')} className="text-[12px] font-bold active:opacity-70" style={{ color: THEME.coral }}>+ Add pet</button>
+          </div>
+          <div className="flex gap-3 overflow-x-auto px-4 pb-1" style={{ scrollbarWidth: 'none' }}>
+            {user.pets.map((p) => (
+              <button key={p.id} onClick={() => onRowTap('pet:' + p.id)} className="shrink-0 w-[136px] rounded-[18px] overflow-hidden bg-white text-left active:scale-[0.98] transition-all" style={{ boxShadow: softShadow }}>
+                <div className="h-[92px] w-full overflow-hidden" style={{ background: THEME.tint }}>
+                  {p.photo ? <img src={p.photo} alt="" className="w-full h-full object-cover" /> : null}
+                </div>
+                <div className="px-3 py-2.5">
+                  <div className="text-[14px] font-bold truncate" style={{ color: THEME.txt }}>{p.name}</div>
+                  <div className="text-[11.5px] truncate" style={{ color: THEME.muted }}>{p.breed}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+
+        {/* Details */}
+        <div className="px-4 pb-3">
+          <SectionLabel>Details</SectionLabel>
+          <Card>
+            <LineRow title="Full name" value={`${user.firstName} ${user.lastName}`} onClick={() => onRowTap('name')} />
+            <LineRow title="Date of birth" value={user.dobDisplay} onClick={() => onRowTap('dob')} />
+            <LineRow title="Email" value={user.email} onClick={() => onRowTap('email')} />
+            <LineRow title="Phone" value={user.phone} onClick={() => onRowTap('phone')} />
+            <LineRow title="Home address" value={user.addressShort} onClick={() => onRowTap('address')} last />
+          </Card>
+        </div>
+
+        {/* Invite friends — single line, count only; opens the homepage Invite */}
+        <div className="px-4 pb-3">
+          <button onClick={onInvite} className="w-full rounded-[18px] bg-white px-4 py-[15px] flex items-center justify-between gap-3 active:scale-[0.99] transition-all" style={{ boxShadow: softShadow }}>
+            <span className="text-[14.5px] font-semibold" style={{ color: THEME.txt }}>Invite friends</span>
+            <span className="flex items-center gap-1.5 shrink-0">
+              <span className="text-[13px] font-medium" style={{ color: THEME.muted }}>3 invited</span>
+              <ChevronRight size={15} color="#CFC7BD" strokeWidth={2.2} />
+            </span>
+          </button>
+        </div>
+
+        {/* Account */}
+        <div className="px-4">
+          <SectionLabel>Account</SectionLabel>
+          <Card>
+            <LineRow title="Log out" danger onClick={onLogout} />
+            <LineRow title="Delete account" danger onClick={onDeleteAccount} last />
+          </Card>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
 
 /* ═══════════════════════════════════════════════════════
    MAIN
    ═══════════════════════════════════════════════════════ */
+/* ────────── Center pop-up (for confirmations) ────────── */
+const CenterDialog = ({ open, onClose, title, message, confirmLabel, onConfirm, danger }) => {
+  if (!open) return null;
+  return (
+    <div className="absolute inset-0 z-[200] flex items-center justify-center px-7">
+      <div className="absolute inset-0 animate-in fade-in duration-200" style={{ background: 'rgba(20,12,8,0.42)' }} onClick={onClose} />
+      <div className="relative w-full rounded-[24px] bg-white p-5 animate-in fade-in zoom-in-95 duration-200" style={{ boxShadow: '0 24px 60px rgba(0,0,0,0.28)' }}>
+        <h3 className="text-[17px] font-bold text-center" style={{ color: THEME.txt }}>{title}</h3>
+        <p className="text-[12.5px] mt-2 mb-5 text-center leading-relaxed" style={{ color: THEME.mutedDark }}>{message}</p>
+        <button onClick={onConfirm} className="w-full flex items-center justify-center font-semibold text-[14.5px] mb-2.5 active:scale-[0.98] transition-all rounded-[14px] py-3" style={{ background: danger ? THEME.danger : THEME.coral, color: '#FFFFFF' }}>{confirmLabel}</button>
+        <button onClick={onClose} className="w-full flex items-center justify-center font-semibold text-[14.5px] active:scale-[0.98] transition-all rounded-[14px] py-3" style={{ background: '#F4EFE9', color: THEME.txt }}>Cancel</button>
+      </div>
+    </div>
+  );
+};
+
+/* ────────── Delete account — richer confirm with a gate ────────── */
+const DeleteAccountDialog = ({ open, onClose, onConfirm }) => {
+  const [ack, setAck] = useState(false);
+  if (!open) return null;
+  const close = () => { setAck(false); onClose(); };
+  const confirm = () => { setAck(false); onConfirm(); };
+  const items = [
+    'Your pets and their records',
+    'All bookings and history',
+    'Saved cards and any fylos credit',
+    'Your reviews and messages',
+  ];
+  return (
+    <div className="absolute inset-0 z-[200] flex items-center justify-center px-6">
+      <div className="absolute inset-0 animate-in fade-in duration-200" style={{ background: 'rgba(20,12,8,0.42)' }} onClick={close} />
+      <div className="relative w-full rounded-[24px] bg-white p-5 animate-in fade-in zoom-in-95 duration-200" style={{ boxShadow: '0 24px 60px rgba(0,0,0,0.28)' }}>
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ background: THEME.dangerTint }}>
+            <Trash2 size={20} color={THEME.danger} strokeWidth={2} />
+          </div>
+          <h3 className="text-[17px] font-bold" style={{ color: THEME.txt }}>Delete account?</h3>
+          <p className="text-[12.5px] mt-1.5 text-center" style={{ color: THEME.mutedDark }}>This permanently removes:</p>
+        </div>
+        <div className="mt-3 mb-3 rounded-[14px] p-3" style={{ background: '#FAF7F3' }}>
+          {items.map((t) => (
+            <div key={t} className="flex items-center gap-2.5 py-1">
+              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: THEME.danger }} />
+              <span className="text-[12.5px]" style={{ color: THEME.mutedDark }}>{t}</span>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => setAck(!ack)} className="w-full flex items-center gap-2.5 mb-4 text-left active:opacity-70">
+          <span className="w-5 h-5 rounded-[6px] flex items-center justify-center shrink-0" style={{ background: ack ? THEME.danger : 'transparent', boxShadow: ack ? 'none' : 'inset 0 0 0 2px #D8D0C6' }}>{ack && <Check size={12} color="#FFFFFF" strokeWidth={3} />}</span>
+          <span className="text-[12.5px] font-medium" style={{ color: THEME.txt }}>I understand this can't be undone.</span>
+        </button>
+        <button disabled={!ack} onClick={confirm} className="w-full flex items-center justify-center font-semibold text-[14.5px] mb-2.5 rounded-[14px] py-3 transition-all active:scale-[0.98]" style={{ background: ack ? THEME.danger : '#EDE8E2', color: ack ? '#FFFFFF' : THEME.muted }}>Delete account</button>
+        <button onClick={close} className="w-full flex items-center justify-center font-semibold text-[14.5px] rounded-[14px] py-3" style={{ background: '#F4EFE9', color: THEME.txt }}>Cancel</button>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [user, setUser] = useState({ ...MOCK_USER });
   const [editingField, setEditingField] = useState(null);
   const [showLogout, setShowLogout] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
 
-  const handleSave = (patch) => setUser((p) => ({ ...p, ...patch }));
+  const handleSave = (patch) => setUser((p) => {
+    const next = { ...p, ...patch };
+    // Saving the home address marks that profile step complete.
+    if (patch.addressStreet || patch.addressShort) {
+      const checklist = (p.profileChecklist || []).map((i) => (i.key === 'address' ? { ...i, done: true } : i));
+      next.profileChecklist = checklist;
+      next.profileCompletePct = Math.round((checklist.filter((i) => i.done).length / checklist.length) * 100);
+    }
+    return next;
+  });
 
   const back = () => {
+    // Reopen Settings on the dashboard (this screen is opened from there).
+    try { window.sessionStorage.setItem('fylos.settingsOpen', '1'); } catch (e) {}
     if (window.history.length > 1) window.history.back();
     else window.location.href = '/';
   };
 
   const handleRowTap = (row) => {
     if (row.startsWith('pet:')) return;
-    if (row === 'addpet') return;
+    if (row === 'addpet') { window.location.href = '/add-pet'; return; }
     setEditingField(row);
   };
 
@@ -880,15 +1063,17 @@ export default function App() {
           </div>
 
           <div className="relative w-full h-full overflow-hidden">
-            <ProfileOverview
+            <ProfileOverviewMix
               user={user}
               onBack={back}
-              onShare={() => setShowShare(true)}
               onRowTap={handleRowTap}
+              onInvite={() => setInviteOpen(true)}
               onLogout={() => setShowLogout(true)}
-              onDeleteAccount={() => setEditingField('delete')}
+              onDeleteAccount={() => setShowDelete(true)}
             />
           </div>
+
+          {inviteOpen && <InviteFriends embedded onExit={() => setInviteOpen(false)} />}
 
           <BottomSheet open={!!editingField} onClose={() => setEditingField(null)}>
             <FieldSheet field={editingField} user={user} onSave={handleSave} onClose={() => setEditingField(null)} />
@@ -898,28 +1083,21 @@ export default function App() {
             <InviteSheet user={user} onClose={() => setShowShare(false)} />
           </BottomSheet>
 
-          <BottomSheet open={showLogout} onClose={() => setShowLogout(false)}>
-            <div className="flex flex-col items-center">
-              <h3 className="text-[17px] font-semibold mb-1.5" style={{ color: THEME.txt }}>Log out?</h3>
-              <p className="text-[12.5px] mb-5 text-center" style={{ color: THEME.mutedDark }}>
-                You will be logged out of your Fylos account on this device.
-              </p>
-              <button
-                onClick={() => setShowLogout(false)}
-                className="w-full flex items-center justify-center font-semibold text-[14.5px] text-white mb-2.5 active:scale-[0.97] transition-all rounded-[14px] py-3"
-                style={{ backgroundColor: THEME.danger, border: 'none', cursor: 'pointer' }}
-              >
-                Log out
-              </button>
-              <button
-                onClick={() => setShowLogout(false)}
-                className="w-full flex items-center justify-center font-semibold text-[14.5px] active:scale-[0.97] transition-all rounded-[14px] py-3"
-                style={{ backgroundColor: '#FFFFFF', color: THEME.txt, border: '1px solid rgba(0,0,0,0.06)', cursor: 'pointer' }}
-              >
-                Cancel
-              </button>
-            </div>
-          </BottomSheet>
+          <CenterDialog
+            open={showLogout}
+            onClose={() => setShowLogout(false)}
+            title="Log out?"
+            message="You'll be logged out of your fylos account on this device."
+            confirmLabel="Log out"
+            danger
+            onConfirm={() => setShowLogout(false)}
+          />
+
+          <DeleteAccountDialog
+            open={showDelete}
+            onClose={() => setShowDelete(false)}
+            onConfirm={() => setShowDelete(false)}
+          />
         </div>
       </div>
     </>

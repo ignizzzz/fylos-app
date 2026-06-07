@@ -73,6 +73,7 @@ import {
   ShieldCheck,
   Award,
   CreditCard,
+  Coins,
   Lock,
   XCircle,
   MoreVertical,
@@ -10451,7 +10452,7 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations }
   const TXT_MUTED   = '#9B9B9F';
 
   const SectionLabel = ({ children }) => (
-    <div className="text-[10.5px] font-medium text-[#8E8E93] tracking-[0.02em] mb-1.5 ml-3 mt-5">{children}</div>
+    <div className="text-[10.5px] font-bold uppercase text-[#A8A29C] tracking-[0.12em] mb-2 ml-1.5 mt-6">{children}</div>
   );
 
   const SetRow = ({ icon: Icon, title, subtitle, rightValue, onClick, last, danger, trailing }) => (
@@ -10461,19 +10462,19 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations }
         className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left"
       >
         <div
-          className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center"
+          className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center"
           style={{ backgroundColor: danger ? '#FEE8E7' : ICON_TINT }}
         >
-          <Icon size={15} color={danger ? '#EF4444' : ICON_COLOR} strokeWidth={2} />
+          <Icon size={16} color={danger ? '#EF4444' : ICON_COLOR} strokeWidth={2} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-[14px] font-semibold text-[#111111] truncate leading-tight" style={{ color: TXT_PRIMARY }}>{title}</div>
           {subtitle && <div className="text-[11.5px] truncate mt-[3px] leading-tight" style={{ color: TXT_MUTED }}>{subtitle}</div>}
         </div>
-        {rightValue && <span className="text-[12.5px] font-medium mr-1 shrink-0" style={{ color: TXT_MUTED }}>{rightValue}</span>}
+        {rightValue && <span className="text-[11.5px] font-semibold mr-1 shrink-0 px-2.5 py-[3px] rounded-full" style={{ background: '#F4EFE9', color: '#9A8F84' }}>{rightValue}</span>}
         {trailing ? trailing : <ChevronRight size={14} className="text-[#D4D4D8] shrink-0" strokeWidth={2.2} />}
       </button>
-      {!last && <div className="absolute bottom-0 left-[58px] right-0 h-px" style={{ background: DIVIDER }} />}
+      {!last && <div className="absolute bottom-0 left-[62px] right-0 h-px" style={{ background: DIVIDER }} />}
     </div>
   );
 
@@ -10489,110 +10490,78 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations }
 
   return (
     <div className="absolute inset-0 z-[70] bg-[#F7F5F2] animate-in slide-in-from-right-full duration-300 overflow-y-auto custom-scrollbar">
-      {/* Canonical transparent header */}
-      <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
+      {/* Canonical gradient-fade header — content scrolls behind it */}
+      <div className="pt-14 pb-5 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 56%, rgba(247,245,242,0) 100%)' }}>
         <button
           onClick={onClose}
-          className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+          className="absolute left-5 top-[52px] w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
+          style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}
         >
           <X size={16} strokeWidth={2.2} color="#111" />
         </button>
-        <h1 className="text-[17px] font-semibold text-[#111111]">Settings</h1>
+        <h1 className="text-[17px] font-bold text-[#111111]">Settings</h1>
       </div>
 
       <div className="px-4 pb-24">
         {/* Profile strip with verified check + outlined tier pill */}
         <button
           onClick={() => nav('/user-profile')}
-          className="w-full flex items-center gap-3 p-3 mt-2 mb-5 rounded-[18px] bg-white border border-black/[0.04] active:scale-[0.99] transition-all text-left"
+          className="w-full flex items-center gap-3 px-3.5 py-3 mt-1 mb-1 rounded-[16px] bg-white active:scale-[0.99] transition-all text-left"
+          style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 4px 12px rgba(60,30,15,0.045)' }}
         >
           <div className="relative shrink-0">
-            <Avatar src={MOCK_USER.avatar} size={42} />
-            <div className="absolute -bottom-[1px] -right-[1px] w-[14px] h-[14px] rounded-full bg-[#00C060] border-[2px] border-white flex items-center justify-center">
-              <Check size={7} color="white" strokeWidth={4} />
+            <Avatar src={MOCK_USER.avatar} size={44} />
+            <div className="absolute -bottom-0.5 -right-0.5 w-[16px] h-[16px] rounded-full bg-white flex items-center justify-center">
+              <div className="w-[12px] h-[12px] rounded-full flex items-center justify-center" style={{ background: '#E85D2A' }}>
+                <Check size={8} color="white" strokeWidth={3.6} />
+              </div>
             </div>
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="text-[14.5px] font-semibold text-[#111111] truncate">Alex Mueller</span>
-              <span className="text-[9.5px] font-bold text-[#E85D2A] border border-[#E85D2A]/35 px-1.5 py-[1px] rounded-[5px] tracking-[0.06em] shrink-0 leading-none">FREE</span>
+              <span className="text-[15px] font-bold text-[#111111] truncate">Alex Mueller</span>
+              <span className="text-[8.5px] font-extrabold text-[#E85D2A] px-1.5 py-[2px] rounded-full tracking-[0.06em] shrink-0 leading-none" style={{ background: '#FBE7DD' }}>FREE</span>
             </div>
-            <p className="text-[12px] mt-[3px] truncate" style={{ color: TXT_MUTED }}>alex@example.com</p>
+            <p className="text-[12px] mt-[2px] truncate" style={{ color: '#9B9B9F' }}>alex@example.com</p>
           </div>
-          <ChevronRight size={14} className="text-[#D4D4D8] shrink-0" strokeWidth={2.2} />
+          <ChevronRight size={15} className="text-[#CFC7BD] shrink-0" strokeWidth={2.2} />
         </button>
 
-        {/* Horizontal action shortcuts */}
-        <div className="flex gap-1 overflow-x-auto -mx-4 px-4 mb-6 pb-1" style={{ scrollbarWidth: 'none' }}>
-          {[
-            { icon: Award,  label: 'Upgrade', onClickItem: () => nav('/subscription') },
-            { icon: Gift,   label: 'Invite',  onClickItem: () => {} },
-            { icon: QrCode, label: 'QR',      onClickItem: () => {} },
-            { icon: Share2, label: 'Refer',   onClickItem: () => {} },
-          ].map(({ icon: Icon, label, onClickItem }, i) => (
-            <button
-              key={i}
-              onClick={onClickItem}
-              className="flex-1 flex flex-col items-center gap-[6px] py-1 active:scale-95 transition-all"
-            >
-              <div className="w-9 h-9 rounded-full bg-white border border-black/[0.05] flex items-center justify-center">
-                <Icon size={15} color={ICON_COLOR} strokeWidth={2} />
-              </div>
-              <span className="text-[10.5px] font-medium text-[#111111] text-center leading-tight">{label}</span>
-            </button>
-          ))}
-        </div>
-
         <SectionLabel>Account</SectionLabel>
-        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
-          <SetRow icon={Bell}       title="Notifications"    subtitle="Push, email, in-app"          onClick={() => nav('/notification-prefs')} />
-          <SetRow icon={CreditCard} title="Payment & Wallet" subtitle="Cards, balance, transactions" onClick={() => nav('/wallet')} />
-          <SetRow icon={Shield}     title="Subscription"     rightValue="Free"                       onClick={() => nav('/subscription')} last />
-        </div>
-
-        <SectionLabel>Security</SectionLabel>
-        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
-          <SetRow icon={Lock}        title="Password"                 rightValue="2 months ago" onClick={() => nav('/security/password')} />
-          <SetRow icon={KeyRound}    title="Two-factor authentication" rightValue={twoFactor ? 'On' : 'Off'} onClick={() => nav('/security/2fa')} />
-          <SetRow icon={Fingerprint} title="Biometric unlock"          rightValue={biometric ? 'On' : 'Off'} onClick={() => nav('/security/biometric')} />
-          <SetRow icon={Smartphone}  title="Active sessions"           rightValue="2 devices" onClick={() => nav('/security/sessions')} />
-          <SetRow icon={Info}        title="Connected accounts"        rightValue="Apple"     onClick={() => nav('/security/connected-accounts')} last />
-        </div>
-
-        <SectionLabel>Privacy</SectionLabel>
-        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
-          <SetRow icon={Eye}           title="Profile visibility" rightValue="Friends"        onClick={() => nav('/privacy/visibility')} />
-          <SetRow icon={MessageCircle} title="Discoverable by"    rightValue="Phone & email"  onClick={() => nav('/privacy/discoverable')} />
-          <SetRow icon={MapPin}        title="Location sharing"   rightValue="Approximate"    onClick={() => nav('/privacy/location')} />
-          <SetRow icon={ActivityIcon}  title="Activity sharing"   rightValue="Friends"        onClick={() => nav('/privacy/activity')} last />
+        <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+          <SetRow icon={Bell}       title="Notifications"   subtitle="Push, email, in-app" onClick={() => nav('/notification-prefs')} />
+          <SetRow icon={CreditCard} title="Payment methods" subtitle="Cards & billing"     onClick={() => nav('/wallet')} />
+          <SetRow icon={Shield}     title="Subscription"    rightValue="Free"              onClick={() => nav('/subscription')} last />
         </div>
 
         <SectionLabel>Pet care</SectionLabel>
-        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
-          <SetRow icon={Globe}         title="Language"         rightValue="English"                     onClick={() => nav('/language')} />
-          <SetRow icon={MapPin}         title="Region"          rightValue="Switzerland"                 onClick={() => nav('/region')} />
-          <SetRow icon={CreditCard}    title="Currency"         rightValue="CHF"                         onClick={() => nav('/currency')} />
-          <SetRow icon={HeartPulse}    title="Health reminders" subtitle="Vaccinations, medications"     onClick={() => nav('/health-reminders')} />
-          <SetRow icon={AlertTriangle} title="Emergency SOS"    subtitle="Vet hotline, first aid" danger onClick={() => nav('/emergency')} last />
+        <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+          <SetRow icon={HeartPulse}    title="Health reminders"        subtitle="Vaccinations, medications" onClick={() => nav('/health-reminders')} />
+          <SetRow icon={Stethoscope}   title="Primary vet"             rightValue="Dr. Schmidt"             onClick={() => nav('/vet/primary')} />
+          <SetRow icon={AlertTriangle} title="Vet hotline & first aid" subtitle="Emergency help" danger     onClick={() => nav('/emergency')} last />
         </div>
 
-        <SectionLabel>Connected services</SectionLabel>
-        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
-          <SetRow icon={HeartPulse}    title="Apple Health / Google Fit" rightValue="Not connected" onClick={() => nav('/integrations/health-sync')} />
-          <SetRow icon={CalendarClock} title="Calendar sync"             rightValue="Connected"     onClick={() => nav('/integrations/calendar')} />
-          <SetRow icon={Stethoscope}   title="Primary vet clinic"        rightValue="Dr. Schmidt"   onClick={() => nav('/vet/primary')} last />
+        <SectionLabel>Preferences</SectionLabel>
+        <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+          <SetRow icon={Globe} title="Language" rightValue="English" onClick={() => nav('/language')} />
+          <SetRow icon={Coins} title="Currency" rightValue="CHF"     onClick={() => nav('/currency')} last />
         </div>
 
-        <SectionLabel>More</SectionLabel>
-        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
-          <SetRow icon={HelpCircle} title="Help center"    subtitle="FAQ, support, report"         onClick={() => nav('/help')} />
-          <SetRow icon={Rocket}     title="What's coming"  subtitle="Preview upcoming features"    onClick={() => setSubView('upcoming')} />
-          <SetRow icon={Zap}        title="Become a Pro"   subtitle="Register as walker or sitter" onClick={() => nav('/pro-registration')} last />
+        <SectionLabel>Security</SectionLabel>
+        <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+          <SetRow icon={Lock}        title="Password"                  rightValue="2 months ago"             onClick={() => nav('/security/password')} />
+          <SetRow icon={KeyRound}    title="Two-factor authentication" rightValue={twoFactor ? 'On' : 'Off'} onClick={() => nav('/security/2fa')} />
+          <SetRow icon={Fingerprint} title="Biometric unlock"          rightValue={biometric ? 'On' : 'Off'} onClick={() => nav('/security/biometric')} last />
         </div>
 
-        <SectionLabel>Data &amp; legal</SectionLabel>
-        <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
-          <SetRow icon={Download} title="Export my data"   onClick={() => nav('/data/export')} />
+        <SectionLabel>fylos</SectionLabel>
+        <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+          <SetRow icon={Zap}        title="Become a Pro" subtitle="Walk or sit for others" onClick={() => nav('/pro-registration')} />
+          <SetRow icon={HelpCircle} title="Help center"  subtitle="FAQ & support"          onClick={() => nav('/help')} last />
+        </div>
+
+        <SectionLabel>About</SectionLabel>
+        <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
           <SetRow icon={FileText} title="Terms of service" onClick={() => nav('/legal/terms')} />
           <SetRow icon={Shield}   title="Privacy policy"   onClick={() => nav('/legal/privacy')} />
           <SetRow icon={Info}     title="Licenses"         onClick={() => nav('/legal/licenses')} last />
