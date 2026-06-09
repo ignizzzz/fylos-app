@@ -102,6 +102,14 @@ const DOWS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const DATES14 = [...Array(14)].map((_, i) => { const n = 12 + i; return { n, dow: DOWS[(n) % 7], label: i === 0 ? 'Today' : i === 1 ? 'Tmrw' : DOWS[n % 7].charAt(0) + DOWS[n % 7].slice(1).toLowerCase() }; });
 // Per-day open slots (indexes into TIMES) — varies day to day so it feels real
 const slotsFor = (i) => [[1, 2, 3], [0, 1, 3], [0, 2], [0, 1, 2, 3]][i % 4];
+// Bookable months (mock spring 2026). first = weekday index of the 1st (0=SUN)
+const MONTHS_META = [
+  { name: 'February 2026', short: 'Feb', days: 28, first: 0 },
+  { name: 'March 2026', short: 'Mar', days: 31, first: 0 },
+  { name: 'April 2026', short: 'Apr', days: 30, first: 3 },
+];
+const dowFor = (m, n) => DOWS[(MONTHS_META[m].first + n - 1) % 7];
+const dateLabel = (m, n) => `${dowFor(m, n).charAt(0) + dowFor(m, n).slice(1).toLowerCase()} ${n} ${MONTHS_META[m].short}`;
 const FUTURE_SERVICES = [
   { label: 'Training', icon: GraduationCap },
   { label: 'Boarding', icon: Home },
@@ -169,16 +177,50 @@ const catLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label || 'Provider
 
 const SubHeader = ({ title, sub, onBack, right, showTitle = true }) => (
   <div className="absolute top-0 left-0 right-0 z-40 pointer-events-none" style={{ paddingTop: 54, background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 64%, rgba(247,245,242,0) 100%)', paddingBottom: 14 }}>
-    <div className="flex items-center px-5 pointer-events-auto" style={{ height: 44 }}>
+    <div className="relative flex items-center justify-between px-5 pointer-events-auto" style={{ height: 44 }}>
       <button onClick={onBack} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 shrink-0" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><ChevronLeft size={18} color={INK} strokeWidth={2.2} /></button>
-      <div className="flex-1 text-center transition-opacity duration-200" style={{ opacity: showTitle ? 1 : 0 }}>
-        <div className="text-[16px] font-bold tracking-[-0.01em] leading-tight" style={{ color: INK }}>{title}</div>
-        {sub && <div className="text-[10.5px] font-medium" style={{ color: TERT }}>{sub}</div>}
+      {/* dead-centre title, independent of side-button widths */}
+      <div className="absolute left-1/2 -translate-x-1/2 text-center transition-opacity duration-200 pointer-events-none" style={{ opacity: showTitle ? 1 : 0, maxWidth: '52%' }}>
+        <div className="text-[16px] font-bold tracking-[-0.01em] leading-tight truncate" style={{ color: INK }}>{title}</div>
+        {sub && <div className="text-[10.5px] font-medium truncate" style={{ color: TERT }}>{sub}</div>}
       </div>
       {right || <span className="w-9 shrink-0" />}
     </div>
   </div>
 );
+
+/* Centred full-month picker with month switching */
+const MonthPopup = ({ month, setMonth, selected, onPick, onClose, minDay = 12 }) => {
+  const meta = MONTHS_META[month];
+  return (
+    <div className="absolute inset-0 z-[190] flex items-center justify-center px-7" style={{ background: 'rgba(20,12,8,0.45)', animation: 'svFade 0.2s ease both' }} onClick={onClose}>
+      <div className="w-full rounded-[24px] bg-white p-5" style={{ animation: 'svPop 0.22s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => setMonth(Math.max(0, month - 1))} disabled={month === 0} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90" style={{ background: PEACH, opacity: month === 0 ? 0.35 : 1 }}><ChevronLeft size={15} color={INK} strokeWidth={2.4} /></button>
+          <h2 className="text-[16px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>{meta.name}</h2>
+          <button onClick={() => setMonth(Math.min(MONTHS_META.length - 1, month + 1))} disabled={month === MONTHS_META.length - 1} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90" style={{ background: PEACH, opacity: month === MONTHS_META.length - 1 ? 0.35 : 1 }}><ChevronRight size={15} color={INK} strokeWidth={2.4} /></button>
+        </div>
+        <div className="grid grid-cols-7 gap-y-1 mb-1">
+          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i} className="text-center text-[10px] font-bold" style={{ color: '#C4BBB0' }}>{d}</div>)}
+        </div>
+        <div className="grid grid-cols-7 gap-y-1">
+          {[...Array(meta.first)].map((_, i) => <span key={'x' + i} />)}
+          {[...Array(meta.days)].map((_, i) => {
+            const n = i + 1;
+            const past = month === 0 && n < minDay;
+            const on = selected && selected.m === month && selected.n === n;
+            return (
+              <button key={n} disabled={past} onClick={() => onPick({ m: month, n })} className="flex items-center justify-center rounded-[10px] mx-auto transition-all active:scale-90" style={{ width: 36, height: 36, background: on ? CORAL : 'transparent' }}>
+                <span className="text-[13px] font-bold leading-none" style={{ color: on ? '#fff' : past ? '#DDD4C9' : MUTED }}>{n}</span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="text-[10.5px] text-center mt-3" style={{ color: TERT }}>Pick any date — bookings open up to 3 months ahead</p>
+      </div>
+    </div>
+  );
+};
 
 const Toast = ({ embedded, msg }) => (
   <div className="absolute left-1/2 z-[200] px-4 py-2.5 rounded-full" style={{ bottom: embedded ? 108 : 38, transform: 'translateX(-50%)', background: INK, animation: 'svToast 0.2s ease both' }}><span className="text-[13px] font-semibold text-white whitespace-nowrap">{msg}</span></div>
@@ -191,6 +233,10 @@ const Wrap = ({ embedded, children }) => {
     @keyframes svFade { from { opacity: 0; } to { opacity: 1; } }
     @keyframes svSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
     @keyframes svPop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+    @keyframes svRing { 0% { transform: scale(0.7); opacity: 0.6; } 100% { transform: scale(1.7); opacity: 0; } }
+    @keyframes svBadge { 0% { opacity: 0; transform: scale(0); } 70% { transform: scale(1.25); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes svPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+    @keyframes svBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   `}</style>;
   if (embedded) return (<>{styleBlock}<div className="absolute inset-0" style={{ background: CREAM }}>{children}</div></>);
   return (
@@ -234,15 +280,23 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [verifiedOpen, setVerifiedOpen] = useState(false);
   const [profScrolled, setProfScrolled] = useState(false);
   const [revFilter, setRevFilter] = useState('All');
+  const [calMonth, setCalMonth] = useState(0);            // bookings inline month
+  const [pickCtx, setPickCtx] = useState(null);            // 'avail' | 'resched' — month popup open for…
+  const [pickMonth, setPickMonth] = useState(0);
+  const [pickedAvail, setPickedAvail] = useState(null);    // {m,n} chosen via popup (profile)
+  const [pickedResched, setPickedResched] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);  // request-sent overlay
+  const [petHint, setPetHint] = useState(false);
   const [toast, setToast] = useState('');
   const act = (m) => { setToast(m); setTimeout(() => setToast(''), 1700); };
   const cycleReminder = (id) => setRemIdx((r) => ({ ...r, [id]: ((r[id] ?? 0) + 1) % REMINDER_OPTS.length }));
   const submitRating = (id, stars) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, rated: stars } : b)); setRateFor(null); act('Thanks for your feedback'); };
   const confirmCancel = (id) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, when: 'past', group: 'February', status: 'Cancelled', notes: 'Cancelled by you.' } : b)); setCancelFor(null); setExpanded(null); act('Booking cancelled'); };
   const confirmResched = (b) => {
-    const d = DATES14[reschedDay];
-    setBookings((prev) => prev.map((x) => x.id === b.id ? { ...x, dow: d.dow, dom: String(d.n), group: d.n <= 22 ? 'This week' : 'Next week', time: TIMES[reschedTime], status: 'Pending', notes: `Waiting for ${b.provider.split(' ')[0]} to confirm the new time.` } : x));
-    setReschedFor(null); act('Reschedule requested');
+    const d = pickedResched || { m: 0, n: DATES14[reschedDay].n };
+    const group = d.m === 0 ? (d.n <= 22 ? 'This week' : 'Next week') : MONTHS_META[d.m].name.split(' ')[0];
+    setBookings((prev) => prev.map((x) => x.id === b.id ? { ...x, dow: dowFor(d.m, d.n), dom: String(d.n), bm: d.m, group, time: TIMES[reschedTime], status: 'Pending', notes: `Waiting for ${b.provider.split(' ')[0]} to confirm the new time.` } : x));
+    setReschedFor(null); setPickedResched(null); act('Reschedule requested');
   };
   useEffect(() => { if (focusedBookingId && onClearFocus) onClearFocus(); // eslint-disable-next-line
   }, []);
@@ -264,12 +318,13 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const browseRest = [...browseAll.filter((p) => !p.recommended)].sort((a, b) =>
     sort === 'Top rated' ? b.rating - a.rating : sort === 'Price: low to high' ? a.price - b.price : sort === 'Nearest' ? a.dist - b.dist : b.rating * b.reviews - a.rating * a.reviews);
 
-  const requestBooking = (p, svcSel, dayIdx, timeSel) => {
-    const d = DATES14[dayIdx];
+  const requestBooking = (p, svcSel, dateObj, timeSel) => {
+    const { m, n } = dateObj;
     const id = 'b' + Math.floor(Math.random() * 100000);
-    setBookings((prev) => [{ id, when: 'upcoming', group: d.n <= 22 ? 'This week' : 'Next week', status: 'Pending', service: svcSel.n, provider: p.name, photo: p.photo, dow: d.dow, dom: String(d.n), time: timeSel, pet: petName, location: 'Pickup at home', notes: `Waiting for ${p.name.split(' ')[0]} to confirm.` }, ...prev]);
-    setView({ kind: 'bookings' }); setBkFilter('upcoming'); setExpanded(id);
-    act('Request sent — waiting for confirmation');
+    const group = m === 0 ? (n <= 22 ? 'This week' : 'Next week') : MONTHS_META[m].name.split(' ')[0];
+    setBookings((prev) => [{ id, when: 'upcoming', group, bm: m, status: 'Pending', service: svcSel.n, provider: p.name, photo: p.photo, dow: dowFor(m, n), dom: String(n), time: timeSel, pet: petName, location: 'Pickup at home', notes: `Waiting for ${p.name.split(' ')[0]} to confirm.` }, ...prev]);
+    setView({ kind: 'bookings' }); setBkFilter('upcoming'); setExpanded(id); setPickedAvail(null);
+    setConfirmation({ photo: p.photo, provider: p.name, service: svcSel.n, when: `${dateLabel(m, n)} · ${timeSel}` });
   };
 
   /* ───────── PROVIDER PROFILE (full screen) ───────── */
@@ -322,11 +377,19 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             </div>
           )}
 
-          <SectionLabel>Availability</SectionLabel>
-          <DateScroller selected={day} onSelect={(i) => { setDay(i); const s = slotsFor(i); if (!s.includes(time)) setTime(s[0] ?? 0); }} />
+          <SectionLabel action={`${MONTHS_META[pickedAvail ? pickedAvail.m : 0].short} · Full calendar`} onAction={() => { setPickMonth(pickedAvail ? pickedAvail.m : 0); setPickCtx('avail'); }}>Availability</SectionLabel>
+          <DateScroller selected={pickedAvail ? -1 : day} onSelect={(i) => { setPickedAvail(null); setDay(i); const s = slotsFor(DATES14[i].n); if (!s.includes(time)) setTime(s[0] ?? 0); }} />
+          {pickedAvail && (
+            <button onClick={() => { setPickMonth(pickedAvail.m); setPickCtx('avail'); }} className="mt-2 inline-flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full active:scale-95 transition-transform" style={{ background: CORAL }}>
+              <CalendarDays size={12} color="#fff" strokeWidth={2.2} />
+              <span className="text-[12px] font-bold text-white">{dateLabel(pickedAvail.m, pickedAvail.n)}</span>
+              <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>· change</span>
+            </button>
+          )}
+          {(() => { const selN = pickedAvail ? pickedAvail.n : DATES14[day].n; return (
           <div className="rounded-[16px] bg-white p-3 mt-2" style={{ boxShadow: SHADOW }}>
             <div className="grid grid-cols-4 gap-2">{TIMES.map((t, i) => {
-              const openSlot = slotsFor(day).includes(i);
+              const openSlot = slotsFor(selN).includes(i);
               const on = time === i && openSlot;
               return (
                 <button key={t} onClick={() => openSlot && setTime(i)} disabled={!openSlot} className="h-[36px] rounded-[10px] text-[12px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? CORAL : openSlot ? PEACH : 'transparent', color: on ? '#fff' : openSlot ? MUTED : '#D3CABF', boxShadow: openSlot ? 'none' : 'inset 0 0 0 1px #EFE9E0', textDecoration: openSlot ? 'none' : 'line-through' }}>{t}</button>
@@ -334,6 +397,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             })}</div>
             <div className="text-[10px] font-medium mt-2.5 text-center" style={{ color: '#C4BBB0' }}>All times local{p.cancelPolicy ? ` · free cancellation up to ${p.cancelPolicy} before` : ''}</div>
           </div>
+          ); })()}
 
           <SectionLabel action={`See all (${p.reviews})`} onAction={() => setView({ kind: 'reviews', id: p.id })}>Latest review</SectionLabel>
           <div className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
@@ -344,12 +408,12 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
 
         <SubHeader title={p.name} sub={`${catLabel(p.cat)} · ${p.dist} km`} showTitle={profScrolled} onBack={() => setView(view.from === 'browse' ? { kind: 'browse', cat: p.cat } : view.from === 'saved' ? { kind: 'saved' } : view.from === 'bookings' ? { kind: 'bookings' } : { kind: 'home' })}
           right={<span className="flex items-center gap-2 shrink-0">
-            <button onClick={() => act('Profile link copied')} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-90" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Share2 size={15} color={MUTED} strokeWidth={2} /></button>
+            <button onClick={async () => { const data = { title: `${p.name} on fylos`, text: `Check out ${p.name} — ${p.rating}★ ${p.cat === 'sitting' ? 'pet sitter' : 'dog walker'} near you`, url: `https://fylos.app/p/${p.id}` }; try { if (navigator.share) { await navigator.share(data); } else { await navigator.clipboard.writeText(data.url); act('Profile link copied'); } } catch (e) { try { await navigator.clipboard.writeText(data.url); act('Profile link copied'); } catch (e2) { act('Profile link copied'); } } }} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-90" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Share2 size={15} color={MUTED} strokeWidth={2} /></button>
             <button onClick={() => toggleSave(p.id)} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style={{ background: isSaved ? TINT : '#fff', boxShadow: isSaved ? 'none' : '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Heart size={16} color={isSaved ? CORAL : MUTED} fill={isSaved ? CORAL : 'none'} strokeWidth={2} /></button>
           </span>} />
 
         <div className="absolute left-0 right-0 z-40 px-5 pointer-events-none" style={{ bottom: 0, paddingBottom: embedded ? 100 : 28, paddingTop: 26, background: `linear-gradient(to top, ${CREAM} 62%, rgba(247,245,242,0))` }}>
-          <button onClick={() => requestBooking(p, sel, day, TIMES[time])} className="w-full py-4 rounded-[16px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 pointer-events-auto" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
+          <button onClick={() => requestBooking(p, sel, pickedAvail || { m: 0, n: DATES14[day].n }, TIMES[time])} className="w-full py-4 rounded-[16px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 pointer-events-auto" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
             <span className="text-[15px] font-bold text-white">Request booking</span>
             <span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>· CHF {sel.p}</span>
           </button>
@@ -376,6 +440,11 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               </div>
             </div>
           </>
+        )}
+
+        {pickCtx === 'avail' && (
+          <MonthPopup month={pickMonth} setMonth={setPickMonth} selected={pickedAvail} onClose={() => setPickCtx(null)}
+            onPick={(d) => { setPickedAvail(d); const s = slotsFor(d.n); if (!s.includes(time)) setTime(s[0] ?? 0); setPickCtx(null); }} />
         )}
         {toast && <Toast embedded={embedded} msg={toast} />}
       </Wrap>
@@ -537,7 +606,11 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               <div className="pl-1 pr-1 py-3 flex items-center">
                 {!monthOpen && <button onClick={() => setCalStart(Math.max(0, calStart - 1))} disabled={calStart === 0} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart === 0 ? 0.3 : 1 }}><ChevronLeft size={15} color={MUTED} strokeWidth={2.4} /></button>}
                 {monthOpen ? (
-                  <span className="flex-1 text-[13px] font-extrabold pl-3" style={{ color: INK }}>February 2026</span>
+                  <span className="flex-1 flex items-center gap-2 pl-2">
+                    <button onClick={() => setCalMonth(Math.max(0, calMonth - 1))} disabled={calMonth === 0} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90" style={{ background: PEACH, opacity: calMonth === 0 ? 0.35 : 1 }}><ChevronLeft size={13} color={INK} strokeWidth={2.4} /></button>
+                    <span className="text-[13px] font-extrabold flex-1 text-center" style={{ color: INK }}>{MONTHS_META[calMonth].name}</span>
+                    <button onClick={() => setCalMonth(Math.min(MONTHS_META.length - 1, calMonth + 1))} disabled={calMonth === MONTHS_META.length - 1} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-90" style={{ background: PEACH, opacity: calMonth === MONTHS_META.length - 1 ? 0.35 : 1 }}><ChevronRight size={13} color={INK} strokeWidth={2.4} /></button>
+                  </span>
                 ) : (
                   <div className="flex-1 flex justify-between">
                     {CAL_DAYS.slice(calStart, calStart + 7).map((day, i) => {
@@ -558,13 +631,13 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               {monthOpen && (
                 <div className="px-3 pb-3" style={{ borderTop: '1px solid ' + LINE }}>
                   <div className="grid grid-cols-7 gap-y-1 mt-3 mb-1">
-                    {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <div key={i} className="text-center text-[10px] font-bold" style={{ color: '#C4BBB0' }}>{d}</div>)}
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => <div key={i} className="text-center text-[10px] font-bold" style={{ color: '#C4BBB0' }}>{d}</div>)}
                   </div>
                   <div className="grid grid-cols-7 gap-y-1">
-                    {[...Array(6)].map((_, i) => <span key={'x' + i} />)}
-                    {[...Array(28)].map((_, i) => {
+                    {[...Array(MONTHS_META[calMonth].first)].map((_, i) => <span key={'x' + i} />)}
+                    {[...Array(MONTHS_META[calMonth].days)].map((_, i) => {
                       const n = i + 1;
-                      const bk = bookings.find((b) => b.when === 'upcoming' && b.dom === String(n));
+                      const bk = bookings.find((b) => b.when === 'upcoming' && b.dom === String(n) && (b.bm ?? 0) === calMonth);
                       return (
                         <button key={n} onClick={() => { if (bk) { setExpanded(bk.id); setMonthOpen(false); } }} className="flex flex-col items-center justify-center rounded-[10px] mx-auto transition-all active:scale-90" style={{ width: 34, height: 36, background: bk ? TINT : 'transparent' }}>
                           <span className="text-[12.5px] font-bold leading-none" style={{ color: bk ? CORAL : MUTED }}>{n}</span>
@@ -732,14 +805,26 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                 <h2 className="flex-1 text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Reschedule</h2>
                 <button onClick={() => setReschedFor(null)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
               </div>
-              <p className="px-5 text-[12.5px]" style={{ color: TERT }}>{reschedFor.service} · {reschedFor.provider}</p>
+              <div className="px-5 flex items-center justify-between">
+                <p className="text-[12.5px]" style={{ color: TERT }}>{reschedFor.service} · {reschedFor.provider}</p>
+                <button onClick={() => { setPickMonth(pickedResched ? pickedResched.m : 0); setPickCtx('resched'); }} className="inline-flex items-center gap-1 text-[12px] font-bold active:opacity-70" style={{ color: CORAL }}><CalendarDays size={12} strokeWidth={2.2} /> Full calendar</button>
+              </div>
               <div className="px-5 mt-4">
-                <DateScroller selected={reschedDay} onSelect={(i) => { setReschedDay(i); const s = slotsFor(i); if (!s.includes(reschedTime)) setReschedTime(s[0] ?? 0); }} />
+                <DateScroller selected={pickedResched ? -1 : reschedDay} onSelect={(i) => { setPickedResched(null); setReschedDay(i); const s = slotsFor(DATES14[i].n); if (!s.includes(reschedTime)) setReschedTime(s[0] ?? 0); }} />
+                {pickedResched && (
+                  <button onClick={() => { setPickMonth(pickedResched.m); setPickCtx('resched'); }} className="mt-2 inline-flex items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-full active:scale-95 transition-transform" style={{ background: CORAL }}>
+                    <CalendarDays size={12} color="#fff" strokeWidth={2.2} />
+                    <span className="text-[12px] font-bold text-white">{dateLabel(pickedResched.m, pickedResched.n)}</span>
+                    <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>· change</span>
+                  </button>
+                )}
+                {(() => { const selN = pickedResched ? pickedResched.n : DATES14[reschedDay].n; return (
                 <div className="grid grid-cols-4 gap-2 mt-2">{TIMES.map((t, i) => {
-                  const openSlot = slotsFor(reschedDay).includes(i);
+                  const openSlot = slotsFor(selN).includes(i);
                   const on = reschedTime === i && openSlot;
                   return <button key={t} onClick={() => openSlot && setReschedTime(i)} disabled={!openSlot} className="h-[36px] rounded-[10px] text-[12px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? CORAL : openSlot ? '#fff' : 'transparent', color: on ? '#fff' : openSlot ? MUTED : '#D3CABF', boxShadow: on ? '0 4px 12px rgba(232,93,42,0.25)' : openSlot ? SHADOW : 'inset 0 0 0 1px #EAE2D8', textDecoration: openSlot ? 'none' : 'line-through' }}>{t}</button>;
                 })}</div>
+                ); })()}
                 <p className="text-[11px] mt-3" style={{ color: TERT }}>{reschedFor.provider.split(' ')[0]} will need to confirm the new time.</p>
               </div>
               <div className="px-5 pt-4" style={{ paddingBottom: embedded ? 104 : 30 }}>
@@ -747,6 +832,43 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               </div>
             </div>
           </>
+        )}
+
+        {pickCtx === 'resched' && (
+          <MonthPopup month={pickMonth} setMonth={setPickMonth} selected={pickedResched} onClose={() => setPickCtx(null)}
+            onPick={(d) => { setPickedResched(d); const s = slotsFor(d.n); if (!s.includes(reschedTime)) setReschedTime(s[0] ?? 0); setPickCtx(null); }} />
+        )}
+
+        {/* Request sent — animated confirmation with live steps */}
+        {confirmation && (
+          <div className="absolute inset-0 z-[195] flex items-center justify-center px-7" style={{ background: 'rgba(20,12,8,0.5)', animation: 'svFade 0.2s ease both' }}>
+            <div className="w-full rounded-[26px] bg-white px-6 pt-7 pb-5 text-center" style={{ animation: 'svPop 0.26s cubic-bezier(0.34,1.56,0.64,1) both' }}>
+              <div className="relative mx-auto mb-4" style={{ width: 76, height: 76 }}>
+                <span className="absolute inset-0 rounded-full" style={{ border: `2px solid ${CORAL}`, animation: 'svRing 1.4s 0.2s ease-out both' }} />
+                <img src={confirmation.photo} alt="" className="absolute inset-0 w-full h-full rounded-full object-cover" />
+                <span className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-[3px] border-white" style={{ background: GREEN, animation: 'svBadge 0.4s 0.35s cubic-bezier(0.34,1.56,0.64,1) both' }}><Check size={15} color="#fff" strokeWidth={3.2} /></span>
+              </div>
+              <h2 className="text-[19px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Request sent</h2>
+              <p className="text-[12.5px] mt-1" style={{ color: TERT }}>{confirmation.service} · {confirmation.when}</p>
+
+              {/* live steps */}
+              <div className="flex items-start justify-between mt-6 px-1">
+                {[{ l: 'Request sent', done: true }, { l: `${confirmation.provider.split(' ')[0]} confirms`, now: true }, { l: 'Day of the walk' }].map((s, i) => (
+                  <React.Fragment key={i}>
+                    {i > 0 && <span className="flex-1 h-[2px] rounded-full mt-[11px] mx-1" style={{ background: s.now || s.done ? '#F6C9B4' : LINE }} />}
+                    <span className="flex flex-col items-center" style={{ width: 76 }}>
+                      <span className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: s.done ? GREEN : s.now ? TINT : PEACH, boxShadow: s.now ? `0 0 0 4px ${TINT}66` : 'none', animation: s.now ? 'svPulse 1.6s ease-in-out infinite' : 'none' }}>
+                        {s.done ? <Check size={12} color="#fff" strokeWidth={3.2} /> : <span className="w-1.5 h-1.5 rounded-full" style={{ background: s.now ? CORAL : '#C9BBAE' }} />}
+                      </span>
+                      <span className="text-[10px] font-semibold mt-1.5 leading-tight" style={{ color: s.done ? GREEN : s.now ? CORAL : TERT }}>{s.l}</span>
+                    </span>
+                  </React.Fragment>
+                ))}
+              </div>
+              <p className="text-[11px] mt-4" style={{ color: TERT }}>{confirmation.provider.split(' ')[0]} usually replies within ~1 h — we’ll notify you.</p>
+              <button onClick={() => setConfirmation(null)} className="w-full mt-4 py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 6px 18px rgba(232,93,42,0.26)' }}><span className="text-[14.5px] font-bold text-white">View booking</span></button>
+            </div>
+          </div>
         )}
 
         {chat && <ChatOverlay provider={chat} onClose={() => setChat(null)} embedded={embedded} />}
@@ -818,12 +940,24 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
     <Wrap embedded={embedded}>
       <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 116, paddingBottom: embedded ? 104 : 36, scrollbarWidth: 'none', background: CREAM }}>
         {/* Search */}
-        <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px]" style={{ boxShadow: SHADOW }}>
-          <Search size={16} color={TERT} strokeWidth={2} />
-          <input placeholder={`Find care for ${petName}…`} className="flex-1 bg-transparent outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" />
-          <div className="flex -space-x-1.5">
-            {PETS.map((p) => { const on = petSel.includes(p.id); return <button key={p.id} onClick={() => togglePet(p.id)} title="Tap to include or remove this pet" className="rounded-full p-[1.5px] active:scale-95 transition-all duration-200" style={{ width: on ? 30 : 26, height: on ? 30 : 26, background: on ? CORAL : '#E5DED5', zIndex: on ? 2 : 1, position: 'relative', opacity: on ? 1 : 0.75 }}><img src={p.photo} alt={p.name} className="w-full h-full rounded-full object-cover" /></button>; })}
+        <div className="relative">
+          <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px]" style={{ boxShadow: SHADOW }}>
+            <Search size={16} color={TERT} strokeWidth={2} />
+            <input placeholder={`Find care for ${petName}…`} className="flex-1 bg-transparent outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" />
+            <div className="relative flex items-center -space-x-1.5">
+              {PETS.map((p) => { const on = petSel.includes(p.id); return <button key={p.id} onClick={() => togglePet(p.id)} className="rounded-full p-[1.5px] active:scale-95 transition-all duration-200" style={{ width: on ? 30 : 26, height: on ? 30 : 26, background: on ? CORAL : '#E5DED5', zIndex: on ? 2 : 1, position: 'relative', opacity: on ? 1 : 0.75 }}><img src={p.photo} alt={p.name} className="w-full h-full rounded-full object-cover" /></button>; })}
+              <button onClick={() => setPetHint(!petHint)} className="absolute -top-1.5 -right-1.5 w-[15px] h-[15px] rounded-full flex items-center justify-center active:scale-90" style={{ background: CORAL, border: '1.5px solid #fff', zIndex: 5, animation: petHint ? 'none' : 'svBlink 2.4s ease-in-out infinite' }}>
+                <span className="text-[9px] font-extrabold text-white leading-none">!</span>
+              </button>
+            </div>
           </div>
+          {petHint && (
+            <div className="absolute right-0 z-50 rounded-[14px] bg-white p-3.5" style={{ top: 52, width: 230, boxShadow: '0 8px 30px rgba(60,30,15,0.16)', animation: 'svPop 0.2s cubic-bezier(0.34,1.56,0.64,1) both' }}>
+              <div className="text-[12.5px] font-bold" style={{ color: INK }}>Booking for who?</div>
+              <p className="text-[11.5px] leading-[1.45] mt-1" style={{ color: MUTED }}>Tap a pet to include or remove them — you can select <span style={{ color: CORAL, fontWeight: 700 }}>one or both</span> for the same booking.</p>
+              <button onClick={() => setPetHint(false)} className="mt-2 text-[12px] font-bold active:opacity-70" style={{ color: CORAL }}>Got it</button>
+            </div>
+          )}
         </div>
 
         {/* Categories */}
