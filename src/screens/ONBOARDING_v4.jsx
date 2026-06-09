@@ -12,7 +12,6 @@ import {
   Pill,
   Sparkles as SparklesIcon,
 } from 'lucide-react';
-import { AddPetMascot } from './37_ADD_PET_v1';
 
 /* ──────────────────────────────────────────────────────────────────────
    ONBOARDING_v4.jsx — Clean rebuild
@@ -121,27 +120,6 @@ const SLIDES = [
   },
 ];
 
-/* ────────────────────────────────────────────────────────────────────
-   Scaled mascot wrapper — uses canonical AddPetMascot with sizing
-   ──────────────────────────────────────────────────────────────────── */
-function MascotAt({ step, petName, scale = 1 }) {
-  return (
-    <div
-      style={{
-        transform: `scale(${scale})`,
-        transformOrigin: 'center',
-        display: 'inline-block',
-      }}
-    >
-      <AddPetMascot
-        step={step}
-        petType="dog"
-        petName={petName}
-        scrollProgress={0}
-      />
-    </div>
-  );
-}
 
 /* ════════════════════════════════════════════════════════════════════
    SCENES
