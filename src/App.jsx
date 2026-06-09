@@ -20,7 +20,7 @@ import OnboardingV3 from './screens/ONBOARDING_v3'
 import OnboardingV4 from './screens/ONBOARDING_v4'
 import OnboardingPreview from './screens/ONBOARDING_PREVIEW_v1'
 import SplashVariants from './screens/SPLASH_VARIANTS_v1'
-import AddPetScreen from './screens/37_ADD_PET_v1'
+import AddPetScreen from './screens/71_ADD_PET_v1'
 import EditPetScreen from './screens/38_EDIT_PET_v1'
 import ReviewRatingScreen from './screens/39_REVIEW_RATING_v1'
 import GPSTrackingScreen from './screens/40_GPS_TRACKING_v1'
@@ -49,6 +49,10 @@ import BookingFlowScreen from './screens/63_BOOKING_FLOW_v1'
 import ChatMessagingScreen from './screens/64_CHAT_MESSAGING_v1'
 import UserProfileScreen from './screens/65_USER_PROFILE_v1'
 import PetProfileDetailScreen from './screens/66_PET_PROFILE_DETAIL_v1'
+import PetsHome from './screens/70_PETS_HOME_v1'
+import PetProfileV2 from './screens/92_PET_PROFILE_v1'
+import JournalV2 from './screens/93_JOURNAL_v1'
+import ServicesV2W from './screens/94_SERVICES_v1'
 import EmergencySOSScreen from './screens/67_EMERGENCY_SOS_v1'
 import ProviderReviewsScreen from './screens/68_PROVIDER_REVIEWS_v1'
 import CreateAccountScreen from './screens/69_CREATE_ACCOUNT_v1'
@@ -152,6 +156,10 @@ function App() {
       <Route path="/booking-flow" element={<BookingFlowScreen />} />
       <Route path="/chat" element={<ChatMessagingScreen />} />
       <Route path="/user-profile" element={<UserProfileScreen />} />
+      <Route path="/pets-home" element={<PetsHome />} />
+      <Route path="/pet-view" element={<PetProfileV2 />} />
+      <Route path="/journal-view" element={<JournalV2 />} />
+      <Route path="/services-view" element={<ServicesV2W />} />
       <Route path="/pet-profile" element={<PetProfileDetailScreen />} />
       <Route path="/emergency" element={<EmergencySOSScreen />} />
       <Route path="/provider-reviews" element={<ProviderReviewsScreen />} />

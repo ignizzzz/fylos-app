@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AddPetMascot } from './37_ADD_PET_v1';
-import JournalScreen from '../features/journal/JournalScreen';
 import ServicesTab from '../features/services/ServicesTab';
 import ProRegistration from './50_PRO_REGISTRATION_v1';
 import InviteFriends from './60_INVITE_FRIENDS_v1';
+import PetsHome from './70_PETS_HOME_v1';
+import PetProfileV2 from './92_PET_PROFILE_v1';
+import JournalV2 from './93_JOURNAL_v1';
+import ServicesV2 from './94_SERVICES_v1';
 import {
   Home,
   PawPrint,
@@ -73,6 +75,7 @@ import {
   ShieldCheck,
   Award,
   CreditCard,
+  Wallet,
   Coins,
   Lock,
   XCircle,
@@ -195,7 +198,7 @@ const INITIAL_MOCK_PETS = [
     name: 'Leo',
     breed: 'Golden Retriever',
     age: 3,
-    sex: 'Female',
+    sex: 'Male',
     weight: '28',
     weightUnit: 'kg',
     location: 'Zurich, CH',
@@ -1540,11 +1543,10 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
 };
 
 const FAB_ACTIONS = [
-  { id: 'book-walk', label: 'Book', icon: Calendar },
-  { id: 'log-med', label: 'Log med', icon: Pill },
-  { id: 'add-photo', label: 'Photo', icon: Camera },
+  { id: 'book', label: 'Book', icon: Calendar },
+  { id: 'log-entry', label: 'Log entry', icon: BookOpen },
+  { id: 'moment', label: 'Moment', icon: Camera },
   { id: 'add-pet', label: 'Add pet', icon: PawPrint },
-  { id: 'upload-doc', label: 'Upload', icon: FileText },
 ];
 
 const TabBar = ({ activeTab, onTabChange, visible = true }) => {
@@ -1568,11 +1570,10 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
 
   const handleFabAction = (actionId) => {
     setFabOpen(false);
-    if (actionId === 'book-walk') onTabChange('services');
+    if (actionId === 'book') onTabChange('services');
     if (actionId === 'add-pet') window.location.href = '/add-pet';
-    if (actionId === 'add-photo') window.location.href = '/photo-gallery';
-    if (actionId === 'log-med') window.location.href = '/feeding-tracker';
-    if (actionId === 'upload-doc') window.location.href = '/help';
+    if (actionId === 'log-entry') { try { sessionStorage.setItem('fylos.journalAdd', 'note'); } catch (e) {} onTabChange('journal'); }
+    if (actionId === 'moment') { try { sessionStorage.setItem('fylos.journalAdd', 'moment'); } catch (e) {} onTabChange('journal'); }
   };
 
   return (
@@ -10529,9 +10530,9 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations }
 
         <SectionLabel>Account</SectionLabel>
         <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
-          <SetRow icon={Bell}       title="Notifications"   subtitle="Push, email, in-app" onClick={() => nav('/notification-prefs')} />
-          <SetRow icon={CreditCard} title="Payment methods" subtitle="Cards & billing"     onClick={() => nav('/wallet')} />
-          <SetRow icon={Shield}     title="Subscription"    rightValue="Free"              onClick={() => nav('/subscription')} last />
+          <SetRow icon={Bell}       title="Notifications"   subtitle="Push, email, in-app"      onClick={() => nav('/notification-prefs')} />
+          <SetRow icon={Wallet}     title="Wallet"          subtitle="Cards, credits & billing" onClick={() => nav('/wallet')} />
+          <SetRow icon={Shield}     title="Subscription"    rightValue="Free"                   onClick={() => nav('/subscription')} last />
         </div>
 
         <SectionLabel>Pet care</SectionLabel>
@@ -11207,7 +11208,7 @@ export default function App() {
     setPetsData(prev => prev.map(p => p.id === updatedPet.id ? updatedPet : p));
   };
 
-  const hideGlobalHeader = displayTab === 'services' && (servicesRoute === 'walking' || servicesRoute === 'bookings');
+  const hideGlobalHeader = (displayTab === 'services' && servicesRoute === 'walking') || (displayTab === 'pets' && petsRoute === 'profile');
 
   const renderScreen = () => {
     if (displayTab === 'pets') {
@@ -11216,21 +11217,31 @@ export default function App() {
       }
       if (petsRoute === 'profile') {
         const pet = petsData.find(p => p.id === selectedPetId) || petsData[0];
-        return <PetProfileScreen pet={pet} onUpdate={handleUpdatePet} showToast={showToast} onOpenPublicView={setPublicViewPetId} onNavigateToFamily={() => setPetsRoute('family')} />;
+        return <PetProfileV2 embedded pet={pet} onBack={handlePetBack} />;
       }
-      return <PetListScreen pets={petsData} onSelectPet={handlePetSelect} />;
+      return (
+        <PetsHome
+          embedded
+          onOpenPet={(petId) => { const t = petsData.find((p) => p.name && p.name.toLowerCase() === petId) || petsData[0]; if (t) handlePetSelect(t.id); }}
+          onAddPet={() => { window.location.href = '/add-pet'; }}
+          onOpenProfile={() => setSettingsOpen(true)}
+          onOpenNotifications={() => setInboxOpen(true)}
+          onOpenSafety={() => { window.location.href = '/danger-reports'; }}
+        />
+      );
     }
 
     if (displayTab === 'services' && servicesRoute === 'walking') {
       return <WalkingScreen onBack={() => navigateTo('services')} petsData={petsData} />;
     }
-    if (displayTab === 'services' && servicesRoute === 'bookings') {
+    if (displayTab === 'services') {
       return (
-        <BookingsScreen
+        <ServicesV2
+          embedded
+          initialSegment={servicesRoute === 'bookings' ? 'bookings' : 'discover'}
           focusedBookingId={focusedBookingId}
           onClearFocus={() => setFocusedBookingId(null)}
-          onBack={() => { setFocusedBookingId(null); navigateTo('services'); }}
-          onOpenDetails={(booking) => { setBookingStatus(booking.status); navigateTo('booking_details'); }}
+          onOpenWalking={() => setServicesRoute('walking')}
         />
       );
     }
@@ -11261,15 +11272,7 @@ export default function App() {
           onPopupStateChange={setDashboardPopupOpen}
         />
       );
-      case 'services':
-        return (
-          <ServicesTab
-            pets={MOCK_DASHBOARD_PETS}
-            selectedPetId={null}
-            onNavigate={navigateTo}
-          />
-        );
-      case 'journal': return <JournalScreen />;
+      case 'journal': return <JournalV2 embedded />;
       case 'vault': return <VaultScreen onOpenHealthRecords={() => setPushedScreen('vault_health_records')} onOpenDocuments={() => setPushedScreen('vault_documents')} onOpenContacts={() => setPushedScreen('vault_contacts')} onOpenPlaces={() => setPushedScreen('vault_places')} />;
       default: return (
         <HomeScreen
@@ -11772,14 +11775,6 @@ export default function App() {
                       border: '2px solid rgba(232,93,42,0.15)',
                       animation: 'celebRingBurst 0.8s ease-out both',
                     }} />
-
-                    {/* Mascot */}
-                    <div style={{
-                      animation: 'celebBounceIn 0.6s 0.1s cubic-bezier(0.22,1,0.36,1) both',
-                      transform: 'scale(1.3)',
-                    }}>
-                      <AddPetMascot step={3} petType={celebration.petType} petName={celebration.name} focusedField={null} scrollProgress={0} />
-                    </div>
 
                     {/* Avatar */}
                     <div style={{
