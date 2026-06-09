@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   AlertTriangle, Bell, Search, Footprints, Home, Scissors, Stethoscope,
   Star, Heart, ChevronRight, ChevronLeft, ChevronDown, MapPin, MessageCircle,
-  CalendarClock, X, Check, BadgeCheck, Repeat, Gift,
+  CalendarClock, X, Check, BadgeCheck, Repeat, Gift, Sparkles, GraduationCap,
+  Sun, Car, DoorOpen, Camera, Apple,
 } from 'lucide-react';
 
 /**
@@ -77,12 +78,26 @@ const INITIAL_BOOKINGS = [
   { id: 'b2', when: 'upcoming', group: 'This week', status: 'Confirmed', service: 'Grooming', provider: 'Bright Paws · Elena', photo: 'https://i.pravatar.cc/150?u=elena_groomer', dow: 'WED', dom: '18', time: '15:30', pet: 'Leo', location: 'Bright Paws · Seefeld', notes: 'Bath, blow-dry & style with Elena.' },
   { id: 'b3', when: 'upcoming', group: 'This week', status: 'Confirmed', service: 'Vet visit', provider: 'Lakeshore Vet · Dr. Reza', photo: 'https://i.pravatar.cc/150?u=dr_reza', dow: 'FRI', dom: '20', time: '09:00', pet: 'Leo', location: 'Lakeshore Vet · Bellevue', notes: 'Annual checkup & vaccinations.' },
   { id: 'b4', when: 'upcoming', group: 'Next week', status: 'Pending', service: '90 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'TUE', dom: '24', time: '14:00', pet: 'Leo', location: 'Pickup at home', notes: 'Waiting for Lukas to confirm.' },
-  { id: 'b5', when: 'past', group: 'February', status: 'Completed', service: '60 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'FRI', dom: '6', time: '09:00', pet: 'Leo', location: 'Zürichhorn loop', notes: '' },
+  { id: 'b5', when: 'past', group: 'February', status: 'Completed', service: '60 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'FRI', dom: '6', time: '09:00', pet: 'Leo', location: 'Zürichhorn loop', notes: '', rated: 5,
+    checkIns: [['09:02', 'Picked up Leo at home'], ['09:25', 'Halfway — photo update sent'], ['09:58', 'Walk done · 45 min · 3.2 km'], ['10:04', 'Dropped off, fresh water topped up']] },
   { id: 'b6', when: 'past', group: 'January', status: 'Cancelled', service: 'Overnight sitting', provider: 'Maria K.', photo: 'https://i.pravatar.cc/150?u=maria_sitter', dow: 'SAT', dom: '31', time: '', pet: 'Tao', location: '', notes: 'Cancelled by you.' },
 ];
 const SORTS = ['Recommended', 'Top rated', 'Price: low to high', 'Nearest'];
 const DAYS = ['Today', 'Tomorrow', 'Sat 14'];
 const TIMES = ['09:00', '11:00', '14:00', '16:30'];
+// Per-day open slots (indexes into TIMES) — makes availability feel real
+const SLOTS = { 0: [1, 2, 3], 1: [0, 1, 3], 2: [0, 2] };
+const FUTURE_SERVICES = [
+  { label: 'Training', icon: GraduationCap },
+  { label: 'Boarding', icon: Home },
+  { label: 'Daycare', icon: Sun },
+  { label: 'Pet taxi', icon: Car },
+  { label: 'Drop-ins', icon: DoorOpen },
+  { label: 'Photos', icon: Camera },
+  { label: 'Nutrition', icon: Apple },
+];
+// Bookings mini-calendar: a fortnight the arrows can walk through
+const CAL_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => ({ d, n: 16 + i }));
 
 const StatusBar = () => (
   <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
@@ -143,6 +158,8 @@ const Wrap = ({ embedded, children }) => {
   const styleBlock = <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap');
     @keyframes svToast { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+    @keyframes svFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes svSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
   `}</style>;
   if (embedded) return (<>{styleBlock}<div className="absolute inset-0" style={{ background: CREAM }}>{children}</div></>);
   return (
@@ -171,6 +188,8 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [svc, setSvc] = useState(1);
   const [day, setDay] = useState(0);
   const [time, setTime] = useState(1);
+  const [calStart, setCalStart] = useState(0);
+  const [futureOpen, setFutureOpen] = useState(false);
   const [toast, setToast] = useState('');
   const act = (m) => { setToast(m); setTimeout(() => setToast(''), 1700); };
   useEffect(() => { if (focusedBookingId && onClearFocus) onClearFocus(); // eslint-disable-next-line
@@ -245,10 +264,25 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           </div>
 
           <SectionLabel>Availability</SectionLabel>
-          <div className="flex gap-2">{DAYS.map((d, i) => { const on = day === i; return <button key={d} onClick={() => setDay(i)} className="flex-1 h-[42px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{d}</button>; })}</div>
-          <div className="flex gap-2 mt-2">{TIMES.map((t, i) => { const on = time === i; return <button key={t} onClick={() => setTime(i)} className="flex-1 h-[38px] rounded-[11px] text-[12.5px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{t}</button>; })}</div>
+          <div className="flex gap-2">{DAYS.map((d, i) => {
+            const on = day === i;
+            const free = (SLOTS[i] || []).length;
+            return (
+              <button key={d} onClick={() => { setDay(i); const s = SLOTS[i] || []; if (!s.includes(time)) setTime(s[0] ?? 0); }} className="flex-1 rounded-[12px] py-2 active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>
+                <div className="text-[13px] font-bold leading-tight" style={{ color: on ? CORAL : MUTED }}>{d}</div>
+                <div className="text-[9.5px] font-semibold mt-[2px]" style={{ color: on ? CORAL : '#C4BBB0' }}>{free} slot{free === 1 ? '' : 's'}</div>
+              </button>
+            );
+          })}</div>
+          <div className="flex gap-2 mt-2">{TIMES.map((t, i) => {
+            const openSlot = (SLOTS[day] || []).includes(i);
+            const on = time === i && openSlot;
+            return (
+              <button key={t} onClick={() => openSlot && setTime(i)} disabled={!openSlot} className="flex-1 h-[38px] rounded-[11px] text-[12.5px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : openSlot ? '#fff' : 'transparent', color: on ? CORAL : openSlot ? MUTED : '#D3CABF', boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : openSlot ? SHADOW : 'inset 0 0 0 1px #EAE2D8', textDecoration: openSlot ? 'none' : 'line-through' }}>{t}</button>
+            );
+          })}</div>
 
-          <SectionLabel>Latest review</SectionLabel>
+          <SectionLabel action={`See all (${p.reviews})`} onAction={() => act(`All ${p.reviews} reviews`)}>Latest review</SectionLabel>
           <div className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
             <div className="flex items-center gap-1.5 mb-1.5">{[...Array(5)].map((_, i) => <Star key={i} size={11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />)}<span className="text-[11.5px] font-bold ml-1" style={{ color: INK }}>{p.review.who}</span></div>
             <p className="text-[13px] leading-[1.5]" style={{ color: MUTED }}>“{p.review.txt}”</p>
@@ -314,10 +348,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           <div className="flex flex-col gap-3">
             {browseRest.map((p) => (
               <button key={p.id} onClick={() => openProfile(p.id, 'browse')} className="bg-white rounded-[18px] p-3 flex gap-3.5 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
-                <span className="relative shrink-0">
-                  <img src={p.photo} alt={p.name} className="w-[86px] h-[86px] rounded-[16px] object-cover" />
-                  {p.today && <span className="absolute -bottom-1 -right-1 w-[15px] h-[15px] rounded-full" style={{ background: GREEN, border: '2.5px solid #fff' }} />}
-                </span>
+                <img src={p.photo} alt={p.name} className="w-[76px] h-[76px] rounded-[15px] object-cover shrink-0" />
                 <div className="flex-1 min-w-0 flex flex-col">
                   <div className="flex items-center gap-1">
                     <span className="text-[14.5px] font-bold truncate" style={{ color: INK }}>{p.name}</span>
@@ -329,7 +360,6 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                     <Rating p={p} small />
                     <span className="text-[11px]" style={{ color: TERT }}>· {p.dist} km</span>
                   </div>
-                  <div className="text-[11.5px] mt-[3px] truncate" style={{ color: MUTED }}>{p.meta}</div>
                   <div className="flex items-center justify-between mt-auto pt-2" style={{ borderTop: '1px solid ' + LINE }}>
                     {p.today ? <span className="inline-flex items-center gap-1 text-[11px] font-bold" style={{ color: GREEN }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /> Available today</span> : <span className="text-[11px] font-medium" style={{ color: TERT }}>Next: tomorrow</span>}
                     <span className="text-[12.5px] font-extrabold" style={{ color: INK }}><span className="text-[10.5px] font-semibold" style={{ color: TERT }}>from </span>CHF {p.services[0].p}</span>
@@ -361,19 +391,23 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             })}
           </div>
 
-          {/* This week at a glance */}
+          {/* Week at a glance — arrows walk the calendar day by day */}
           {bkFilter === 'upcoming' && (
-            <div className="bg-white rounded-[16px] px-3 py-3 mt-4 flex justify-between" style={{ boxShadow: SHADOW }}>
-              {[{ d: 'M', n: 16 }, { d: 'T', n: 17 }, { d: 'W', n: 18 }, { d: 'T', n: 19 }, { d: 'F', n: 20 }, { d: 'S', n: 21 }, { d: 'S', n: 22 }].map((day, i) => {
-                const has = bookings.some((b) => b.when === 'upcoming' && b.dom === String(day.n));
-                return (
-                  <div key={i} className="flex flex-col items-center gap-1 rounded-[10px] px-1.5 py-1.5" style={{ background: has ? TINT : 'transparent', minWidth: 36 }}>
-                    <span className="text-[9px] font-bold" style={{ color: has ? CORAL : '#C4BBB0' }}>{day.d}</span>
-                    <span className="text-[13px] font-extrabold leading-none" style={{ color: has ? INK : TERT }}>{day.n}</span>
-                    <span className="w-1 h-1 rounded-full" style={{ background: has ? CORAL : 'transparent' }} />
-                  </div>
-                );
-              })}
+            <div className="bg-white rounded-[16px] pl-1 pr-1 py-3 mt-4 flex items-center" style={{ boxShadow: SHADOW }}>
+              <button onClick={() => setCalStart(Math.max(0, calStart - 1))} disabled={calStart === 0} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart === 0 ? 0.3 : 1 }}><ChevronLeft size={15} color={MUTED} strokeWidth={2.4} /></button>
+              <div className="flex-1 flex justify-between">
+                {CAL_DAYS.slice(calStart, calStart + 7).map((day, i) => {
+                  const has = bookings.some((b) => b.when === 'upcoming' && b.dom === String(day.n));
+                  return (
+                    <div key={i} className="flex flex-col items-center gap-1 rounded-[10px] px-1.5 py-1.5" style={{ background: has ? TINT : 'transparent', minWidth: 34 }}>
+                      <span className="text-[9px] font-bold" style={{ color: has ? CORAL : '#C4BBB0' }}>{day.d}</span>
+                      <span className="text-[13px] font-extrabold leading-none" style={{ color: has ? INK : TERT }}>{day.n <= 28 ? day.n : day.n - 28}</span>
+                      <span className="w-1 h-1 rounded-full" style={{ background: has ? CORAL : 'transparent' }} />
+                    </div>
+                  );
+                })}
+              </div>
+              <button onClick={() => setCalStart(Math.min(CAL_DAYS.length - 7, calStart + 1))} disabled={calStart >= CAL_DAYS.length - 7} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart >= CAL_DAYS.length - 7 ? 0.3 : 1 }}><ChevronRight size={15} color={MUTED} strokeWidth={2.4} /></button>
             </div>
           )}
 
@@ -406,9 +440,34 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                         {open && (
                           <div className="px-3.5 pb-3.5" style={{ borderTop: '1px solid ' + LINE }}>
                             <div className="flex flex-col gap-2 pt-3">
-                              {b.location && <div className="flex items-center gap-2"><MapPin size={13} color={TERT} strokeWidth={2} /><span className="text-[12.5px]" style={{ color: MUTED }}>{b.location}</span></div>}
+                              {b.location && (
+                                <div className="flex items-center gap-2">
+                                  <MapPin size={13} color={TERT} strokeWidth={2} className="shrink-0" />
+                                  <span className="flex-1 text-[12.5px]" style={{ color: MUTED }}>{b.location}</span>
+                                  {b.location !== 'Pickup at home' && <button onClick={(e) => { e.stopPropagation(); act('Opening in Maps…'); }} className="shrink-0 text-[11.5px] font-bold px-2.5 py-1 rounded-full active:scale-95" style={{ background: TINT, color: CORAL }}>Open</button>}
+                                </div>
+                              )}
                               <div className="flex items-center gap-2"><span className="w-[13px] text-center text-[11px]">🐾</span><span className="text-[12.5px]" style={{ color: MUTED }}>For {b.pet}</span></div>
+                              {isUp && <div className="flex items-center gap-2"><Bell size={12} color={TERT} strokeWidth={2} className="shrink-0" /><span className="text-[12px]" style={{ color: TERT }}>Reminder · 1 h before</span></div>}
                               {b.notes && <div className="text-[12.5px] leading-[1.45] rounded-[10px] px-3 py-2" style={{ background: PEACH, color: MUTED }}>{b.notes}</div>}
+                              {b.checkIns && (
+                                <div className="rounded-[12px] px-3.5 py-3 mt-0.5" style={{ background: PEACH }}>
+                                  <div className="text-[10px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: '#A8A29C' }}>How it went</div>
+                                  {b.checkIns.map(([t, txt], ci) => (
+                                    <div key={ci} className="flex gap-2.5 relative">
+                                      <div className="flex flex-col items-center shrink-0" style={{ width: 10 }}>
+                                        <span className="w-[7px] h-[7px] rounded-full mt-[5px]" style={{ background: CORAL }} />
+                                        {ci < b.checkIns.length - 1 && <span className="flex-1 w-px my-0.5" style={{ background: '#E5D8CC' }} />}
+                                      </div>
+                                      <div className="pb-2.5">
+                                        <span className="text-[10.5px] font-bold" style={{ color: TERT }}>{t}</span>
+                                        <div className="text-[12px] font-medium leading-snug" style={{ color: MUTED }}>{txt}</div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                  {b.rated && <div className="flex items-center gap-1.5 mt-1 pt-2" style={{ borderTop: '1px solid #EBDFD3' }}><span className="text-[11.5px] font-semibold" style={{ color: MUTED }}>You rated</span>{[...Array(b.rated)].map((_, si) => <Star key={si} size={11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />)}</div>}
+                                </div>
+                              )}
                             </div>
                             <div className="flex gap-2 mt-3">
                               {isUp ? (
@@ -589,12 +648,19 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           </>
         )}
 
-        {/* Future near you */}
+        {/* Future near you — quiet teaser, taps open the full list */}
         <SectionLabel>Future near you</SectionLabel>
-        <div className="flex items-start gap-2 px-1">
-          <span className="flex-1 text-[12px] font-medium leading-[1.6]" style={{ color: '#B6AEA5' }}>Training · Boarding · Daycare · Pet taxi · Drop-in visits · Photography · Nutrition advice</span>
-          <span className="shrink-0 text-[9px] font-extrabold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-full mt-[2px]" style={{ background: PEACH, color: '#A8A29C' }}>On the way</span>
-        </div>
+        <button onClick={() => setFutureOpen(true)} className="w-full bg-white rounded-[16px] px-3.5 py-3 flex items-center gap-3 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
+          <span className="relative w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: TINT }}>
+            <Sparkles size={16} color={CORAL} strokeWidth={2} />
+            <span className="absolute -top-0.5 -right-0.5 w-[14px] h-[14px] rounded-full flex items-center justify-center text-[9px] font-extrabold text-white" style={{ background: CORAL, border: '1.5px solid #fff' }}>!</span>
+          </span>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-bold" style={{ color: INK }}>More services on the way</div>
+            <div className="text-[10.5px] mt-[1px]" style={{ color: TERT }}>Training, daycare & more — see what’s coming</div>
+          </div>
+          <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
+        </button>
 
         {/* Refer — slim */}
         <div className="rounded-[14px] mt-5 px-3.5 py-2.5 flex items-center gap-3" style={{ background: TINT }}>
@@ -603,6 +669,35 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           <button onClick={() => act('Invite friends')} className="shrink-0 text-[12.5px] font-bold active:opacity-70" style={{ color: CORAL }}>Invite</button>
         </div>
       </div>
+
+      {/* On the way — bottom sheet with circular service icons */}
+      {futureOpen && (
+        <>
+          <div className="absolute inset-0 z-[150]" style={{ background: 'rgba(20,12,8,0.4)', animation: 'svFade 0.2s ease both' }} onClick={() => setFutureOpen(false)} />
+          <div className="absolute left-0 right-0 bottom-0 z-[160] rounded-t-[26px]" style={{ background: CREAM, boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', animation: 'svSheet 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
+            <div className="flex justify-center pt-2.5 pb-1"><div style={{ width: 38, height: 5, borderRadius: 9999, background: '#DDD4C9' }} /></div>
+            <div className="px-5 pt-1 pb-2 flex items-center gap-3">
+              <h2 className="flex-1 text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>On the way</h2>
+              <button onClick={() => setFutureOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
+            </div>
+            <p className="px-5 text-[12.5px] leading-[1.5]" style={{ color: TERT }}>We’re adding new services through the year — you’ll know the moment they launch near you.</p>
+            <div className="grid grid-cols-4 gap-y-5 px-5 mt-5">
+              {FUTURE_SERVICES.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <div key={s.label} className="flex flex-col items-center gap-2">
+                    <span className="w-[52px] h-[52px] rounded-full flex items-center justify-center bg-white" style={{ boxShadow: SHADOW }}><Icon size={19} color="#C9BBAE" strokeWidth={2} /></span>
+                    <span className="text-[10.5px] font-semibold" style={{ color: TERT }}>{s.label}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="px-5 pt-6" style={{ paddingBottom: embedded ? 104 : 30 }}>
+              <button onClick={() => { setFutureOpen(false); act('We’ll notify you as they launch'); }} className="w-full py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 6px 18px rgba(232,93,42,0.26)' }}><span className="text-[14.5px] font-bold text-white">Notify me</span></button>
+            </div>
+          </div>
+        </>
+      )}
 
       {toast && <Toast embedded={embedded} msg={toast} />}
       {!embedded && <PreviewHeader />}
