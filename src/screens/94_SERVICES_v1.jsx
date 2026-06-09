@@ -313,20 +313,26 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           {/* Marketplace cards — separate, photo-led, key facts */}
           <div className="flex flex-col gap-3">
             {browseRest.map((p) => (
-              <button key={p.id} onClick={() => openProfile(p.id, 'browse')} className="bg-white rounded-[18px] p-3 flex gap-3 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
-                <img src={p.photo} alt={p.name} className="w-[76px] h-[76px] rounded-[15px] object-cover shrink-0" />
+              <button key={p.id} onClick={() => openProfile(p.id, 'browse')} className="bg-white rounded-[18px] p-3 flex gap-3.5 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
+                <span className="relative shrink-0">
+                  <img src={p.photo} alt={p.name} className="w-[86px] h-[86px] rounded-[16px] object-cover" />
+                  {p.today && <span className="absolute -bottom-1 -right-1 w-[15px] h-[15px] rounded-full" style={{ background: GREEN, border: '2.5px solid #fff' }} />}
+                </span>
                 <div className="flex-1 min-w-0 flex flex-col">
                   <div className="flex items-center gap-1">
                     <span className="text-[14.5px] font-bold truncate" style={{ color: INK }}>{p.name}</span>
                     {p.verified && <BadgeCheck size={13} color={CORAL} strokeWidth={2.2} className="shrink-0" />}
                     <span className="flex-1" />
-                    <Rating p={p} small />
+                    {p.rating >= 4.8 && <span className="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase tracking-[0.03em] px-1.5 py-[2px] rounded-full shrink-0" style={{ background: '#FBF1E2', color: AMBER }}><Star size={8} color={AMBER} fill={AMBER} strokeWidth={0} /> Top rated</span>}
                   </div>
-                  <div className="text-[11.5px] mt-[3px]" style={{ color: TERT }}>{p.cat === 'sitting' ? 'Pet sitter' : 'Dog walker'} · {p.dist} km</div>
+                  <div className="flex items-center gap-1.5 mt-[3px]">
+                    <Rating p={p} small />
+                    <span className="text-[11px]" style={{ color: TERT }}>· {p.dist} km</span>
+                  </div>
                   <div className="text-[11.5px] mt-[3px] truncate" style={{ color: MUTED }}>{p.meta}</div>
-                  <div className="flex items-center justify-between mt-auto pt-1.5">
+                  <div className="flex items-center justify-between mt-auto pt-2" style={{ borderTop: '1px solid ' + LINE }}>
                     {p.today ? <span className="inline-flex items-center gap-1 text-[11px] font-bold" style={{ color: GREEN }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /> Available today</span> : <span className="text-[11px] font-medium" style={{ color: TERT }}>Next: tomorrow</span>}
-                    <span className="text-[13px] font-extrabold" style={{ color: INK }}>CHF {p.price}<span className="text-[10.5px] font-semibold" style={{ color: TERT }}>/h</span></span>
+                    <span className="text-[12.5px] font-extrabold" style={{ color: INK }}><span className="text-[10.5px] font-semibold" style={{ color: TERT }}>from </span>CHF {p.services[0].p}</span>
                   </div>
                 </div>
               </button>
@@ -354,6 +360,22 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               return <button key={f.id} onClick={() => setBkFilter(f.id)} className="relative pb-1.5 text-[13.5px] font-bold transition-colors" style={{ color: on ? INK : TERT }}>{f.l}{on && <span className="absolute left-0 right-0 bottom-0 rounded-full" style={{ height: 2, background: CORAL }} />}</button>;
             })}
           </div>
+
+          {/* This week at a glance */}
+          {bkFilter === 'upcoming' && (
+            <div className="bg-white rounded-[16px] px-3 py-3 mt-4 flex justify-between" style={{ boxShadow: SHADOW }}>
+              {[{ d: 'M', n: 16 }, { d: 'T', n: 17 }, { d: 'W', n: 18 }, { d: 'T', n: 19 }, { d: 'F', n: 20 }, { d: 'S', n: 21 }, { d: 'S', n: 22 }].map((day, i) => {
+                const has = bookings.some((b) => b.when === 'upcoming' && b.dom === String(day.n));
+                return (
+                  <div key={i} className="flex flex-col items-center gap-1 rounded-[10px] px-1.5 py-1.5" style={{ background: has ? TINT : 'transparent', minWidth: 36 }}>
+                    <span className="text-[9px] font-bold" style={{ color: has ? CORAL : '#C4BBB0' }}>{day.d}</span>
+                    <span className="text-[13px] font-extrabold leading-none" style={{ color: has ? INK : TERT }}>{day.n}</span>
+                    <span className="w-1 h-1 rounded-full" style={{ background: has ? CORAL : 'transparent' }} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           {groups.map((grp) => {
             const items = list.filter((b) => b.group === grp);
@@ -398,6 +420,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                 <button onClick={() => { const p = PROVIDERS.find((x) => x.name === b.provider); if (p) openProfile(p.id, 'bookings'); else act('Book again'); }} className="flex-1 h-10 rounded-[12px] flex items-center justify-center active:scale-[0.98]" style={{ background: TINT }}><span className="text-[13px] font-bold" style={{ color: CORAL }}>Book again</span></button>
                               )}
                             </div>
+                            {isUp && <button onClick={() => act('Added to your calendar')} className="w-full mt-2 py-1.5 active:opacity-60"><span className="text-[12px] font-bold" style={{ color: TERT }}>＋ Add to calendar</span></button>}
                           </div>
                         )}
                       </div>
@@ -483,7 +506,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   /* ───────── DISCOVER (home) ───────── */
   return (
     <Wrap embedded={embedded}>
-      <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 100, paddingBottom: embedded ? 104 : 36, scrollbarWidth: 'none', background: CREAM }}>
+      <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 116, paddingBottom: embedded ? 104 : 36, scrollbarWidth: 'none', background: CREAM }}>
         {/* Search */}
         <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px]" style={{ boxShadow: SHADOW }}>
           <Search size={16} color={TERT} strokeWidth={2} />
@@ -568,9 +591,9 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
 
         {/* Future near you */}
         <SectionLabel>Future near you</SectionLabel>
-        <div className="flex items-center gap-2 px-1">
-          <span className="text-[12px] font-medium" style={{ color: '#B6AEA5' }}>Training · Boarding · Pet taxi</span>
-          <span className="text-[9px] font-extrabold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-full" style={{ background: PEACH, color: '#A8A29C' }}>On the way</span>
+        <div className="flex items-start gap-2 px-1">
+          <span className="flex-1 text-[12px] font-medium leading-[1.6]" style={{ color: '#B6AEA5' }}>Training · Boarding · Daycare · Pet taxi · Drop-in visits · Photography · Nutrition advice</span>
+          <span className="shrink-0 text-[9px] font-extrabold uppercase tracking-[0.06em] px-1.5 py-[2px] rounded-full mt-[2px]" style={{ background: PEACH, color: '#A8A29C' }}>On the way</span>
         </div>
 
         {/* Refer — slim */}
