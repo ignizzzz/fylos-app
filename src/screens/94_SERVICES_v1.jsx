@@ -3,7 +3,7 @@ import {
   AlertTriangle, Bell, Search, Footprints, Home, Scissors, Stethoscope,
   Star, Heart, ChevronRight, ChevronLeft, ChevronDown, MapPin, MessageCircle,
   CalendarClock, X, Check, BadgeCheck, Repeat, Gift, Sparkles, GraduationCap,
-  Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User, Share2,
+  Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User, Share2, Clock,
 } from 'lucide-react';
 import ChatOverlay from './95_CHAT_v1';
 import InviteFriends from './60_INVITE_FRIENDS_v1';
@@ -76,6 +76,8 @@ const GENERATED = NAMES.map((name, i) => {
 const PROVIDERS = [...DETAILED, ...GENERATED];
 
 const INITIAL_BOOKINGS = [
+  { id: 'b0', when: 'upcoming', group: 'Today', status: 'Live', service: '60 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'THU', dom: '12', time: '09:00', pet: 'Leo', location: 'Zürichhorn loop',
+    live: { total: 60, done: 24, km: '1.8', lastPhoto: '4 min ago' }, checkIns: [['09:02', 'Picked up Leo at home'], ['09:18', 'Photo update sent']] },
   { id: 'b1', when: 'upcoming', group: 'This week', status: 'Confirmed', service: 'Grooming', provider: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker', dow: 'MON', dom: '16', time: '10:00', pet: 'Leo', location: 'Sofia’s studio · Niederdorf', notes: 'Full groom — wash, trim, nails.' },
   { id: 'b2', when: 'upcoming', group: 'This week', status: 'Confirmed', service: 'Grooming', provider: 'Bright Paws · Elena', photo: 'https://i.pravatar.cc/150?u=elena_groomer', dow: 'WED', dom: '18', time: '15:30', pet: 'Leo', location: 'Bright Paws · Seefeld', notes: 'Bath, blow-dry & style with Elena.' },
   { id: 'b3', when: 'upcoming', group: 'This week', status: 'Confirmed', service: 'Vet visit', provider: 'Lakeshore Vet · Dr. Reza', photo: 'https://i.pravatar.cc/150?u=dr_reza', dow: 'FRI', dom: '20', time: '09:00', pet: 'Leo', location: 'Lakeshore Vet · Bellevue', notes: 'Annual checkup & vaccinations.' },
@@ -85,6 +87,7 @@ const INITIAL_BOOKINGS = [
   { id: 'b7', when: 'past', group: 'February', status: 'Completed', service: 'Full groom', provider: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker', dow: 'SAT', dom: '7', time: '14:00', pet: 'Leo', location: 'Sofia’s studio · Niederdorf', notes: '',
     checkIns: [['14:05', 'Checked in at the studio'], ['15:20', 'All done — fresh & fluffy']] },
   { id: 'b6', when: 'past', group: 'January', status: 'Cancelled', service: 'Overnight sitting', provider: 'Maria K.', photo: 'https://i.pravatar.cc/150?u=maria_sitter', dow: 'SAT', dom: '31', time: '', pet: 'Tao', location: '', notes: 'Cancelled by you.' },
+  { id: 'b8', when: 'past', group: 'January', status: 'Expired', service: '30 min walk', provider: 'Nina T.', photo: 'https://i.pravatar.cc/150?u=nina_walker', dow: 'TUE', dom: '27', time: '16:30', pet: 'Leo', location: '', notes: 'Request expired — Nina didn’t respond within 24 h. You weren’t charged.' },
 ];
 const REMINDER_OPTS = ['1 h before', '3 h before', '1 day before', 'Off'];
 const EXTRA_REVIEWS = [
@@ -157,7 +160,7 @@ const Rating = ({ p, small }) => (
   <span className="inline-flex items-center gap-1"><Star size={small ? 10 : 11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} /><span className={small ? 'text-[11px] font-bold' : 'text-[11.5px] font-bold'} style={{ color: INK }}>{p.rating}</span><span className={small ? 'text-[10px]' : 'text-[11px]'} style={{ color: TERT }}>({p.reviews})</span></span>
 );
 
-const statusTone = (s) => s === 'Confirmed' ? { bg: '#EAF7EF', c: GREEN } : s === 'Pending' ? { bg: '#FBF1E2', c: AMBER } : s === 'Cancelled' ? { bg: '#FEE8E7', c: DANGER } : { bg: PEACH, c: MUTED };
+const statusTone = (s) => s === 'Confirmed' ? { bg: '#EAF7EF', c: GREEN } : s === 'Pending' ? { bg: '#FBF1E2', c: AMBER } : s === 'Cancelled' ? { bg: '#FEE8E7', c: DANGER } : s === 'Live' ? { bg: TINT, c: CORAL } : { bg: PEACH, c: MUTED };
 
 // Shared 14-day date scroller (profile availability + reschedule)
 const DateScroller = ({ selected, onSelect }) => (
@@ -287,6 +290,8 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [pickedResched, setPickedResched] = useState(null);
   const [confirmation, setConfirmation] = useState(null);  // request-sent overlay
   const [petHint, setPetHint] = useState(false);
+  const [bookNote, setBookNote] = useState('');
+  const [repeatWeekly, setRepeatWeekly] = useState(false);
   const [toast, setToast] = useState('');
   const act = (m) => { setToast(m); setTimeout(() => setToast(''), 1700); };
   const cycleReminder = (id) => setRemIdx((r) => ({ ...r, [id]: ((r[id] ?? 0) + 1) % REMINDER_OPTS.length }));
@@ -310,7 +315,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const savedProviders = PROVIDERS.filter((p) => saved.includes(p.id));
   const suggestions = PROVIDERS.filter((p) => !saved.includes(p.id) && p.verified).slice(0, 2);
 
-  const openProfile = (id, from) => { setSvc(1); setDay(0); setTime(1); setProfScrolled(false); setVerifiedOpen(false); setView({ kind: 'profile', id, from }); };
+  const openProfile = (id, from) => { setSvc(1); setDay(0); setTime(1); setProfScrolled(false); setVerifiedOpen(false); setBookNote(''); setRepeatWeekly(false); setView({ kind: 'profile', id, from }); };
   const profileP = view.kind === 'profile' ? PROVIDERS.find((p) => p.id === view.id) : null;
 
   const browseAll = view.kind === 'browse' ? PROVIDERS.filter((p) => p.cat === view.cat) : [];
@@ -322,9 +327,9 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
     const { m, n } = dateObj;
     const id = 'b' + Math.floor(Math.random() * 100000);
     const group = m === 0 ? (n <= 22 ? 'This week' : 'Next week') : MONTHS_META[m].name.split(' ')[0];
-    setBookings((prev) => [{ id, when: 'upcoming', group, bm: m, status: 'Pending', service: svcSel.n, provider: p.name, photo: p.photo, dow: dowFor(m, n), dom: String(n), time: timeSel, pet: petName, location: 'Pickup at home', notes: `Waiting for ${p.name.split(' ')[0]} to confirm.` }, ...prev]);
+    setBookings((prev) => [{ id, when: 'upcoming', group, bm: m, status: 'Pending', service: svcSel.n, provider: p.name, photo: p.photo, dow: dowFor(m, n), dom: String(n), time: timeSel, pet: petName, location: 'Pickup at home', repeat: repeatWeekly, notes: bookNote.trim() || `Waiting for ${p.name.split(' ')[0]} to confirm.` }, ...prev]);
     setView({ kind: 'bookings' }); setBkFilter('upcoming'); setExpanded(id); setPickedAvail(null);
-    setConfirmation({ photo: p.photo, provider: p.name, service: svcSel.n, when: `${dateLabel(m, n)} · ${timeSel}` });
+    setConfirmation({ photo: p.photo, provider: p.name, service: svcSel.n, when: `${dateLabel(m, n)} · ${timeSel}`, repeat: repeatWeekly });
   };
 
   /* ───────── PROVIDER PROFILE (full screen) ───────── */
@@ -399,6 +404,23 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           </div>
           ); })()}
 
+          <SectionLabel>Repeat</SectionLabel>
+          <div className="flex gap-2">
+            {[{ v: false, l: 'One-time' }, { v: true, l: 'Weekly' }].map((o) => {
+              const on = repeatWeekly === o.v;
+              return (
+                <button key={o.l} onClick={() => setRepeatWeekly(o.v)} className="flex-1 h-[42px] rounded-[12px] flex items-center justify-center gap-1.5 text-[13px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>
+                  {o.v && <Repeat size={13} strokeWidth={2.4} />}{o.l}
+                </button>
+              );
+            })}
+          </div>
+          {repeatWeekly && <p className="text-[11px] mt-2 ml-1.5" style={{ color: TERT }}>Same day & time every week — skip or stop any week from Bookings.</p>}
+
+          <SectionLabel>Note for {p.name.split(' ')[0]} <span className="lowercase tracking-normal" style={{ color: '#C4BBB0' }}>· optional</span></SectionLabel>
+          <textarea value={bookNote} onChange={(e) => setBookNote(e.target.value)} placeholder="e.g. The leash hangs by the door — ring the bell twice." rows={2}
+            className="w-full bg-white rounded-[14px] px-4 py-3 outline-none text-[13.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
+
           <SectionLabel action={`See all (${p.reviews})`} onAction={() => setView({ kind: 'reviews', id: p.id })}>Latest review</SectionLabel>
           <div className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
             <div className="flex items-center gap-1.5 mb-1.5">{[...Array(5)].map((_, i) => <Star key={i} size={11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />)}<span className="text-[11.5px] font-bold ml-1" style={{ color: INK }}>{p.review.who}</span></div>
@@ -415,8 +437,9 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         <div className="absolute left-0 right-0 z-40 px-5 pointer-events-none" style={{ bottom: 0, paddingBottom: embedded ? 100 : 28, paddingTop: 26, background: `linear-gradient(to top, ${CREAM} 62%, rgba(247,245,242,0))` }}>
           <button onClick={() => requestBooking(p, sel, pickedAvail || { m: 0, n: DATES14[day].n }, TIMES[time])} className="w-full py-4 rounded-[16px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 pointer-events-auto" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
             <span className="text-[15px] font-bold text-white">Request booking</span>
-            <span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>· CHF {sel.p}</span>
+            <span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>· CHF {sel.p}{repeatWeekly ? '/wk' : ''}</span>
           </button>
+          <div className="text-[10.5px] font-medium text-center mt-2" style={{ color: TERT }}>Pay after the service · Visa ··4242 — charged only once it’s done</div>
         </div>
 
         {/* Verified — what it means */}
@@ -672,8 +695,8 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                           </span>
                           <div className="flex-1 min-w-0">
                             <div className="text-[14px] font-bold truncate" style={{ color: INK }}>{b.service}</div>
-                            <div className="text-[11.5px] mt-0.5 truncate" style={{ color: TERT }}>{b.provider}{b.time ? ` · ${b.time}` : ''}</div>
-                            <span className="inline-flex items-center gap-1 mt-1 text-[10.5px] font-bold" style={{ color: tone.c }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: tone.c }} />{b.status}</span>
+                            <div className="text-[11.5px] mt-0.5 truncate" style={{ color: TERT }}>{b.provider}{b.time ? ` · ${b.time}` : ''}{b.repeat ? ' · repeats weekly' : ''}</div>
+                            <span className="inline-flex items-center gap-1 mt-1 text-[10.5px] font-bold" style={{ color: tone.c }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: tone.c, animation: b.status === 'Live' ? 'svPulse 1.4s ease-in-out infinite' : 'none' }} />{b.status === 'Live' ? 'Live now' : b.status}</span>
                           </div>
                           <img src={b.photo} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
                           <ChevronRight size={15} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" style={{ transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.18s' }} />
@@ -689,7 +712,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                 </div>
                               )}
                               <div className="flex items-center gap-2"><span className="w-[13px] text-center text-[11px]">🐾</span><span className="text-[12.5px]" style={{ color: MUTED }}>For {b.pet}</span></div>
-                              {isUp && (
+                              {isUp && b.status !== 'Live' && (
                                 <button onClick={(e) => { e.stopPropagation(); cycleReminder(b.id); }} className="flex items-center gap-2 text-left active:opacity-70">
                                   <Bell size={12} color={CORAL} strokeWidth={2} className="shrink-0" />
                                   <span className="text-[12px] font-semibold" style={{ color: MUTED }}>Reminder · <span style={{ color: CORAL }}>{REMINDER_OPTS[remIdx[b.id] ?? 0]}</span></span>
@@ -697,6 +720,22 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                 </button>
                               )}
                               {isUp && b.status === 'Pending' && <div className="flex items-center gap-2"><MessageCircle size={12} color={TERT} strokeWidth={2} className="shrink-0" /><span className="text-[12px]" style={{ color: TERT }}>{b.provider.split(' ')[0]} usually responds within ~1 h</span></div>}
+                              {isUp && b.status === 'Pending' && <div className="flex items-center gap-2"><Clock size={12} color={AMBER} strokeWidth={2} className="shrink-0" /><span className="text-[12px] font-medium" style={{ color: AMBER }}>Auto-expires in 22 h if not confirmed — you won’t be charged</span></div>}
+                              {b.repeat && <div className="flex items-center gap-2"><Repeat size={12} color={TERT} strokeWidth={2.2} className="shrink-0" /><span className="text-[12px]" style={{ color: TERT }}>Repeats weekly · manage anytime</span></div>}
+                              {b.status === 'Live' && b.live && (
+                                <div className="rounded-[12px] px-3.5 py-3" style={{ background: TINT }}>
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold" style={{ color: CORAL }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: CORAL, animation: 'svPulse 1.4s ease-in-out infinite' }} />LIVE · {b.live.done} of {b.live.total} min</span>
+                                    <span className="text-[11px] font-bold" style={{ color: MUTED }}>{b.live.km} km · photo {b.live.lastPhoto}</span>
+                                  </div>
+                                  <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.7)' }}>
+                                    <div className="h-full rounded-full transition-all" style={{ width: `${Math.round((b.live.done / b.live.total) * 100)}%`, background: CORAL }} />
+                                  </div>
+                                  {b.checkIns && b.checkIns.map(([tt, txt], ci) => (
+                                    <div key={ci} className="flex items-center gap-2 mt-2"><span className="text-[10px] font-bold" style={{ color: TERT }}>{tt}</span><span className="text-[11.5px] font-medium" style={{ color: MUTED }}>{txt}</span></div>
+                                  ))}
+                                </div>
+                              )}
                               {b.notes && <div className="text-[12.5px] leading-[1.45] rounded-[10px] px-3 py-2" style={{ background: PEACH, color: MUTED }}>{b.notes}</div>}
                               {b.status === 'Completed' && !b.rated && (
                                 <div className="rounded-[12px] px-3.5 py-3 flex items-center gap-3" style={{ background: TINT }}>
@@ -706,7 +745,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                   ))}</span>
                                 </div>
                               )}
-                              {b.checkIns && (
+                              {b.checkIns && b.when === 'past' && (
                                 <div className="rounded-[12px] px-3.5 py-3 mt-0.5" style={{ background: PEACH }}>
                                   <div className="text-[10px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: '#A8A29C' }}>How it went</div>
                                   {b.checkIns.map(([t, txt], ci) => (
@@ -729,7 +768,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                               {isUp ? (
                                 <>
                                   <button onClick={() => setChat({ name: b.provider, photo: b.photo })} className="flex-1 h-10 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98] bg-white" style={{ boxShadow: 'inset 0 0 0 1.4px #E5DED5' }}><MessageCircle size={14} color={INK} strokeWidth={2} /><span className="text-[13px] font-bold" style={{ color: INK }}>Message</span></button>
-                                  <button onClick={() => { setReschedFor(b); setReschedDay(0); setReschedTime(1); }} className="flex-1 h-10 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: TINT }}><CalendarClock size={14} color={CORAL} strokeWidth={2} /><span className="text-[13px] font-bold" style={{ color: CORAL }}>Reschedule</span></button>
+                                  {b.status !== 'Live' && <button onClick={() => { setReschedFor(b); setReschedDay(0); setReschedTime(1); }} className="flex-1 h-10 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: TINT }}><CalendarClock size={14} color={CORAL} strokeWidth={2} /><span className="text-[13px] font-bold" style={{ color: CORAL }}>Reschedule</span></button>}
                                 </>
                               ) : (
                                 <button onClick={() => { const p = PROVIDERS.find((x) => x.name === b.provider); if (p) openProfile(p.id, 'bookings'); else act('Book again'); }} className="flex-1 h-10 rounded-[12px] flex items-center justify-center active:scale-[0.98]" style={{ background: TINT }}><span className="text-[13px] font-bold" style={{ color: CORAL }}>Book again</span></button>
@@ -737,13 +776,13 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                             </div>
                             <div className="flex items-center justify-between mt-2.5 px-0.5">
                               <button onClick={() => { const p = PROVIDERS.find((x) => x.name === b.provider); if (p) openProfile(p.id, 'bookings'); else act('Profile unavailable'); }} className="flex items-center gap-1.5 py-1 active:opacity-60"><User size={12} color={TERT} strokeWidth={2.2} /><span className="text-[12px] font-bold" style={{ color: TERT }}>Go to profile</span></button>
-                              {isUp ? (
+                              {isUp && b.status !== 'Live' ? (
                                 <button onClick={() => setCancelFor(b)} className="py-1 active:opacity-60"><span className="text-[12px] font-bold" style={{ color: DANGER }}>{b.status === 'Pending' ? 'Cancel request' : 'Cancel booking'}</span></button>
                               ) : (
-                                <button onClick={() => act('Added to your calendar')} className="py-1 active:opacity-60 invisible"><span className="text-[12px]">.</span></button>
+                                <span className="py-1 text-[12px] font-medium" style={{ color: '#C4BBB0' }}>{b.status === 'Live' ? 'In progress' : b.status}</span>
                               )}
                             </div>
-                            {isUp && <button onClick={() => act('Added to your calendar')} className="w-full mt-1 py-1.5 active:opacity-60"><span className="text-[12px] font-bold" style={{ color: TERT }}>＋ Add to calendar</span></button>}
+                            {isUp && b.status !== 'Live' && <button onClick={() => act('Added to your calendar')} className="w-full mt-1 py-1.5 active:opacity-60"><span className="text-[12px] font-bold" style={{ color: TERT }}>＋ Add to calendar</span></button>}
                           </div>
                         )}
                       </div>
@@ -849,7 +888,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                 <span className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-[3px] border-white" style={{ background: GREEN, animation: 'svBadge 0.4s 0.35s cubic-bezier(0.34,1.56,0.64,1) both' }}><Check size={15} color="#fff" strokeWidth={3.2} /></span>
               </div>
               <h2 className="text-[19px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Request sent</h2>
-              <p className="text-[12.5px] mt-1" style={{ color: TERT }}>{confirmation.service} · {confirmation.when}</p>
+              <p className="text-[12.5px] mt-1" style={{ color: TERT }}>{confirmation.service} · {confirmation.when}{confirmation.repeat ? ' · repeats weekly' : ''}</p>
 
               {/* live steps */}
               <div className="flex items-start justify-between mt-6 px-1">
