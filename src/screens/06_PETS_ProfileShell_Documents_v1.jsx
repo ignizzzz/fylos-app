@@ -11032,6 +11032,9 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState(null);
   const [publicViewPetId, setPublicViewPetId] = useState(null);
   const [servicesRoute, setServicesRoute] = useState('home'); // 'home' | 'walking' | 'bookings'
+  // True while the Services tab shows a full sub-screen (category browse /
+  // provider profile) — the global header hides so the sub-screen owns the top.
+  const [servicesSub, setServicesSub] = useState(false);
   const [pushedScreen, setPushedScreen] = useState(null);
   const [screenParams, setScreenParams] = useState({});
   const [bookingStatus, setBookingStatus] = useState('confirmed');
@@ -11208,7 +11211,7 @@ export default function App() {
     setPetsData(prev => prev.map(p => p.id === updatedPet.id ? updatedPet : p));
   };
 
-  const hideGlobalHeader = (displayTab === 'services' && servicesRoute === 'walking') || (displayTab === 'pets' && petsRoute === 'profile');
+  const hideGlobalHeader = (displayTab === 'services' && servicesRoute === 'walking') || (displayTab === 'services' && servicesSub) || (displayTab === 'pets' && petsRoute === 'profile');
 
   const renderScreen = () => {
     if (displayTab === 'pets') {
@@ -11241,7 +11244,7 @@ export default function App() {
           initialSegment={servicesRoute === 'bookings' ? 'bookings' : 'discover'}
           focusedBookingId={focusedBookingId}
           onClearFocus={() => setFocusedBookingId(null)}
-          onOpenWalking={() => setServicesRoute('walking')}
+          onSubScreenChange={setServicesSub}
         />
       );
     }
