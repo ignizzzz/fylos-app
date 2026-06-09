@@ -3,7 +3,7 @@ import {
   AlertTriangle, Bell, Search, Footprints, Home, Scissors, Stethoscope,
   Star, Heart, ChevronRight, ChevronLeft, ChevronDown, MapPin, MessageCircle,
   CalendarClock, X, Check, BadgeCheck, Repeat, Gift, Sparkles, GraduationCap,
-  Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User,
+  Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User, Share2,
 } from 'lucide-react';
 import ChatOverlay from './95_CHAT_v1';
 import InviteFriends from './60_INVITE_FRIENDS_v1';
@@ -41,19 +41,19 @@ const CATEGORIES = [
 ];
 
 const DETAILED = [
-  { id: 'pr1', cat: 'walking', name: 'Lukas F.', rating: 4.9, reviews: 132, dist: 0.8, price: 22, photo: 'https://i.pravatar.cc/150?u=lukas_walker', verified: true, today: true, recommended: true,
+  { id: 'pr1', cat: 'walking', name: 'Lukas F.', rating: 4.9, reviews: 132, dist: 0.8, price: 22, photo: 'https://i.pravatar.cc/150?u=lukas_walker', verified: true, today: true, recommended: true, perks: ['GPS tracking', 'Photo updates'], cancelPolicy: '24 h',
     stats: [['530', 'walks'], ['92%', 'repeat'], ['~1 h', 'reply']], meta: '530 walks · replies in ~1 h', bio: 'Full-time walker in Seefeld. Calm energy, great with reactive dogs, photo updates on every walk.',
     services: [{ n: '30 min walk', p: 14, d: 'Quick loop · water break' }, { n: '60 min walk', p: 22, d: 'Park time · photo update' }, { n: '90 min walk', p: 33, d: 'Long adventure · forest trails' }],
     review: { who: 'Anna M.', txt: 'Leo comes back happy and tired every single time. Lukas sends the best photo updates.' } },
-  { id: 'pr3', cat: 'sitting', name: 'Maria K.', rating: 4.8, reviews: 96, dist: 0.5, price: 38, photo: 'https://i.pravatar.cc/150?u=maria_sitter', verified: true, today: true, recommended: true,
+  { id: 'pr3', cat: 'sitting', name: 'Maria K.', rating: 4.8, reviews: 96, dist: 0.5, price: 38, photo: 'https://i.pravatar.cc/150?u=maria_sitter', verified: true, today: true, recommended: true, perks: ['Photo updates'], cancelPolicy: '12 h',
     stats: [['210', 'stays'], ['88%', 'repeat'], ['~30 m', 'reply']], meta: '210 stays · replies in ~30 m', bio: 'Your pet stays at my quiet flat by the lake — daily walks, couch privileges included.',
     services: [{ n: 'Day sitting', p: 25, d: '8 am – 6 pm at my flat' }, { n: 'Overnight', p: 38, d: 'Evening walk · cozy night in' }, { n: 'Week package', p: 240, d: '7 nights · daily updates' }],
     review: { who: 'Julia S.', txt: 'Tao was so relaxed when we got back. Daily photos and a little diary — adorable.' } },
-  { id: 'pr6', cat: 'walking', name: 'Jonas W.', rating: 4.8, reviews: 84, dist: 2.3, price: 24, photo: 'https://i.pravatar.cc/150?u=jonas_walker', verified: true, today: false, recommended: true,
+  { id: 'pr6', cat: 'walking', name: 'Jonas W.', rating: 4.8, reviews: 84, dist: 2.3, price: 24, photo: 'https://i.pravatar.cc/150?u=jonas_walker', verified: true, today: false, recommended: true, perks: ['GPS tracking', 'Photo updates'], cancelPolicy: '24 h',
     stats: [['310', 'walks'], ['90%', 'repeat'], ['~2 h', 'reply']], meta: '310 walks · replies in ~2 h', bio: 'Trail runner — perfect for high-energy dogs that need real exercise.',
     services: [{ n: '60 min run', p: 24, d: 'Lakeside jog · high energy' }, { n: '90 min trail', p: 36, d: 'Uetliberg trails · real workout' }],
     review: { who: 'Felix H.', txt: 'Our husky finally gets the workout he needs.' } },
-  { id: 'pr5', cat: 'walking', name: 'Nina T.', rating: 4.7, reviews: 58, dist: 1.6, price: 19, photo: 'https://i.pravatar.cc/150?u=nina_walker', verified: false, today: true, recommended: false,
+  { id: 'pr5', cat: 'walking', name: 'Nina T.', rating: 4.7, reviews: 58, dist: 1.6, price: 19, photo: 'https://i.pravatar.cc/150?u=nina_walker', verified: false, today: true, recommended: false, perks: null, cancelPolicy: null,
     stats: [['160', 'walks'], ['81%', 'repeat'], ['~3 h', 'reply']], meta: '160 walks · replies in ~3 h', bio: 'Student & lifelong dog person. Energetic walks, parks and trails.',
     services: [{ n: '30 min walk', p: 12, d: 'Neighbourhood round' }, { n: '60 min walk', p: 19, d: 'Park visit · play time' }],
     review: { who: 'Petra K.', txt: 'Great with our young lab — comes back perfectly tired.' } },
@@ -66,7 +66,7 @@ const GENERATED = NAMES.map((name, i) => {
   const reply = ['~1 h', '~2 h', '~30 m', '~3 h'][i % 4];
   return {
     id: 'gw' + i, cat: i % 4 === 3 ? 'sitting' : 'walking', name, rating: parseFloat(rating), reviews: 12 + ((i * 13) % 90), dist: +(0.4 + ((i * 5) % 40) / 10).toFixed(1), price,
-    photo: `https://i.pravatar.cc/150?u=fylos_walker_${i}`, verified: i % 3 !== 1, today: i % 2 === 0, recommended: false,
+    photo: `https://i.pravatar.cc/150?u=fylos_walker_`, verified: i % 3 !== 1, today: i % 2 === 0, recommended: false, perks: i % 2 === 0 ? ['GPS tracking', 'Photo updates'] : null, cancelPolicy: i % 3 === 0 ? '24 h' : i % 3 === 1 ? '12 h' : null,
     stats: [[String(walks), 'walks'], [`${78 + ((i * 5) % 20)}%`, 'repeat'], [reply, 'reply']], meta: `${walks} walks · replies in ${reply}`,
     bio: 'Local, vetted and insured through fylos. Flexible with schedules and happy to meet beforehand.',
     services: [{ n: '30 min walk', p: Math.round(price * 0.65), d: 'Quick neighbourhood loop' }, { n: '60 min walk', p: price, d: 'Full hour · park time' }, { n: '90 min walk', p: Math.round(price * 1.5), d: 'Extended adventure' }],
@@ -88,15 +88,20 @@ const INITIAL_BOOKINGS = [
 ];
 const REMINDER_OPTS = ['1 h before', '3 h before', '1 day before', 'Off'];
 const EXTRA_REVIEWS = [
-  { who: 'Marco R.', when: '2 weeks ago', txt: 'Always on time, super communicative. Our dog adores him.' },
-  { who: 'Petra K.', when: '1 month ago', txt: 'Photo updates every time and a tired, happy pup at the end.' },
-  { who: 'Stefan B.', when: '2 months ago', txt: 'Flexible with last-minute changes — lifesaver for our schedule.' },
+  { who: 'Marco R.', when: '2 weeks ago', stars: 5, txt: 'Always on time, super communicative. Our dog adores him.' },
+  { who: 'Petra K.', when: '1 month ago', stars: 4, txt: 'Photo updates every time and a tired, happy pup at the end.' },
+  { who: 'Stefan B.', when: '2 months ago', stars: 5, txt: 'Flexible with last-minute changes — lifesaver for our schedule.' },
+  { who: 'Lena W.', when: '3 months ago', stars: 3, txt: 'Good walk, though pickup ran a little late that day.' },
 ];
+// Synthetic star distribution for the reviews dashboard
+const starDist = (p) => { const t = p.reviews; const five = Math.round(t * 0.78); const four = Math.round(t * 0.15); const three = Math.round(t * 0.05); const two = Math.max(0, Math.round(t * 0.01)); return [five, four, three, two, Math.max(0, t - five - four - three - two)]; };
 const SORTS = ['Recommended', 'Top rated', 'Price: low to high', 'Nearest'];
-const DAYS = ['Today', 'Tomorrow', 'Sat 14'];
 const TIMES = ['09:00', '11:00', '14:00', '16:30'];
-// Per-day open slots (indexes into TIMES) — makes availability feel real
-const SLOTS = { 0: [1, 2, 3], 1: [0, 1, 3], 2: [0, 2] };
+// Next 14 days (mock today = Thu Feb 12 2026) — shared by availability & reschedule
+const DOWS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const DATES14 = [...Array(14)].map((_, i) => { const n = 12 + i; return { n, dow: DOWS[(n) % 7], label: i === 0 ? 'Today' : i === 1 ? 'Tmrw' : DOWS[n % 7].charAt(0) + DOWS[n % 7].slice(1).toLowerCase() }; });
+// Per-day open slots (indexes into TIMES) — varies day to day so it feels real
+const slotsFor = (i) => [[1, 2, 3], [0, 1, 3], [0, 2], [0, 1, 2, 3]][i % 4];
 const FUTURE_SERVICES = [
   { label: 'Training', icon: GraduationCap },
   { label: 'Boarding', icon: Home },
@@ -145,13 +150,28 @@ const Rating = ({ p, small }) => (
 );
 
 const statusTone = (s) => s === 'Confirmed' ? { bg: '#EAF7EF', c: GREEN } : s === 'Pending' ? { bg: '#FBF1E2', c: AMBER } : s === 'Cancelled' ? { bg: '#FEE8E7', c: DANGER } : { bg: PEACH, c: MUTED };
+
+// Shared 14-day date scroller (profile availability + reschedule)
+const DateScroller = ({ selected, onSelect }) => (
+  <div className="flex gap-2 overflow-x-auto -mx-5 px-5 pb-1" style={{ scrollbarWidth: 'none' }}>
+    {DATES14.map((d, i) => {
+      const on = selected === i;
+      return (
+        <button key={i} onClick={() => onSelect(i)} className="shrink-0 rounded-[12px] px-1 py-2 active:scale-[0.95] transition-all" style={{ width: 52, background: on ? CORAL : '#fff', boxShadow: on ? '0 4px 12px rgba(232,93,42,0.25)' : SHADOW }}>
+          <div className="text-[9px] font-bold tracking-[0.04em]" style={{ color: on ? 'rgba(255,255,255,0.85)' : '#C4BBB0' }}>{d.label.toUpperCase()}</div>
+          <div className="text-[15px] font-extrabold leading-tight mt-[1px]" style={{ color: on ? '#fff' : INK }}>{d.n}</div>
+        </button>
+      );
+    })}
+  </div>
+);
 const catLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label || 'Providers';
 
-const SubHeader = ({ title, sub, onBack, right }) => (
+const SubHeader = ({ title, sub, onBack, right, showTitle = true }) => (
   <div className="absolute top-0 left-0 right-0 z-40 pointer-events-none" style={{ paddingTop: 54, background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 64%, rgba(247,245,242,0) 100%)', paddingBottom: 14 }}>
     <div className="flex items-center px-5 pointer-events-auto" style={{ height: 44 }}>
       <button onClick={onBack} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 shrink-0" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><ChevronLeft size={18} color={INK} strokeWidth={2.2} /></button>
-      <div className="flex-1 text-center">
+      <div className="flex-1 text-center transition-opacity duration-200" style={{ opacity: showTitle ? 1 : 0 }}>
         <div className="text-[16px] font-bold tracking-[-0.01em] leading-tight" style={{ color: INK }}>{title}</div>
         {sub && <div className="text-[10.5px] font-medium" style={{ color: TERT }}>{sub}</div>}
       </div>
@@ -191,7 +211,8 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [view, setView] = useState(focusedBookingId || initialSegment === 'bookings' ? { kind: 'bookings' } : { kind: 'home' });
   const [sort, setSort] = useState('Recommended');
   const [sortOpen, setSortOpen] = useState(false);
-  const [pet, setPet] = useState('leo');
+  const [petSel, setPetSel] = useState(['leo']);
+  const togglePet = (id) => setPetSel((s) => s.includes(id) ? (s.length > 1 ? s.filter((x) => x !== id) : s) : [...s, id]);
   const [saved, setSaved] = useState(['pr1', 'pr3', 'pr6']);
   const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
   const [bkFilter, setBkFilter] = useState('upcoming');
@@ -209,16 +230,18 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [reschedDay, setReschedDay] = useState(0);
   const [reschedTime, setReschedTime] = useState(1);
   const [cancelFor, setCancelFor] = useState(null);
-  const [reviewsOpen, setReviewsOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [verifiedOpen, setVerifiedOpen] = useState(false);
+  const [profScrolled, setProfScrolled] = useState(false);
+  const [revFilter, setRevFilter] = useState('All');
   const [toast, setToast] = useState('');
   const act = (m) => { setToast(m); setTimeout(() => setToast(''), 1700); };
   const cycleReminder = (id) => setRemIdx((r) => ({ ...r, [id]: ((r[id] ?? 0) + 1) % REMINDER_OPTS.length }));
   const submitRating = (id, stars) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, rated: stars } : b)); setRateFor(null); act('Thanks for your feedback'); };
   const confirmCancel = (id) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, when: 'past', group: 'February', status: 'Cancelled', notes: 'Cancelled by you.' } : b)); setCancelFor(null); setExpanded(null); act('Booking cancelled'); };
   const confirmResched = (b) => {
-    const map = { 0: { dow: 'TODAY', dom: '' }, 1: { dow: 'TMRW', dom: '' }, 2: { dow: 'SAT', dom: '14' } };
-    setBookings((prev) => prev.map((x) => x.id === b.id ? { ...x, ...map[reschedDay], time: TIMES[reschedTime], status: 'Pending', notes: `Waiting for ${b.provider.split(' ')[0]} to confirm the new time.` } : x));
+    const d = DATES14[reschedDay];
+    setBookings((prev) => prev.map((x) => x.id === b.id ? { ...x, dow: d.dow, dom: String(d.n), group: d.n <= 22 ? 'This week' : 'Next week', time: TIMES[reschedTime], status: 'Pending', notes: `Waiting for ${b.provider.split(' ')[0]} to confirm the new time.` } : x));
     setReschedFor(null); act('Reschedule requested');
   };
   useEffect(() => { if (focusedBookingId && onClearFocus) onClearFocus(); // eslint-disable-next-line
@@ -226,14 +249,14 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   useEffect(() => { onSubScreenChange && onSubScreenChange(view.kind !== 'home' || inviteOpen); }, [view, inviteOpen, onSubScreenChange]);
 
   const toggleSave = (id) => setSaved((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
-  const petName = PETS.find((p) => p.id === pet)?.name || 'Leo';
+  const petName = petSel.length > 1 ? 'Leo & Tao' : (PETS.find((p) => p.id === petSel[0])?.name || 'Leo');
   const upcoming = bookings.filter((b) => b.when === 'upcoming');
   const nextUp = upcoming[0];
   const lastDone = bookings.find((b) => b.status === 'Completed');
   const savedProviders = PROVIDERS.filter((p) => saved.includes(p.id));
   const suggestions = PROVIDERS.filter((p) => !saved.includes(p.id) && p.verified).slice(0, 2);
 
-  const openProfile = (id, from) => { setSvc(1); setDay(0); setTime(1); setView({ kind: 'profile', id, from }); };
+  const openProfile = (id, from) => { setSvc(1); setDay(0); setTime(1); setProfScrolled(false); setVerifiedOpen(false); setView({ kind: 'profile', id, from }); };
   const profileP = view.kind === 'profile' ? PROVIDERS.find((p) => p.id === view.id) : null;
 
   const browseAll = view.kind === 'browse' ? PROVIDERS.filter((p) => p.cat === view.cat) : [];
@@ -241,9 +264,10 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const browseRest = [...browseAll.filter((p) => !p.recommended)].sort((a, b) =>
     sort === 'Top rated' ? b.rating - a.rating : sort === 'Price: low to high' ? a.price - b.price : sort === 'Nearest' ? a.dist - b.dist : b.rating * b.reviews - a.rating * a.reviews);
 
-  const requestBooking = (p, svcSel, daySel, timeSel) => {
+  const requestBooking = (p, svcSel, dayIdx, timeSel) => {
+    const d = DATES14[dayIdx];
     const id = 'b' + Math.floor(Math.random() * 100000);
-    setBookings((prev) => [{ id, when: 'upcoming', group: 'This week', status: 'Pending', service: svcSel.n, provider: p.name, photo: p.photo, dow: daySel === 'Today' ? 'TODAY' : daySel === 'Tomorrow' ? 'TMRW' : 'SAT', dom: daySel === 'Sat 14' ? '14' : '', time: timeSel, pet: petName, location: 'Pickup at home', notes: `Waiting for ${p.name.split(' ')[0]} to confirm.` }, ...prev]);
+    setBookings((prev) => [{ id, when: 'upcoming', group: d.n <= 22 ? 'This week' : 'Next week', status: 'Pending', service: svcSel.n, provider: p.name, photo: p.photo, dow: d.dow, dom: String(d.n), time: timeSel, pet: petName, location: 'Pickup at home', notes: `Waiting for ${p.name.split(' ')[0]} to confirm.` }, ...prev]);
     setView({ kind: 'bookings' }); setBkFilter('upcoming'); setExpanded(id);
     act('Request sent — waiting for confirmation');
   };
@@ -255,13 +279,10 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
     const isSaved = saved.includes(p.id);
     return (
       <Wrap embedded={embedded}>
-        <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 112, paddingBottom: embedded ? 196 : 120, scrollbarWidth: 'none', background: CREAM }}>
+        <div onScroll={(e) => setProfScrolled(e.currentTarget.scrollTop > 130)} className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 112, paddingBottom: embedded ? 196 : 120, scrollbarWidth: 'none', background: CREAM }}>
           <div className="flex flex-col items-center text-center">
-            <span className="relative">
-              <img src={p.photo} alt={p.name} className="w-[84px] h-[84px] rounded-full object-cover" style={{ boxShadow: '0 10px 26px rgba(60,30,15,0.14)' }} />
-              {p.today && <span className="absolute bottom-0.5 right-0.5 w-4 h-4 rounded-full" style={{ background: GREEN, border: '2.5px solid ' + CREAM }} />}
-            </span>
-            <div className="flex items-center gap-1.5 mt-3"><h1 className="text-[21px] font-extrabold tracking-[-0.02em]" style={{ color: INK }}>{p.name}</h1>{p.verified && <BadgeCheck size={17} color={CORAL} strokeWidth={2.2} />}</div>
+            <img src={p.photo} alt={p.name} className="w-[84px] h-[84px] rounded-full object-cover" style={{ boxShadow: '0 10px 26px rgba(60,30,15,0.14)' }} />
+            <div className="flex items-center gap-1.5 mt-3"><h1 className="text-[21px] font-extrabold tracking-[-0.02em]" style={{ color: INK }}>{p.name}</h1>{p.verified && <button onClick={() => setVerifiedOpen(true)} className="active:scale-90 transition-transform"><BadgeCheck size={17} color={CORAL} strokeWidth={2.2} /></button>}</div>
             <div className="text-[12.5px] mt-0.5" style={{ color: MUTED }}>{p.cat === 'sitting' ? 'Pet sitter' : 'Dog walker'} · {p.dist} km away{p.today ? ' · Available today' : ''}</div>
             <div className="mt-1.5"><Rating p={p} /></div>
           </div>
@@ -294,82 +315,129 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               );
             })}
           </div>
-          <div className="flex items-center gap-1.5 mt-2 ml-1.5">
-            <Check size={11} color={GREEN} strokeWidth={3} />
-            <span className="text-[11px] font-medium" style={{ color: TERT }}>GPS tracking & photo updates included</span>
-          </div>
+          {p.perks && p.perks.length > 0 && (
+            <div className="flex items-center gap-1.5 mt-2 ml-1.5">
+              <Check size={11} color={GREEN} strokeWidth={3} />
+              <span className="text-[11px] font-medium" style={{ color: TERT }}>{p.perks.join(' & ')} included</span>
+            </div>
+          )}
 
           <SectionLabel>Availability</SectionLabel>
-          <div className="rounded-[16px] bg-white p-3" style={{ boxShadow: SHADOW }}>
-            <div className="flex gap-2">{DAYS.map((d, i) => {
-              const on = day === i;
-              const free = (SLOTS[i] || []).length;
-              return (
-                <button key={d} onClick={() => { setDay(i); const s = SLOTS[i] || []; if (!s.includes(time)) setTime(s[0] ?? 0); }} className="flex-1 rounded-[12px] py-2 active:scale-[0.97] transition-all" style={{ background: on ? CORAL : PEACH }}>
-                  <div className="text-[13px] font-bold leading-tight" style={{ color: on ? '#fff' : MUTED }}>{d}</div>
-                  <div className="text-[9.5px] font-semibold mt-[2px]" style={{ color: on ? 'rgba(255,255,255,0.85)' : '#B6AEA5' }}>{free} slot{free === 1 ? '' : 's'}</div>
-                </button>
-              );
-            })}</div>
-            <div className="h-px my-3" style={{ background: LINE }} />
+          <DateScroller selected={day} onSelect={(i) => { setDay(i); const s = slotsFor(i); if (!s.includes(time)) setTime(s[0] ?? 0); }} />
+          <div className="rounded-[16px] bg-white p-3 mt-2" style={{ boxShadow: SHADOW }}>
             <div className="grid grid-cols-4 gap-2">{TIMES.map((t, i) => {
-              const openSlot = (SLOTS[day] || []).includes(i);
+              const openSlot = slotsFor(day).includes(i);
               const on = time === i && openSlot;
               return (
                 <button key={t} onClick={() => openSlot && setTime(i)} disabled={!openSlot} className="h-[36px] rounded-[10px] text-[12px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? CORAL : openSlot ? PEACH : 'transparent', color: on ? '#fff' : openSlot ? MUTED : '#D3CABF', boxShadow: openSlot ? 'none' : 'inset 0 0 0 1px #EFE9E0', textDecoration: openSlot ? 'none' : 'line-through' }}>{t}</button>
               );
             })}</div>
-            <div className="text-[10px] font-medium mt-2.5 text-center" style={{ color: '#C4BBB0' }}>All times local · free cancellation up to 24 h before</div>
+            <div className="text-[10px] font-medium mt-2.5 text-center" style={{ color: '#C4BBB0' }}>All times local{p.cancelPolicy ? ` · free cancellation up to ${p.cancelPolicy} before` : ''}</div>
           </div>
 
-          <SectionLabel action={`See all (${p.reviews})`} onAction={() => setReviewsOpen(true)}>Latest review</SectionLabel>
+          <SectionLabel action={`See all (${p.reviews})`} onAction={() => setView({ kind: 'reviews', id: p.id })}>Latest review</SectionLabel>
           <div className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
             <div className="flex items-center gap-1.5 mb-1.5">{[...Array(5)].map((_, i) => <Star key={i} size={11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />)}<span className="text-[11.5px] font-bold ml-1" style={{ color: INK }}>{p.review.who}</span></div>
             <p className="text-[13px] leading-[1.5]" style={{ color: MUTED }}>“{p.review.txt}”</p>
           </div>
         </div>
 
-        <SubHeader title={p.name} sub={`${catLabel(p.cat)} · ${p.dist} km`} onBack={() => setView(view.from === 'browse' ? { kind: 'browse', cat: p.cat } : view.from === 'saved' ? { kind: 'saved' } : view.from === 'bookings' ? { kind: 'bookings' } : { kind: 'home' })}
-          right={<button onClick={() => toggleSave(p.id)} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90 shrink-0" style={{ background: isSaved ? TINT : '#fff', boxShadow: isSaved ? 'none' : '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Heart size={16} color={isSaved ? CORAL : MUTED} fill={isSaved ? CORAL : 'none'} strokeWidth={2} /></button>} />
+        <SubHeader title={p.name} sub={`${catLabel(p.cat)} · ${p.dist} km`} showTitle={profScrolled} onBack={() => setView(view.from === 'browse' ? { kind: 'browse', cat: p.cat } : view.from === 'saved' ? { kind: 'saved' } : view.from === 'bookings' ? { kind: 'bookings' } : { kind: 'home' })}
+          right={<span className="flex items-center gap-2 shrink-0">
+            <button onClick={() => act('Profile link copied')} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-90" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Share2 size={15} color={MUTED} strokeWidth={2} /></button>
+            <button onClick={() => toggleSave(p.id)} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style={{ background: isSaved ? TINT : '#fff', boxShadow: isSaved ? 'none' : '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Heart size={16} color={isSaved ? CORAL : MUTED} fill={isSaved ? CORAL : 'none'} strokeWidth={2} /></button>
+          </span>} />
 
         <div className="absolute left-0 right-0 z-40 px-5 pointer-events-none" style={{ bottom: 0, paddingBottom: embedded ? 100 : 28, paddingTop: 26, background: `linear-gradient(to top, ${CREAM} 62%, rgba(247,245,242,0))` }}>
-          <button onClick={() => requestBooking(p, sel, DAYS[day], TIMES[time])} className="w-full py-4 rounded-[16px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 pointer-events-auto" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
+          <button onClick={() => requestBooking(p, sel, day, TIMES[time])} className="w-full py-4 rounded-[16px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 pointer-events-auto" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
             <span className="text-[15px] font-bold text-white">Request booking</span>
             <span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>· CHF {sel.p}</span>
           </button>
         </div>
 
-        {/* All reviews — bottom sheet */}
-        {reviewsOpen && (
+        {/* Verified — what it means */}
+        {verifiedOpen && (
           <>
-            <div className="absolute inset-0 z-[170]" style={{ background: 'rgba(20,12,8,0.4)', animation: 'svFade 0.2s ease both' }} onClick={() => setReviewsOpen(false)} />
-            <div className="absolute left-0 right-0 bottom-0 z-[172] rounded-t-[26px] flex flex-col" style={{ background: CREAM, maxHeight: '78%', boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', animation: 'svSheet 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
-              <div className="flex justify-center pt-2.5 pb-1 shrink-0"><div style={{ width: 38, height: 5, borderRadius: 9999, background: '#DDD4C9' }} /></div>
-              <div className="px-5 pt-1 pb-3 flex items-center gap-3 shrink-0">
-                <div className="flex-1">
-                  <h2 className="text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Reviews</h2>
-                  <div className="flex items-center gap-1 mt-0.5"><Star size={12} color="#E8B04A" fill="#E8B04A" strokeWidth={0} /><span className="text-[12px] font-bold" style={{ color: INK }}>{p.rating}</span><span className="text-[11.5px]" style={{ color: TERT }}>· {p.reviews} reviews</span></div>
-                </div>
-                <button onClick={() => setReviewsOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
+            <div className="absolute inset-0 z-[170]" style={{ background: 'rgba(20,12,8,0.4)', animation: 'svFade 0.2s ease both' }} onClick={() => setVerifiedOpen(false)} />
+            <div className="absolute left-0 right-0 bottom-0 z-[172] rounded-t-[26px]" style={{ background: CREAM, boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', animation: 'svSheet 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div className="flex justify-center pt-2.5 pb-1"><div style={{ width: 38, height: 5, borderRadius: 9999, background: '#DDD4C9' }} /></div>
+              <div className="px-5 pt-2 pb-1 flex items-center gap-3">
+                <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: TINT }}><BadgeCheck size={20} color={CORAL} strokeWidth={2} /></span>
+                <h2 className="flex-1 text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Verified by fylos</h2>
+                <button onClick={() => setVerifiedOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
               </div>
-              <div className="overflow-y-auto px-5" style={{ scrollbarWidth: 'none', paddingBottom: embedded ? 104 : 30 }}>
-                <div className="flex flex-col gap-2.5">
-                  {[{ who: p.review.who, when: '1 week ago', txt: p.review.txt }, ...EXTRA_REVIEWS].map((r, i) => (
-                    <div key={i} className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
-                      <div className="flex items-center gap-1.5">
-                        {[...Array(5)].map((_, si) => <Star key={si} size={10} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />)}
-                        <span className="text-[11.5px] font-bold ml-1" style={{ color: INK }}>{r.who}</span>
-                        <span className="flex-1" />
-                        <span className="text-[10.5px]" style={{ color: '#C4BBB0' }}>{r.when}</span>
-                      </div>
-                      <p className="text-[13px] leading-[1.5] mt-1.5" style={{ color: MUTED }}>“{r.txt}”</p>
-                    </div>
-                  ))}
-                </div>
+              <div className="px-5 pt-3" style={{ paddingBottom: embedded ? 104 : 30 }}>
+                {[['Identity checked', 'Government ID confirmed in person'], ['Insured', 'Covered while caring for your pet'], ['References reviewed', 'Past clients vouched before approval']].map(([t, s], i) => (
+                  <div key={i} className="flex items-start gap-3 py-2.5">
+                    <Check size={15} color={GREEN} strokeWidth={3} className="mt-0.5 shrink-0" />
+                    <div><div className="text-[14px] font-semibold" style={{ color: INK }}>{t}</div><div className="text-[12px] mt-0.5" style={{ color: TERT }}>{s}</div></div>
+                  </div>
+                ))}
               </div>
             </div>
           </>
         )}
+        {toast && <Toast embedded={embedded} msg={toast} />}
+      </Wrap>
+    );
+  }
+
+  /* ───────── REVIEWS (full screen with dashboard + filters) ───────── */
+  if (view.kind === 'reviews') {
+    const p = PROVIDERS.find((x) => x.id === view.id) || DETAILED[0];
+    const dist = starDist(p);
+    const allReviews = [{ who: p.review.who, when: '1 week ago', stars: 5, txt: p.review.txt }, ...EXTRA_REVIEWS];
+    const filtered = revFilter === 'All' ? allReviews : allReviews.filter((r) => revFilter === '3★ & less' ? r.stars <= 3 : r.stars === parseInt(revFilter));
+    return (
+      <Wrap embedded={embedded}>
+        <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 116, paddingBottom: embedded ? 104 : 36, scrollbarWidth: 'none', background: CREAM }}>
+          {/* Dashboard */}
+          <div className="rounded-[18px] bg-white p-4 flex items-center gap-5" style={{ boxShadow: SHADOW }}>
+            <div className="flex flex-col items-center shrink-0">
+              <span className="text-[34px] font-extrabold leading-none tracking-[-0.02em]" style={{ color: INK }}>{p.rating}</span>
+              <span className="flex gap-0.5 mt-1.5">{[...Array(5)].map((_, i) => <Star key={i} size={11} color="#E8B04A" fill={i < Math.round(p.rating) ? '#E8B04A' : 'none'} strokeWidth={1.4} />)}</span>
+              <span className="text-[10.5px] mt-1" style={{ color: TERT }}>{p.reviews} reviews</span>
+            </div>
+            <div className="flex-1 flex flex-col gap-1.5">
+              {dist.map((n, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold w-2 text-right" style={{ color: MUTED }}>{5 - i}</span>
+                  <Star size={9} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />
+                  <div className="flex-1 h-[5px] rounded-full overflow-hidden" style={{ background: PEACH }}>
+                    <div className="h-full rounded-full" style={{ width: `${p.reviews ? Math.round((n / p.reviews) * 100) : 0}%`, background: '#E8B04A' }} />
+                  </div>
+                  <span className="text-[10px] font-semibold w-7" style={{ color: TERT }}>{n}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Minimal filters */}
+          <div className="flex items-center gap-5 mt-5 ml-1.5">
+            {['All', '5', '4', '3★ & less'].map((f) => {
+              const on = revFilter === f;
+              const label = f === 'All' ? 'All' : f === '3★ & less' ? '3★ & less' : `${f}★`;
+              return <button key={f} onClick={() => setRevFilter(f)} className="relative pb-1.5 text-[13px] font-bold transition-colors" style={{ color: on ? INK : TERT }}>{label}{on && <span className="absolute left-0 right-0 bottom-0 rounded-full" style={{ height: 2, background: CORAL }} />}</button>;
+            })}
+          </div>
+
+          <div className="flex flex-col gap-2.5 mt-3">
+            {filtered.map((r, i) => (
+              <div key={i} className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
+                <div className="flex items-center gap-1.5">
+                  {[...Array(5)].map((_, si) => <Star key={si} size={10} color="#E8B04A" fill={si < r.stars ? '#E8B04A' : 'none'} strokeWidth={1.4} />)}
+                  <span className="text-[11.5px] font-bold ml-1" style={{ color: INK }}>{r.who}</span>
+                  <span className="flex-1" />
+                  <span className="text-[10.5px]" style={{ color: '#C4BBB0' }}>{r.when}</span>
+                </div>
+                <p className="text-[13px] leading-[1.5] mt-1.5" style={{ color: MUTED }}>“{r.txt}”</p>
+              </div>
+            ))}
+            {!filtered.length && <div className="text-center text-[13px] mt-10" style={{ color: TERT }}>No reviews with this rating yet.</div>}
+          </div>
+        </div>
+
+        <SubHeader title="Reviews" sub={`${p.name} · ★ ${p.rating}`} onBack={() => setView({ kind: 'profile', id: p.id, from: view.from || 'home' })} />
         {toast && <Toast embedded={embedded} msg={toast} />}
       </Wrap>
     );
@@ -463,53 +531,51 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             })}
           </div>
 
-          {/* Week at a glance — arrows walk the calendar day by day */}
+          {/* Calendar card — week strip that expands into the full month */}
           {bkFilter === 'upcoming' && (
-            <div className="bg-white rounded-[16px] pl-1 pr-1 py-3 mt-4 flex items-center" style={{ boxShadow: SHADOW }}>
-              <button onClick={() => setCalStart(Math.max(0, calStart - 1))} disabled={calStart === 0} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart === 0 ? 0.3 : 1 }}><ChevronLeft size={15} color={MUTED} strokeWidth={2.4} /></button>
-              <div className="flex-1 flex justify-between">
-                {CAL_DAYS.slice(calStart, calStart + 7).map((day, i) => {
-                  const has = bookings.some((b) => b.when === 'upcoming' && b.dom === String(day.n));
-                  return (
-                    <div key={i} className="flex flex-col items-center gap-1 rounded-[10px] px-1.5 py-1.5" style={{ background: has ? TINT : 'transparent', minWidth: 34 }}>
-                      <span className="text-[9px] font-bold" style={{ color: has ? CORAL : '#C4BBB0' }}>{day.d}</span>
-                      <span className="text-[13px] font-extrabold leading-none" style={{ color: has ? INK : TERT }}>{day.n <= 28 ? day.n : day.n - 28}</span>
-                      <span className="w-1 h-1 rounded-full" style={{ background: has ? CORAL : 'transparent' }} />
-                    </div>
-                  );
-                })}
+            <div className="bg-white rounded-[16px] mt-4 overflow-hidden" style={{ boxShadow: SHADOW }}>
+              <div className="pl-1 pr-1 py-3 flex items-center">
+                {!monthOpen && <button onClick={() => setCalStart(Math.max(0, calStart - 1))} disabled={calStart === 0} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart === 0 ? 0.3 : 1 }}><ChevronLeft size={15} color={MUTED} strokeWidth={2.4} /></button>}
+                {monthOpen ? (
+                  <span className="flex-1 text-[13px] font-extrabold pl-3" style={{ color: INK }}>February 2026</span>
+                ) : (
+                  <div className="flex-1 flex justify-between">
+                    {CAL_DAYS.slice(calStart, calStart + 7).map((day, i) => {
+                      const has = bookings.some((b) => b.when === 'upcoming' && b.dom === String(day.n));
+                      return (
+                        <div key={i} className="flex flex-col items-center gap-1 rounded-[10px] px-1.5 py-1.5" style={{ background: has ? TINT : 'transparent', minWidth: 34 }}>
+                          <span className="text-[9px] font-bold" style={{ color: has ? CORAL : '#C4BBB0' }}>{day.d}</span>
+                          <span className="text-[13px] font-extrabold leading-none" style={{ color: has ? INK : TERT }}>{day.n <= 28 ? day.n : day.n - 28}</span>
+                          <span className="w-1 h-1 rounded-full" style={{ background: has ? CORAL : 'transparent' }} />
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                {!monthOpen && <button onClick={() => setCalStart(Math.min(CAL_DAYS.length - 7, calStart + 1))} disabled={calStart >= CAL_DAYS.length - 7} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart >= CAL_DAYS.length - 7 ? 0.3 : 1 }}><ChevronRight size={15} color={MUTED} strokeWidth={2.4} /></button>}
+                <button onClick={() => setMonthOpen(!monthOpen)} className="w-8 h-9 flex items-center justify-center shrink-0 mr-1 active:scale-90 transition-transform"><ChevronDown size={16} color={MUTED} strokeWidth={2.4} style={{ transform: monthOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} /></button>
               </div>
-              <button onClick={() => setCalStart(Math.min(CAL_DAYS.length - 7, calStart + 1))} disabled={calStart >= CAL_DAYS.length - 7} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart >= CAL_DAYS.length - 7 ? 0.3 : 1 }}><ChevronRight size={15} color={MUTED} strokeWidth={2.4} /></button>
-              <button onClick={() => setMonthOpen(true)} className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0 ml-1 active:scale-90 transition-transform" style={{ background: TINT }}><CalendarDays size={16} color={CORAL} strokeWidth={2} /></button>
-            </div>
-          )}
-
-          {/* Full-month calendar — centred pop-up */}
-          {monthOpen && (
-            <div className="absolute inset-0 z-[170] flex items-center justify-center px-7" style={{ background: 'rgba(20,12,8,0.45)', animation: 'svFade 0.2s ease both' }} onClick={() => setMonthOpen(false)}>
-              <div className="w-full rounded-[24px] bg-white p-5" style={{ animation: 'svPop 0.22s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-[17px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>February 2026</h2>
-                  <button onClick={() => setMonthOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={15} color={INK} strokeWidth={2.2} /></button>
+              {monthOpen && (
+                <div className="px-3 pb-3" style={{ borderTop: '1px solid ' + LINE }}>
+                  <div className="grid grid-cols-7 gap-y-1 mt-3 mb-1">
+                    {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <div key={i} className="text-center text-[10px] font-bold" style={{ color: '#C4BBB0' }}>{d}</div>)}
+                  </div>
+                  <div className="grid grid-cols-7 gap-y-1">
+                    {[...Array(6)].map((_, i) => <span key={'x' + i} />)}
+                    {[...Array(28)].map((_, i) => {
+                      const n = i + 1;
+                      const bk = bookings.find((b) => b.when === 'upcoming' && b.dom === String(n));
+                      return (
+                        <button key={n} onClick={() => { if (bk) { setExpanded(bk.id); setMonthOpen(false); } }} className="flex flex-col items-center justify-center rounded-[10px] mx-auto transition-all active:scale-90" style={{ width: 34, height: 36, background: bk ? TINT : 'transparent' }}>
+                          <span className="text-[12.5px] font-bold leading-none" style={{ color: bk ? CORAL : MUTED }}>{n}</span>
+                          <span className="w-1 h-1 rounded-full mt-1" style={{ background: bk ? CORAL : 'transparent' }} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[10px] text-center mt-2" style={{ color: '#C4BBB0' }}>Tap a highlighted day to jump to its booking</p>
                 </div>
-                <div className="grid grid-cols-7 gap-y-1 mb-1">
-                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <div key={i} className="text-center text-[10px] font-bold" style={{ color: '#C4BBB0' }}>{d}</div>)}
-                </div>
-                <div className="grid grid-cols-7 gap-y-1.5">
-                  {[...Array(6)].map((_, i) => <span key={'x' + i} />)}
-                  {[...Array(28)].map((_, i) => {
-                    const n = i + 1;
-                    const bk = bookings.find((b) => b.when === 'upcoming' && b.dom === String(n));
-                    return (
-                      <button key={n} onClick={() => { if (bk) { setBkFilter('upcoming'); setExpanded(bk.id); setMonthOpen(false); } }} className="flex flex-col items-center justify-center rounded-[10px] mx-auto transition-all active:scale-90" style={{ width: 36, height: 38, background: bk ? TINT : 'transparent' }}>
-                        <span className="text-[13px] font-bold leading-none" style={{ color: bk ? CORAL : MUTED }}>{n}</span>
-                        <span className="w-1 h-1 rounded-full mt-1" style={{ background: bk ? CORAL : 'transparent' }} />
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-[10.5px] text-center mt-3" style={{ color: TERT }}>Tap a highlighted day to jump to its booking</p>
-              </div>
+              )}
             </div>
           )}
 
@@ -668,8 +734,12 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               </div>
               <p className="px-5 text-[12.5px]" style={{ color: TERT }}>{reschedFor.service} · {reschedFor.provider}</p>
               <div className="px-5 mt-4">
-                <div className="flex gap-2">{DAYS.map((d, i) => { const on = reschedDay === i; return <button key={d} onClick={() => setReschedDay(i)} className="flex-1 h-[42px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{d}</button>; })}</div>
-                <div className="flex gap-2 mt-2">{TIMES.map((t, i) => { const on = reschedTime === i; return <button key={t} onClick={() => setReschedTime(i)} className="flex-1 h-[38px] rounded-[11px] text-[12.5px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{t}</button>; })}</div>
+                <DateScroller selected={reschedDay} onSelect={(i) => { setReschedDay(i); const s = slotsFor(i); if (!s.includes(reschedTime)) setReschedTime(s[0] ?? 0); }} />
+                <div className="grid grid-cols-4 gap-2 mt-2">{TIMES.map((t, i) => {
+                  const openSlot = slotsFor(reschedDay).includes(i);
+                  const on = reschedTime === i && openSlot;
+                  return <button key={t} onClick={() => openSlot && setReschedTime(i)} disabled={!openSlot} className="h-[36px] rounded-[10px] text-[12px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? CORAL : openSlot ? '#fff' : 'transparent', color: on ? '#fff' : openSlot ? MUTED : '#D3CABF', boxShadow: on ? '0 4px 12px rgba(232,93,42,0.25)' : openSlot ? SHADOW : 'inset 0 0 0 1px #EAE2D8', textDecoration: openSlot ? 'none' : 'line-through' }}>{t}</button>;
+                })}</div>
                 <p className="text-[11px] mt-3" style={{ color: TERT }}>{reschedFor.provider.split(' ')[0]} will need to confirm the new time.</p>
               </div>
               <div className="px-5 pt-4" style={{ paddingBottom: embedded ? 104 : 30 }}>
@@ -752,7 +822,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           <Search size={16} color={TERT} strokeWidth={2} />
           <input placeholder={`Find care for ${petName}…`} className="flex-1 bg-transparent outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" />
           <div className="flex -space-x-1.5">
-            {PETS.map((p) => { const on = pet === p.id; return <button key={p.id} onClick={() => setPet(p.id)} className="w-7 h-7 rounded-full p-[1.5px] active:scale-95 transition-all" style={{ background: on ? CORAL : '#E5DED5', zIndex: on ? 2 : 1, position: 'relative' }}><img src={p.photo} alt={p.name} className="w-full h-full rounded-full object-cover" /></button>; })}
+            {PETS.map((p) => { const on = petSel.includes(p.id); return <button key={p.id} onClick={() => togglePet(p.id)} title="Tap to include or remove this pet" className="rounded-full p-[1.5px] active:scale-95 transition-all duration-200" style={{ width: on ? 30 : 26, height: on ? 30 : 26, background: on ? CORAL : '#E5DED5', zIndex: on ? 2 : 1, position: 'relative', opacity: on ? 1 : 0.75 }}><img src={p.photo} alt={p.name} className="w-full h-full rounded-full object-cover" /></button>; })}
           </div>
         </div>
 
