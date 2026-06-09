@@ -3,8 +3,10 @@ import {
   AlertTriangle, Bell, Search, Footprints, Home, Scissors, Stethoscope,
   Star, Heart, ChevronRight, ChevronLeft, ChevronDown, MapPin, MessageCircle,
   CalendarClock, X, Check, BadgeCheck, Repeat, Gift, Sparkles, GraduationCap,
-  Sun, Car, DoorOpen, Camera, Apple,
+  Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User,
 } from 'lucide-react';
+import ChatOverlay from './95_CHAT_v1';
+import InviteFriends from './60_INVITE_FRIENDS_v1';
 
 /**
  * 94_SERVICES_v1.jsx — Services tab v4.
@@ -41,19 +43,19 @@ const CATEGORIES = [
 const DETAILED = [
   { id: 'pr1', cat: 'walking', name: 'Lukas F.', rating: 4.9, reviews: 132, dist: 0.8, price: 22, photo: 'https://i.pravatar.cc/150?u=lukas_walker', verified: true, today: true, recommended: true,
     stats: [['530', 'walks'], ['92%', 'repeat'], ['~1 h', 'reply']], meta: '530 walks · replies in ~1 h', bio: 'Full-time walker in Seefeld. Calm energy, great with reactive dogs, photo updates on every walk.',
-    services: [{ n: '30 min walk', p: 14 }, { n: '60 min walk', p: 22 }, { n: '90 min walk', p: 33 }],
+    services: [{ n: '30 min walk', p: 14, d: 'Quick loop · water break' }, { n: '60 min walk', p: 22, d: 'Park time · photo update' }, { n: '90 min walk', p: 33, d: 'Long adventure · forest trails' }],
     review: { who: 'Anna M.', txt: 'Leo comes back happy and tired every single time. Lukas sends the best photo updates.' } },
   { id: 'pr3', cat: 'sitting', name: 'Maria K.', rating: 4.8, reviews: 96, dist: 0.5, price: 38, photo: 'https://i.pravatar.cc/150?u=maria_sitter', verified: true, today: true, recommended: true,
     stats: [['210', 'stays'], ['88%', 'repeat'], ['~30 m', 'reply']], meta: '210 stays · replies in ~30 m', bio: 'Your pet stays at my quiet flat by the lake — daily walks, couch privileges included.',
-    services: [{ n: 'Day sitting', p: 25 }, { n: 'Overnight', p: 38 }, { n: 'Week package', p: 240 }],
+    services: [{ n: 'Day sitting', p: 25, d: '8 am – 6 pm at my flat' }, { n: 'Overnight', p: 38, d: 'Evening walk · cozy night in' }, { n: 'Week package', p: 240, d: '7 nights · daily updates' }],
     review: { who: 'Julia S.', txt: 'Tao was so relaxed when we got back. Daily photos and a little diary — adorable.' } },
   { id: 'pr6', cat: 'walking', name: 'Jonas W.', rating: 4.8, reviews: 84, dist: 2.3, price: 24, photo: 'https://i.pravatar.cc/150?u=jonas_walker', verified: true, today: false, recommended: true,
     stats: [['310', 'walks'], ['90%', 'repeat'], ['~2 h', 'reply']], meta: '310 walks · replies in ~2 h', bio: 'Trail runner — perfect for high-energy dogs that need real exercise.',
-    services: [{ n: '60 min run', p: 24 }, { n: '90 min trail', p: 36 }],
+    services: [{ n: '60 min run', p: 24, d: 'Lakeside jog · high energy' }, { n: '90 min trail', p: 36, d: 'Uetliberg trails · real workout' }],
     review: { who: 'Felix H.', txt: 'Our husky finally gets the workout he needs.' } },
   { id: 'pr5', cat: 'walking', name: 'Nina T.', rating: 4.7, reviews: 58, dist: 1.6, price: 19, photo: 'https://i.pravatar.cc/150?u=nina_walker', verified: false, today: true, recommended: false,
     stats: [['160', 'walks'], ['81%', 'repeat'], ['~3 h', 'reply']], meta: '160 walks · replies in ~3 h', bio: 'Student & lifelong dog person. Energetic walks, parks and trails.',
-    services: [{ n: '30 min walk', p: 12 }, { n: '60 min walk', p: 19 }],
+    services: [{ n: '30 min walk', p: 12, d: 'Neighbourhood round' }, { n: '60 min walk', p: 19, d: 'Park visit · play time' }],
     review: { who: 'Petra K.', txt: 'Great with our young lab — comes back perfectly tired.' } },
 ];
 const NAMES = ['Elena B.', 'Marc S.', 'Tina R.', 'David K.', 'Laura M.', 'Pascal H.', 'Mia W.', 'Noah B.', 'Lea F.', 'Tim G.', 'Sara J.', 'Luca P.', 'Nora E.', 'Jan D.', 'Amélie C.', 'Ben T.', 'Chiara V.', 'Felix N.', 'Ida M.', 'Oskar L.', 'Zoe A.', 'Liam K.', 'Emma S.', 'Paul W.', 'Lina H.', 'Aaron Z.', 'Maja Q.', 'Leon X.'];
@@ -67,7 +69,7 @@ const GENERATED = NAMES.map((name, i) => {
     photo: `https://i.pravatar.cc/150?u=fylos_walker_${i}`, verified: i % 3 !== 1, today: i % 2 === 0, recommended: false,
     stats: [[String(walks), 'walks'], [`${78 + ((i * 5) % 20)}%`, 'repeat'], [reply, 'reply']], meta: `${walks} walks · replies in ${reply}`,
     bio: 'Local, vetted and insured through fylos. Flexible with schedules and happy to meet beforehand.',
-    services: [{ n: '30 min walk', p: Math.round(price * 0.65) }, { n: '60 min walk', p: price }, { n: '90 min walk', p: Math.round(price * 1.5) }],
+    services: [{ n: '30 min walk', p: Math.round(price * 0.65), d: 'Quick neighbourhood loop' }, { n: '60 min walk', p: price, d: 'Full hour · park time' }, { n: '90 min walk', p: Math.round(price * 1.5), d: 'Extended adventure' }],
     review: { who: 'fylos member', txt: 'Reliable and kind — booking again.' },
   };
 });
@@ -80,7 +82,15 @@ const INITIAL_BOOKINGS = [
   { id: 'b4', when: 'upcoming', group: 'Next week', status: 'Pending', service: '90 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'TUE', dom: '24', time: '14:00', pet: 'Leo', location: 'Pickup at home', notes: 'Waiting for Lukas to confirm.' },
   { id: 'b5', when: 'past', group: 'February', status: 'Completed', service: '60 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'FRI', dom: '6', time: '09:00', pet: 'Leo', location: 'Zürichhorn loop', notes: '', rated: 5,
     checkIns: [['09:02', 'Picked up Leo at home'], ['09:25', 'Halfway — photo update sent'], ['09:58', 'Walk done · 45 min · 3.2 km'], ['10:04', 'Dropped off, fresh water topped up']] },
+  { id: 'b7', when: 'past', group: 'February', status: 'Completed', service: 'Full groom', provider: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker', dow: 'SAT', dom: '7', time: '14:00', pet: 'Leo', location: 'Sofia’s studio · Niederdorf', notes: '',
+    checkIns: [['14:05', 'Checked in at the studio'], ['15:20', 'All done — fresh & fluffy']] },
   { id: 'b6', when: 'past', group: 'January', status: 'Cancelled', service: 'Overnight sitting', provider: 'Maria K.', photo: 'https://i.pravatar.cc/150?u=maria_sitter', dow: 'SAT', dom: '31', time: '', pet: 'Tao', location: '', notes: 'Cancelled by you.' },
+];
+const REMINDER_OPTS = ['1 h before', '3 h before', '1 day before', 'Off'];
+const EXTRA_REVIEWS = [
+  { who: 'Marco R.', when: '2 weeks ago', txt: 'Always on time, super communicative. Our dog adores him.' },
+  { who: 'Petra K.', when: '1 month ago', txt: 'Photo updates every time and a tired, happy pup at the end.' },
+  { who: 'Stefan B.', when: '2 months ago', txt: 'Flexible with last-minute changes — lifesaver for our schedule.' },
 ];
 const SORTS = ['Recommended', 'Top rated', 'Price: low to high', 'Nearest'];
 const DAYS = ['Today', 'Tomorrow', 'Sat 14'];
@@ -160,6 +170,7 @@ const Wrap = ({ embedded, children }) => {
     @keyframes svToast { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
     @keyframes svFade { from { opacity: 0; } to { opacity: 1; } }
     @keyframes svSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes svPop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
   `}</style>;
   if (embedded) return (<>{styleBlock}<div className="absolute inset-0" style={{ background: CREAM }}>{children}</div></>);
   return (
@@ -190,11 +201,29 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [time, setTime] = useState(1);
   const [calStart, setCalStart] = useState(0);
   const [futureOpen, setFutureOpen] = useState(false);
+  const [monthOpen, setMonthOpen] = useState(false);
+  const [remIdx, setRemIdx] = useState({});
+  const [rateFor, setRateFor] = useState(null);   // { booking, stars }
+  const [chat, setChat] = useState(null);          // { name, photo }
+  const [reschedFor, setReschedFor] = useState(null);
+  const [reschedDay, setReschedDay] = useState(0);
+  const [reschedTime, setReschedTime] = useState(1);
+  const [cancelFor, setCancelFor] = useState(null);
+  const [reviewsOpen, setReviewsOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [toast, setToast] = useState('');
   const act = (m) => { setToast(m); setTimeout(() => setToast(''), 1700); };
+  const cycleReminder = (id) => setRemIdx((r) => ({ ...r, [id]: ((r[id] ?? 0) + 1) % REMINDER_OPTS.length }));
+  const submitRating = (id, stars) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, rated: stars } : b)); setRateFor(null); act('Thanks for your feedback'); };
+  const confirmCancel = (id) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, when: 'past', group: 'February', status: 'Cancelled', notes: 'Cancelled by you.' } : b)); setCancelFor(null); setExpanded(null); act('Booking cancelled'); };
+  const confirmResched = (b) => {
+    const map = { 0: { dow: 'TODAY', dom: '' }, 1: { dow: 'TMRW', dom: '' }, 2: { dow: 'SAT', dom: '14' } };
+    setBookings((prev) => prev.map((x) => x.id === b.id ? { ...x, ...map[reschedDay], time: TIMES[reschedTime], status: 'Pending', notes: `Waiting for ${b.provider.split(' ')[0]} to confirm the new time.` } : x));
+    setReschedFor(null); act('Reschedule requested');
+  };
   useEffect(() => { if (focusedBookingId && onClearFocus) onClearFocus(); // eslint-disable-next-line
   }, []);
-  useEffect(() => { onSubScreenChange && onSubScreenChange(view.kind !== 'home'); }, [view, onSubScreenChange]);
+  useEffect(() => { onSubScreenChange && onSubScreenChange(view.kind !== 'home' || inviteOpen); }, [view, inviteOpen, onSubScreenChange]);
 
   const toggleSave = (id) => setSaved((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
   const petName = PETS.find((p) => p.id === pet)?.name || 'Leo';
@@ -255,34 +284,45 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               return (
                 <button key={s.n} onClick={() => setSvc(i)} className="relative w-full flex items-center gap-3 px-4 py-3 text-left active:bg-black/[0.02]">
                   <span className="w-[20px] h-[20px] rounded-full flex items-center justify-center shrink-0" style={{ background: on ? CORAL : 'transparent', border: on ? 'none' : '1.6px solid #DDD4C9' }}>{on && <Check size={12} color="#fff" strokeWidth={3.2} />}</span>
-                  <span className="flex-1 text-[14px] font-semibold" style={{ color: INK }}>{s.n}</span>
-                  <span className="text-[13.5px] font-bold" style={{ color: on ? CORAL : MUTED }}>CHF {s.p}</span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block text-[14px] font-semibold" style={{ color: INK }}>{s.n}</span>
+                    {s.d && <span className="block text-[11px] mt-[1px] truncate" style={{ color: TERT }}>{s.d}</span>}
+                  </span>
+                  <span className="text-[13.5px] font-bold shrink-0" style={{ color: on ? CORAL : MUTED }}>CHF {s.p}</span>
                   {i < p.services.length - 1 && <div className="absolute bottom-0 left-[46px] right-0 h-px" style={{ background: LINE }} />}
                 </button>
               );
             })}
           </div>
+          <div className="flex items-center gap-1.5 mt-2 ml-1.5">
+            <Check size={11} color={GREEN} strokeWidth={3} />
+            <span className="text-[11px] font-medium" style={{ color: TERT }}>GPS tracking & photo updates included</span>
+          </div>
 
           <SectionLabel>Availability</SectionLabel>
-          <div className="flex gap-2">{DAYS.map((d, i) => {
-            const on = day === i;
-            const free = (SLOTS[i] || []).length;
-            return (
-              <button key={d} onClick={() => { setDay(i); const s = SLOTS[i] || []; if (!s.includes(time)) setTime(s[0] ?? 0); }} className="flex-1 rounded-[12px] py-2 active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>
-                <div className="text-[13px] font-bold leading-tight" style={{ color: on ? CORAL : MUTED }}>{d}</div>
-                <div className="text-[9.5px] font-semibold mt-[2px]" style={{ color: on ? CORAL : '#C4BBB0' }}>{free} slot{free === 1 ? '' : 's'}</div>
-              </button>
-            );
-          })}</div>
-          <div className="flex gap-2 mt-2">{TIMES.map((t, i) => {
-            const openSlot = (SLOTS[day] || []).includes(i);
-            const on = time === i && openSlot;
-            return (
-              <button key={t} onClick={() => openSlot && setTime(i)} disabled={!openSlot} className="flex-1 h-[38px] rounded-[11px] text-[12.5px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : openSlot ? '#fff' : 'transparent', color: on ? CORAL : openSlot ? MUTED : '#D3CABF', boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : openSlot ? SHADOW : 'inset 0 0 0 1px #EAE2D8', textDecoration: openSlot ? 'none' : 'line-through' }}>{t}</button>
-            );
-          })}</div>
+          <div className="rounded-[16px] bg-white p-3" style={{ boxShadow: SHADOW }}>
+            <div className="flex gap-2">{DAYS.map((d, i) => {
+              const on = day === i;
+              const free = (SLOTS[i] || []).length;
+              return (
+                <button key={d} onClick={() => { setDay(i); const s = SLOTS[i] || []; if (!s.includes(time)) setTime(s[0] ?? 0); }} className="flex-1 rounded-[12px] py-2 active:scale-[0.97] transition-all" style={{ background: on ? CORAL : PEACH }}>
+                  <div className="text-[13px] font-bold leading-tight" style={{ color: on ? '#fff' : MUTED }}>{d}</div>
+                  <div className="text-[9.5px] font-semibold mt-[2px]" style={{ color: on ? 'rgba(255,255,255,0.85)' : '#B6AEA5' }}>{free} slot{free === 1 ? '' : 's'}</div>
+                </button>
+              );
+            })}</div>
+            <div className="h-px my-3" style={{ background: LINE }} />
+            <div className="grid grid-cols-4 gap-2">{TIMES.map((t, i) => {
+              const openSlot = (SLOTS[day] || []).includes(i);
+              const on = time === i && openSlot;
+              return (
+                <button key={t} onClick={() => openSlot && setTime(i)} disabled={!openSlot} className="h-[36px] rounded-[10px] text-[12px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? CORAL : openSlot ? PEACH : 'transparent', color: on ? '#fff' : openSlot ? MUTED : '#D3CABF', boxShadow: openSlot ? 'none' : 'inset 0 0 0 1px #EFE9E0', textDecoration: openSlot ? 'none' : 'line-through' }}>{t}</button>
+              );
+            })}</div>
+            <div className="text-[10px] font-medium mt-2.5 text-center" style={{ color: '#C4BBB0' }}>All times local · free cancellation up to 24 h before</div>
+          </div>
 
-          <SectionLabel action={`See all (${p.reviews})`} onAction={() => act(`All ${p.reviews} reviews`)}>Latest review</SectionLabel>
+          <SectionLabel action={`See all (${p.reviews})`} onAction={() => setReviewsOpen(true)}>Latest review</SectionLabel>
           <div className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
             <div className="flex items-center gap-1.5 mb-1.5">{[...Array(5)].map((_, i) => <Star key={i} size={11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />)}<span className="text-[11.5px] font-bold ml-1" style={{ color: INK }}>{p.review.who}</span></div>
             <p className="text-[13px] leading-[1.5]" style={{ color: MUTED }}>“{p.review.txt}”</p>
@@ -298,6 +338,38 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             <span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>· CHF {sel.p}</span>
           </button>
         </div>
+
+        {/* All reviews — bottom sheet */}
+        {reviewsOpen && (
+          <>
+            <div className="absolute inset-0 z-[170]" style={{ background: 'rgba(20,12,8,0.4)', animation: 'svFade 0.2s ease both' }} onClick={() => setReviewsOpen(false)} />
+            <div className="absolute left-0 right-0 bottom-0 z-[172] rounded-t-[26px] flex flex-col" style={{ background: CREAM, maxHeight: '78%', boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', animation: 'svSheet 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div className="flex justify-center pt-2.5 pb-1 shrink-0"><div style={{ width: 38, height: 5, borderRadius: 9999, background: '#DDD4C9' }} /></div>
+              <div className="px-5 pt-1 pb-3 flex items-center gap-3 shrink-0">
+                <div className="flex-1">
+                  <h2 className="text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Reviews</h2>
+                  <div className="flex items-center gap-1 mt-0.5"><Star size={12} color="#E8B04A" fill="#E8B04A" strokeWidth={0} /><span className="text-[12px] font-bold" style={{ color: INK }}>{p.rating}</span><span className="text-[11.5px]" style={{ color: TERT }}>· {p.reviews} reviews</span></div>
+                </div>
+                <button onClick={() => setReviewsOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
+              </div>
+              <div className="overflow-y-auto px-5" style={{ scrollbarWidth: 'none', paddingBottom: embedded ? 104 : 30 }}>
+                <div className="flex flex-col gap-2.5">
+                  {[{ who: p.review.who, when: '1 week ago', txt: p.review.txt }, ...EXTRA_REVIEWS].map((r, i) => (
+                    <div key={i} className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
+                      <div className="flex items-center gap-1.5">
+                        {[...Array(5)].map((_, si) => <Star key={si} size={10} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />)}
+                        <span className="text-[11.5px] font-bold ml-1" style={{ color: INK }}>{r.who}</span>
+                        <span className="flex-1" />
+                        <span className="text-[10.5px]" style={{ color: '#C4BBB0' }}>{r.when}</span>
+                      </div>
+                      <p className="text-[13px] leading-[1.5] mt-1.5" style={{ color: MUTED }}>“{r.txt}”</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
         {toast && <Toast embedded={embedded} msg={toast} />}
       </Wrap>
     );
@@ -408,6 +480,36 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                 })}
               </div>
               <button onClick={() => setCalStart(Math.min(CAL_DAYS.length - 7, calStart + 1))} disabled={calStart >= CAL_DAYS.length - 7} className="w-7 h-9 flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ opacity: calStart >= CAL_DAYS.length - 7 ? 0.3 : 1 }}><ChevronRight size={15} color={MUTED} strokeWidth={2.4} /></button>
+              <button onClick={() => setMonthOpen(true)} className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0 ml-1 active:scale-90 transition-transform" style={{ background: TINT }}><CalendarDays size={16} color={CORAL} strokeWidth={2} /></button>
+            </div>
+          )}
+
+          {/* Full-month calendar — centred pop-up */}
+          {monthOpen && (
+            <div className="absolute inset-0 z-[170] flex items-center justify-center px-7" style={{ background: 'rgba(20,12,8,0.45)', animation: 'svFade 0.2s ease both' }} onClick={() => setMonthOpen(false)}>
+              <div className="w-full rounded-[24px] bg-white p-5" style={{ animation: 'svPop 0.22s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-[17px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>February 2026</h2>
+                  <button onClick={() => setMonthOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={15} color={INK} strokeWidth={2.2} /></button>
+                </div>
+                <div className="grid grid-cols-7 gap-y-1 mb-1">
+                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => <div key={i} className="text-center text-[10px] font-bold" style={{ color: '#C4BBB0' }}>{d}</div>)}
+                </div>
+                <div className="grid grid-cols-7 gap-y-1.5">
+                  {[...Array(6)].map((_, i) => <span key={'x' + i} />)}
+                  {[...Array(28)].map((_, i) => {
+                    const n = i + 1;
+                    const bk = bookings.find((b) => b.when === 'upcoming' && b.dom === String(n));
+                    return (
+                      <button key={n} onClick={() => { if (bk) { setBkFilter('upcoming'); setExpanded(bk.id); setMonthOpen(false); } }} className="flex flex-col items-center justify-center rounded-[10px] mx-auto transition-all active:scale-90" style={{ width: 36, height: 38, background: bk ? TINT : 'transparent' }}>
+                        <span className="text-[13px] font-bold leading-none" style={{ color: bk ? CORAL : MUTED }}>{n}</span>
+                        <span className="w-1 h-1 rounded-full mt-1" style={{ background: bk ? CORAL : 'transparent' }} />
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-[10.5px] text-center mt-3" style={{ color: TERT }}>Tap a highlighted day to jump to its booking</p>
+              </div>
             </div>
           )}
 
@@ -448,8 +550,23 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                 </div>
                               )}
                               <div className="flex items-center gap-2"><span className="w-[13px] text-center text-[11px]">🐾</span><span className="text-[12.5px]" style={{ color: MUTED }}>For {b.pet}</span></div>
-                              {isUp && <div className="flex items-center gap-2"><Bell size={12} color={TERT} strokeWidth={2} className="shrink-0" /><span className="text-[12px]" style={{ color: TERT }}>Reminder · 1 h before</span></div>}
+                              {isUp && (
+                                <button onClick={(e) => { e.stopPropagation(); cycleReminder(b.id); }} className="flex items-center gap-2 text-left active:opacity-70">
+                                  <Bell size={12} color={CORAL} strokeWidth={2} className="shrink-0" />
+                                  <span className="text-[12px] font-semibold" style={{ color: MUTED }}>Reminder · <span style={{ color: CORAL }}>{REMINDER_OPTS[remIdx[b.id] ?? 0]}</span></span>
+                                  <span className="text-[10px] font-bold px-1.5 py-[1px] rounded-full" style={{ background: PEACH, color: TERT }}>Edit</span>
+                                </button>
+                              )}
+                              {isUp && b.status === 'Pending' && <div className="flex items-center gap-2"><MessageCircle size={12} color={TERT} strokeWidth={2} className="shrink-0" /><span className="text-[12px]" style={{ color: TERT }}>{b.provider.split(' ')[0]} usually responds within ~1 h</span></div>}
                               {b.notes && <div className="text-[12.5px] leading-[1.45] rounded-[10px] px-3 py-2" style={{ background: PEACH, color: MUTED }}>{b.notes}</div>}
+                              {b.status === 'Completed' && !b.rated && (
+                                <div className="rounded-[12px] px-3.5 py-3 flex items-center gap-3" style={{ background: TINT }}>
+                                  <span className="flex-1 text-[12.5px] font-bold" style={{ color: INK }}>How was it? Rate {b.provider.split(' ')[0]}</span>
+                                  <span className="flex gap-1">{[...Array(5)].map((_, si) => (
+                                    <button key={si} onClick={(e) => { e.stopPropagation(); setRateFor({ booking: b, stars: si + 1 }); }} className="active:scale-90 transition-transform"><Star size={18} color={CORAL} strokeWidth={1.8} /></button>
+                                  ))}</span>
+                                </div>
+                              )}
                               {b.checkIns && (
                                 <div className="rounded-[12px] px-3.5 py-3 mt-0.5" style={{ background: PEACH }}>
                                   <div className="text-[10px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: '#A8A29C' }}>How it went</div>
@@ -472,14 +589,22 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                             <div className="flex gap-2 mt-3">
                               {isUp ? (
                                 <>
-                                  <button onClick={() => act(`Message ${b.provider.split(' ')[0]}`)} className="flex-1 h-10 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98] bg-white" style={{ boxShadow: 'inset 0 0 0 1.4px #E5DED5' }}><MessageCircle size={14} color={INK} strokeWidth={2} /><span className="text-[13px] font-bold" style={{ color: INK }}>Message</span></button>
-                                  <button onClick={() => act('Reschedule')} className="flex-1 h-10 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: TINT }}><CalendarClock size={14} color={CORAL} strokeWidth={2} /><span className="text-[13px] font-bold" style={{ color: CORAL }}>Reschedule</span></button>
+                                  <button onClick={() => setChat({ name: b.provider, photo: b.photo })} className="flex-1 h-10 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98] bg-white" style={{ boxShadow: 'inset 0 0 0 1.4px #E5DED5' }}><MessageCircle size={14} color={INK} strokeWidth={2} /><span className="text-[13px] font-bold" style={{ color: INK }}>Message</span></button>
+                                  <button onClick={() => { setReschedFor(b); setReschedDay(0); setReschedTime(1); }} className="flex-1 h-10 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: TINT }}><CalendarClock size={14} color={CORAL} strokeWidth={2} /><span className="text-[13px] font-bold" style={{ color: CORAL }}>Reschedule</span></button>
                                 </>
                               ) : (
                                 <button onClick={() => { const p = PROVIDERS.find((x) => x.name === b.provider); if (p) openProfile(p.id, 'bookings'); else act('Book again'); }} className="flex-1 h-10 rounded-[12px] flex items-center justify-center active:scale-[0.98]" style={{ background: TINT }}><span className="text-[13px] font-bold" style={{ color: CORAL }}>Book again</span></button>
                               )}
                             </div>
-                            {isUp && <button onClick={() => act('Added to your calendar')} className="w-full mt-2 py-1.5 active:opacity-60"><span className="text-[12px] font-bold" style={{ color: TERT }}>＋ Add to calendar</span></button>}
+                            <div className="flex items-center justify-between mt-2.5 px-0.5">
+                              <button onClick={() => { const p = PROVIDERS.find((x) => x.name === b.provider); if (p) openProfile(p.id, 'bookings'); else act('Profile unavailable'); }} className="flex items-center gap-1.5 py-1 active:opacity-60"><User size={12} color={TERT} strokeWidth={2.2} /><span className="text-[12px] font-bold" style={{ color: TERT }}>Go to profile</span></button>
+                              {isUp ? (
+                                <button onClick={() => setCancelFor(b)} className="py-1 active:opacity-60"><span className="text-[12px] font-bold" style={{ color: DANGER }}>{b.status === 'Pending' ? 'Cancel request' : 'Cancel booking'}</span></button>
+                              ) : (
+                                <button onClick={() => act('Added to your calendar')} className="py-1 active:opacity-60 invisible"><span className="text-[12px]">.</span></button>
+                              )}
+                            </div>
+                            {isUp && <button onClick={() => act('Added to your calendar')} className="w-full mt-1 py-1.5 active:opacity-60"><span className="text-[12px] font-bold" style={{ color: TERT }}>＋ Add to calendar</span></button>}
                           </div>
                         )}
                       </div>
@@ -499,6 +624,62 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         </div>
 
         <SubHeader title="Bookings" sub={`${upcoming.length} upcoming`} onBack={() => setView({ kind: 'home' })} />
+
+        {/* Rate dialog — stars + optional note */}
+        {rateFor && (
+          <div className="absolute inset-0 z-[175] flex items-center justify-center px-8" style={{ background: 'rgba(20,12,8,0.45)', animation: 'svFade 0.2s ease both' }} onClick={() => setRateFor(null)}>
+            <div className="w-full rounded-[24px] bg-white p-6 text-center" style={{ animation: 'svPop 0.22s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={(e) => e.stopPropagation()}>
+              <img src={rateFor.booking.photo} alt="" className="w-14 h-14 rounded-full object-cover mx-auto mb-3" />
+              <h2 className="text-[17px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Rate {rateFor.booking.provider.split(' ')[0]}</h2>
+              <div className="flex justify-center gap-1.5 mt-3">
+                {[...Array(5)].map((_, si) => (
+                  <button key={si} onClick={() => setRateFor({ ...rateFor, stars: si + 1 })} className="active:scale-90 transition-transform">
+                    <Star size={26} color="#E8B04A" fill={si < rateFor.stars ? '#E8B04A' : 'none'} strokeWidth={1.6} />
+                  </button>
+                ))}
+              </div>
+              <textarea placeholder="Add a note (optional)…" rows={2} className="w-full mt-4 rounded-[13px] px-3.5 py-2.5 outline-none text-[13.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] resize-none" style={{ background: PEACH }} />
+              <button onClick={() => submitRating(rateFor.booking.id, rateFor.stars)} className="w-full mt-4 py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 6px 18px rgba(232,93,42,0.26)' }}><span className="text-[14.5px] font-bold text-white">Submit</span></button>
+            </div>
+          </div>
+        )}
+
+        {/* Cancel confirm */}
+        {cancelFor && (
+          <div className="absolute inset-0 z-[175] flex items-center justify-center px-8" style={{ background: 'rgba(20,12,8,0.45)', animation: 'svFade 0.2s ease both' }} onClick={() => setCancelFor(null)}>
+            <div className="w-full rounded-[24px] bg-white p-6 text-center" style={{ animation: 'svPop 0.22s cubic-bezier(0.34,1.56,0.64,1) both' }} onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-[17px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Cancel this booking?</h2>
+              <p className="text-[13px] mt-2 leading-[1.5]" style={{ color: MUTED }}>{cancelFor.service} with {cancelFor.provider}. Free cancellation up to 24 h before.</p>
+              <button onClick={() => confirmCancel(cancelFor.id)} className="w-full mt-5 py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: DANGER }}><span className="text-[14.5px] font-bold text-white">Cancel booking</span></button>
+              <button onClick={() => setCancelFor(null)} className="w-full mt-2 py-2.5"><span className="text-[13.5px] font-bold" style={{ color: MUTED }}>Keep it</span></button>
+            </div>
+          </div>
+        )}
+
+        {/* Reschedule sheet */}
+        {reschedFor && (
+          <>
+            <div className="absolute inset-0 z-[170]" style={{ background: 'rgba(20,12,8,0.4)', animation: 'svFade 0.2s ease both' }} onClick={() => setReschedFor(null)} />
+            <div className="absolute left-0 right-0 bottom-0 z-[172] rounded-t-[26px]" style={{ background: CREAM, boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', animation: 'svSheet 0.3s cubic-bezier(0.22,1,0.36,1) both' }}>
+              <div className="flex justify-center pt-2.5 pb-1"><div style={{ width: 38, height: 5, borderRadius: 9999, background: '#DDD4C9' }} /></div>
+              <div className="px-5 pt-1 pb-1 flex items-center gap-3">
+                <h2 className="flex-1 text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Reschedule</h2>
+                <button onClick={() => setReschedFor(null)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
+              </div>
+              <p className="px-5 text-[12.5px]" style={{ color: TERT }}>{reschedFor.service} · {reschedFor.provider}</p>
+              <div className="px-5 mt-4">
+                <div className="flex gap-2">{DAYS.map((d, i) => { const on = reschedDay === i; return <button key={d} onClick={() => setReschedDay(i)} className="flex-1 h-[42px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{d}</button>; })}</div>
+                <div className="flex gap-2 mt-2">{TIMES.map((t, i) => { const on = reschedTime === i; return <button key={t} onClick={() => setReschedTime(i)} className="flex-1 h-[38px] rounded-[11px] text-[12.5px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{t}</button>; })}</div>
+                <p className="text-[11px] mt-3" style={{ color: TERT }}>{reschedFor.provider.split(' ')[0]} will need to confirm the new time.</p>
+              </div>
+              <div className="px-5 pt-4" style={{ paddingBottom: embedded ? 104 : 30 }}>
+                <button onClick={() => confirmResched(reschedFor)} className="w-full py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 6px 18px rgba(232,93,42,0.26)' }}><span className="text-[14.5px] font-bold text-white">Request new time</span></button>
+              </div>
+            </div>
+          </>
+        )}
+
+        {chat && <ChatOverlay provider={chat} onClose={() => setChat(null)} embedded={embedded} />}
         {toast && <Toast embedded={embedded} msg={toast} />}
       </Wrap>
     );
@@ -666,7 +847,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         <div className="rounded-[14px] mt-5 px-3.5 py-2.5 flex items-center gap-3" style={{ background: TINT }}>
           <Gift size={16} color={CORAL} strokeWidth={2} className="shrink-0" />
           <span className="flex-1 text-[12.5px] font-semibold truncate" style={{ color: INK }}>Give CHF 10, get CHF 10</span>
-          <button onClick={() => act('Invite friends')} className="shrink-0 text-[12.5px] font-bold active:opacity-70" style={{ color: CORAL }}>Invite</button>
+          <button onClick={() => setInviteOpen(true)} className="shrink-0 text-[12.5px] font-bold active:opacity-70" style={{ color: CORAL }}>Invite</button>
         </div>
       </div>
 
@@ -699,6 +880,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         </>
       )}
 
+      {inviteOpen && <InviteFriends embedded onExit={() => setInviteOpen(false)} />}
       {toast && <Toast embedded={embedded} msg={toast} />}
       {!embedded && <PreviewHeader />}
     </Wrap>
