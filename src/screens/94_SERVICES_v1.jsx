@@ -944,13 +944,14 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px]" style={{ boxShadow: SHADOW }}>
             <Search size={16} color={TERT} strokeWidth={2} />
             <input placeholder={`Find care for ${petName}…`} className="flex-1 bg-transparent outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" />
-            <div className="relative flex items-center -space-x-1.5">
+            <div className="flex items-center -space-x-1.5">
               {PETS.map((p) => { const on = petSel.includes(p.id); return <button key={p.id} onClick={() => togglePet(p.id)} className="rounded-full p-[1.5px] active:scale-95 transition-all duration-200" style={{ width: on ? 30 : 26, height: on ? 30 : 26, background: on ? CORAL : '#E5DED5', zIndex: on ? 2 : 1, position: 'relative', opacity: on ? 1 : 0.75 }}><img src={p.photo} alt={p.name} className="w-full h-full rounded-full object-cover" /></button>; })}
-              <button onClick={() => setPetHint(!petHint)} className="absolute -top-1.5 -right-1.5 w-[15px] h-[15px] rounded-full flex items-center justify-center active:scale-90" style={{ background: CORAL, border: '1.5px solid #fff', zIndex: 5, animation: petHint ? 'none' : 'svBlink 2.4s ease-in-out infinite' }}>
-                <span className="text-[9px] font-extrabold text-white leading-none">!</span>
-              </button>
             </div>
           </div>
+          {/* quiet, static hint marker on the bar's corner — doesn't cover the pets */}
+          <button onClick={() => setPetHint(!petHint)} className="absolute w-[16px] h-[16px] rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ top: -5, right: -4, background: '#fff', boxShadow: '0 1px 4px rgba(60,30,15,0.16)', zIndex: 5 }}>
+            <span className="text-[10px] font-extrabold leading-none" style={{ color: CORAL }}>!</span>
+          </button>
           {petHint && (
             <div className="absolute right-0 z-50 rounded-[14px] bg-white p-3.5" style={{ top: 52, width: 230, boxShadow: '0 8px 30px rgba(60,30,15,0.16)', animation: 'svPop 0.2s cubic-bezier(0.34,1.56,0.64,1) both' }}>
               <div className="text-[12.5px] font-bold" style={{ color: INK }}>Booking for who?</div>
