@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { area as d3area, line as d3line, curveCatmullRom } from 'd3-shape';
-import { ChevronLeft, ChevronRight, Plus, TrendingUp, Ticket, Gift, RefreshCw, Receipt, Users, Scissors, Syringe, PawPrint } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, TrendingUp, Ticket, Gift, RefreshCw, Receipt, Users, Scissors, Syringe } from 'lucide-react';
 
 /**
  * 57_PAYMENT_WALLET_v1.jsx — Wallet (single combined screen).
@@ -253,18 +253,15 @@ const PaymentWalletScreen = () => {
             <div className="px-4 pb-12">
               {/* Credits hero card */}
               <div className="relative" style={{ marginTop: 2, overflow: 'visible' }}>
-                <div className="absolute left-4 right-4 rounded-[24px]" style={{ height: 30, bottom: -10, background: '#D9501F', opacity: 0.45 }} />
-                <div className="absolute left-2 right-2 rounded-[24px]" style={{ height: 30, bottom: -5, background: '#E0571F', opacity: 0.7 }} />
-                <div className="relative rounded-[24px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 2px 6px rgba(207,74,28,0.18), 0 16px 36px rgba(232,93,42,0.30)', height: 178, transform: pulse ? 'scale(1.015)' : 'scale(1)', transition: 'transform 260ms cubic-bezier(0.22,1,0.36,1)' }}>
-                  <div className="absolute inset-0" style={{ background: 'radial-gradient(130% 90% at 88% -10%, rgba(255,255,255,0.30), transparent 55%)' }} />
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(200deg, transparent 60%, rgba(120,28,0,0.14) 100%)' }} />
-                  <PawPrint size={120} color="#fff" strokeWidth={1.2} className="absolute pointer-events-none" style={{ right: -20, bottom: -24, opacity: 0.09, transform: 'rotate(-14deg)' }} />
-                  <div className="absolute inset-0 rounded-[24px] pointer-events-none" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 0 rgba(255,255,255,0.25)' }} />
+                <div className="absolute left-4 right-4 rounded-[20px]" style={{ height: 30, bottom: -10, background: '#D9501F', opacity: 0.45 }} />
+                <div className="absolute left-2 right-2 rounded-[20px]" style={{ height: 30, bottom: -5, background: '#E0571F', opacity: 0.7 }} />
+                <div className="relative rounded-[20px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)', height: 178, transform: pulse ? 'scale(1.015)' : 'scale(1)', transition: 'transform 260ms cubic-bezier(0.22,1,0.36,1)' }}>
+                  <div className="absolute inset-0" style={{ background: 'radial-gradient(130% 90% at 88% -10%, rgba(255,255,255,0.28), transparent 55%)' }} />
                   <div className="relative h-full flex flex-col justify-between">
                     <div className="flex items-start justify-between">
                       <div>
                         <div style={{ fontFamily: '"Nunito", sans-serif', fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px', lineHeight: 1 }}>fylos<span style={{ color: '#FFD9C8' }}>•</span></div>
-                        <div className="text-[9px] font-extrabold uppercase mt-1.5" style={{ color: 'rgba(255,255,255,0.75)', letterSpacing: '0.26em' }}>Credits</div>
+                        <div className="text-[10px] font-bold uppercase tracking-[0.22em] mt-1.5" style={{ color: 'rgba(255,255,255,0.7)' }}>Credits</div>
                       </div>
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.16)' }}><TrendingUp size={12} color="#fff" strokeWidth={2.4} /><span className="text-[10.5px] font-bold text-white">+10 this month</span></span>
                     </div>
