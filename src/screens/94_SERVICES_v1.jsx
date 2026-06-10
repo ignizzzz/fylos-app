@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   AlertTriangle, Bell, Search, Footprints, Home, Scissors, Stethoscope,
-  Star, Heart, ChevronRight, ChevronLeft, ChevronDown, MapPin, MessageCircle,
+  Star, Heart, ChevronRight, ChevronLeft, ChevronDown, ChevronsRight, MapPin, MessageCircle,
   CalendarClock, X, Check, BadgeCheck, Repeat, Gift, Sparkles, GraduationCap, Lock,
   Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User, Share2, Clock,
 } from 'lucide-react';
@@ -312,6 +312,38 @@ const Toast = ({ embedded, msg }) => (
   <div className="absolute left-1/2 z-[200] px-4 py-2.5 rounded-full" style={{ bottom: embedded ? 108 : 38, transform: 'translateX(-50%)', background: INK, animation: 'svToast 0.2s ease both' }}><span className="text-[13px] font-semibold text-white whitespace-nowrap">{msg}</span></div>
 );
 
+const SlideToHold = ({ label, onComplete }) => {
+  const trackRef = useRef(null);
+  const startRef = useRef(0);
+  const [x, setX] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [done, setDone] = useState(false);
+  const maxOf = () => (trackRef.current ? trackRef.current.offsetWidth - 56 : 0);
+  const progress = x / Math.max(1, maxOf());
+  return (
+    <div ref={trackRef} className="relative h-[56px] rounded-full overflow-hidden" style={{ background: '#F1E9E0', marginTop: 16, touchAction: 'none' }}>
+      <div className="absolute left-0 top-0 bottom-0" style={{ width: x + 56, background: TINT, borderRadius: 9999 }} />
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <span className="text-[14px] font-bold" style={{ color: TERT, opacity: Math.max(0, 1 - progress * 1.6) }}>{label}</span>
+      </div>
+      <div
+        className="absolute top-1 w-12 h-12 rounded-full flex items-center justify-center"
+        style={{ left: x + 4, background: CORAL, boxShadow: '0 4px 14px rgba(232,93,42,0.35)', transition: dragging ? 'none' : done ? 'left 0.18s ease-out' : 'left 0.35s cubic-bezier(0.34,1.56,0.64,1)' }}
+        onPointerDown={(e) => { if (done) return; try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* untrusted event */ } startRef.current = e.clientX - x; setDragging(true); }}
+        onPointerMove={(e) => { if (!dragging || done) return; setX(Math.min(maxOf(), Math.max(0, e.clientX - startRef.current))); }}
+        onPointerUp={() => {
+          if (!dragging || done) return;
+          setDragging(false);
+          const max = maxOf();
+          if (x > max * 0.82) { setX(max); setDone(true); setTimeout(() => onComplete(), 200); } else { setX(0); }
+        }}
+      >
+        {done ? <Check size={20} color="#fff" strokeWidth={2.6} /> : <ChevronsRight size={20} color="#fff" strokeWidth={2.4} />}
+      </div>
+    </div>
+  );
+};
+
 const Wrap = ({ embedded, children }) => {
   const styleBlock = <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap');
@@ -595,9 +627,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                       <ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} />
                     </div>
                   </div>
-                  <button onClick={() => { setPayStep('processing'); setTimeout(() => { const f = payFor; setPayFor(null); setPayStep('review'); requestBooking(f.p, f.sel, f.date, f.time); }, 1000); }} className="w-full mt-4 py-4 rounded-[16px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
-                    <span className="text-[15px] font-bold text-white">Place hold · CHF {payFor.sel.p}</span>
-                  </button>
+                  <SlideToHold label={'Slide to hold · CHF ' + payFor.sel.p} onComplete={() => { setPayStep('processing'); setTimeout(() => { const f = payFor; setPayFor(null); setPayStep('review'); requestBooking(f.p, f.sel, f.date, f.time); }, 1000); }} />
                   <div className="flex items-center justify-center gap-1.5 mt-3"><Lock size={11} color={TERT} strokeWidth={2} /><span className="text-[10.5px] font-medium" style={{ color: TERT }}>Secured by Stripe. Released if {payFor.p.name.split(' ')[0]} declines</span></div>
                 </>
               ) : (

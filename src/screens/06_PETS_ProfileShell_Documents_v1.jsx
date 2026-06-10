@@ -5412,7 +5412,7 @@ const SafetyConfirmFollowupPopup = ({ onClose, onYes }) => {
   );
 };
 
-const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords, onOpenBookings, onOpenBookingFocused, onPopupStateChange }) => {
+const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords, onOpenBookings, onOpenBookingFocused, onPopupStateChange, onOpenPet }) => {
   const homeNavigate = useNavigate();
   const [selectedPetId, setSelectedPetId] = useState(MOCK_DASHBOARD_PETS[0].id);
   const [medSheetOpen, setMedSheetOpen] = useState(false);
@@ -5429,6 +5429,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const [expandedHomeRows, setExpandedHomeRows] = useState(new Set());
   const [isFading, setIsFading] = useState(false);
   const [displayPetId, setDisplayPetId] = useState(MOCK_DASHBOARD_PETS[0].id);
+  const [deckIdx, setDeckIdx] = useState(0);
+  const deckRef = useRef(null);
   const [dismissedHealthAlerts, setDismissedHealthAlerts] = useState(new Set());
   // Slim safety ribbon (above greeting) — appears only for live geo-time-
   // critical alerts. Dismissable; everything else lives in the bell inbox.
@@ -5795,72 +5797,118 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           );
         })()}
 
-        {/* ═══ 1. GREETING (date + coral name) + PET SELECTOR (right) ═══ */}
-        <div className="pt-3 pb-4" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
-          <div className="flex items-center justify-between gap-3">
-            {/* Left — date label + greeting with coral name */}
-            <div className="flex-1 min-w-0">
-              <div className="text-[11px] font-semibold text-[#9B9B9F] uppercase tracking-[0.14em] mb-1.5">
-                {(() => {
-                  const d = new Date();
-                  const wd = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-                  const mon = d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
-                  return `${wd} · ${d.getDate()} ${mon}`;
-                })()}
-              </div>
-              <h2 className="text-[26px] font-bold text-[#111] tracking-[-0.5px] leading-[1.08]">
-                {calmGreeting}, <span style={{ color: '#E85D2A' }}>{MOCK_USER.name}.</span>
-              </h2>
-            </div>
-
-            {/* Right — overlapping pet avatars + add. Dot semantics:
-                · Green pulsing dot → pet is in an active service NOW
-                · Coral static dot  → pet has pending tasks today
-                Live wins if both apply. Selected pet gets a coral ring
-                regardless; dots overlay independently. */}
-            <div className="shrink-0 flex items-center">
-              {MOCK_DASHBOARD_PETS.slice(0, 3).map((pet, i) => {
-                const isActive = pet.id === selectedPetId;
-                const isLive = !!(MOCK_ACTIVE_SERVICE?.petIds?.includes(pet.id));
-                const hasPending = !isActive && !isLive && petsWithPendingTasks.has(pet.id);
-                const showDot = isLive || hasPending;
-                return (
-                  <button
-                    key={pet.id}
-                    onClick={() => handlePetSelect(pet.id)}
-                    className="relative shrink-0 rounded-full active:scale-[0.9] transition-transform"
-                    style={{ marginLeft: i === 0 ? 0 : -10, zIndex: isActive ? 4 : 3 - i }}
-                    aria-label={`Select ${pet.name}${isLive ? ' (live service)' : hasPending ? ' (pending tasks)' : ''}`}
-                  >
-                    <img
-                      src={pet.avatar}
-                      alt={pet.name}
-                      className={`w-[42px] h-[42px] rounded-full object-cover transition-all duration-300 ${
-                        isActive
-                          ? 'ring-[2.5px] ring-[#E85D2A] ring-offset-2 ring-offset-[#F7F5F2]'
-                          : 'border-2 border-white'
-                      }`}
-                      style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.14)' }}
-                    />
-                    {showDot && (
-                      <span
-                        className="absolute top-0 right-0 w-[10px] h-[10px] rounded-full"
-                        style={{
-                          background: isLive ? '#3F8D63' : '#E85D2A',
-                          animation: isLive ? 'fy-livePulse 1.6s ease-in-out infinite' : undefined,
-                          boxShadow: '0 0 0 2px #F7F5F2',
-                        }}
-                        aria-hidden="true"
-                      />
-                    )}
-                  </button>
-                );
-              })}
-              {/* Add-pet shortcut removed — pet management lives in
-                  the Pets tab to keep the dashboard avatar row clean. */}
-            </div>
+        {/* ═══ 1. PET DECK — pets as physical cards. Swiping a card drives
+            the whole dashboard; the status ring absorbs "Next up". Tap a
+            card and the avatar morphs into the pet profile hero. ═══ */}
+        <div className="pt-3 pb-1" style={{ animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
+          <div className="flex items-center justify-between px-0.5 mb-2.5">
+            <span className="text-[11px] font-semibold text-[#9B9B9F] uppercase tracking-[0.14em]">
+              {(() => { const d = new Date(); return `${d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase()} · ${d.getDate()} ${d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}`; })()}
+            </span>
+            <span className="text-[11.5px] font-semibold text-[#9B9B9F]">{calmGreeting}, <span className="font-bold" style={{ color: '#D14E1F' }}>{MOCK_USER.name}</span></span>
           </div>
-
+          {(() => {
+            const deckPets = MOCK_DASHBOARD_PETS.slice(0, 2);
+            const CARD_W = 318, GAP = 12;
+            const pendingFor = (pid) => [...quickLogEntries, ...MOCK_REMINDERS]
+              .filter((r) => r.petId === pid && ['medication', 'health'].includes(r.type) && !completedReminders.has(r.id))
+              .sort((a, b) => {
+                const ao = typeof a.time === 'string' && /ago|overdue/i.test(a.time);
+                const bo = typeof b.time === 'string' && /ago|overdue/i.test(b.time);
+                if (ao && !bo) return -1; if (!ao && bo) return 1;
+                return String(a.time).localeCompare(String(b.time));
+              });
+            return (
+              <>
+                <div
+                  ref={deckRef}
+                  onScroll={(e) => {
+                    const i = Math.round(e.currentTarget.scrollLeft / (CARD_W + GAP));
+                    if (i !== deckIdx && i >= 0 && i <= deckPets.length) {
+                      setDeckIdx(i);
+                      const p = deckPets[i];
+                      if (p && p.id !== selectedPetId) handlePetSelect(p.id);
+                    }
+                  }}
+                  className="flex gap-3 -mx-5 px-5 overflow-x-auto"
+                  style={{ scrollSnapType: 'x mandatory', scrollbarWidth: 'none', paddingBottom: 6, scrollPaddingLeft: 20 }}
+                >
+                  {deckPets.map((pet, i) => {
+                    const isLive = !!(MOCK_ACTIVE_SERVICE?.petIds?.includes(pet.id));
+                    const pending = pendingFor(pet.id);
+                    const top = pending[0];
+                    const C = 2 * Math.PI * 34;
+                    const arc = isLive || pending.length === 0 ? C : Math.min(0.75, pending.length * 0.25) * C;
+                    const ringColor = isLive ? '#3F8D63' : pending.length ? '#E85D2A' : '#3F8D63';
+                    const on = deckIdx === i;
+                    return (
+                      <button
+                        key={pet.id}
+                        onClick={(e) => {
+                          const img = e.currentTarget.querySelector('img');
+                          if (img && onOpenPet) onOpenPet(pet.id, img.getBoundingClientRect(), pet.avatar);
+                        }}
+                        className="relative shrink-0 text-left bg-white rounded-[24px] px-4 pt-4 pb-3.5 transition-all duration-300"
+                        style={{ width: CARD_W, scrollSnapAlign: 'start', transform: on ? 'scale(1)' : 'scale(0.95)', opacity: on ? 1 : 0.82, boxShadow: '0 2px 4px rgba(60,30,15,0.04), 0 10px 26px rgba(60,30,15,0.08)', transitionTimingFunction: 'cubic-bezier(0.22,1,0.36,1)' }}
+                      >
+                        <span className="absolute top-4 right-4 text-[10px] font-extrabold" style={{ color: '#E5DCCF', fontFamily: '"Nunito", sans-serif', letterSpacing: '0.04em' }}>fylos</span>
+                        <div className="flex items-center gap-3.5">
+                          <span className="relative shrink-0" style={{ width: 76, height: 76 }}>
+                            <svg width="76" height="76" viewBox="0 0 76 76" className="absolute inset-0" style={{ transform: 'rotate(-90deg)' }}>
+                              <circle cx="38" cy="38" r="34" fill="none" stroke="#F1EDE8" strokeWidth="3.5" />
+                              <circle cx="38" cy="38" r="34" fill="none" stroke={ringColor} strokeWidth="3.5" strokeLinecap="round"
+                                strokeDasharray={`${arc} ${C}`} style={{ transition: 'stroke-dasharray 0.55s cubic-bezier(0.22,1,0.36,1), stroke 0.4s ease' }} />
+                            </svg>
+                            <img src={pet.avatar} alt={pet.name} className="absolute rounded-full object-cover" style={{ inset: 7, width: 62, height: 62 }} />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[19px] font-extrabold text-[#111] leading-tight truncate">{pet.name}</div>
+                            <div className="text-[11.5px] text-[#9B9B9F] mt-0.5 truncate">{pet.breed} · {pet.age} yrs</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-3 min-h-[26px]">
+                          {isLive ? (
+                            <>
+                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#3F8D63', animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
+                              <span className="flex-1 text-[12.5px] font-semibold truncate" style={{ color: '#3F8D63' }}>Live · {MOCK_ACTIVE_SERVICE.provider.name.split(' ')[0]} is with {pet.name}</span>
+                            </>
+                          ) : top ? (
+                            <>
+                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#E85D2A' }} />
+                              <span className="flex-1 text-[12.5px] font-semibold text-[#111] truncate">{top.title}</span>
+                              <span className="text-[11px] font-bold shrink-0" style={{ color: '#D14E1F' }}>{top.time}</span>
+                              <span
+                                role="button"
+                                onClick={(e) => { e.stopPropagation(); handleCompleteReminder(top.id); }}
+                                className="w-[26px] h-[26px] rounded-full shrink-0 flex items-center justify-center active:scale-90 transition-transform"
+                                style={{ border: '1.6px solid #E0D7CC' }}
+                                aria-label={`Mark ${top.title} done`}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#3F8D63' }} />
+                              <span className="text-[12.5px] font-semibold" style={{ color: '#3F8D63' }}>All good today</span>
+                            </>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                  {/* add-pet card */}
+                  <button onClick={() => onNavigate('pets')} className="shrink-0 rounded-[24px] flex flex-col items-center justify-center gap-2 transition-all duration-300" style={{ width: CARD_W, scrollSnapAlign: 'start', border: '1.6px dashed #DDD4C9', transform: deckIdx === deckPets.length ? 'scale(1)' : 'scale(0.95)', opacity: deckIdx === deckPets.length ? 1 : 0.75 }}>
+                    <span className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: '#FBE7DD' }}><Plus size={18} color="#E85D2A" strokeWidth={2.2} /></span>
+                    <span className="text-[12.5px] font-bold text-[#6E6058]">Add a pet</span>
+                  </button>
+                </div>
+                <div className="flex items-center justify-center gap-1.5 mt-1.5 mb-2">
+                  {[...deckPets, null].map((_, i) => (
+                    <span key={i} className="rounded-full transition-all duration-300" style={{ height: 5, width: deckIdx === i ? 16 : 5, background: deckIdx === i ? '#E85D2A' : '#E0D8CF' }} />
+                  ))}
+                </div>
+              </>
+            );
+          })()}
         </div>
 
         {/* ═══ CROSSFADE WRAPPER ═══ */}
@@ -6004,191 +6052,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               })()}
             </div>
 
-          {/* ═══ 4b. NEXT UP — carousel of important pending items
-              (medication + health). Shows one at a time, sorted by
-              time (overdue first). Tap = complete + advance. Swipe
-              left/right or tap dots to navigate between items. ═══ */}
-          {(() => {
-            const importantTypes = ['medication', 'health'];
-            const allPending = filteredReminders
-              .filter(r => importantTypes.includes(r.type) && !completedReminders.has(r.id))
-              .sort((a, b) => {
-                // Overdue items ("2d ago", "4d ago") come first; then time-of-day order.
-                const aOverdue = typeof a.time === 'string' && /ago|overdue/i.test(a.time);
-                const bOverdue = typeof b.time === 'string' && /ago|overdue/i.test(b.time);
-                if (aOverdue && !bOverdue) return -1;
-                if (!aOverdue && bOverdue) return 1;
-                return String(a.time).localeCompare(String(b.time));
-              });
-
-            const justDone = nextUpDoneId
-              ? filteredReminders.find(r => r.id === nextUpDoneId)
-              : null;
-
-            // Empty state — quiet positive note instead of hiding.
-            // First-launch users without any reminders still see this
-            // section and understand what NEXT UP is for.
-            if (!justDone && allPending.length === 0) {
-              return (
-                <div
-                  className="mb-6 flex items-center gap-2.5 px-4 py-3 rounded-[16px] bg-white"
-                  style={{
-                    boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)',
-                    animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both',
-                  }}
-                >
-                  <span className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: '#EAF7EF' }}>
-                    <Check size={14} className="text-[#3F8D63]" strokeWidth={2.4} />
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[12.5px] font-semibold text-[#111]">You're all set for today</div>
-                    <div className="text-[11px] text-[#9B9B9F] mt-0.5">No meds or vaccines pending</div>
-                  </div>
-                </div>
-              );
-            }
-
-            const total = allPending.length;
-            const currentIdx = total > 0 ? Math.min(nextUpIndex, total - 1) : 0;
-            const current = justDone || allPending[currentIdx];
-            if (!current) return null;
-
-            const isJustDone = !!justDone;
-            const hasMore = total > 1;
-
-            const goToIdx = (idx) => {
-              if (total === 0) return;
-              const wrapped = ((idx % total) + total) % total;
-              setNextUpIndex(wrapped);
-            };
-
-            const handleTap = () => {
-              if (isJustDone) return; // already animating out
-              // Every item in the carousel uses the checkbox to acknowledge.
-              // Tap marks done and animates out so the next pending appears.
-              handleCompleteReminder(current.id);
-              setNextUpDoneId(current.id);
-              setTimeout(() => setNextUpDoneId(null), 850);
-            };
-
-            const onPointerDown = (e) => {
-              // Only handle primary (left) mouse button; allow any touch/pen.
-              if (e.pointerType === 'mouse' && e.button !== 0) return;
-              if (!hasMore) return;
-              try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
-              nextUpTouchStartX.current = e.clientX;
-              nextUpTouchStartY.current = e.clientY;
-              nextUpTouchMoved.current = false;
-              setNextUpDragging(true);
-            };
-            const onPointerMove = (e) => {
-              if (nextUpTouchStartX.current == null) return;
-              const dx = e.clientX - nextUpTouchStartX.current;
-              const dy = e.clientY - nextUpTouchStartY.current;
-              if (Math.abs(dx) > 6 && Math.abs(dx) > Math.abs(dy)) {
-                nextUpTouchMoved.current = true;
-                // Mild rubber-band: limit to ±140px so it feels bounded.
-                const clamped = Math.max(-140, Math.min(140, dx));
-                setNextUpDragX(clamped);
-              }
-            };
-            const finishDrag = (clientX) => {
-              if (nextUpTouchStartX.current == null) return;
-              const dx = (clientX ?? nextUpTouchStartX.current) - nextUpTouchStartX.current;
-              nextUpTouchStartX.current = null;
-              nextUpTouchStartY.current = null;
-              setNextUpDragging(false);
-              if (nextUpTouchMoved.current && Math.abs(dx) > 50 && hasMore) {
-                // Pass threshold → advance/retreat. Defer dragX reset to
-                // the next frame so the new card animates from the drag
-                // offset back to 0 (smoother than instant snap).
-                goToIdx(currentIdx + (dx < 0 ? 1 : -1));
-                requestAnimationFrame(() => setNextUpDragX(0));
-              } else {
-                // Snap back to center.
-                setNextUpDragX(0);
-              }
-            };
-            const onPointerUp = (e) => finishDrag(e.clientX);
-            const onPointerCancel = () => {
-              nextUpTouchStartX.current = null;
-              nextUpTouchStartY.current = null;
-              setNextUpDragging(false);
-              setNextUpDragX(0);
-            };
-
-            return (
-              <div
-                className="mb-6"
-                style={{
-                  animation: isJustDone
-                    ? 'nextUpDone 850ms cubic-bezier(0.22, 1, 0.36, 1) forwards'
-                    : 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both',
-                }}
-              >
-                <button
-                  key={current.id}
-                  onClick={() => {
-                    if (nextUpTouchMoved.current) { nextUpTouchMoved.current = false; return; }
-                    handleTap();
-                  }}
-                  onPointerDown={onPointerDown}
-                  onPointerMove={onPointerMove}
-                  onPointerUp={onPointerUp}
-                  onPointerCancel={onPointerCancel}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-[16px]"
-                  style={{
-                    background: '#FBE7DD',
-                    touchAction: hasMore ? 'pan-y' : 'auto',
-                    transform: `translateX(${nextUpDragX}px)`,
-                    transition: nextUpDragging
-                      ? 'none'
-                      : 'transform 0.28s cubic-bezier(0.22, 1, 0.36, 1)',
-                    cursor: hasMore ? (nextUpDragging ? 'grabbing' : 'grab') : 'pointer',
-                    userSelect: 'none',
-                    touchCallout: 'none',
-                  }}
-                >
-                  <span
-                    className={`w-[22px] h-[22px] rounded-full border-[1.5px] inline-flex items-center justify-center shrink-0 transition-all duration-200 ${
-                      isJustDone ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#D4CCC4]'
-                    }`}
-                  >
-                    {isJustDone && <Check size={12} className="text-white" strokeWidth={3} />}
-                  </span>
-                  <div className="flex-1 min-w-0 text-left">
-                    <div className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#E85D2A]">Next up</div>
-                    <div className={`text-[14px] font-bold mt-0.5 truncate transition-colors duration-200 ${
-                      isJustDone ? 'text-[#9B9B9F] line-through' : 'text-[#111]'
-                    }`}>
-                      {current.title}
-                    </div>
-                  </div>
-                  <span className="text-[12px] text-[#9B9B9F] tabular-nums shrink-0">{current.time}</span>
-                </button>
-                {hasMore && !isJustDone && (
-                  <div className="flex items-center justify-center gap-1.5 mt-2.5" aria-label={`${currentIdx + 1} of ${total} items`}>
-                    {allPending.map((p, i) => (
-                      <button
-                        key={p.id}
-                        onClick={(e) => { e.stopPropagation(); goToIdx(i); }}
-                        aria-label={`Show item ${i + 1}`}
-                        className="p-1.5 -m-1.5"
-                      >
-                        <span
-                          className={`block rounded-full transition-all duration-200 ${
-                            i === currentIdx
-                              ? 'w-4 h-1.5 bg-[#E85D2A]'
-                              : 'w-1.5 h-1.5 bg-[#E0D8CF]'
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
 
 
           {/* ═══ 7. EXPLORE — quick entries + secondary actions.
@@ -11182,6 +11045,7 @@ export default function App() {
     switch (displayTab) {
       case 'home': return (
         <HomeScreen
+          onOpenPet={openPetFromDeck}
           onNavigate={handleTabChange}
           notifications={appNotifications}
           onOpenInbox={() => setInboxOpen(true)}
@@ -11209,6 +11073,7 @@ export default function App() {
       case 'vault': return <VaultScreen onOpenHealthRecords={() => setPushedScreen('vault_health_records')} onOpenDocuments={() => setPushedScreen('vault_documents')} onOpenContacts={() => setPushedScreen('vault_contacts')} onOpenPlaces={() => setPushedScreen('vault_places')} />;
       default: return (
         <HomeScreen
+          onOpenPet={openPetFromDeck}
           onNavigate={handleTabChange}
           notifications={appNotifications}
           onOpenInbox={() => setInboxOpen(true)}
@@ -11266,13 +11131,29 @@ export default function App() {
   // When the user taps a booking on the dashboard, we navigate to the
   // bookings list and remember which row to start expanded.
   const [focusedBookingId, setFocusedBookingId] = useState(null);
+  // Pet card → profile shared-element morph. The card avatar's clone flies
+  // to the profile hero position while the tab underneath switches.
+  const phoneFrameRef = useRef(null);
+  const [petMorph, setPetMorph] = useState(null);
+  const openPetFromDeck = (petId, clientRect, src) => {
+    const fr = phoneFrameRef.current?.getBoundingClientRect();
+    const go = () => { setSelectedPetId(petId); setPetsRoute('profile'); setActiveTab('pets'); setDisplayTab('pets'); };
+    if (!fr || !clientRect) { go(); return; }
+    setPetMorph({ src, x: clientRect.left - fr.left, y: clientRect.top - fr.top, w: clientRect.width, go: false });
+    requestAnimationFrame(() => requestAnimationFrame(() => setPetMorph((m) => m && { ...m, go: true })));
+    setTimeout(go, 170);
+    setTimeout(() => setPetMorph(null), 560);
+  };
 
   // PRO mode replaces the whole personal UI with the provider dashboard
   if (proMode) {
     return (
       <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center sm:p-8 font-sans antialiased">
         <GlobalStyles />
-        <div className="relative w-[390px] h-[844px] bg-[#F7F5F2] rounded-[50px] border-[8px] border-black overflow-hidden" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.28)' }}>
+        <div ref={phoneFrameRef} className="relative w-[390px] h-[844px] bg-[#F7F5F2] rounded-[50px] border-[8px] border-black overflow-hidden" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.28)' }}>
+          {petMorph && (
+            <img src={petMorph.src} alt="" className="absolute object-cover pointer-events-none" style={{ zIndex: 300, borderRadius: '50%', left: petMorph.go ? 139 : petMorph.x, top: petMorph.go ? 112 : petMorph.y, width: petMorph.go ? 112 : petMorph.w, height: petMorph.go ? 112 : petMorph.w, transition: 'all 0.46s cubic-bezier(0.22,1,0.36,1)', boxShadow: '0 10px 30px rgba(60,30,15,0.18)' }} />
+          )}
           <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
           <ProDashboard onExitPro={() => { try { window.sessionStorage.removeItem('fylos.proMode'); } catch (e) {} setProMode(false); }} />

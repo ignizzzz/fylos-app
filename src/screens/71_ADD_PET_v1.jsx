@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Camera, Plus, Minus, Check, Calendar, Search, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Camera, Plus, Minus, Check, Calendar, Search, X, Dog, Cat, Rabbit, Bird, Fish, Turtle, Squirrel, PawPrint } from 'lucide-react';
 
 /**
  * 71_ADD_PET_v1.jsx — comprehensive "Add a pet" flow (Revolut-style).
@@ -11,12 +11,14 @@ import { ChevronLeft, ChevronRight, Camera, Plus, Minus, Check, Calendar, Search
 const CORAL = '#E85D2A';
 const CREAM = '#F7F5F2';
 const PEACH = '#F3EFEB';
+const TINT = '#FBE7DD';
 const INK = '#111111';
 const MUTED = '#6E6058';
 const TERT = '#9B9B9F';
 const GREEN = '#3F8D63';
 const FIELD = '#E0D8CF';
 const CARD_SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.05)';
+const SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)';
 const DOG_PHOTO = 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=300&h=300';
 
 const SPECIES = [
@@ -40,11 +42,7 @@ const MEDS = ['Apoquel', 'NexGard', 'Frontline', 'Bravecto', 'Heartgard', 'Galli
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const CURRENT_YEAR = 2026;
 const YEARS = Array.from({ length: 26 }, (_, i) => CURRENT_YEAR - i);
-const CONFETTI = [
-  { dx: -64, dy: -78, c: CORAL, d: 0 }, { dx: 66, dy: -76, c: '#E8B04A', d: 60 }, { dx: -98, dy: -12, c: GREEN, d: 30 },
-  { dx: 98, dy: -14, c: '#F0A878', d: 90 }, { dx: -56, dy: 58, c: '#E8B04A', d: 120 }, { dx: 58, dy: 60, c: CORAL, d: 50 },
-  { dx: 4, dy: -108, c: GREEN, d: 150 }, { dx: -28, dy: -94, c: '#F0A878', d: 100 }, { dx: 34, dy: -92, c: CORAL, d: 180 }, { dx: 88, dy: 40, c: '#E8B04A', d: 140 },
-];
+const SPECIES_ICONS = { dog: Dog, cat: Cat, rabbit: Rabbit, bird: Bird, fish: Fish, reptile: Turtle, small: Squirrel, horse: PawPrint, other: PawPrint };
 
 const STEPS = [
   { id: 'identity', title: "Let's meet your pet", sub: 'A photo and a name to start.' },
@@ -99,6 +97,58 @@ const Stepper = ({ value, onChange, min = 0, max = 99, unit }) => (
     <button onClick={() => onChange(Math.min(max, value + 1))} className="w-11 h-11 rounded-full flex items-center justify-center active:scale-90 transition-transform" style={{ background: PEACH }}><Plus size={18} color={INK} strokeWidth={2.4} /></button>
   </div>
 );
+
+// Assembling Pet Card — fills in live as the flow answers questions
+const petChips = (d, reached) => {
+  const chips = [];
+  if (!d.isMix && d.breed) chips.push(d.breed);
+  if (d.isMix && d.breedMix1) chips.push(d.breedMix1);
+  if (d.isMix && d.breedMix2) chips.push(d.breedMix2);
+  if (reached && d.sex) chips.push(d.sex === 'male' ? 'Male' : 'Female');
+  if (reached) {
+    if (d.dobKnown) {
+      if (d.dobYear !== undefined && d.dobYear !== '') chips.push(`Born ${d.dobMonth !== undefined && d.dobMonth !== '' ? `${MONTHS[Number(d.dobMonth)]} ` : ''}${d.dobYear}`);
+    } else if (d.ageValue !== undefined) {
+      chips.push(`${d.ageValue} ${d.ageUnit === 'months' ? (d.ageValue === 1 ? 'month' : 'months') : (d.ageValue === 1 ? 'year' : 'years')}`);
+    }
+  }
+  if (d.weight) chips.push(`${d.weightApprox ? '~' : ''}${d.weight} ${d.weightUnit}`);
+  if (d.color) chips.push(d.color);
+  return [...new Set(chips)];
+};
+
+const PetCard = ({ d, big, reached }) => {
+  const name = (d.name || '').trim();
+  const chips = petChips(d, reached);
+  const Icon = SPECIES_ICONS[d.species];
+  const av = big ? 64 : 56;
+  return (
+    <div className={`relative w-full bg-white flex items-center gap-3 text-left ${big ? 'rounded-[24px] px-5 py-4' : 'rounded-[20px] px-4 py-3'}`} style={{ boxShadow: SHADOW }}>
+      <span className="absolute select-none" style={{ top: big ? 12 : 9, right: big ? 16 : 13, fontSize: 10, fontWeight: 800, letterSpacing: '0.14em', color: '#D8CFC4', fontFamily: "'Nunito', Inter, sans-serif" }}>fylos</span>
+      {d.photo ? (
+        <span className="rounded-full flex items-center justify-center shrink-0" style={{ width: av, height: av, background: TINT }}><Check size={big ? 26 : 22} color={CORAL} strokeWidth={2.6} /></span>
+      ) : Icon ? (
+        <span className="rounded-full flex items-center justify-center shrink-0" style={{ width: av, height: av, background: TINT }}><Icon size={big ? 30 : 26} color={CORAL} strokeWidth={1.9} /></span>
+      ) : (
+        <span className="rounded-full flex items-center justify-center shrink-0" style={{ width: av, height: av, border: '1.6px dashed #DDD4C9' }}><Camera size={big ? 24 : 20} color={TERT} strokeWidth={1.8} /></span>
+      )}
+      <div className="flex-1 min-w-0">
+        {name ? (
+          <div className={`${big ? 'text-[20px]' : 'text-[16px]'} font-extrabold truncate pr-8 tracking-[-0.01em]`} style={{ color: INK, animation: 'apPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both' }}>{name}</div>
+        ) : (
+          <div className="h-[12px] w-[90px] rounded-full" style={{ background: '#F1ECE6' }} />
+        )}
+        {chips.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1.5 pr-4">
+            {chips.map((c) => (
+              <span key={c} className="text-[10.5px] font-bold px-2 py-[3px] rounded-full" style={{ background: PEACH, color: MUTED, animation: 'apChipIn 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>{c}</span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 // Clean select row that opens a picker sheet (replaces pill clouds)
 const SelectRow = ({ value, placeholder, onClick }) => (
@@ -212,22 +262,20 @@ const AddPet = () => {
   const valid = step === 0 ? !!(name && data.species && (data.species !== 'other' || (data.otherType || '').trim())) : true;
   const isLast = step === TOTAL - 1;
   const headline = typeof cfg?.title === 'function' ? cfg.title(name || 'your pet') : cfg?.title;
-  const hasChip = step > 0 && !!name;
   const vaccineOpts = VACCINES[data.species] || VACCINES._;
   const summary = (arr) => arr && arr.length ? arr.join(', ') : '';
   const openSelect = (key, title, options, opts = {}) => setSheet({ kind: 'select', key, title, options, ...opts });
 
   const styleBlock = (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap');
       @keyframes apStep { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
       .ap-step { animation: apStep 0.3s cubic-bezier(0.22,1,0.36,1) both; }
       @keyframes apSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
       @keyframes apFade { from { opacity: 0; } to { opacity: 1; } }
-      @keyframes apAvatar { 0% { opacity: 0; transform: scale(0.3); } 62% { transform: scale(1.09); } 100% { opacity: 1; transform: scale(1); } }
-      @keyframes apRingOut { 0% { transform: scale(0.55); opacity: 0.55; } 100% { transform: scale(2.5); opacity: 0; } }
-      @keyframes apConfetti { 0% { opacity: 0; transform: translate(0,0) scale(0.2); } 22% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); } }
-      @keyframes apBadge { 0% { opacity: 0; transform: scale(0); } 70% { transform: scale(1.25); } 100% { opacity: 1; transform: scale(1); } }
+      @keyframes apPop { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+      @keyframes apChipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes apFlip { from { transform: perspective(900px) rotateY(70deg) scale(0.9); opacity: 0; } to { transform: perspective(900px) rotateY(0) scale(1); opacity: 1; } }
       @keyframes apRise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
       .ap-rise { animation: apRise 0.5s 0.35s cubic-bezier(0.22,1,0.36,1) both; }
     `}</style>
@@ -247,16 +295,8 @@ const AddPet = () => {
   if (step === 'done') {
     return (<>{styleBlock}{frame(
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8" style={{ background: CREAM }}>
-        <div className="relative mb-7" style={{ width: 132, height: 132 }}>
-          <span className="absolute inset-0 rounded-full" style={{ border: `2px solid ${CORAL}`, animation: 'apRingOut 1.4s 0.15s ease-out both' }} />
-          <span className="absolute inset-0 rounded-full" style={{ border: `2px solid ${CORAL}`, animation: 'apRingOut 1.4s 0.45s ease-out both' }} />
-          {CONFETTI.map((p, i) => (
-            <span key={i} className="absolute top-1/2 left-1/2 rounded-full" style={{ width: 8, height: 8, marginLeft: -4, marginTop: -4, background: p.c, '--dx': `${p.dx}px`, '--dy': `${p.dy}px`, animation: `apConfetti 0.9s ${p.d + 200}ms cubic-bezier(0.22,1,0.36,1) both` }} />
-          ))}
-          <span className="absolute inset-0 rounded-full overflow-hidden flex items-center justify-center" style={{ background: data.photo ? 'transparent' : CORAL, boxShadow: '0 12px 30px rgba(232,93,42,0.3)', animation: 'apAvatar 0.6s cubic-bezier(0.34,1.56,0.64,1) both' }}>
-            {data.photo ? <img src={DOG_PHOTO} alt="" className="w-full h-full object-cover" /> : <span className="text-[44px] font-extrabold text-white">{(name[0] || 'P').toUpperCase()}</span>}
-          </span>
-          <span className="absolute -bottom-1 -right-1 w-11 h-11 rounded-full flex items-center justify-center border-[3px] border-[#F7F5F2]" style={{ background: GREEN, animation: 'apBadge 0.45s 0.5s cubic-bezier(0.34,1.56,0.64,1) both' }}><Check size={22} color="#FFFFFF" strokeWidth={3} /></span>
+        <div className="w-full mb-8" style={{ animation: 'apFlip 0.65s cubic-bezier(0.22,1,0.36,1) both' }}>
+          <PetCard d={data} big reached />
         </div>
         <h1 className="ap-rise text-[27px] font-extrabold text-[#111] tracking-[-0.02em]">Welcome, {name || 'little one'}!</h1>
         <p className="ap-rise text-[14px] text-[#6E6058] mt-2.5 leading-[1.5] max-w-[280px]">{name || 'Your pet'}'s profile is ready. Your walkers, sitters and vet can now see everything they need.</p>
@@ -268,7 +308,7 @@ const AddPet = () => {
   return (<>{styleBlock}{frame(
     <div className="absolute inset-0" style={{ background: CREAM }}>
       {/* Scrolling content — runs behind header & footer */}
-      <div className="absolute inset-0 overflow-y-auto overflow-x-hidden px-6" style={{ scrollbarWidth: 'none', paddingTop: hasChip ? 132 : 100, paddingBottom: 104 }}>
+      <div className="absolute inset-0 overflow-y-auto overflow-x-hidden px-6" style={{ scrollbarWidth: 'none', paddingTop: 208, paddingBottom: 104 }}>
         <div key={step} className="ap-step">
           <h1 className="text-[26px] font-extrabold text-[#111] tracking-[-0.03em] leading-[1.1]">{headline}</h1>
           <p className="text-[14px] mt-2 leading-[1.45]" style={{ color: TERT }}>{cfg.sub}</p>
@@ -402,20 +442,15 @@ const AddPet = () => {
       </div>
 
       {/* Header — gradient-fade, content scrolls behind */}
-      <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 62%, rgba(247,245,242,0) 100%)', paddingTop: 56, paddingBottom: 16 }}>
+      <div className="absolute top-0 left-0 right-0 z-30 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 78%, rgba(247,245,242,0) 100%)', paddingTop: 56, paddingBottom: 16 }}>
         <div className="px-5 flex items-center gap-3 pointer-events-auto">
           <button onClick={back} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-95 transition-transform shrink-0 bg-white" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><ChevronLeft size={18} color={INK} strokeWidth={2.2} /></button>
           <div className="flex-1 flex gap-1">{STEPS.map((_, i) => (<div key={i} className="flex-1 h-[5px] rounded-full overflow-hidden" style={{ background: '#EAE3DB' }}><div className="h-full rounded-full transition-all duration-[400ms]" style={{ width: i <= step ? '100%' : '0%', background: CORAL }} /></div>))}</div>
           {cfg.skip ? <button onClick={next} className="text-[13px] font-bold shrink-0 w-10 text-right" style={{ color: TERT }}>Skip</button> : <span className="shrink-0 w-10 text-right text-[12px] font-bold" style={{ color: TERT }}>{step + 1}/{TOTAL}</span>}
         </div>
-        {hasChip && (
-          <div className="px-5 pt-2.5 flex justify-center pointer-events-auto">
-            <div className="inline-flex items-center gap-2 pl-1.5 pr-3.5 py-1.5 rounded-full bg-white" style={{ boxShadow: CARD_SHADOW }}>
-              <span className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center shrink-0" style={{ background: data.photo ? 'transparent' : PEACH }}>{data.photo ? <img src={DOG_PHOTO} alt="" className="w-full h-full object-cover" /> : <span className="text-[11px] font-extrabold" style={{ color: CORAL }}>{name[0].toUpperCase()}</span>}</span>
-              <span className="text-[13px] font-bold" style={{ color: INK }}>{name}</span>
-            </div>
-          </div>
-        )}
+        <div className="px-5 pt-3 pointer-events-auto">
+          <PetCard d={data} reached={step >= 2} />
+        </div>
       </div>
 
       {/* Footer CTA — gradient-fade, content scrolls behind */}

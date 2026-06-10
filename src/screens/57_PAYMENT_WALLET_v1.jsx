@@ -74,16 +74,53 @@ const MiniToggle = ({ value, onChange }) => (
   </div>
 );
 
+// Rolling odometer: each digit is a vertical 0-9 strip translated to the target digit.
+const ODO_STRIP = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const OdoDigit = ({ digit }) => {
+  const [pos, setPos] = useState(0);
+  useEffect(() => {
+    let r2;
+    const r1 = requestAnimationFrame(() => { r2 = requestAnimationFrame(() => setPos(digit)); });
+    return () => { cancelAnimationFrame(r1); if (r2) cancelAnimationFrame(r2); };
+  }, [digit]);
+  return (
+    <span className="tabular-nums" style={{ display: 'inline-flex', overflow: 'hidden', height: '1em' }}>
+      <span style={{ display: 'block', transform: `translateY(-${pos}em)`, transition: 'transform 0.55s cubic-bezier(0.22,1,0.36,1)', willChange: 'transform' }}>
+        {ODO_STRIP.map((d) => <span key={d} style={{ display: 'block', height: '1em', lineHeight: 1 }}>{d}</span>)}
+      </span>
+    </span>
+  );
+};
+
+const Odometer = ({ value }) => (
+  <span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em] tabular-nums" style={{ display: 'inline-flex', overflow: 'hidden', height: '1em' }}>
+    {String(value).split('').map((ch, i) => (
+      /\d/.test(ch)
+        ? <OdoDigit key={`d${i}`} digit={Number(ch)} />
+        : <span key={`s${i}`} style={{ display: 'block', height: '1em', lineHeight: 1 }}>{ch}</span>
+    ))}
+  </span>
+);
+
 const PaymentWalletScreen = () => {
   const [defaultId, setDefaultId] = useState('c1');
   const [autopay, setAutopay] = useState(true);
-  // credits balance counts up on open
-  const [bal, setBal] = useState(0);
+  // signature moment: the wallet catches an incoming transaction.
+  // 0ms balance shows 20.00, 900ms a reward chip drops into the card,
+  // it lands at 1380ms (900 + 480) so the odometer rolls to 30.00 and the card pulses,
+  // then the chip fades away.
+  const [bal, setBal] = useState(20);
+  const [chip, setChip] = useState('waiting'); // waiting | drop | gone
+  const [pulse, setPulse] = useState(false);
   useEffect(() => {
-    let start = null, raf;
-    const tick = (t) => { if (!start) start = t; const p = Math.min(1, (t - start) / 800); setBal(30 * (1 - Math.pow(1 - p, 3))); if (p < 1) raf = requestAnimationFrame(tick); };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    const timers = [
+      setTimeout(() => setChip('drop'), 900),
+      setTimeout(() => { setBal(30); setPulse(true); }, 1380),
+      setTimeout(() => setChip('gone'), 1560),
+      setTimeout(() => setPulse(false), 1640),
+    ];
+    return () => timers.forEach(clearTimeout);
   }, []);
   const back = () => { if (window.history.length > 1) window.history.back(); else window.location.href = '/'; };
 
@@ -104,10 +141,10 @@ const PaymentWalletScreen = () => {
 
             <div className="px-4 pb-12">
               {/* Credits hero card */}
-              <div className="relative" style={{ marginTop: 2 }}>
+              <div className="relative" style={{ marginTop: 2, overflow: 'visible' }}>
                 <div className="absolute left-4 right-4 rounded-[20px]" style={{ height: 30, bottom: -10, background: '#D9501F', opacity: 0.45 }} />
                 <div className="absolute left-2 right-2 rounded-[20px]" style={{ height: 30, bottom: -5, background: '#E0571F', opacity: 0.7 }} />
-                <div className="relative rounded-[20px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)', height: 178 }}>
+                <div className="relative rounded-[20px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)', height: 178, transform: pulse ? 'scale(1.015)' : 'scale(1)', transition: 'transform 260ms cubic-bezier(0.22,1,0.36,1)' }}>
                   <div className="absolute inset-0" style={{ background: 'radial-gradient(130% 90% at 88% -10%, rgba(255,255,255,0.28), transparent 55%)' }} />
                   <div className="relative h-full flex flex-col justify-between">
                     <div className="flex items-start justify-between">
@@ -118,9 +155,22 @@ const PaymentWalletScreen = () => {
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.16)' }}><TrendingUp size={12} color="#fff" strokeWidth={2.4} /><span className="text-[10.5px] font-bold text-white">+10 this month</span></span>
                     </div>
                     <div>
-                      <div className="flex items-baseline gap-1.5"><span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>CHF</span><span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em] tabular-nums">{bal.toFixed(2)}</span></div>
+                      <div className="flex items-baseline gap-1.5"><span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>CHF</span><Odometer value={bal.toFixed(2)} /></div>
                       <div className="text-[11.5px] mt-1.5" style={{ color: 'rgba(255,255,255,0.78)' }}>Available toward any booking</div>
                     </div>
+                  </div>
+                </div>
+                {/* Incoming transaction chip that drops into the card */}
+                <div className="absolute z-10 pointer-events-none" style={{
+                  top: -18,
+                  left: '50%',
+                  opacity: chip === 'drop' ? 1 : 0,
+                  transform: chip === 'waiting' ? 'translate(-50%, 0) scale(1)' : chip === 'drop' ? 'translate(-50%, 58px) scale(1)' : 'translate(-50%, 58px) scale(0.6)',
+                  transition: chip === 'gone' ? 'transform 220ms cubic-bezier(0.22,1,0.36,1), opacity 220ms cubic-bezier(0.22,1,0.36,1)' : 'transform 480ms cubic-bezier(0.34,1.56,0.64,1), opacity 200ms ease',
+                }}>
+                  <div className="bg-white rounded-full px-3 py-1.5 flex items-center gap-1.5 whitespace-nowrap" style={{ boxShadow: SHADOW }}>
+                    <span className="text-[12px] font-bold" style={{ color: INK }}>Referral reward</span>
+                    <span className="text-[12px] font-bold" style={{ color: GREEN }}>+ CHF 10.00</span>
                   </div>
                 </div>
               </div>
