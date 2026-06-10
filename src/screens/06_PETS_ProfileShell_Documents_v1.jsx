@@ -5893,10 +5893,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               {filteredBookings.length === 0 ? (
                 <button
                   onClick={() => onOpenBookings?.()}
-                  className="w-full flex items-center gap-3 px-3.5 py-3 rounded-[14px] active:scale-[0.99] transition-transform"
-                  style={{ background: '#F3EFEB' }}
+                  className="w-full flex items-center gap-3 px-3.5 py-3 rounded-[16px] bg-white active:scale-[0.99] transition-transform"
+                  style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
                 >
-                  <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0">
+                  <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: '#F3EFEB' }}>
                     <Calendar size={14} className="text-[#A09A94]" strokeWidth={1.9} />
                   </span>
                   <div className="flex-1 text-left min-w-0">
@@ -5912,8 +5912,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   : filteredBookings.slice(0, 2);
                 const hiddenCount = filteredBookings.length - 2;
                 return (<>
-              <div>
-                {visibleBookings.map((b) => {
+              <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+                {visibleBookings.map((b, bi) => {
                   const d = new Date(`${b.date}T${b.time}:00`);
                   // "Monday, Feb 16" — title case, day-first
                   const dayLabel = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
@@ -5961,8 +5961,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                     <button
                       key={b.id}
                       onClick={() => (onOpenBookingFocused ? onOpenBookingFocused(b.id) : onOpenBookings?.())}
-                      className="w-full text-left flex items-center gap-3 mb-4 last:mb-0 active:opacity-70 transition-opacity"
+                      className="relative w-full text-left flex items-center gap-3 px-3.5 py-3 active:bg-black/[0.02] transition-colors"
                     >
+                      {bi < visibleBookings.length - 1 && <span className="absolute bottom-0 left-[66px] right-0 h-px" style={{ background: '#F1EDE8' }} />}
                       {renderAvatar()}
                       {/* Two-line content column to the right of the avatar:
                           title on top, coral day label (+ optional muted
@@ -6029,13 +6030,13 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             if (!justDone && allPending.length === 0) {
               return (
                 <div
-                  className="mb-6 flex items-center gap-2.5 px-4 py-3 rounded-[14px]"
+                  className="mb-6 flex items-center gap-2.5 px-4 py-3 rounded-[16px] bg-white"
                   style={{
-                    background: '#F3EFEB',
+                    boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)',
                     animation: 'homeReveal 0.4s 0.2s cubic-bezier(0.22,1,0.36,1) both',
                   }}
                 >
-                  <span className="w-7 h-7 rounded-full bg-white flex items-center justify-center shrink-0">
+                  <span className="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style={{ background: '#EAF7EF' }}>
                     <Check size={14} className="text-[#3F8D63]" strokeWidth={2.4} />
                   </span>
                   <div className="flex-1 min-w-0">
@@ -6134,9 +6135,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   onPointerMove={onPointerMove}
                   onPointerUp={onPointerUp}
                   onPointerCancel={onPointerCancel}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px]"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-[16px]"
                   style={{
-                    background: '#FFEDE3',
+                    background: '#FBE7DD',
                     touchAction: hasMore ? 'pan-y' : 'auto',
                     transform: `translateX(${nextUpDragX}px)`,
                     transition: nextUpDragging
@@ -6200,10 +6201,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 <button
                   key={i}
                   onClick={() => setTrackPopupType(a.type)}
-                  className="flex items-center justify-center gap-1.5 py-2.5 rounded-full active:scale-[0.96] transition-transform"
-                  style={{ background: '#F3EFEB' }}
+                  className="flex items-center justify-center gap-1.5 py-2.5 rounded-full bg-white active:scale-[0.96] transition-transform"
+                  style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
                 >
-                  <a.icon size={15} className="text-[#6E6058]" strokeWidth={1.8} />
+                  <a.icon size={15} className="text-[#E85D2A]" strokeWidth={1.8} />
                   <span className="text-[13px] font-semibold text-[#111]">+ {a.label}</span>
                 </button>
               ))}
@@ -6225,9 +6226,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 { label: 'Calendar', icon: CalendarDays, onClick: () => onNavigate('journal') },
                 { label: 'Health', icon: Stethoscope, onClick: () => onOpenHealthRecords?.() },
               ].map((e, i) => (
-                <button key={i} onClick={e.onClick} className="flex flex-col items-center gap-1.5 py-3 rounded-[14px] active:scale-[0.96] transition-transform" style={{ background: '#F3EFEB' }}>
+                <button key={i} onClick={e.onClick} className="flex flex-col items-center gap-1.5 py-3 rounded-[16px] bg-white active:scale-[0.96] transition-transform" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
                   <e.icon size={18} className="text-[#E85D2A]" strokeWidth={1.9} />
-                  <span className="text-[11px] font-semibold text-[#6E6058]">{e.label}</span>
+                  <span className="text-[11px] font-semibold text-[#111]">{e.label}</span>
                 </button>
               ))}
             </div>
@@ -6238,18 +6239,18 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             <div className="grid grid-cols-2 gap-2.5 mb-3">
               <button
                 onClick={() => setVetHotlineOpen(true)}
-                className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[14px] active:scale-[0.97] transition-transform"
-                style={{ background: '#F3EFEB' }}
+                className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[16px] bg-white active:scale-[0.97] transition-transform"
+                style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
               >
-                <Phone size={14} className="text-[#111] shrink-0" strokeWidth={1.9} />
+                <Phone size={14} className="text-[#E5484D] shrink-0" strokeWidth={1.9} />
                 <span className="text-[12.5px] font-semibold text-[#111] truncate">Vet hotline</span>
               </button>
               <button
                 onClick={() => homeNavigate('/emergency')}
-                className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[14px] active:scale-[0.97] transition-transform"
-                style={{ background: '#F3EFEB' }}
+                className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[16px] bg-white active:scale-[0.97] transition-transform"
+                style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
               >
-                <LifeBuoy size={14} className="text-[#111] shrink-0" strokeWidth={1.9} />
+                <LifeBuoy size={14} className="text-[#E5484D] shrink-0" strokeWidth={1.9} />
                 <span className="text-[12.5px] font-semibold text-[#111] truncate">First aid</span>
               </button>
             </div>
@@ -6259,16 +6260,16 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   provider onboarding as an in-app overlay. */}
             <button
               onClick={() => setProRegOpen(true)}
-              className="w-full text-left rounded-[14px] mb-1 active:scale-[0.99] transition-transform"
-              style={{ background: '#111111', padding: '13px 16px' }}
+              className="w-full text-left rounded-[18px] mb-1 active:scale-[0.99] transition-transform"
+              style={{ background: '#FBE7DD', padding: '14px 16px' }}
             >
               <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#E85D2A] mb-1.5">
-                Earn with Fylos
+                Earn with fylos
               </div>
-              <div className="text-[15px] font-bold text-white leading-[1.28] mb-2">
+              <div className="text-[15px] font-bold text-[#111] leading-[1.28] mb-2">
                 Love dogs? Become a walker or sitter.
               </div>
-              <div className="flex items-center gap-1 text-[12px] font-semibold text-[#E85D2A]">
+              <div className="flex items-center gap-1 text-[12px] font-bold text-[#E85D2A]">
                 <span>Apply in 3 minutes</span>
                 <ArrowRight size={12} strokeWidth={2.4} />
               </div>
@@ -6283,7 +6284,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             >
               <Gift size={14} className="text-[#A09A94] shrink-0" strokeWidth={1.8} />
               <span className="text-[12.5px] text-[#6E6058]">
-                Invite a friend — get <span className="font-bold text-[#E85D2A]">10 CHF</span> each
+                Invite a friend and get <span className="font-bold text-[#E85D2A]">CHF 10</span> each
               </span>
               <ArrowRight size={13} className="text-[#A09A94] shrink-0" strokeWidth={2} />
             </button>
