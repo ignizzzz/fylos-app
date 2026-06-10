@@ -50,7 +50,7 @@ const sevTone = (s) => s === 'Severe' ? 'danger' : s === 'Moderate' ? 'warn' : '
 
 // Detailed, explanatory field configs per health item / document
 const FORMS = {
-  vaccines: { add: 'Add vaccination', edit: 'Vaccination', note: 'Record each shot your pet has had — sitters and vets use this to see what’s up to date and what’s coming due.', icon: Syringe, fields: [
+  vaccines: { add: 'Add vaccination', edit: 'Vaccination', note: 'Record each shot your pet has had. Sitters and vets use it to see what’s up to date and what’s coming due.', icon: Syringe, fields: [
     { key: 'name', label: 'Vaccine', ph: 'e.g. Rabies' },
     { key: 'date', label: 'Date given', ph: 'e.g. May 2023' },
     { key: 'next', label: 'Next due', ph: 'e.g. May 2026', opt: true },
@@ -58,7 +58,7 @@ const FORMS = {
     { key: 'lot', label: 'Lot / batch no.', ph: 'Optional', opt: true },
     { key: 'notes', label: 'Notes', ph: 'Anything to remember', opt: true },
   ] },
-  allergies: { add: 'Add allergy', edit: 'Allergy', note: 'Note what your pet reacts to, how serious it is and the symptoms — so carers can keep them safe.', icon: AlertTriangle, fields: [
+  allergies: { add: 'Add allergy', edit: 'Allergy', note: 'Note what your pet reacts to, how serious it is and the symptoms, so carers can keep them safe.', icon: AlertTriangle, fields: [
     { key: 'name', label: 'Allergen', ph: 'e.g. Chicken' },
     { key: 'sev', label: 'Severity', options: SEV },
     { key: 'reaction', label: 'Reaction / symptoms', ph: 'e.g. Itchy skin, swelling', opt: true },
@@ -70,14 +70,14 @@ const FORMS = {
     { key: 'since', label: 'Diagnosed', ph: 'e.g. 2023', opt: true },
     { key: 'notes', label: 'Notes', ph: 'Care instructions', opt: true },
   ] },
-  meds: { add: 'Add medication', edit: 'Medication', note: 'Current medications — the exact dose and how often, so a sitter gives the right amount at the right time.', icon: Pill, fields: [
+  meds: { add: 'Add medication', edit: 'Medication', note: 'Current medications with the exact dose and timing, so a sitter gives the right amount at the right moment.', icon: Pill, fields: [
     { key: 'name', label: 'Medication', ph: 'e.g. Apoquel' },
     { key: 'dose', label: 'Dosage', ph: 'e.g. 16 mg' },
     { key: 'freq', label: 'Frequency', ph: 'e.g. Once daily' },
     { key: 'by', label: 'Prescribed by', ph: 'Optional', opt: true },
     { key: 'notes', label: 'Notes', ph: 'With food, time of day…', opt: true },
   ] },
-  documents: { add: 'Add document', edit: 'Document', note: 'Upload certificates, insurance, passports and more — keep everything in one safe place.', icon: FileText, upload: true, fields: [
+  documents: { add: 'Add document', edit: 'Document', note: 'Upload certificates, insurance, passports and more. Everything in one safe place.', icon: FileText, upload: true, fields: [
     { key: 'cat', label: 'Category', options: DOC_CATS },
     { key: 'name', label: 'File name', ph: 'e.g. Rabies certificate' },
     { key: 'source', label: 'Source', ph: 'e.g. Vet clinic', opt: true },
@@ -212,7 +212,7 @@ const ItemSheet = ({ form, item, onSave, onRemove, onClose, act }) => {
         <p className="text-[11.5px] leading-[1.45]" style={{ color: MUTED }}>{form.note}</p>
       </div>
       {form.upload && (
-        <button onClick={() => act('File picker — demo')} className="w-full mt-4 flex flex-col items-center gap-2 py-6 rounded-[16px] active:scale-[0.99]" style={{ border: '1.5px dashed #D6CDC2', background: '#FFF' }}>
+        <button onClick={() => act('File picker (demo)')} className="w-full mt-4 flex flex-col items-center gap-2 py-6 rounded-[16px] active:scale-[0.99]" style={{ border: '1.5px dashed #D6CDC2', background: '#FFF' }}>
           <span className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: TINT }}><UploadCloud size={20} color={CORAL} strokeWidth={2} /></span>
           <span className="text-[13.5px] font-bold" style={{ color: INK }}>Upload a file</span>
           <span className="text-[11px]" style={{ color: TERT }}>PDF or photo · up to 20 MB</span>
@@ -394,27 +394,27 @@ const PetProfile = ({ embedded = false, onBack, pet }) => {
                   <SectionLabel action="Add" onAction={() => openItem('vaccines')}>Vaccinations</SectionLabel>
                   <Card>
                     {data.vaccines.map((v, i) => <IconRow key={i} icon={Syringe} title={v.name} sub={`Given ${v.date}${v.next ? ` · Next ${v.next}` : ''}`} right={v.ok ? 'Up to date' : 'Due soon'} rightTone={v.ok ? 'good' : 'warn'} onClick={() => openItem('vaccines', v, i)}
-                      trailing={!v.ok ? <button onClick={(e) => { e.stopPropagation(); setData((d) => ({ ...d, vaccines: d.vaccines.map((x, j) => j === i ? { ...x, reminded: !x.reminded } : x) })); act(v.reminded ? 'Reminder off' : 'Reminder on — added to Pets · Coming up'); }} className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ background: v.reminded === false ? PEACH : TINT }}><Bell size={14} color={v.reminded === false ? MUTED : CORAL} strokeWidth={2.2} fill={v.reminded === false ? 'none' : CORAL} /></button> : undefined}
+                      trailing={!v.ok ? <button onClick={(e) => { e.stopPropagation(); setData((d) => ({ ...d, vaccines: d.vaccines.map((x, j) => j === i ? { ...x, reminded: !x.reminded } : x) })); act(v.reminded ? 'Reminder off' : 'Reminder on. It will show in Coming up'); }} className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ background: v.reminded === false ? PEACH : TINT }}><Bell size={14} color={v.reminded === false ? MUTED : CORAL} strokeWidth={2.2} fill={v.reminded === false ? 'none' : CORAL} /></button> : undefined}
                       last={i === data.vaccines.length - 1} />)}
-                    {!data.vaccines.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>No vaccines yet — tap Add.</div>}
+                    {!data.vaccines.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>No vaccines yet. Tap Add.</div>}
                   </Card>
 
                   <SectionLabel action="Add" onAction={() => openItem('allergies')}>Allergies</SectionLabel>
                   <Card>
                     {data.allergies.map((a, i) => <IconRow key={i} icon={AlertTriangle} title={a.name} sub={a.reaction} right={a.sev} rightTone={sevTone(a.sev)} danger={a.sev === 'Severe'} onClick={() => openItem('allergies', a, i)} last={i === data.allergies.length - 1} />)}
-                    {!data.allergies.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>None recorded — tap Add.</div>}
+                    {!data.allergies.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>None recorded. Tap Add.</div>}
                   </Card>
 
                   <SectionLabel action="Add" onAction={() => openItem('conditions')}>Conditions</SectionLabel>
                   <Card>
                     {data.conditions.map((c, i) => <IconRow key={i} icon={Heart} title={c.name} sub={c.since ? `Since ${c.since}` : undefined} right={c.status} rightTone="warn" onClick={() => openItem('conditions', c, i)} last={i === data.conditions.length - 1} />)}
-                    {!data.conditions.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>None recorded — tap Add.</div>}
+                    {!data.conditions.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>None recorded. Tap Add.</div>}
                   </Card>
 
                   <SectionLabel action="Add" onAction={() => openItem('meds')}>Medications</SectionLabel>
                   <Card>
                     {data.meds.map((m, i) => <IconRow key={i} icon={Pill} title={m.name} sub={`${m.dose} · ${m.freq}`} right="Active" rightTone="good" onClick={() => openItem('meds', m, i)} last={i === data.meds.length - 1} />)}
-                    {!data.meds.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>None — tap Add.</div>}
+                    {!data.meds.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>None yet. Tap Add.</div>}
                   </Card>
 
                   <SectionLabel>Veterinarian</SectionLabel>

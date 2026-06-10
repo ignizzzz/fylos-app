@@ -18,11 +18,11 @@ const SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)';
 
 const STARTER = (name) => ([
   { me: false, text: `Hi! Looking forward to seeing Leo again 🐾`.replace(' 🐾', ''), time: '09:12' },
-  { me: true, text: 'Great! Quick note — he’s a bit jumpy around scooters lately.', time: '09:14' },
+  { me: true, text: 'Great! Quick note, he’s a bit jumpy around scooters lately.', time: '09:14' },
   { me: false, text: 'Good to know, I’ll keep him on the short leash near the road.', time: '09:15' },
 ]);
 
-const REPLIES = ['Got it — see you then!', 'Perfect, noted.', 'Sounds good. I’ll send a photo update as always.', 'No problem at all.'];
+const REPLIES = ['Got it, see you then!', 'Perfect, noted.', 'Sounds good. I’ll send a photo update as always.', 'No problem at all.'];
 
 const ChatOverlay = ({ provider, onClose, embedded = false }) => {
   const [msgs, setMsgs] = useState(() => STARTER(provider.name));

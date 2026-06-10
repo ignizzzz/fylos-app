@@ -44,10 +44,10 @@ const DEFAULT_SERVICES = {
   sitting: [{ n: 'Day sitting', p: '25', d: '' }, { n: 'Overnight', p: '38', d: '' }],
 };
 const STEPS = [
-  { id: 'role', title: 'What would you like to offer?', sub: 'Pick one or both — you can change this later.' },
+  { id: 'role', title: 'What would you like to offer?', sub: 'Pick one or both. You can change this later.' },
   { id: 'about', title: 'Tell owners about you', sub: 'This is the first thing they read.' },
   { id: 'experience', title: 'Your experience', sub: 'Helps us match you with the right pets.', skip: true },
-  { id: 'services', title: 'Services & prices', sub: 'Suggested prices for your area — make them yours.' },
+  { id: 'services', title: 'Services & prices', sub: 'Suggested prices for your area. Make them yours.' },
   { id: 'availability', title: 'When can you work?', sub: 'Owners only see slots inside these hours.' },
   { id: 'perks', title: 'Perks & policies', sub: 'Small promises that win bookings.', skip: true },
   { id: 'verify', title: 'Verification', sub: 'Required for the “Verified by fylos” badge.' },
@@ -168,7 +168,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               </div>
             ))}
           </div>
-          <p className="text-[11.5px] text-center mt-5" style={{ color: TERT }}>Takes about 3 minutes — go live after a quick review.</p>
+          <p className="text-[11.5px] text-center mt-5" style={{ color: TERT }}>Takes about 3 minutes. You go live after a quick review.</p>
         </div>
         <div className="px-6 pt-3 shrink-0" style={{ paddingBottom: embedded ? 100 : 34, background: `linear-gradient(to top, ${CREAM} 72%, rgba(247,245,242,0))` }}>
           <button onClick={() => setPhase(0)} className="w-full py-4 rounded-[18px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}><span className="text-[15.5px] font-bold text-white">Get started</span></button>
@@ -193,7 +193,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
           <span className="absolute -bottom-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center border-[3px]" style={{ background: GREEN, borderColor: CREAM }}><Check size={20} color="#fff" strokeWidth={3} /></span>
         </div>
         <h1 className="pr-rise text-[26px] font-extrabold tracking-[-0.02em]" style={{ color: INK }}>Application sent</h1>
-        <p className="pr-rise text-[13.5px] mt-2 leading-[1.5] max-w-[280px]" style={{ color: MUTED }}>We review every pro by hand — you’ll hear from us within 48 hours.</p>
+        <p className="pr-rise text-[13.5px] mt-2 leading-[1.5] max-w-[280px]" style={{ color: MUTED }}>We review every pro by hand. You’ll hear from us within 48 hours.</p>
         <div className="pr-rise flex items-start justify-between mt-7 w-full px-3">
           {[{ l: 'Application sent', done: true }, { l: 'Review & checks', now: true }, { l: 'You go live' }].map((s, i) => (
             <React.Fragment key={i}>
@@ -295,14 +295,14 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                         <div className="text-right text-[10.5px] font-semibold mt-0.5" style={{ color: parseFloat(s.p) > 0 ? GREEN : TERT }}>
                           {parseFloat(s.p) > 0 ? `You receive CHF ${(parseFloat(s.p) * (1 - FEE)).toFixed(2)}` : 'Set a price'}
                         </div>
-                        <input value={s.d} onChange={(e) => setSvc(role, i, 'd', e.target.value)} placeholder="What’s included? (optional — owners see this)"
+                        <input value={s.d} onChange={(e) => setSvc(role, i, 'd', e.target.value)} placeholder="What’s included? Optional, owners see this."
                           className="w-full mt-1.5 pt-2 bg-transparent outline-none text-[12.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ borderTop: '1px solid ' + LINE }} />
                       </div>
                     ))}
                   </div>
                 </div>
               ))}
-              <p className="text-[11.5px] -mt-2 ml-1" style={{ color: TERT }}>fylos keeps 15% per booking — prices shown to owners are yours.</p>
+              <p className="text-[11.5px] -mt-2 ml-1" style={{ color: TERT }}>You keep 85% of every booking. The prices owners see are yours.</p>
             </div>
           )}
 
@@ -337,7 +337,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                   </div>
                 ))}
               </div>
-              <p className="text-[11.5px] ml-1 mt-3" style={{ color: TERT }}>Tap any slot — e.g. switch off Monday afternoons. Block single dates later from your dashboard.</p>
+              <p className="text-[11.5px] ml-1 mt-3" style={{ color: TERT }}>Tap any slot, e.g. switch off Monday afternoons. Block single dates later from your dashboard.</p>
             </div>
           )}
 
@@ -362,7 +362,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
 
           {cfg.id === 'verify' && (
             <div className="mt-7 flex flex-col gap-3">
-              {[['idDone', CreditCard, 'Government ID', 'Passport or Swiss ID — checked once, stored encrypted'], ['selfieDone', ScanFace, 'Selfie check', 'Quick match against your ID']].map(([k, Icon, t, s]) => {
+              {[['idDone', CreditCard, 'Government ID', 'Passport or Swiss ID. Checked once, stored encrypted'], ['selfieDone', ScanFace, 'Selfie check', 'Quick match against your ID']].map(([k, Icon, t, s]) => {
                 const done = d[k];
                 return (
                   <button key={k} onClick={() => set(k, !done)} className="flex items-center gap-3.5 px-4 py-4 rounded-[18px] text-left transition-all active:scale-[0.98]" style={{ background: done ? '#EAF7EF' : '#fff', boxShadow: done ? 'inset 0 0 0 1.5px #BBDFC8' : SHADOW }}>
@@ -387,7 +387,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               <div><Label>IBAN</Label><RowInput value={d.iban} onChange={(v) => set('iban', v.toUpperCase())} placeholder="CH00 0000 0000 0000 0000 0" /></div>
               <div className="bg-white rounded-[16px] px-4 py-3.5 flex items-center gap-3" style={{ boxShadow: SHADOW }}>
                 <span className="w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: '#EAF7EF' }}><Lock size={16} color={GREEN} strokeWidth={2} /></span>
-                <p className="text-[12px] leading-[1.45]" style={{ color: MUTED }}>Payouts every Monday via <span style={{ color: INK, fontWeight: 600 }}>Stripe</span> — fylos never holds your money.</p>
+                <p className="text-[12px] leading-[1.45]" style={{ color: MUTED }}>Payouts every Monday via <span style={{ color: INK, fontWeight: 600 }}>Stripe</span>. fylos never holds your money.</p>
               </div>
             </div>
           )}

@@ -39,14 +39,14 @@ const MOOD = { Playful: CORAL, Happy: GREEN, Tired: TERT, Anxious: '#E5484D', Cu
 const PETS = [{ id: 'all', name: 'All' }, { id: 'leo', name: 'Leo', photo: LEO }, { id: 'tao', name: 'Tao', photo: TAO }];
 
 const ENTRIES = [
-  { id: 1, pet: 'leo', period: 'Today', type: 'walk', title: 'Morning lakefront walk', time: '8:30', body: '45 min along Zürichhorn. Met a friendly Bernese — Leo was thrilled.', photo: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=700', location: 'Zürichhorn', mood: 'Playful', tags: ['lake', 'social'], pinned: false },
+  { id: 1, pet: 'leo', period: 'Today', type: 'walk', title: 'Morning lakefront walk', time: '8:30', body: '45 min along Zürichhorn. Met a friendly Bernese and Leo was thrilled.', photo: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=700', location: 'Zürichhorn', mood: 'Playful', tags: ['lake', 'social'], pinned: false },
   { id: 2, pet: 'leo', period: 'Today', type: 'health', title: 'Apoquel given', time: '8:00', body: '16 mg with breakfast.', mood: null },
-  { id: 3, pet: 'tao', period: 'Today', type: 'meal', title: 'New kibble — first bowl', time: '12:15', body: 'Switched to Acana. Ate everything, no hesitation.', mood: 'Happy' },
-  { id: 4, pet: 'leo', period: 'Yesterday', type: 'moment', title: 'Beach day', time: '16:40', body: 'First time at the sea — loved every second of it.', photo: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=700', location: 'Rapperswil', mood: 'Playful', tags: ['beach'], pinned: true },
+  { id: 3, pet: 'tao', period: 'Today', type: 'meal', title: 'New kibble, first bowl', time: '12:15', body: 'Switched to Acana. Ate everything, no hesitation.', mood: 'Happy' },
+  { id: 4, pet: 'leo', period: 'Yesterday', type: 'moment', title: 'Beach day', time: '16:40', body: 'First time at the sea. He loved every second of it.', photo: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?auto=format&fit=crop&q=80&w=700', location: 'Rapperswil', mood: 'Playful', tags: ['beach'], pinned: true },
   { id: 5, pet: 'leo', period: 'Yesterday', type: 'health', title: 'Annual checkup', time: '10:00', body: 'All clear. Weight 28 kg. Next visit in 6 months.', location: 'Dr. Meier', mood: null },
-  { id: 6, pet: 'leo', period: 'This week', type: 'note', title: 'Scared of the vacuum', time: 'Mon', body: 'Hides under the bed when it’s on — worth noting for sitters.', mood: 'Anxious' },
+  { id: 6, pet: 'leo', period: 'This week', type: 'note', title: 'Scared of the vacuum', time: 'Mon', body: 'Hides under the bed when it’s on. Worth noting for sitters.', mood: 'Anxious' },
   { id: 7, pet: 'tao', period: 'This week', type: 'walk', title: 'Evening garden time', time: 'Sun', body: 'Quiet evening outside, a bit tired after.', mood: 'Tired' },
-  { id: 8, pet: 'leo', period: 'Earlier', type: 'milestone', title: 'Came home', time: 'Jun 2021', body: 'Adoption day — the best day. Settled in within an hour.', photo: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=700', mood: null },
+  { id: 8, pet: 'leo', period: 'Earlier', type: 'milestone', title: 'Came home', time: 'Jun 2021', body: 'Adoption day, the best day. He settled in within an hour.', photo: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?auto=format&fit=crop&q=80&w=700', mood: null },
 ];
 const PERIODS = ['Today', 'Yesterday', 'This week', 'Earlier'];
 const USER_AVATAR = 'https://i.pravatar.cc/150?u=alex_fylos';
@@ -117,7 +117,7 @@ const AddEntrySheet = ({ defaultPet, defaultType = 'walk', onSave, onClose }) =>
             })}
           </div>
           <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-2 mt-5 ml-0.5" style={{ color: TERT }}>Title</div>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={type === 'walk' ? 'e.g. Morning lakefront walk' : type === 'meal' ? 'e.g. Dinner — new kibble' : 'Give it a title'} autoFocus
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={type === 'walk' ? 'e.g. Morning lakefront walk' : type === 'meal' ? 'e.g. Dinner, new kibble' : 'Give it a title'} autoFocus
             className="w-full bg-white rounded-[13px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: SHADOW }} />
           <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-2 mt-4 ml-0.5" style={{ color: TERT }}>Notes <span className="lowercase tracking-normal font-semibold" style={{ color: '#C4B8AC' }}>· optional</span></div>
           <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="What happened? Anything worth remembering…" rows={3}

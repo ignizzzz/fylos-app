@@ -78,7 +78,7 @@ const NotificationPrefsScreen = () => {
             </div>
 
             <div className="px-4 pb-12">
-              <Card><SetRow icon={Bell} title="Push notifications" subtitle={s.push ? 'On — alerts on this device' : 'Off — alerts paused'} trailing={tog('push')} last /></Card>
+              <Card><SetRow icon={Bell} title="Push notifications" subtitle={s.push ? 'On, alerts on this device' : 'Off, alerts paused'} trailing={tog('push')} last /></Card>
 
               <div style={{ opacity: s.push ? 1 : 0.45, pointerEvents: s.push ? 'auto' : 'none', transition: 'opacity 0.2s' }}>
                 <SectionLabel>Bookings</SectionLabel>

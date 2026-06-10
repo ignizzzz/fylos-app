@@ -454,7 +454,7 @@ const DobSheet = ({ user, onClose }) => (
       </p>
     </div>
     <Banner tone="info" icon={Info}>
-      Identity-related fields can't be edited here for safety reasons — we'll verify any changes through support.
+      Identity-related fields can't be edited here for safety reasons. We'll verify any changes through support.
     </Banner>
     <PrimaryBtn onClick={onClose}>Contact support</PrimaryBtn>
     <GhostBtn onClick={onClose}>Close</GhostBtn>

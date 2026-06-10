@@ -83,7 +83,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
   const accept = (r) => {
     setRequests((prev) => prev.filter((x) => x.id !== r.id));
     setSchedule((prev) => [...prev, { id: r.id, time: r.when.split('· ')[1] || r.when, svc: r.svc, who: `${r.who} · ${r.owner}`, photo: r.photo, accepted: true }]);
-    act(`Accepted — ${r.who} is booked in`);
+    act(`Accepted. ${r.who} is booked in`);
   };
   const decline = (r) => { setRequests((prev) => prev.filter((x) => x.id !== r.id)); act('Request declined'); };
 
@@ -100,7 +100,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
       </button>
       <span className="flex-1" />
       {/* online toggle */}
-      <button onClick={() => { setOnline(!online); act(online ? 'You’re offline — no new requests' : 'You’re online'); }} className="flex items-center gap-1.5 rounded-full px-3 py-2 active:scale-95 transition-all" style={{ background: online ? '#EAF7EF' : PEACH }}>
+      <button onClick={() => { setOnline(!online); act(online ? 'You’re offline. No new requests' : 'You’re online'); }} className="flex items-center gap-1.5 rounded-full px-3 py-2 active:scale-95 transition-all" style={{ background: online ? '#EAF7EF' : PEACH }}>
         <span className="w-2 h-2 rounded-full" style={{ background: online ? GREEN : '#C9BBAE', animation: online ? 'pdPulse 1.6s ease-in-out infinite' : 'none' }} />
         <span className="text-[12px] font-bold" style={{ color: online ? GREEN : TERT }}>{online ? 'Online' : 'Offline'}</span>
       </button>
@@ -140,7 +140,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                 </div>
                 <div className="flex gap-2 mt-3">
                   <button onClick={() => act('Photo update sent to Anna')} className="flex-1 h-10 rounded-[11px] bg-white flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.08)' }}><Camera size={14} color={CORAL} strokeWidth={2.2} /><span className="text-[12.5px] font-bold" style={{ color: CORAL }}>Send photo</span></button>
-                  <button onClick={() => act('Walk ended — summary sent')} className="flex-1 h-10 rounded-[11px] flex items-center justify-center active:scale-[0.98]" style={{ background: CORAL }}><span className="text-[12.5px] font-bold text-white">End walk</span></button>
+                  <button onClick={() => act('Walk ended. Summary sent to Anna')} className="flex-1 h-10 rounded-[11px] flex items-center justify-center active:scale-[0.98]" style={{ background: CORAL }}><span className="text-[12.5px] font-bold text-white">End walk</span></button>
                 </div>
               </div>
             ); })()}
@@ -152,7 +152,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                   <Inbox size={16} color={CORAL} strokeWidth={2} />
                   <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center text-[9.5px] font-extrabold text-white" style={{ background: CORAL }}>{requests.length}</span>
                 </span>
-                <div className="flex-1"><div className="text-[13.5px] font-bold" style={{ color: INK }}>{requests.length} new requests</div><div className="text-[11px] mt-[1px]" style={{ color: TERT }}>Reply fast — it boosts your ranking</div></div>
+                <div className="flex-1"><div className="text-[13.5px] font-bold" style={{ color: INK }}>{requests.length} new requests</div><div className="text-[11px] mt-[1px]" style={{ color: TERT }}>Reply fast, it boosts your ranking</div></div>
                 <ChevronRight size={15} color="#CFC7BD" strokeWidth={2.2} />
               </button>
             )}
@@ -189,7 +189,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                       {r.isNew && <span className="text-[8.5px] font-extrabold px-1.5 py-[2px] rounded-full shrink-0" style={{ background: TINT, color: CORAL }}>NEW</span>}
                     </div>
                     <div className="text-[12px] mt-0.5 font-semibold" style={{ color: CORAL }}>{r.when}</div>
-                    <div className="text-[11.5px] mt-0.5 truncate" style={{ color: TERT }}>{r.who} — {r.meta}</div>
+                    <div className="text-[11.5px] mt-0.5 truncate" style={{ color: TERT }}>{r.who} · {r.meta}</div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-[15px] font-extrabold" style={{ color: INK }}>CHF {r.price}</div>
@@ -206,7 +206,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
               <div className="flex flex-col items-center text-center mt-20 px-8">
                 <span className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ background: PEACH }}><Inbox size={22} color={TERT} strokeWidth={2} /></span>
                 <div className="text-[15px] font-bold" style={{ color: INK }}>Inbox zero</div>
-                <p className="text-[13px] mt-1" style={{ color: TERT }}>New requests appear here — stay online to receive more.</p>
+                <p className="text-[13px] mt-1" style={{ color: TERT }}>New requests appear here. Stay online to receive more.</p>
               </div>
             )}
           </>
@@ -270,7 +270,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-center mt-4 px-6" style={{ color: TERT }}>Paid out weekly via Stripe — fylos never holds your money. You keep 85% of every booking.</p>
+            <p className="text-[11px] text-center mt-4 px-6" style={{ color: TERT }}>Paid out weekly via Stripe. fylos never holds your money. You keep 85% of every booking.</p>
           </>
         )}
 

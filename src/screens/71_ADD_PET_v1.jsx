@@ -259,7 +259,7 @@ const AddPet = () => {
           <span className="absolute -bottom-1 -right-1 w-11 h-11 rounded-full flex items-center justify-center border-[3px] border-[#F7F5F2]" style={{ background: GREEN, animation: 'apBadge 0.45s 0.5s cubic-bezier(0.34,1.56,0.64,1) both' }}><Check size={22} color="#FFFFFF" strokeWidth={3} /></span>
         </div>
         <h1 className="ap-rise text-[27px] font-extrabold text-[#111] tracking-[-0.02em]">Welcome, {name || 'little one'}!</h1>
-        <p className="ap-rise text-[14px] text-[#6E6058] mt-2.5 leading-[1.5] max-w-[280px]">{name || 'Your pet'}'s profile is ready — your walkers, sitters and vet can now see everything they need.</p>
+        <p className="ap-rise text-[14px] text-[#6E6058] mt-2.5 leading-[1.5] max-w-[280px]">{name || 'Your pet'}'s profile is ready. Your walkers, sitters and vet can now see everything they need.</p>
         <button onClick={exit} className="ap-rise w-full mt-8 py-4 rounded-[18px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}><span className="text-[15px] font-bold text-white">See {name || 'their'} profile</span></button>
       </div>
     )}</>);
@@ -353,7 +353,7 @@ const AddPet = () => {
               <div>
                 <Label>Microchip</Label>
                 {!data.noChip ? <BigInput value={data.microchip} onChange={(v) => set('microchip', v)} placeholder="15-digit number" inputMode="numeric" /> : <div className="text-[14px] font-medium px-1 py-2" style={{ color: TERT }}>Not microchipped</div>}
-                <p className="text-[11.5px] leading-[1.4] mt-2" style={{ color: TERT }}>The unique 15-digit ID from your pet's implanted chip — ask your vet if unsure.</p>
+                <p className="text-[11.5px] leading-[1.4] mt-2" style={{ color: TERT }}>The unique 15-digit ID from your pet's implanted chip. Ask your vet if unsure.</p>
                 <button onClick={() => set('noChip', !data.noChip)} className="mt-1.5 text-[12.5px] font-bold active:opacity-70" style={{ color: data.noChip ? CORAL : TERT }}>{data.noChip ? 'Add a microchip number' : "My pet isn't microchipped"}</button>
               </div>
             </div>

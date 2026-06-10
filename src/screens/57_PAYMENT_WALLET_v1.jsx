@@ -171,7 +171,7 @@ const PaymentWalletScreen = () => {
                 <SetRow icon={Receipt} title="Billing history" subtitle="Receipts & past charges" last />
               </Card>
 
-              <p className="text-[11px] leading-[1.45] text-center mt-6 px-6" style={{ color: TERT }}>Cards are charged securely by our partners (Stripe & Link) — FYLOS never holds your card details. Credits are a reward balance, not redeemable for cash.</p>
+              <p className="text-[11px] leading-[1.45] text-center mt-6 px-6" style={{ color: TERT }}>Cards are charged securely by our partners (Stripe & Link). fylos never holds your card details. Credits are a reward balance, not redeemable for cash.</p>
             </div>
           </div>
         </div>

@@ -46,17 +46,17 @@ const DETAILED = [
     services: [{ n: '30 min walk', p: 14, d: 'Quick loop · water break' }, { n: '60 min walk', p: 22, d: 'Park time · photo update' }, { n: '90 min walk', p: 33, d: 'Long adventure · forest trails' }],
     review: { who: 'Anna M.', txt: 'Leo comes back happy and tired every single time. Lukas sends the best photo updates.' } },
   { id: 'pr3', cat: 'sitting', name: 'Maria K.', rating: 4.8, reviews: 96, dist: 0.5, price: 38, photo: 'https://i.pravatar.cc/150?u=maria_sitter', verified: true, today: true, recommended: true, perks: ['Photo updates'], cancelPolicy: '12 h',
-    stats: [['210', 'stays'], ['88%', 'repeat'], ['~30 m', 'reply']], meta: '210 stays · replies in ~30 m', bio: 'Your pet stays at my quiet flat by the lake — daily walks, couch privileges included.',
+    stats: [['210', 'stays'], ['88%', 'repeat'], ['~30 m', 'reply']], meta: '210 stays · replies in ~30 m', bio: 'Your pet stays at my quiet flat by the lake. Daily walks, couch privileges included.',
     services: [{ n: 'Day sitting', p: 25, d: '8 am – 6 pm at my flat' }, { n: 'Overnight', p: 38, d: 'Evening walk · cozy night in' }, { n: 'Week package', p: 240, d: '7 nights · daily updates' }],
-    review: { who: 'Julia S.', txt: 'Tao was so relaxed when we got back. Daily photos and a little diary — adorable.' } },
+    review: { who: 'Julia S.', txt: 'Tao was so relaxed when we got back. Daily photos and a little diary. Adorable.' } },
   { id: 'pr6', cat: 'walking', name: 'Jonas W.', rating: 4.8, reviews: 84, dist: 2.3, price: 24, photo: 'https://i.pravatar.cc/150?u=jonas_walker', verified: true, today: false, recommended: true, perks: ['GPS tracking', 'Photo updates'], cancelPolicy: '24 h',
-    stats: [['310', 'walks'], ['90%', 'repeat'], ['~2 h', 'reply']], meta: '310 walks · replies in ~2 h', bio: 'Trail runner — perfect for high-energy dogs that need real exercise.',
+    stats: [['310', 'walks'], ['90%', 'repeat'], ['~2 h', 'reply']], meta: '310 walks · replies in ~2 h', bio: 'Trail runner. Perfect for high-energy dogs that need real exercise.',
     services: [{ n: '60 min run', p: 24, d: 'Lakeside jog · high energy' }, { n: '90 min trail', p: 36, d: 'Uetliberg trails · real workout' }],
     review: { who: 'Felix H.', txt: 'Our husky finally gets the workout he needs.' } },
   { id: 'pr5', cat: 'walking', name: 'Nina T.', rating: 4.7, reviews: 58, dist: 1.6, price: 19, photo: 'https://i.pravatar.cc/150?u=nina_walker', verified: false, today: true, recommended: false, perks: null, cancelPolicy: null,
     stats: [['160', 'walks'], ['81%', 'repeat'], ['~3 h', 'reply']], meta: '160 walks · replies in ~3 h', bio: 'Student & lifelong dog person. Energetic walks, parks and trails.',
     services: [{ n: '30 min walk', p: 12, d: 'Neighbourhood round' }, { n: '60 min walk', p: 19, d: 'Park visit · play time' }],
-    review: { who: 'Petra K.', txt: 'Great with our young lab — comes back perfectly tired.' } },
+    review: { who: 'Petra K.', txt: 'Great with our young lab. He comes back perfectly tired.' } },
 ];
 const NAMES = ['Elena B.', 'Marc S.', 'Tina R.', 'David K.', 'Laura M.', 'Pascal H.', 'Mia W.', 'Noah B.', 'Lea F.', 'Tim G.', 'Sara J.', 'Luca P.', 'Nora E.', 'Jan D.', 'Amélie C.', 'Ben T.', 'Chiara V.', 'Felix N.', 'Ida M.', 'Oskar L.', 'Zoe A.', 'Liam K.', 'Emma S.', 'Paul W.', 'Lina H.', 'Aaron Z.', 'Maja Q.', 'Leon X.'];
 const GENERATED = NAMES.map((name, i) => {
@@ -70,7 +70,7 @@ const GENERATED = NAMES.map((name, i) => {
     stats: [[String(walks), 'walks'], [`${78 + ((i * 5) % 20)}%`, 'repeat'], [reply, 'reply']], meta: `${walks} walks · replies in ${reply}`,
     bio: 'Local, vetted and insured through fylos. Flexible with schedules and happy to meet beforehand.',
     services: [{ n: '30 min walk', p: Math.round(price * 0.65), d: 'Quick neighbourhood loop' }, { n: '60 min walk', p: price, d: 'Full hour · park time' }, { n: '90 min walk', p: Math.round(price * 1.5), d: 'Extended adventure' }],
-    review: { who: 'fylos member', txt: 'Reliable and kind — booking again.' },
+    review: { who: 'fylos member', txt: 'Reliable and kind. Booking again.' },
   };
 });
 const PROVIDERS = [...DETAILED, ...GENERATED];
@@ -83,17 +83,17 @@ const INITIAL_BOOKINGS = [
   { id: 'b3', when: 'upcoming', group: 'This week', status: 'Confirmed', service: 'Vet visit', provider: 'Lakeshore Vet · Dr. Reza', photo: 'https://i.pravatar.cc/150?u=dr_reza', dow: 'FRI', dom: '20', time: '09:00', pet: 'Leo', location: 'Lakeshore Vet · Bellevue', notes: 'Annual checkup & vaccinations.' },
   { id: 'b4', when: 'upcoming', group: 'Next week', status: 'Pending', service: '90 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'TUE', dom: '24', time: '14:00', pet: 'Leo', location: 'Pickup at home', notes: 'Waiting for Lukas to confirm.' },
   { id: 'b5', when: 'past', group: 'February', status: 'Completed', service: '60 min walk', provider: 'Lukas F.', photo: 'https://i.pravatar.cc/150?u=lukas_walker', dow: 'FRI', dom: '6', time: '09:00', pet: 'Leo', location: 'Zürichhorn loop', notes: '', rated: 5,
-    checkIns: [['09:02', 'Picked up Leo at home'], ['09:25', 'Halfway — photo update sent'], ['09:58', 'Walk done · 45 min · 3.2 km'], ['10:04', 'Dropped off, fresh water topped up']] },
+    checkIns: [['09:02', 'Picked up Leo at home'], ['09:25', 'Halfway, photo update sent'], ['09:58', 'Walk done · 45 min · 3.2 km'], ['10:04', 'Dropped off, fresh water topped up']] },
   { id: 'b7', when: 'past', group: 'February', status: 'Completed', service: 'Full groom', provider: 'Sofia Lambrou', photo: 'https://i.pravatar.cc/150?u=sofia_walker', dow: 'SAT', dom: '7', time: '14:00', pet: 'Leo', location: 'Sofia’s studio · Niederdorf', notes: '',
-    checkIns: [['14:05', 'Checked in at the studio'], ['15:20', 'All done — fresh & fluffy']] },
+    checkIns: [['14:05', 'Checked in at the studio'], ['15:20', 'All done, fresh and fluffy']] },
   { id: 'b6', when: 'past', group: 'January', status: 'Cancelled', service: 'Overnight sitting', provider: 'Maria K.', photo: 'https://i.pravatar.cc/150?u=maria_sitter', dow: 'SAT', dom: '31', time: '', pet: 'Tao', location: '', notes: 'Cancelled by you.' },
-  { id: 'b8', when: 'past', group: 'January', status: 'Expired', service: '30 min walk', provider: 'Nina T.', photo: 'https://i.pravatar.cc/150?u=nina_walker', dow: 'TUE', dom: '27', time: '16:30', pet: 'Leo', location: '', notes: 'Request expired — Nina didn’t respond within 24 h. You weren’t charged.' },
+  { id: 'b8', when: 'past', group: 'January', status: 'Expired', service: '30 min walk', provider: 'Nina T.', photo: 'https://i.pravatar.cc/150?u=nina_walker', dow: 'TUE', dom: '27', time: '16:30', pet: 'Leo', location: '', notes: 'Request expired. Nina didn’t respond within 24 h and you weren’t charged.' },
 ];
 const REMINDER_OPTS = ['1 h before', '3 h before', '1 day before', 'Off'];
 const EXTRA_REVIEWS = [
   { who: 'Marco R.', when: '2 weeks ago', stars: 5, txt: 'Always on time, super communicative. Our dog adores him.' },
   { who: 'Petra K.', when: '1 month ago', stars: 4, txt: 'Photo updates every time and a tired, happy pup at the end.' },
-  { who: 'Stefan B.', when: '2 months ago', stars: 5, txt: 'Flexible with last-minute changes — lifesaver for our schedule.' },
+  { who: 'Stefan B.', when: '2 months ago', stars: 5, txt: 'Flexible with last-minute changes, a lifesaver for our schedule.' },
   { who: 'Lena W.', when: '3 months ago', stars: 3, txt: 'Good walk, though pickup ran a little late that day.' },
 ];
 // Synthetic star distribution for the reviews dashboard
@@ -302,7 +302,7 @@ const MonthPopup = ({ month, setMonth, selected, onPick, onClose, minDay = 12 })
             );
           })}
         </div>
-        <p className="text-[10.5px] text-center mt-3" style={{ color: TERT }}>Pick any date — bookings open up to 3 months ahead</p>
+        <p className="text-[10.5px] text-center mt-3" style={{ color: TERT }}>Pick any date. Bookings open up to 3 months ahead</p>
       </div>
     </div>
   );
@@ -506,10 +506,10 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               );
             })}
           </div>
-          {repeatWeekly && <p className="text-[11px] mt-2 ml-1.5" style={{ color: TERT }}>Same day & time every week — skip or stop any week from Bookings.</p>}
+          {repeatWeekly && <p className="text-[11px] mt-2 ml-1.5" style={{ color: TERT }}>Same day & time every week. Skip or stop any week from Bookings.</p>}
 
           <SectionLabel>Note for {p.name.split(' ')[0]} <span className="lowercase tracking-normal" style={{ color: '#C4BBB0' }}>· optional</span></SectionLabel>
-          <textarea value={bookNote} onChange={(e) => setBookNote(e.target.value)} placeholder="e.g. The leash hangs by the door — ring the bell twice." rows={2}
+          <textarea value={bookNote} onChange={(e) => setBookNote(e.target.value)} placeholder="e.g. The leash hangs by the door, ring the bell twice." rows={2}
             className="w-full bg-white rounded-[14px] px-4 py-3 outline-none text-[13.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
 
           <SectionLabel action={`See all (${p.reviews})`} onAction={() => setView({ kind: 'reviews', id: p.id })}>Latest review</SectionLabel>
@@ -521,7 +521,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
 
         <SubHeader title={p.name} sub={`${catLabel(p.cat)} · ${p.dist} km`} showTitle={profScrolled} onBack={() => setView(view.from === 'browse' ? { kind: 'browse', cat: p.cat } : view.from === 'saved' ? { kind: 'saved' } : view.from === 'bookings' ? { kind: 'bookings' } : { kind: 'home' })}
           right={<span className="flex items-center gap-2 shrink-0">
-            <button onClick={async () => { const data = { title: `${p.name} on fylos`, text: `Check out ${p.name} — ${p.rating}★ ${p.cat === 'sitting' ? 'pet sitter' : 'dog walker'} near you`, url: `https://fylos.app/p/${p.id}` }; try { if (navigator.share) { await navigator.share(data); } else { await navigator.clipboard.writeText(data.url); act('Profile link copied'); } } catch (e) { try { await navigator.clipboard.writeText(data.url); act('Profile link copied'); } catch (e2) { act('Profile link copied'); } } }} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-90" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Share2 size={15} color={MUTED} strokeWidth={2} /></button>
+            <button onClick={async () => { const data = { title: `${p.name} on fylos`, text: `Check out ${p.name}, ${p.rating}★ ${p.cat === 'sitting' ? 'pet sitter' : 'dog walker'} near you`, url: `https://fylos.app/p/${p.id}` }; try { if (navigator.share) { await navigator.share(data); } else { await navigator.clipboard.writeText(data.url); act('Profile link copied'); } } catch (e) { try { await navigator.clipboard.writeText(data.url); act('Profile link copied'); } catch (e2) { act('Profile link copied'); } } }} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-90" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Share2 size={15} color={MUTED} strokeWidth={2} /></button>
             <button onClick={() => toggleSave(p.id)} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-90" style={{ background: isSaved ? TINT : '#fff', boxShadow: isSaved ? 'none' : '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><Heart size={16} color={isSaved ? CORAL : MUTED} fill={isSaved ? CORAL : 'none'} strokeWidth={2} /></button>
           </span>} />
 
@@ -530,7 +530,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             <span className="text-[15px] font-bold text-white">Request booking</span>
             <span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>· CHF {sel.p}{repeatWeekly ? '/wk' : ''}</span>
           </button>
-          <div className="text-[10.5px] font-medium text-center mt-2" style={{ color: TERT }}>Pay after the service · Visa ··4242 — charged only once it’s done</div>
+          <div className="text-[10.5px] font-medium text-center mt-2" style={{ color: TERT }}>Pay after the service · Visa ··4242. Charged only once it’s done</div>
         </div>
 
         {/* Verified — what it means */}
@@ -582,14 +582,14 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                     </div>
                     <div className="flex items-center gap-3 px-4 py-3">
                       <span className="w-10 h-7 rounded-[6px] flex items-center justify-center shrink-0" style={{ background: '#1A1F71' }}><span className="text-[8px] font-extrabold italic text-white">VISA</span></span>
-                      <div className="flex-1"><div className="text-[13.5px] font-semibold" style={{ color: INK }}>Visa ··4242</div><div className="text-[11px] mt-[1px]" style={{ color: TERT }}>Hold now — charged after the service</div></div>
+                      <div className="flex-1"><div className="text-[13.5px] font-semibold" style={{ color: INK }}>Visa ··4242</div><div className="text-[11px] mt-[1px]" style={{ color: TERT }}>Hold now. Charged after the service</div></div>
                       <ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} />
                     </div>
                   </div>
                   <button onClick={() => { setPayStep('processing'); setTimeout(() => { const f = payFor; setPayFor(null); setPayStep('review'); requestBooking(f.p, f.sel, f.date, f.time); }, 1000); }} className="w-full mt-4 py-4 rounded-[16px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
                     <span className="text-[15px] font-bold text-white">Place hold · CHF {payFor.sel.p}</span>
                   </button>
-                  <div className="flex items-center justify-center gap-1.5 mt-3"><Lock size={11} color={TERT} strokeWidth={2} /><span className="text-[10.5px] font-medium" style={{ color: TERT }}>Secured by Stripe — released if {payFor.p.name.split(' ')[0]} declines</span></div>
+                  <div className="flex items-center justify-center gap-1.5 mt-3"><Lock size={11} color={TERT} strokeWidth={2} /><span className="text-[10.5px] font-medium" style={{ color: TERT }}>Secured by Stripe. Released if {payFor.p.name.split(' ')[0]} declines</span></div>
                 </>
               ) : (
                 <div className="flex flex-col items-center py-10">
@@ -852,7 +852,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                 </button>
                               )}
                               {isUp && b.status === 'Pending' && <div className="flex items-center gap-2"><MessageCircle size={12} color={TERT} strokeWidth={2} className="shrink-0" /><span className="text-[12px]" style={{ color: TERT }}>{b.provider.split(' ')[0]} usually responds within ~1 h</span></div>}
-                              {isUp && b.status === 'Pending' && <div className="flex items-center gap-2"><Clock size={12} color={AMBER} strokeWidth={2} className="shrink-0" /><span className="text-[12px] font-medium" style={{ color: AMBER }}>Auto-expires in 22 h if not confirmed — you won’t be charged</span></div>}
+                              {isUp && b.status === 'Pending' && <div className="flex items-center gap-2"><Clock size={12} color={AMBER} strokeWidth={2} className="shrink-0" /><span className="text-[12px] font-medium" style={{ color: AMBER }}>Auto-expires in 22 h if not confirmed. You won’t be charged</span></div>}
                               {b.repeat && <div className="flex items-center gap-2"><Repeat size={12} color={TERT} strokeWidth={2.2} className="shrink-0" /><span className="text-[12px]" style={{ color: TERT }}>Repeats weekly · manage anytime</span></div>}
                               {b.status === 'Live' && b.live && (
                                 <div className="rounded-[12px] px-3.5 py-3" style={{ background: TINT }}>
@@ -1059,7 +1059,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                   </React.Fragment>
                 ))}
               </div>
-              <p className="text-[11px] mt-4" style={{ color: TERT }}>{confirmation.provider.split(' ')[0]} usually replies within ~1 h — we’ll notify you.</p>
+              <p className="text-[11px] mt-4" style={{ color: TERT }}>{confirmation.provider.split(' ')[0]} usually replies within ~1 h. We’ll notify you.</p>
               <button onClick={() => setConfirmation(null)} className="w-full mt-4 py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 6px 18px rgba(232,93,42,0.26)' }}><span className="text-[14.5px] font-bold text-white">View booking</span></button>
             </div>
           </div>
@@ -1150,7 +1150,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           {petHint && (
             <div className="absolute right-0 z-50 rounded-[14px] bg-white p-3.5" style={{ top: 52, width: 230, boxShadow: '0 8px 30px rgba(60,30,15,0.16)', animation: 'svPop 0.2s cubic-bezier(0.34,1.56,0.64,1) both' }}>
               <div className="text-[12.5px] font-bold" style={{ color: INK }}>Booking for who?</div>
-              <p className="text-[11.5px] leading-[1.45] mt-1" style={{ color: MUTED }}>Tap a pet to include or remove them — you can select <span style={{ color: CORAL, fontWeight: 700 }}>one or both</span> for the same booking.</p>
+              <p className="text-[11.5px] leading-[1.45] mt-1" style={{ color: MUTED }}>Tap a pet to include or remove them. You can select <span style={{ color: CORAL, fontWeight: 700 }}>one or both</span> for the same booking.</p>
               <button onClick={() => setPetHint(false)} className="mt-2 text-[12px] font-bold active:opacity-70" style={{ color: CORAL }}>Got it</button>
             </div>
           )}
@@ -1161,7 +1161,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           {CATEGORIES.map((c) => {
             const Icon = c.icon;
             return (
-              <button key={c.id} onClick={() => c.live ? (setSort('Recommended'), setView({ kind: 'browse', cat: c.id })) : act(`${c.label} is coming soon — we’ll let you know`)} className="relative flex flex-col items-center gap-2 active:scale-95 transition-transform">
+              <button key={c.id} onClick={() => c.live ? (setSort('Recommended'), setView({ kind: 'browse', cat: c.id })) : act(`${c.label} is coming soon. We’ll let you know`)} className="relative flex flex-col items-center gap-2 active:scale-95 transition-transform">
                 <span className="relative w-[56px] h-[56px] rounded-full flex items-center justify-center bg-white" style={{ boxShadow: SHADOW, opacity: c.live ? 1 : 0.75 }}>
                   <Icon size={21} color={c.live ? CORAL : '#C9BBAE'} strokeWidth={2} />
                   {!c.live && <span className="absolute -top-1 -right-2 text-[8px] font-extrabold uppercase tracking-[0.04em] px-1.5 py-[2px] rounded-full" style={{ background: TINT, color: CORAL }}>Soon</span>}
@@ -1238,7 +1238,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           </span>
           <div className="flex-1 min-w-0">
             <div className="text-[13px] font-bold" style={{ color: INK }}>More services on the way</div>
-            <div className="text-[10.5px] mt-[1px]" style={{ color: TERT }}>Training, daycare & more — see what’s coming</div>
+            <div className="text-[10.5px] mt-[1px]" style={{ color: TERT }}>Training, daycare and more on the way</div>
           </div>
           <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
         </button>
@@ -1253,7 +1253,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         {/* Become a pro — quiet entry */}
         <button onClick={() => { window.location.href = '/pro-registration'; }} className="w-full rounded-[14px] mt-2.5 px-3.5 py-2.5 flex items-center gap-3 bg-white active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
           <Footprints size={16} color={CORAL} strokeWidth={2} className="shrink-0" />
-          <span className="flex-1 text-[12.5px] font-semibold truncate text-left" style={{ color: INK }}>Become a walker or sitter — earn up to CHF 35/h</span>
+          <span className="flex-1 text-[12.5px] font-semibold truncate text-left" style={{ color: INK }}>Become a walker or sitter and earn up to CHF 35/h</span>
           <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
         </button>
       </div>
@@ -1268,7 +1268,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               <h2 className="flex-1 text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>On the way</h2>
               <button onClick={() => setFutureOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
             </div>
-            <p className="px-5 text-[12.5px] leading-[1.5]" style={{ color: TERT }}>We’re adding new services through the year — you’ll know the moment they launch near you.</p>
+            <p className="px-5 text-[12.5px] leading-[1.5]" style={{ color: TERT }}>We’re adding new services through the year. You’ll know the moment they launch near you.</p>
             <div className="grid grid-cols-4 gap-y-5 px-5 mt-5">
               {FUTURE_SERVICES.map((s) => {
                 const Icon = s.icon;
