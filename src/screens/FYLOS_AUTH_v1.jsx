@@ -191,7 +191,7 @@ export default function AuthShell({
         <div className="absolute top-[12px] left-1/2 transform -translate-x-1/2 w-[120px] h-[32px] bg-black rounded-full z-[300] pointer-events-none hidden sm:block shadow-[inset_0_-1px_2px_rgba(255,255,255,0.1)]" />
 
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap');
+
 
           @keyframes auth-fadeUp {
             from { opacity: 0; transform: translateY(8px); }
@@ -337,11 +337,11 @@ export default function AuthShell({
                 {title && (
                   <h1
                     style={{
-                      fontFamily: '"Playfair Display", "Georgia", serif',
-                      fontSize: 28,
-                      fontWeight: 700,
+                      fontFamily: 'Inter, -apple-system, sans-serif',
+                      fontSize: 26,
+                      fontWeight: 800,
                       color: TAuth.text,
-                      letterSpacing: '-0.01em',
+                      letterSpacing: '-0.02em',
                       lineHeight: 1.15,
                       marginBottom: subtitle ? 6 : 0,
                     }}
@@ -459,15 +459,15 @@ export function AuthInput({
           display: 'flex',
           alignItems: 'center',
           gap: 10,
-          height: 54,
-          padding: '0 18px',
+          height: 52,
+          padding: '0 16px',
           background: '#FFFFFF',
           border: error
-            ? `1px solid ${TAuth.coral}`
-            : '1px solid rgba(60,30,15,0.04)',
-          borderRadius: 16,
+            ? `1.5px solid ${TAuth.coral}`
+            : '1px solid transparent',
+          borderRadius: 12,
           boxShadow:
-            '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)',
+            '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)',
           transition: 'border-color 180ms ease, box-shadow 180ms ease',
         }}
       >
@@ -537,7 +537,7 @@ export function AuthCta({ children, onClick, disabled, loading, type = 'button' 
       style={{
         width: '100%',
         height: 54,
-        borderRadius: 27,
+        borderRadius: 16,
         border: 'none',
         cursor: isDown ? 'not-allowed' : 'pointer',
         display: 'flex',
@@ -546,9 +546,9 @@ export function AuthCta({ children, onClick, disabled, loading, type = 'button' 
         gap: 8,
         color: '#FFFFFF',
         fontWeight: 700,
-        fontSize: 15.5,
+        fontSize: 15,
         background: TAuth.coral,
-        boxShadow: isDown ? 'none' : '0 6px 18px rgba(232,93,42,0.30)',
+        boxShadow: isDown ? 'none' : '0 8px 22px rgba(232,93,42,0.3)',
         fontFamily: 'inherit',
         opacity: loading ? 0.85 : disabled ? 0.45 : 1,
         transition: 'opacity 180ms ease, transform 120ms ease',
@@ -599,7 +599,7 @@ function SsoButton({ icon, label, onClick, ariaLabel }) {
         width: '100%',
         height: 52,
         background: '#FFFFFF',
-        border: '1px solid rgba(60,30,15,0.04)',
+        border: 'none',
         borderRadius: 16,
         display: 'flex',
         alignItems: 'center',
@@ -608,10 +608,10 @@ function SsoButton({ icon, label, onClick, ariaLabel }) {
         cursor: 'pointer',
         fontFamily: 'inherit',
         fontSize: 14.5,
-        fontWeight: 600,
+        fontWeight: 700,
         color: TAuth.text,
         boxShadow:
-          '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.04)',
+          '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)',
         transition: 'transform 120ms ease, box-shadow 180ms ease',
         padding: '0 16px',
       }}
@@ -736,11 +736,11 @@ export function AuthHelpSheet({
 
         <h2
           style={{
-            fontFamily: '"Playfair Display", "Georgia", serif',
-            fontSize: 24,
-            fontWeight: 700,
+            fontFamily: 'Inter, -apple-system, sans-serif',
+            fontSize: 22,
+            fontWeight: 800,
             color: TAuth.text,
-            letterSpacing: '-0.01em',
+            letterSpacing: '-0.02em',
             lineHeight: 1.15,
             margin: 0,
             textAlign: 'center',

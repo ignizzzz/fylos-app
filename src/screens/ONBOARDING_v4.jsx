@@ -1754,10 +1754,10 @@ export default function OnboardingV4() {
                 onClick={() => setSlideIndex(i)}
                 aria-label={`Slide ${i + 1}`}
                 style={{
-                  width: isActive ? 6 : 14,
-                  height: isActive ? 6 : 2,
-                  borderRadius: isActive ? '50%' : 1,
-                  background: isActive ? T.coral : 'rgba(60,30,15,0.22)',
+                  width: isActive ? 16 : 5,
+                  height: 5,
+                  borderRadius: 9999,
+                  background: isActive ? T.coral : '#E0D8CF',
                   transition: 'all 380ms cubic-bezier(0.34, 1.4, 0.64, 1)',
                   border: 'none',
                   padding: 0,
@@ -1774,7 +1774,7 @@ export default function OnboardingV4() {
           style={{
             width: '100%',
             height: 54,
-            borderRadius: 27,
+            borderRadius: 16,
             border: 'none',
             cursor: 'pointer',
             display: 'flex',
@@ -1783,9 +1783,9 @@ export default function OnboardingV4() {
             gap: 8,
             color: '#FFFFFF',
             fontWeight: 700,
-            fontSize: 15.5,
+            fontSize: 15,
             background: T.coral,
-            boxShadow: '0 6px 18px rgba(232,93,42,0.30)',
+            boxShadow: '0 8px 22px rgba(232,93,42,0.3)',
             fontFamily: 'inherit',
           }}
         >
