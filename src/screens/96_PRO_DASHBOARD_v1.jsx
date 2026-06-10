@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { area as d3area, line as d3line, curveCatmullRom } from 'd3-shape';
 import {
   ChevronRight, ChevronDown, Check, X, Star, BadgeCheck, Banknote, Inbox,
-  CalendarDays, User, Footprints, MapPin, MessageCircle, Lock, Repeat, Eye, LifeBuoy, Camera,
+  CalendarDays, User, Footprints, MapPin, MessageCircle, Lock, Repeat, Eye, LifeBuoy, Camera, PawPrint,
 } from 'lucide-react';
 
 /**
@@ -98,16 +99,17 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [tab]);
-  // weekly chart: range toggle, staggered grow-in, tap-to-inspect
+  // earnings chart: range toggle, draw-on reveal, scrub-to-inspect
   const [range, setRange] = useState('week');
-  const [barsIn, setBarsIn] = useState(false);
-  const [selBar, setSelBar] = useState(null);
+  const [chartIn, setChartIn] = useState(false);
+  const [scrub, setScrub] = useState(null);
+  const chartRef = useRef(null);
   useEffect(() => {
-    setBarsIn(false);
-    setSelBar(null);
+    setChartIn(false);
+    setScrub(null);
     if (tab !== 'earnings') return;
     let raf1, raf2;
-    raf1 = requestAnimationFrame(() => { raf2 = requestAnimationFrame(() => setBarsIn(true)); });
+    raf1 = requestAnimationFrame(() => { raf2 = requestAnimationFrame(() => setChartIn(true)); });
     return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
   }, [tab, range]);
 
@@ -119,7 +121,24 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
   const decline = (r) => { setRequests((prev) => prev.filter((x) => x.id !== r.id)); act('Request declined'); };
 
   const bars = range === 'week' ? WEEK_BARS : MONTH_BARS;
-  const maxBar = Math.max(...bars.map((b) => b.v));
+  const CW = 294, CH = 108, CPX = 7, CPT = 14, CPB = 8;
+  const chart = useMemo(() => {
+    const vals = bars.map((b) => b.v);
+    const lo = Math.min(...vals) * 0.8, hi = Math.max(...vals) * 1.06;
+    const xs = (i) => CPX + (i * (CW - 2 * CPX)) / (vals.length - 1);
+    const ys = (v) => CPT + (1 - (v - lo) / (hi - lo)) * (CH - CPT - CPB);
+    const data = vals.map((v, i) => [xs(i), ys(v)]);
+    return {
+      areaD: d3area().x((d) => d[0]).y0(CH).y1((d) => d[1]).curve(curveCatmullRom.alpha(0.6))(data),
+      lineD: d3line().x((d) => d[0]).y((d) => d[1]).curve(curveCatmullRom.alpha(0.6))(data),
+      pts: data,
+    };
+  }, [range]);
+  const onChartScrub = (e) => {
+    const r = chartRef.current?.getBoundingClientRect(); if (!r) return;
+    const i = Math.max(0, Math.min(bars.length - 1, Math.round(((e.clientX - r.left) / r.width) * (bars.length - 1))));
+    setScrub(i);
+  };
 
   const Header = (
     <div className="flex items-center px-5 pointer-events-auto" style={{ height: 46 }}>
@@ -247,43 +266,74 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
         {/* ── EARNINGS ── */}
         {tab === 'earnings' && (
           <>
-            {/* balance hero */}
-            <div className="relative rounded-[20px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)' }}>
-              <div className="absolute inset-0" style={{ background: 'radial-gradient(130% 90% at 88% -10%, rgba(255,255,255,0.28), transparent 55%)' }} />
+            {/* balance hero — premium card: layered gradient, inner hairline, paw watermark */}
+            <div className="relative rounded-[24px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 2px 6px rgba(207,74,28,0.18), 0 18px 40px rgba(232,93,42,0.32)' }}>
+              <div className="absolute inset-0" style={{ background: 'radial-gradient(130% 90% at 88% -10%, rgba(255,255,255,0.30), transparent 55%)' }} />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(200deg, transparent 60%, rgba(120,28,0,0.14) 100%)' }} />
+              <PawPrint size={128} color="#fff" strokeWidth={1.2} className="absolute pointer-events-none" style={{ right: -22, bottom: -26, opacity: 0.09, transform: 'rotate(-14deg)' }} />
+              <div className="absolute inset-0 rounded-[24px] pointer-events-none" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 0 rgba(255,255,255,0.25)' }} />
               <div className="relative">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: 'rgba(255,255,255,0.75)' }}>February earnings</span>
-                  <span className="text-[10.5px] font-bold px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff' }}>38 jobs</span>
+                  <span className="text-[9px] font-extrabold uppercase" style={{ color: 'rgba(255,255,255,0.78)', letterSpacing: '0.26em' }}>February earnings</span>
+                  <span className="text-[10.5px] font-bold px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.18)', color: '#fff', backdropFilter: 'blur(4px)' }}>38 jobs</span>
                 </div>
-                <div className="flex items-baseline gap-1.5 mt-3"><span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>CHF</span><span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em] tabular-nums">{bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                <div className="text-[11.5px] mt-2.5" style={{ color: 'rgba(255,255,255,0.8)' }}>Next payout Mon · CHF 310.20 via Stripe</div>
+                <div className="flex items-baseline gap-1.5 mt-4"><span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.75)' }}>CHF</span><span className="text-[40px] font-extrabold text-white leading-none tracking-[-0.03em] tabular-nums">{bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                <div className="h-px mt-4 mb-2.5" style={{ background: 'rgba(255,255,255,0.18)' }} />
+                <div className="flex items-center justify-between">
+                  <span className="text-[11.5px] font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>Next payout Mon · CHF 310.20</span>
+                  <span className="text-[9.5px] font-extrabold uppercase tracking-[0.08em] px-1.5 py-[3px] rounded-[6px]" style={{ background: 'rgba(255,255,255,0.18)', color: '#fff' }}>Stripe</span>
+                </div>
               </div>
             </div>
 
-            {/* weekly chart */}
-            <SectionLabel>This week</SectionLabel>
-            <div className="bg-white rounded-[18px] px-4 pt-3 pb-3" style={{ boxShadow: SHADOW }}>
-              <div className="flex items-center justify-end gap-1 mb-2">
-                {[['week', 'Week'], ['month', 'Month']].map(([id, label]) => (
-                  <button key={id} onClick={() => setRange(id)} className="h-[26px] px-2.5 text-[11px] font-bold rounded-full active:scale-95 transition-transform" style={range === id ? { background: '#FFF3EC', color: CORAL, boxShadow: 'inset 0 0 0 1.5px ' + CORAL } : { background: 'transparent', color: TERT }}>{label}</button>
-                ))}
+            {/* earnings curve — same chart language as the Wallet, pro grade */}
+            <SectionLabel>{range === 'week' ? 'This week' : 'This month'}</SectionLabel>
+            <div className="bg-white rounded-[20px] px-4 pt-3 pb-3" style={{ boxShadow: SHADOW }}>
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: '#A8A29C' }}>{scrub != null ? bars[scrub].d : 'Total'}</span>
+                  <div className="text-[18px] font-extrabold leading-tight tabular-nums" style={{ color: INK }}>CHF {scrub != null ? bars[scrub].v : bars.reduce((a, b) => a + b.v, 0).toLocaleString('en-US')}</div>
+                </div>
+                <div className="flex items-center gap-1">
+                  {[['week', 'Week'], ['month', 'Month']].map(([id, label]) => (
+                    <button key={id} onClick={() => setRange(id)} className="h-[26px] px-2.5 text-[11px] font-bold rounded-full active:scale-95 transition-transform" style={range === id ? { background: '#FFF3EC', color: CORAL, boxShadow: 'inset 0 0 0 1.5px ' + CORAL } : { background: 'transparent', color: TERT }}>{label}</button>
+                  ))}
+                </div>
               </div>
-              <div className="flex items-end justify-between gap-2" style={{ height: 96 }}>
-                {bars.map((b, i) => {
-                  const top = b.v === maxBar;
-                  const sel = selBar === i;
-                  return (
-                    <button key={i} onClick={() => setSelBar(sel ? null : i)} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end" style={{ opacity: selBar !== null && !sel ? 0.35 : 1, transition: 'opacity 0.25s' }}>
-                      <div className="relative w-full" style={{ height: `${(b.v / maxBar) * 72}px` }}>
-                        {sel && (
-                          <span className="absolute left-1/2 bottom-full mb-1.5 z-10 bg-white rounded-full px-2.5 py-1 whitespace-nowrap text-[11px] font-bold" style={{ color: INK, boxShadow: SHADOW, animation: 'pdChipPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both' }}>CHF {b.v} · {b.d}</span>
-                        )}
-                        <div className="absolute inset-0 rounded-[6px]" style={{ background: top ? CORAL : TINT, transform: barsIn ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'bottom', transition: 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)', transitionDelay: `${i * 60}ms` }} />
-                      </div>
-                      <span className="text-[10.5px] font-bold" style={{ color: top ? INK : '#C4BBB0' }}>{b.d}</span>
-                    </button>
-                  );
-                })}
+              <div ref={chartRef} className="relative select-none" style={{ touchAction: 'none' }}
+                onPointerDown={(e) => { e.currentTarget.setPointerCapture?.(e.pointerId); onChartScrub(e); }}
+                onPointerMove={(e) => { if (e.buttons || e.pointerType === 'touch') onChartScrub(e); }}
+                onPointerUp={() => setScrub(null)} onPointerCancel={() => setScrub(null)}>
+                <svg viewBox={'0 0 ' + CW + ' ' + CH} className="w-full block" style={{ height: 108 }}>
+                  <defs>
+                    <linearGradient id="proFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={CORAL} stopOpacity="0.26" />
+                      <stop offset="100%" stopColor={CORAL} stopOpacity="0" />
+                    </linearGradient>
+                    <clipPath id="proReveal"><rect x="0" y="0" height={CH} width={chartIn ? CW : 0} style={{ transition: 'width 0.7s cubic-bezier(0.22,1,0.36,1)' }} /></clipPath>
+                  </defs>
+                  {[0.3, 0.55, 0.8].map((p) => (
+                    <line key={p} x1={CPX} x2={CW - CPX} y1={CH * p} y2={CH * p} stroke="#F4EFE9" strokeWidth="1" />
+                  ))}
+                  <g clipPath="url(#proReveal)">
+                    <path d={chart.areaD} fill="url(#proFill)" />
+                    <path d={chart.lineD} fill="none" stroke={CORAL} strokeWidth="2.5" strokeLinecap="round" />
+                  </g>
+                  {scrub != null && (
+                    <g>
+                      <line x1={chart.pts[scrub][0]} x2={chart.pts[scrub][0]} y1={6} y2={CH - 2} stroke="#E0D7CC" strokeWidth="1" />
+                      <circle cx={chart.pts[scrub][0]} cy={chart.pts[scrub][1]} r="5" fill={CORAL} stroke="#fff" strokeWidth="2" />
+                    </g>
+                  )}
+                  {scrub == null && chartIn && (
+                    <circle cx={chart.pts[chart.pts.length - 1][0]} cy={chart.pts[chart.pts.length - 1][1]} r="4" fill="#fff" stroke={CORAL} strokeWidth="2.5" />
+                  )}
+                </svg>
+                <div className="flex justify-between mt-1 px-0.5">
+                  {bars.map((b, i) => (
+                    <span key={i} className="text-[10px]" style={{ color: (scrub ?? -1) === i ? INK : '#C4BBB0', fontWeight: (scrub ?? -1) === i ? 800 : 600, transition: 'color 0.2s' }}>{b.d}</span>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -312,34 +362,41 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-center mt-4 px-6" style={{ color: TERT }}>Paid out weekly via Stripe. fylos never holds your money. You keep 85% of every booking.</p>
           </>
         )}
 
         {/* ── PROFILE ── */}
         {tab === 'profile' && (
           <>
-            <div className="bg-white rounded-[18px] p-4" style={{ boxShadow: SHADOW }}>
-              <div className="flex items-center gap-3">
-                <img src={ME} alt="" className="w-14 h-14 rounded-full object-cover" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1"><span className="text-[16px] font-extrabold truncate" style={{ color: INK }}>Alex Mueller</span><BadgeCheck size={15} color={CORAL} strokeWidth={2.2} /></div>
-                  <div className="text-[11.5px] mt-0.5" style={{ color: TERT }}>Dog walker · Zürich · Seefeld</div>
-                  <div className="inline-flex items-center gap-1 mt-1"><Star size={11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} /><span className="text-[11.5px] font-bold" style={{ color: INK }}>4.9</span><span className="text-[11px]" style={{ color: TERT }}>(132)</span></div>
-                </div>
-                <button onClick={() => act('Opening public profile')} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><Eye size={15} color={MUTED} strokeWidth={2} /></button>
+            <div className="relative bg-white rounded-[24px] overflow-hidden" style={{ boxShadow: '0 2px 4px rgba(60,30,15,0.04), 0 12px 30px rgba(60,30,15,0.09), inset 0 0 0 1px #F3EEE7' }}>
+              {/* tint cover band */}
+              <div className="relative h-[62px]" style={{ background: 'linear-gradient(120deg, #FBE7DD 0%, #F8DCC9 100%)' }}>
+                <PawPrint size={84} color={CORAL} strokeWidth={1.3} className="absolute pointer-events-none" style={{ right: -8, top: -16, opacity: 0.12, transform: 'rotate(16deg)' }} />
+                <button onClick={() => act('Opening public profile')} className="absolute top-3 right-3 h-[30px] px-3 rounded-full bg-white/90 flex items-center gap-1.5 active:scale-95 transition-transform" style={{ backdropFilter: 'blur(4px)', boxShadow: '0 2px 8px rgba(60,30,15,0.10)' }}>
+                  <Eye size={13} color={INK} strokeWidth={2.2} /><span className="text-[11px] font-bold" style={{ color: INK }}>Preview</span>
+                </button>
               </div>
-            </div>
-
-            <SectionLabel action="Edit" onAction={() => act('Edit services')}>Services & prices</SectionLabel>
-            <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: SHADOW }}>
-              {MY_SERVICES.map((s, i) => (
-                <div key={s.n} className="relative flex items-center px-4 py-3">
-                  <span className="flex-1 text-[13.5px] font-semibold" style={{ color: INK }}>{s.n}</span>
-                  <span className="text-[13px] font-bold" style={{ color: MUTED }}>CHF {s.p}</span>
-                  {i < MY_SERVICES.length - 1 && <div className="absolute bottom-0 left-4 right-0 h-px" style={{ background: LINE }} />}
+              <div className="px-4 pb-4">
+                <div className="flex items-end gap-3" style={{ marginTop: -30 }}>
+                  <img src={ME} alt="" className="w-[72px] h-[72px] rounded-full object-cover shrink-0" style={{ border: '3px solid #fff', boxShadow: '0 6px 16px rgba(60,30,15,0.16)' }} />
+                  <div className="min-w-0 pb-1">
+                    <div className="flex items-center gap-1"><span className="text-[17px] font-extrabold truncate" style={{ color: INK }}>Alex Mueller</span><BadgeCheck size={16} color={CORAL} strokeWidth={2.2} className="shrink-0" /></div>
+                    <div className="text-[11.5px]" style={{ color: TERT }}>Dog walker · Zürich · Seefeld</div>
+                  </div>
                 </div>
-              ))}
+                <div className="flex items-center mt-3.5 rounded-[16px] py-2.5" style={{ background: '#FAF7F3' }}>
+                  {[
+                    [<span key="r" className="inline-flex items-center gap-1"><Star size={11} color="#E8B04A" fill="#E8B04A" strokeWidth={0} />4.9</span>, '132 reviews'],
+                    ['530', 'walks'],
+                    ['2023', 'pro since'],
+                  ].map(([v, l], i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center" style={{ borderLeft: i ? '1px solid #EFE9E1' : 'none' }}>
+                      <span className="text-[14px] font-extrabold leading-none" style={{ color: INK }}>{v}</span>
+                      <span className="text-[10px] font-medium mt-1" style={{ color: TERT }}>{l}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <SectionLabel action="Edit" onAction={() => act('Edit availability')}>Availability</SectionLabel>
@@ -348,10 +405,6 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                 const on = i < 5;
                 return <span key={i} className="w-[34px] h-[34px] rounded-full flex items-center justify-center text-[12px] font-bold" style={{ background: on ? TINT : PEACH, color: on ? CORAL : '#C4BBB0' }}>{w}</span>;
               })}
-            </div>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2.5 ml-1.5">
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium" style={{ color: TERT }}><Check size={11} color={GREEN} strokeWidth={3} /> GPS tracking & photo updates</span>
-              <span className="text-[11px] font-medium" style={{ color: TERT }}>· free cancellation up to 24 h</span>
             </div>
 
             <SectionLabel>Account</SectionLabel>

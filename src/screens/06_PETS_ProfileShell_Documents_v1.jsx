@@ -5846,8 +5846,8 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                           const img = e.currentTarget.querySelector('img');
                           if (img && onOpenPet) onOpenPet(pet.id, img.getBoundingClientRect(), pet.avatar);
                         }}
-                        className="relative shrink-0 text-left bg-white rounded-[20px] px-4 py-3.5 flex items-center gap-3.5 transition-all duration-300"
-                        style={{ width: CARD_W, scrollSnapAlign: 'start', transform: on ? 'scale(1)' : 'scale(0.97)', opacity: on ? 1 : 0.75, boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)', transitionTimingFunction: 'cubic-bezier(0.22,1,0.36,1)' }}
+                        className="relative shrink-0 text-left rounded-[24px] px-4 py-4 flex items-center gap-3.5 transition-all duration-300"
+                        style={{ width: CARD_W, scrollSnapAlign: 'start', transform: on ? 'scale(1)' : 'scale(0.97)', opacity: on ? 1 : 0.75, background: 'linear-gradient(165deg, #FFFFFF 0%, #FBF7F2 100%)', boxShadow: on ? '0 2px 4px rgba(60,30,15,0.04), 0 14px 30px rgba(60,30,15,0.10), inset 0 0 0 1px #F3EDE5, inset 0 1.5px 0 #FFFFFF' : '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.06), inset 0 0 0 1px #F3EDE5', transitionTimingFunction: 'cubic-bezier(0.22,1,0.36,1)' }}
                       >
                         <span className="relative shrink-0" style={{ width: 60, height: 60 }}>
                           {(isLive || pending.length > 0) && (
@@ -5857,10 +5857,10 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                                 style={{ transition: 'stroke-dasharray 0.55s cubic-bezier(0.22,1,0.36,1), stroke 0.4s ease' }} />
                             </svg>
                           )}
-                          <img src={pet.avatar} alt={pet.name} className="absolute rounded-full object-cover" style={{ inset: 5, width: 50, height: 50 }} />
+                          <img src={pet.avatar} alt={pet.name} className="absolute rounded-full object-cover" style={{ inset: 5, width: 50, height: 50, boxShadow: '0 0 0 2px #FFFFFF, 0 3px 10px rgba(60,30,15,0.14)' }} />
                         </span>
                         <div className="flex-1 min-w-0">
-                          <div className="text-[17px] font-extrabold text-[#111] leading-tight truncate">{pet.name}</div>
+                          <div className="text-[17px] font-extrabold leading-tight truncate" style={{ color: '#111', letterSpacing: '-0.01em' }}>{pet.name}</div>
                           {isLive ? (
                             <div className="flex items-center gap-1.5 mt-[3px] min-w-0">
                               <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#3F8D63', animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
@@ -5885,7 +5885,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                     );
                   })}
                   {/* add-pet card */}
-                  <button onClick={() => onNavigate('pets')} className="shrink-0 rounded-[20px] flex items-center justify-center gap-2.5 transition-all duration-300" style={{ width: CARD_W, scrollSnapAlign: 'start', border: '1.6px dashed #DDD4C9', transform: deckIdx === deckPets.length ? 'scale(1)' : 'scale(0.95)', opacity: deckIdx === deckPets.length ? 1 : 0.75 }}>
+                  <button onClick={() => onNavigate('pets')} className="shrink-0 rounded-[24px] flex items-center justify-center gap-2.5 transition-all duration-300" style={{ width: CARD_W, scrollSnapAlign: 'start', border: '1.6px dashed #DDD4C9', transform: deckIdx === deckPets.length ? 'scale(1)' : 'scale(0.95)', opacity: deckIdx === deckPets.length ? 1 : 0.75 }}>
                     <span className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#FBE7DD' }}><Plus size={16} color="#E85D2A" strokeWidth={2.2} /></span>
                     <span className="text-[12.5px] font-bold text-[#6E6058]">Add a pet</span>
                   </button>
