@@ -109,8 +109,9 @@ import WalkerChatScreen from './screens/Explore-walker-chat.v1'
 function App() {
   return (
     <Routes>
-      {/* Default: Unified App with all tabs working */}
-      <Route path="/" element={<UnifiedApp />} />
+      {/* Default: the app, gated by auth. First run lands on sign-in so the
+          journey is sign-in → welcome → first pet → dashboard, one thread. */}
+      <Route path="/" element={(() => { try { return window.localStorage.getItem('fylos.auth') === '1'; } catch (e) { return true; } })() ? <UnifiedApp /> : <Navigate to="/sign-in" replace />} />
 
       {/* Standalone screens (for reference) */}
       <Route path="/app-shell" element={<AppShell />} />

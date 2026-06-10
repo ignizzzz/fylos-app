@@ -97,7 +97,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
   const set = (k, v) => setD((s) => ({ ...s, [k]: v }));
   const toggleIn = (k, v) => setD((s) => ({ ...s, [k]: s[k].includes(v) ? s[k].filter((x) => x !== v) : [...s[k], v] }));
   const setSvc = (role, i, field, v) => setD((s) => ({ ...s, services: { ...s.services, [role]: s.services[role].map((x, j) => j === i ? { ...x, [field]: v } : x) } }));
-  const exit = () => { if (onExit) return onExit(); if (window.history.length > 1) window.history.back(); else window.location.href = '/'; };
+  const exit = () => { if (onExit) return onExit(); try { window.sessionStorage.setItem('fylos.warm', '1'); } catch (e) {} if (window.history.length > 1) window.history.back(); else window.location.href = '/'; };
 
   const cfg = typeof phase === 'number' ? STEPS[phase] : null;
   const TOTAL = STEPS.length;

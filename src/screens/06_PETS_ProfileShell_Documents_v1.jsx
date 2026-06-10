@@ -5,6 +5,10 @@ import ServicesTab from '../features/services/ServicesTab';
 import ProRegistration from './50_PRO_REGISTRATION_v1';
 import InviteFriends from './60_INVITE_FRIENDS_v1';
 import PetsHome from './70_PETS_HOME_v1';
+// Warm hand-off: any internal jump to a sub-screen marks the session so the
+// return mounts without the splash and lands on the tab you left from.
+const warmGo = (path, tab) => { try { window.sessionStorage.setItem('fylos.warm', '1'); if (tab) window.sessionStorage.setItem('fylos.tab', tab); } catch (e) {} window.location.href = path; };
+const markWarm = (tab) => { try { window.sessionStorage.setItem('fylos.warm', '1'); if (tab) window.sessionStorage.setItem('fylos.tab', tab); } catch (e) {} };
 import ProDashboard from './96_PRO_DASHBOARD_v1';
 import PetProfileV2 from './92_PET_PROFILE_v1';
 import JournalV2 from './93_JOURNAL_v1';
@@ -1508,7 +1512,7 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
           </h1>
           {showActions && (
             <div className="flex items-center gap-2">
-              <button onClick={() => { window.location.href = '/danger-reports'; }} className="w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.9] transition-all" style={{ background: '#FFEBEA' }}>
+              <button onClick={() => warmGo('/danger-reports')} className="w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.9] transition-all" style={{ background: '#FFEBEA' }}>
                 <AlertTriangle size={15} className="text-[#E5484D]" strokeWidth={2} />
               </button>
               <button onClick={onInbox || (() => handleAction('Inbox'))} className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all" style={{ background: '#F3EFEB' }}>
@@ -1573,7 +1577,7 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
   const handleFabAction = (actionId) => {
     setFabOpen(false);
     if (actionId === 'book') onTabChange('services');
-    if (actionId === 'add-pet') window.location.href = '/add-pet';
+    if (actionId === 'add-pet') warmGo('/add-pet', 'pets');
     if (actionId === 'log-entry') { try { sessionStorage.setItem('fylos.journalAdd', 'note'); } catch (e) {} onTabChange('journal'); }
     if (actionId === 'moment') { try { sessionStorage.setItem('fylos.journalAdd', 'moment'); } catch (e) {} onTabChange('journal'); }
   };
@@ -3383,7 +3387,7 @@ const PetListScreen = ({ pets, onSelectPet }) => (
 
           {/* Add pet button */}
           <button
-            onClick={() => { window.location.href = '/add-pet'; }}
+            onClick={() => warmGo('/add-pet', 'pets')}
             className="w-full rounded-[16px] py-3.5 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
             style={{ background: '#F3EFEB', border: '1.5px dashed #DDD8D2', animation: `homeReveal 0.4s ${0.05 + pets.length * 0.1}s cubic-bezier(0.22,1,0.36,1) both` }}
           >
@@ -6055,7 +6059,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             <div className="grid grid-cols-3 gap-2.5 mb-3">
               {[
                 { label: 'Bookings', icon: Calendar, onClick: () => onOpenBookings?.() },
-                { label: 'Wallet', icon: Wallet, onClick: () => homeNavigate('/wallet') },
+                { label: 'Wallet', icon: Wallet, onClick: () => { markWarm(); homeNavigate('/wallet'); } },
                 { label: 'Health', icon: Stethoscope, onClick: () => onOpenHealthRecords?.() },
               ].map((e, i) => (
                 <button key={i} onClick={e.onClick} className="flex flex-col items-center gap-1.5 py-3 rounded-[16px] bg-white active:scale-[0.96] transition-transform" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
@@ -6078,7 +6082,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 <span className="text-[12.5px] font-semibold text-[#111] truncate">Vet hotline</span>
               </button>
               <button
-                onClick={() => homeNavigate('/emergency')}
+                onClick={() => { markWarm(); homeNavigate('/emergency'); }}
                 className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[16px] bg-white active:scale-[0.97] transition-transform"
                 style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
               >
@@ -6311,11 +6315,11 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           }}
           onOpenMap={(alert) => {
             setSafetyPopupOpen(false);
-            homeNavigate('/danger-reports', { state: { focusId: alert.id, view: 'map' } });
+            markWarm(); homeNavigate('/danger-reports', { state: { focusId: alert.id, view: 'map' } });
           }}
           onMoreInfo={(alert) => {
             setSafetyPopupOpen(false);
-            homeNavigate('/danger-reports', { state: { focusId: alert.id } });
+            markWarm(); homeNavigate('/danger-reports', { state: { focusId: alert.id } });
           }}
         />
       )}
@@ -6326,7 +6330,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           onClose={() => setSafetyConfirmFollowupOpen(false)}
           onYes={() => {
             setSafetyConfirmFollowupOpen(false);
-            homeNavigate('/danger-reports', {
+            markWarm(); homeNavigate('/danger-reports', {
               state: {
                 action: 'add-info',
                 category: confirmedAlertContext?.category,
@@ -10781,7 +10785,7 @@ const AnimationsOverlay = ({ isOpen, onClose }) => {
 export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const initialTab = location.state?.tab || 'home';
+  const initialTab = location.state?.tab || (() => { try { const t = window.sessionStorage.getItem('fylos.tab'); if (t) { window.sessionStorage.removeItem('fylos.tab'); return t; } } catch (e) {} return null; })() || 'home';
   const [activeTab, setActiveTab] = useState(initialTab);
   const [displayTab, setDisplayTab] = useState(initialTab);
   // PRO (business) mode — swaps the entire UI for the provider dashboard
@@ -10790,6 +10794,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(() => {
     if (window.__fylosPetPending) return false;
     if (typeof window !== 'undefined' && window.sessionStorage?.getItem('fylos.settingsOpen') === '1') return false;
+    if (typeof window !== 'undefined' && window.sessionStorage?.getItem('fylos.warm') === '1') { try { window.sessionStorage.removeItem('fylos.warm'); } catch (e) {} return false; }
     return true;
   });
   
@@ -11011,7 +11016,7 @@ export default function App() {
           onAddPet={() => { window.location.href = '/add-pet'; }}
           onOpenProfile={() => setSettingsOpen(true)}
           onOpenNotifications={() => setInboxOpen(true)}
-          onOpenSafety={() => { window.location.href = '/danger-reports'; }}
+          onOpenSafety={() => warmGo('/danger-reports')}
         />
       );
     }

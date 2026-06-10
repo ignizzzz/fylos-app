@@ -20,6 +20,8 @@ const GREEN = '#3F8D63';
 const LINE = '#F1EDE8';
 const SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)';
 
+const setAuthed = () => { try { window.localStorage.setItem('fylos.auth', '1'); } catch (e) {} };
+
 const StatusBar = () => (
   <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{ height: 54 }}>
     <span style={{ fontSize: 15, fontWeight: 600, color: INK }}>9:41</span>
@@ -94,8 +96,8 @@ export const SignIn = () => {
           <p className="text-[14px] mt-2 leading-[1.5]" style={{ color: MUTED }}>Care, health and trusted people. All in one place.</p>
         </div>
         <div className="mt-9 flex flex-col gap-3" style={{ animation: 'auRise 0.5s 0.08s ease both' }}>
-          <SocialRow label="Continue with Apple" glyph={AppleGlyph} onClick={() => nav('/welcome')} />
-          <SocialRow label="Continue with Google" glyph={GoogleGlyph} onClick={() => nav('/welcome')} />
+          <SocialRow label="Continue with Apple" glyph={AppleGlyph} onClick={() => { setAuthed(); nav('/welcome'); }} />
+          <SocialRow label="Continue with Google" glyph={GoogleGlyph} onClick={() => { setAuthed(); nav('/welcome'); }} />
         </div>
         <div className="flex items-center gap-3 my-6" style={{ animation: 'auRise 0.5s 0.14s ease both' }}>
           <span className="flex-1 h-px" style={{ background: '#E8E2DA' }} />
@@ -124,7 +126,7 @@ export const SignInPassword = () => {
         <p className="text-[13.5px] mt-1.5" style={{ color: TERT }}>Signing in as <span className="font-bold" style={{ color: INK }}>alex@fylos.app</span></p>
         <div className="mt-7">
           <Field label="Password" type="password" value={pw} onChange={setPw} placeholder="Your password" autoFocus />
-          <CTA disabled={pw.length < 6} onClick={() => nav('/')}>Sign in</CTA>
+          <CTA disabled={pw.length < 6} onClick={() => { setAuthed(); nav('/'); }}>Sign in</CTA>
           <button onClick={() => nav('/forgot-password')} className="w-full mt-4 py-2"><span className="text-[13.5px] font-bold" style={{ color: MUTED }}>Forgot your password?</span></button>
           <button onClick={() => nav('/sign-in-phone')} className="w-full py-2"><span className="text-[13.5px] font-bold" style={{ color: CORAL }}>Use phone number instead</span></button>
         </div>
@@ -154,7 +156,7 @@ export const SignInPhone = () => {
               <CTA disabled={phone.replace(/\D/g, '').length < 8} onClick={() => setSent(true)}>Send code</CTA>
             </>
           ) : (
-            <Otp onDone={() => nav('/')} />
+            <Otp onDone={() => { setAuthed(); nav('/'); }} />
           )}
         </div>
       </div>
@@ -253,7 +255,7 @@ export const VerifyEmail = () => {
       <div className="px-6" style={{ paddingTop: 110 }}>
         <h1 className="text-[24px] font-extrabold tracking-[-0.02em]" style={{ color: INK }}>Check your email</h1>
         <p className="text-[13.5px] mt-1.5 leading-[1.5]" style={{ color: TERT }}>We sent a 6-digit code to <span className="font-bold" style={{ color: INK }}>alex@fylos.app</span></p>
-        <div className="mt-8"><Otp onDone={() => nav('/welcome')} /></div>
+        <div className="mt-8"><Otp onDone={() => { setAuthed(); nav('/welcome'); }} /></div>
       </div>
     </Frame>
   );
@@ -295,8 +297,8 @@ export const ProfileCompletion = () => {
         </div>
         <div className="flex-1" />
         <div style={{ animation: 'auRise 0.5s 0.2s ease both' }}>
-          <CTA onClick={() => nav('/add-pet')}>Add your first pet</CTA>
-          <button onClick={() => nav('/')} className="w-full mt-3 py-2.5"><span className="text-[13.5px] font-bold" style={{ color: MUTED }}>Later</span></button>
+          <CTA onClick={() => { setAuthed(); nav('/add-pet'); }}>Add your first pet</CTA>
+          <button onClick={() => { setAuthed(); nav('/'); }} className="w-full mt-3 py-2.5"><span className="text-[13.5px] font-bold" style={{ color: MUTED }}>Later</span></button>
         </div>
       </div>
     </Frame>

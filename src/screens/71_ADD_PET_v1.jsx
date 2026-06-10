@@ -252,7 +252,9 @@ const AddPet = () => {
   const set = (k, v) => setData((d) => ({ ...d, [k]: v }));
   const toggle = (k, v) => setData((d) => ({ ...d, [k]: d[k].includes(v) ? d[k].filter((x) => x !== v) : [...d[k], v] }));
   const addCustom = (k, v) => setData((d) => ({ ...d, [k]: d[k].includes(v) ? d[k] : [...d[k], v] }));
-  const exit = () => { if (window.history.length > 1) window.history.back(); else window.location.href = '/'; };
+  const exit = () => { try { window.sessionStorage.setItem('fylos.warm', '1'); } catch (e) {} if (window.history.length > 1) window.history.back(); else window.location.href = '/'; };
+  // Done lands inside the app, Pets tab, no splash: one continuous journey.
+  const finish = () => { try { window.sessionStorage.setItem('fylos.warm', '1'); window.sessionStorage.setItem('fylos.tab', 'pets'); } catch (e) {} window.location.href = '/'; };
   const name = (data.name || '').trim();
 
   const TOTAL = STEPS.length;
@@ -300,7 +302,7 @@ const AddPet = () => {
         </div>
         <h1 className="ap-rise text-[27px] font-extrabold text-[#111] tracking-[-0.02em]">Welcome, {name || 'little one'}!</h1>
         <p className="ap-rise text-[14px] text-[#6E6058] mt-2.5 leading-[1.5] max-w-[280px]">{name || 'Your pet'}'s profile is ready. Your walkers, sitters and vet can now see everything they need.</p>
-        <button onClick={exit} className="ap-rise w-full mt-8 py-4 rounded-[18px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}><span className="text-[15px] font-bold text-white">See {name || 'their'} profile</span></button>
+        <button onClick={finish} className="ap-rise w-full mt-8 py-4 rounded-[18px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}><span className="text-[15px] font-bold text-white">See {name || 'their'} profile</span></button>
       </div>
     )}</>);
   }
