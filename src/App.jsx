@@ -64,8 +64,8 @@ import {
   CreateAccountV2,
   ForgotPassword,
   VerifyEmail,
-  ProfileCompletion,
 } from './screens/FYLOS_AUTH_v1'
+import { ProfileCompletion } from './screens/FYLOS_WELCOME_v1'
 import SecurityPasswordScreen from './screens/70_SECURITY_PASSWORD_v1'
 import SecurityTwoFactorScreen from './screens/71_SECURITY_2FA_v1'
 import SecurityBiometricScreen from './screens/72_SECURITY_BIOMETRIC_v1'
