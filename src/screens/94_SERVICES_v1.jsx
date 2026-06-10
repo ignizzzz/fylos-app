@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   AlertTriangle, Bell, Search, Footprints, Home, Scissors, Stethoscope,
   Star, Heart, ChevronRight, ChevronLeft, ChevronDown, MapPin, MessageCircle,
-  CalendarClock, X, Check, BadgeCheck, Repeat, Gift, Sparkles, GraduationCap,
+  CalendarClock, X, Check, BadgeCheck, Repeat, Gift, Sparkles, GraduationCap, Lock,
   Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User, Share2, Clock,
 } from 'lucide-react';
 import ChatOverlay from './95_CHAT_v1';
@@ -318,6 +318,7 @@ const Wrap = ({ embedded, children }) => {
     @keyframes svToast { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
     @keyframes svFade { from { opacity: 0; } to { opacity: 1; } }
     @keyframes svSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes svSpin { to { transform: rotate(360deg); } }
     @keyframes svPop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
     @keyframes svRing { 0% { transform: scale(0.7); opacity: 0.6; } 100% { transform: scale(1.7); opacity: 0; } }
     @keyframes svBadge { 0% { opacity: 0; transform: scale(0); } 70% { transform: scale(1.25); } 100% { opacity: 1; transform: scale(1); } }
@@ -359,6 +360,8 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [rateFor, setRateFor] = useState(null);   // { booking, stars }
   const [chat, setChat] = useState(null);          // { name, photo }
   const [liveOpen, setLiveOpen] = useState(false); // full-screen live walk view
+  const [payFor, setPayFor] = useState(null);      // { p, sel, date, time } → payment confirm sheet
+  const [payStep, setPayStep] = useState('review'); // 'review' | 'processing'
   const [reschedFor, setReschedFor] = useState(null);
   const [reschedDay, setReschedDay] = useState(0);
   const [reschedTime, setReschedTime] = useState(1);
@@ -380,7 +383,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const act = (m) => { setToast(m); setTimeout(() => setToast(''), 1700); };
   const cycleReminder = (id) => setRemIdx((r) => ({ ...r, [id]: ((r[id] ?? 0) + 1) % REMINDER_OPTS.length }));
   const submitRating = (id, stars) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, rated: stars } : b)); setRateFor(null); act('Thanks for your feedback'); };
-  const confirmCancel = (id) => { setBookings((prev) => prev.map((b) => b.id === id ? { ...b, when: 'past', group: 'February', status: 'Cancelled', notes: 'Cancelled by you.' } : b)); setCancelFor(null); setExpanded(null); act('Booking cancelled'); };
+  const confirmCancel = (id) => { const bk = bookings.find((b) => b.id === id); setBookings((prev) => prev.map((b) => b.id === id ? { ...b, when: 'past', group: 'February', status: 'Cancelled', notes: 'Cancelled by you.' } : b)); setCancelFor(null); setExpanded(null); act('Booking cancelled'); if (bk) notify('Booking cancelled', `${bk.service} with ${bk.provider} was cancelled. Any hold on your card is released.`); };
   const confirmResched = (b) => {
     const d = pickedResched || { m: 0, n: DATES14[reschedDay].n };
     const group = d.m === 0 ? (d.n <= 22 ? 'This week' : 'Next week') : MONTHS_META[d.m].name.split(' ')[0];
@@ -407,6 +410,9 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const browseRest = [...browseAll.filter((p) => !p.recommended)].sort((a, b) =>
     sort === 'Top rated' ? b.rating - a.rating : sort === 'Price: low to high' ? a.price - b.price : sort === 'Nearest' ? a.dist - b.dist : b.rating * b.reviews - a.rating * a.reviews);
 
+  // app-wide notification bus → lands in the dashboard inbox
+  const notify = (title, body) => { try { window.dispatchEvent(new CustomEvent('fylos:notify', { detail: { title, body } })); } catch (e) {} };
+
   const requestBooking = (p, svcSel, dateObj, timeSel) => {
     const { m, n } = dateObj;
     const id = 'b' + Math.floor(Math.random() * 100000);
@@ -414,6 +420,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
     setBookings((prev) => [{ id, when: 'upcoming', group, bm: m, status: 'Pending', service: svcSel.n, provider: p.name, photo: p.photo, dow: dowFor(m, n), dom: String(n), time: timeSel, pet: petName, location: 'Pickup at home', repeat: repeatWeekly, notes: bookNote.trim() || `Waiting for ${p.name.split(' ')[0]} to confirm.` }, ...prev]);
     setView({ kind: 'bookings' }); setBkFilter('upcoming'); setExpanded(id); setPickedAvail(null);
     setConfirmation({ photo: p.photo, provider: p.name, service: svcSel.n, when: `${dateLabel(m, n)} · ${timeSel}`, repeat: repeatWeekly });
+    notify('Booking request sent', `${svcSel.n} with ${p.name} · ${dateLabel(m, n)} ${timeSel}. We'll notify you when they confirm.`);
   };
 
   /* ───────── PROVIDER PROFILE (full screen) ───────── */
@@ -519,7 +526,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           </span>} />
 
         <div className="absolute left-0 right-0 z-40 px-5 pointer-events-none" style={{ bottom: 0, paddingBottom: embedded ? 100 : 28, paddingTop: 26, background: `linear-gradient(to top, ${CREAM} 62%, rgba(247,245,242,0))` }}>
-          <button onClick={() => requestBooking(p, sel, pickedAvail || { m: 0, n: DATES14[day].n }, TIMES[time])} className="w-full py-4 rounded-[16px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 pointer-events-auto" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
+          <button onClick={() => setPayFor({ p, sel, date: pickedAvail || { m: 0, n: DATES14[day].n }, time: TIMES[time] })} className="w-full py-4 rounded-[16px] active:scale-[0.98] transition-transform flex items-center justify-center gap-2 pointer-events-auto" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
             <span className="text-[15px] font-bold text-white">Request booking</span>
             <span className="text-[13px] font-bold" style={{ color: 'rgba(255,255,255,0.8)' }}>· CHF {sel.p}{repeatWeekly ? '/wk' : ''}</span>
           </button>
@@ -552,6 +559,47 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         {pickCtx === 'avail' && (
           <MonthPopup month={pickMonth} setMonth={setPickMonth} selected={pickedAvail} onClose={() => setPickCtx(null)}
             onPick={(d) => { setPickedAvail(d); const s = slotsFor(d.n); if (!s.includes(time)) setTime(s[0] ?? 0); setPickCtx(null); }} />
+        )}
+
+        {/* Payment confirm — hold now, charge after the service */}
+        {payFor && (
+          <>
+            <div className="absolute inset-0 z-[150]" style={{ background: 'rgba(20,12,8,0.4)', animation: 'svFade 0.2s ease both' }} onClick={() => payStep === 'review' && setPayFor(null)} />
+            <div className="absolute left-0 right-0 bottom-0 z-[160] rounded-t-[26px] px-5" style={{ background: CREAM, boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', animation: 'svSheet 0.3s cubic-bezier(0.22,1,0.36,1) both', paddingBottom: embedded ? 100 : 30 }}>
+              <div className="flex justify-center pt-2.5 pb-1"><div style={{ width: 38, height: 5, borderRadius: 9999, background: '#DDD4C9' }} /></div>
+              {payStep === 'review' ? (
+                <>
+                  <div className="flex items-center gap-3 pt-1 pb-3">
+                    <h2 className="flex-1 text-[18px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>Confirm request</h2>
+                    <button onClick={() => setPayFor(null)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
+                  </div>
+                  <div className="bg-white rounded-[16px] overflow-hidden" style={{ boxShadow: SHADOW }}>
+                    <div className="relative flex items-center gap-3 px-4 py-3">
+                      <img src={payFor.p.photo} alt="" className="w-10 h-10 rounded-full object-cover" />
+                      <div className="flex-1 min-w-0"><div className="text-[14px] font-bold truncate" style={{ color: INK }}>{payFor.sel.n} · {payFor.p.name}</div><div className="text-[11.5px] mt-0.5" style={{ color: CORAL }}>{dateLabel(payFor.date.m, payFor.date.n)} · {payFor.time}{repeatWeekly ? ' · repeats weekly' : ''}</div></div>
+                      <span className="text-[15px] font-extrabold" style={{ color: INK }}>CHF {payFor.sel.p}</span>
+                      <div className="absolute bottom-0 left-[62px] right-0 h-px" style={{ background: LINE }} />
+                    </div>
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <span className="w-10 h-7 rounded-[6px] flex items-center justify-center shrink-0" style={{ background: '#1A1F71' }}><span className="text-[8px] font-extrabold italic text-white">VISA</span></span>
+                      <div className="flex-1"><div className="text-[13.5px] font-semibold" style={{ color: INK }}>Visa ··4242</div><div className="text-[11px] mt-[1px]" style={{ color: TERT }}>Hold now — charged after the service</div></div>
+                      <ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} />
+                    </div>
+                  </div>
+                  <button onClick={() => { setPayStep('processing'); setTimeout(() => { const f = payFor; setPayFor(null); setPayStep('review'); requestBooking(f.p, f.sel, f.date, f.time); }, 1000); }} className="w-full mt-4 py-4 rounded-[16px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}>
+                    <span className="text-[15px] font-bold text-white">Place hold · CHF {payFor.sel.p}</span>
+                  </button>
+                  <div className="flex items-center justify-center gap-1.5 mt-3"><Lock size={11} color={TERT} strokeWidth={2} /><span className="text-[10.5px] font-medium" style={{ color: TERT }}>Secured by Stripe — released if {payFor.p.name.split(' ')[0]} declines</span></div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center py-10">
+                  <span className="w-12 h-12 rounded-full" style={{ border: '3.5px solid #F1E7DC', borderTopColor: CORAL, animation: 'svSpin 0.8s linear infinite' }} />
+                  <span className="text-[14px] font-bold mt-4" style={{ color: INK }}>Confirming with your bank…</span>
+                  <span className="text-[11.5px] mt-1" style={{ color: TERT }}>Visa ··4242 · CHF {payFor.sel.p}</span>
+                </div>
+              )}
+            </div>
+          </>
         )}
         {toast && <Toast embedded={embedded} msg={toast} />}
       </Wrap>
@@ -830,6 +878,26 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                   <span className="flex gap-1">{[...Array(5)].map((_, si) => (
                                     <button key={si} onClick={(e) => { e.stopPropagation(); setRateFor({ booking: b, stars: si + 1 }); }} className="active:scale-90 transition-transform"><Star size={18} color={CORAL} strokeWidth={1.8} /></button>
                                   ))}</span>
+                                </div>
+                              )}
+                              {b.checkIns && b.when === 'past' && b.status === 'Completed' && (
+                                <div className="rounded-[14px] overflow-hidden" style={{ boxShadow: 'inset 0 0 0 1px ' + LINE }}>
+                                  {/* walk summary mini-map */}
+                                  <svg viewBox="0 0 350 120" className="w-full block" style={{ background: '#EFEAE2' }}>
+                                    <path d="M 230 8 C 300 4 345 40 343 70 C 341 100 300 116 250 114 C 210 112 190 95 192 70 C 194 40 180 12 230 8 Z" fill="#E5EEDF" />
+                                    <path d="M 0 64 C 60 56 110 76 170 62" stroke="#FFFFFF" strokeWidth="8" fill="none" strokeLinecap="round" />
+                                    <path d="M 30 104 C 80 84 70 56 130 48 C 190 40 220 60 262 44 C 296 32 312 26 330 18" stroke={CORAL} strokeWidth="4" fill="none" strokeLinecap="round" />
+                                    <circle cx="30" cy="104" r="5.5" fill="#FFFFFF" stroke={CORAL} strokeWidth="2.5" />
+                                    <circle cx="330" cy="18" r="5.5" fill="#FFFFFF" stroke={GREEN} strokeWidth="2.5" />
+                                  </svg>
+                                  <div className="flex items-center py-2.5 bg-white">
+                                    {[['45 min', 'duration'], ['3.2 km', 'distance'], ['4', 'photos']].map(([v, l], si) => (
+                                      <div key={si} className="flex-1 flex flex-col items-center" style={{ borderLeft: si ? '1px solid ' + LINE : 'none' }}>
+                                        <span className="text-[13.5px] font-extrabold leading-none" style={{ color: CORAL }}>{v}</span>
+                                        <span className="text-[9px] font-medium mt-1" style={{ color: TERT }}>{l}</span>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               )}
                               {b.checkIns && b.when === 'past' && (

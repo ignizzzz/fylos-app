@@ -5,6 +5,7 @@ import ServicesTab from '../features/services/ServicesTab';
 import ProRegistration from './50_PRO_REGISTRATION_v1';
 import InviteFriends from './60_INVITE_FRIENDS_v1';
 import PetsHome from './70_PETS_HOME_v1';
+import ProDashboard from './96_PRO_DASHBOARD_v1';
 import PetProfileV2 from './92_PET_PROFILE_v1';
 import JournalV2 from './93_JOURNAL_v1';
 import ServicesV2 from './94_SERVICES_v1';
@@ -72,6 +73,7 @@ import {
   Share,
   SlidersHorizontal,
   Zap,
+  RefreshCw,
   ShieldCheck,
   Award,
   CreditCard,
@@ -10435,7 +10437,7 @@ const UPCOMING_FEATURES = [
   { id: 'f4', title: 'Behavior Insights', icon: BrainCircuit, launchDate: '2026-09-01', waitlistCount: 412, color: '#AF52DE', description: 'AI-powered behavior pattern tracking.' }
 ];
 
-const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations }) => {
+const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations, onSwitchPro }) => {
   const navigateRouter = useNavigate();
   const [twoFactor, setTwoFactor] = useState(false);
   const [biometric, setBiometric] = useState(true);
@@ -10558,6 +10560,7 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations }
         <SectionLabel>fylos</SectionLabel>
         <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
           <SetRow icon={Zap}        title="Become a Pro" subtitle="Walk or sit for others" onClick={() => nav('/pro-registration')} />
+          <SetRow icon={RefreshCw}  title="Switch to Pro account" subtitle="Your walker dashboard" rightValue="PRO" onClick={onSwitchPro} />
           <SetRow icon={HelpCircle} title="Help center"  subtitle="FAQ & support"          onClick={() => nav('/help')} last />
         </div>
 
@@ -11018,6 +11021,8 @@ export default function App() {
   const initialTab = location.state?.tab || 'home';
   const [activeTab, setActiveTab] = useState(initialTab);
   const [displayTab, setDisplayTab] = useState(initialTab);
+  // PRO (business) mode — swaps the entire UI for the provider dashboard
+  const [proMode, setProMode] = useState(() => { try { return window.sessionStorage?.getItem('fylos.proMode') === '1'; } catch (e) { return false; } });
   const [isFading, setIsFading] = useState(false);
   const [isLoading, setIsLoading] = useState(() => {
     if (window.__fylosPetPending) return false;
@@ -11054,6 +11059,20 @@ export default function App() {
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [animationsOpen, setAnimationsOpen] = useState(false);
   const [appNotifications, setAppNotifications] = useState(APP_NOTIFICATIONS);
+  // Unified inbox: booking events from any tab land here via a tiny window bus
+  useEffect(() => {
+    const onNotify = (e) => {
+      const { title, body } = e.detail || {};
+      if (!title) return;
+      setAppNotifications((prev) => [{
+        id: 'inbox_evt_' + Date.now(), category: 'bookings', type: 'booking-update', priority: 'normal',
+        sender: { name: 'FYLOS Bookings', icon: Bell },
+        title, body, actions: [], read: false, archived: false, timeGroup: 'Today', timeAgo: 'now',
+      }, ...prev]);
+    };
+    window.addEventListener('fylos:notify', onNotify);
+    return () => window.removeEventListener('fylos:notify', onNotify);
+  }, []);
   const [joinedWaitlists, setJoinedWaitlists] = useState(new Set());
   const [isTabBarVisible, setIsTabBarVisible] = useState(true);
   const [celebration, setCelebration] = useState(null);
@@ -11337,6 +11356,20 @@ export default function App() {
   // bookings list and remember which row to start expanded.
   const [focusedBookingId, setFocusedBookingId] = useState(null);
 
+  // PRO mode replaces the whole personal UI with the provider dashboard
+  if (proMode) {
+    return (
+      <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center sm:p-8 font-sans antialiased">
+        <GlobalStyles />
+        <div className="relative w-[390px] h-[844px] bg-[#F7F5F2] rounded-[50px] border-[8px] border-black overflow-hidden" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.28)' }}>
+          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
+          <ProDashboard onExitPro={() => { try { window.sessionStorage.removeItem('fylos.proMode'); } catch (e) {} setProMode(false); }} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center sm:p-8 font-sans antialiased selection:bg-[#E85D2A]/20 selection:text-[#E85D2A]">
       <GlobalStyles />
@@ -11619,6 +11652,7 @@ export default function App() {
               onClose={() => setSettingsOpen(false)}
               onOpenComingSoon={() => { setSettingsOpen(false); setComingSoonOpen(true); }}
               onOpenAnimations={() => { setSettingsOpen(false); setAnimationsOpen(true); }}
+              onSwitchPro={() => { setSettingsOpen(false); try { window.sessionStorage.setItem('fylos.proMode', '1'); } catch (e) {} setProMode(true); }}
             />
 
             <NotificationsOverlay

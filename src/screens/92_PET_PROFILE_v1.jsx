@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   ChevronLeft, Share2, Pencil, ChevronRight, Syringe, Pill, Stethoscope, Phone,
-  FileText, ShieldAlert, Heart, AlertTriangle, Check, Bone,
+  FileText, ShieldAlert, Heart, AlertTriangle, Check, Bone, Bell,
   Footprints, Moon, Cookie, Star, Plus, QrCode, Users, MoreHorizontal, Scale,
   Copy, UserPlus, Trash2, X, UploadCloud, Info,
 } from 'lucide-react';
@@ -393,7 +393,9 @@ const PetProfile = ({ embedded = false, onBack, pet }) => {
 
                   <SectionLabel action="Add" onAction={() => openItem('vaccines')}>Vaccinations</SectionLabel>
                   <Card>
-                    {data.vaccines.map((v, i) => <IconRow key={i} icon={Syringe} title={v.name} sub={`Given ${v.date}${v.next ? ` · Next ${v.next}` : ''}`} right={v.ok ? 'Up to date' : 'Due soon'} rightTone={v.ok ? 'good' : 'warn'} onClick={() => openItem('vaccines', v, i)} last={i === data.vaccines.length - 1} />)}
+                    {data.vaccines.map((v, i) => <IconRow key={i} icon={Syringe} title={v.name} sub={`Given ${v.date}${v.next ? ` · Next ${v.next}` : ''}`} right={v.ok ? 'Up to date' : 'Due soon'} rightTone={v.ok ? 'good' : 'warn'} onClick={() => openItem('vaccines', v, i)}
+                      trailing={!v.ok ? <button onClick={(e) => { e.stopPropagation(); setData((d) => ({ ...d, vaccines: d.vaccines.map((x, j) => j === i ? { ...x, reminded: !x.reminded } : x) })); act(v.reminded ? 'Reminder off' : 'Reminder on — added to Pets · Coming up'); }} className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 active:scale-90 transition-transform" style={{ background: v.reminded === false ? PEACH : TINT }}><Bell size={14} color={v.reminded === false ? MUTED : CORAL} strokeWidth={2.2} fill={v.reminded === false ? 'none' : CORAL} /></button> : undefined}
+                      last={i === data.vaccines.length - 1} />)}
                     {!data.vaccines.length && <div className="px-4 py-4 text-[13px]" style={{ color: TERT }}>No vaccines yet — tap Add.</div>}
                   </Card>
 
