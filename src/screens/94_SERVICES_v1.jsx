@@ -192,6 +192,89 @@ const SubHeader = ({ title, sub, onBack, right, showTitle = true }) => (
   </div>
 );
 
+/* Full-screen live walk tracking — the flagship "wow" view */
+const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
+  if (!b || !b.live) return null;
+  const pct = Math.round((b.live.done / b.live.total) * 100);
+  return (
+    <div className="absolute inset-0 z-[170] flex flex-col" style={{ background: CREAM, animation: 'svFade 0.22s ease both' }}>
+      {/* header */}
+      <div className="shrink-0 px-5 pb-3 flex items-center" style={{ paddingTop: 58 }}>
+        <button onClick={onClose} className="w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 shrink-0" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><ChevronLeft size={18} color={INK} strokeWidth={2.2} /></button>
+        <div className="absolute left-1/2 -translate-x-1/2 text-center">
+          <div className="inline-flex items-center gap-1.5 text-[15px] font-bold" style={{ color: INK }}><span className="w-2 h-2 rounded-full" style={{ background: CORAL, animation: 'svPulse 1.4s ease-in-out infinite' }} />Live walk</div>
+          <div className="text-[10.5px] font-medium" style={{ color: TERT }}>{b.provider} · with {b.pet}</div>
+        </div>
+        <span className="w-9 shrink-0 ml-auto" />
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-5" style={{ scrollbarWidth: 'none', paddingBottom: embedded ? 104 : 30 }}>
+        {/* stylised live map */}
+        <div className="rounded-[22px] overflow-hidden relative" style={{ boxShadow: SHADOW }}>
+          <svg viewBox="0 0 350 290" className="w-full block" style={{ background: '#EFEAE2' }}>
+            {/* park + pond */}
+            <path d="M 200 30 C 290 20 340 70 338 140 C 336 210 300 240 250 250 C 200 260 170 230 168 180 C 166 120 130 40 200 30 Z" fill="#E5EEDF" />
+            <ellipse cx="282" cy="180" rx="38" ry="24" fill="#DCE8F0" />
+            {/* side streets */}
+            <path d="M 0 110 C 70 100 120 130 180 110" stroke="#FFFFFF" strokeWidth="10" fill="none" strokeLinecap="round" />
+            <path d="M 60 290 C 80 220 60 170 110 140" stroke="#FFFFFF" strokeWidth="10" fill="none" strokeLinecap="round" />
+            <path d="M 240 290 C 250 250 280 240 320 244" stroke="#FFFFFF" strokeWidth="8" fill="none" strokeLinecap="round" />
+            {/* route: remaining (dashed) then walked (solid coral) */}
+            <path d="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" stroke="#D8CFC4" strokeWidth="4" strokeDasharray="1.5 7" fill="none" strokeLinecap="round" pathLength="100" />
+            <path d="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" stroke={CORAL} strokeWidth="4.5" fill="none" strokeLinecap="round" pathLength="100" strokeDasharray="40 60" />
+            {/* start + destination markers */}
+            <circle cx="36" cy="254" r="6" fill="#FFFFFF" stroke={CORAL} strokeWidth="3" />
+            <circle cx="318" cy="44" r="6" fill="#FFFFFF" stroke="#C9BBAE" strokeWidth="3" />
+            {/* walker — travels the walked stretch */}
+            <g>
+              <circle r="11" fill={CORAL} opacity="0.25">
+                <animateMotion dur="9s" repeatCount="indefinite" keyPoints="0;0.4;0.36;0.4" keyTimes="0;0.6;0.8;1" calcMode="linear" path="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" />
+              </circle>
+              <circle r="6.5" fill={CORAL} stroke="#FFFFFF" strokeWidth="2.5">
+                <animateMotion dur="9s" repeatCount="indefinite" keyPoints="0;0.4;0.36;0.4" keyTimes="0;0.6;0.8;1" calcMode="linear" path="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" />
+              </circle>
+            </g>
+          </svg>
+          {/* floating provider chip */}
+          <div className="absolute top-3 left-3 bg-white rounded-full pl-1.5 pr-3 py-1.5 flex items-center gap-2" style={{ boxShadow: '0 4px 14px rgba(60,30,15,0.12)' }}>
+            <img src={b.photo} alt="" className="w-6 h-6 rounded-full object-cover" />
+            <span className="text-[11.5px] font-bold" style={{ color: INK }}>{b.provider}</span>
+          </div>
+        </div>
+
+        {/* stats */}
+        <div className="rounded-[16px] bg-white flex items-center py-3.5 mt-3.5" style={{ boxShadow: SHADOW }}>
+          {[[`${b.live.done} min`, `of ${b.live.total} min`], [`${b.live.km} km`, 'so far'], ['2', 'photos']].map(([v, l], i) => (
+            <div key={i} className="flex-1 flex flex-col items-center" style={{ borderLeft: i ? '1px solid ' + LINE : 'none' }}>
+              <span className="text-[16px] font-extrabold leading-none" style={{ color: CORAL }}>{v}</span>
+              <span className="text-[10px] font-medium mt-1.5" style={{ color: TERT }}>{l}</span>
+            </div>
+          ))}
+        </div>
+        <div className="h-[6px] rounded-full overflow-hidden mt-2.5" style={{ background: '#EAE3DB' }}>
+          <div className="h-full rounded-full" style={{ width: `${pct}%`, background: CORAL, transition: 'width 0.4s' }} />
+        </div>
+        <div className="text-[10.5px] font-medium mt-1.5 text-right" style={{ color: TERT }}>Back home ~09:48</div>
+
+        {/* latest photo */}
+        <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] mb-2 ml-1.5 mt-4" style={{ color: '#A8A29C' }}>Latest update</div>
+        <div className="bg-white rounded-[18px] p-3" style={{ boxShadow: SHADOW }}>
+          <img src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?auto=format&fit=crop&q=80&w=700" alt="" className="w-full h-[150px] rounded-[13px] object-cover" />
+          <div className="flex items-center justify-between mt-2.5 px-0.5">
+            <span className="text-[12.5px] font-semibold" style={{ color: INK }}>{b.pet} made a friend at the park</span>
+            <span className="text-[10.5px]" style={{ color: TERT }}>{b.live.lastPhoto}</span>
+          </div>
+        </div>
+
+        <button onClick={() => onMessage({ name: b.provider, photo: b.photo })} className="w-full mt-4 py-3.5 rounded-[16px] bg-white flex items-center justify-center gap-2 active:scale-[0.98] transition-transform" style={{ boxShadow: 'inset 0 0 0 1.4px #E5DED5' }}>
+          <MessageCircle size={15} color={INK} strokeWidth={2} /><span className="text-[14px] font-bold" style={{ color: INK }}>Message {b.provider.split(' ')[0]}</span>
+        </button>
+        <p className="text-[11px] text-center mt-3" style={{ color: TERT }}>You’ll get a full summary when the walk ends.</p>
+      </div>
+    </div>
+  );
+};
+
 /* Centred full-month picker with month switching */
 const MonthPopup = ({ month, setMonth, selected, onPick, onClose, minDay = 12 }) => {
   const meta = MONTHS_META[month];
@@ -275,6 +358,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [remIdx, setRemIdx] = useState({});
   const [rateFor, setRateFor] = useState(null);   // { booking, stars }
   const [chat, setChat] = useState(null);          // { name, photo }
+  const [liveOpen, setLiveOpen] = useState(false); // full-screen live walk view
   const [reschedFor, setReschedFor] = useState(null);
   const [reschedDay, setReschedDay] = useState(0);
   const [reschedTime, setReschedTime] = useState(1);
@@ -734,6 +818,9 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                   {b.checkIns && b.checkIns.map(([tt, txt], ci) => (
                                     <div key={ci} className="flex items-center gap-2 mt-2"><span className="text-[10px] font-bold" style={{ color: TERT }}>{tt}</span><span className="text-[11.5px] font-medium" style={{ color: MUTED }}>{txt}</span></div>
                                   ))}
+                                  <button onClick={() => setLiveOpen(true)} className="w-full mt-3 py-2.5 rounded-[11px] bg-white flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform" style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.08)' }}>
+                                    <MapPin size={13} color={CORAL} strokeWidth={2.2} /><span className="text-[12.5px] font-bold" style={{ color: CORAL }}>Watch live</span>
+                                  </button>
                                 </div>
                               )}
                               {b.notes && <div className="text-[12.5px] leading-[1.45] rounded-[10px] px-3 py-2" style={{ background: PEACH, color: MUTED }}>{b.notes}</div>}
@@ -910,6 +997,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           </div>
         )}
 
+        {liveOpen && <LiveWalkView b={bookings.find((x) => x.status === 'Live')} onClose={() => setLiveOpen(false)} onMessage={(p) => setChat(p)} embedded={embedded} />}
         {chat && <ChatOverlay provider={chat} onClose={() => setChat(null)} embedded={embedded} />}
         {toast && <Toast embedded={embedded} msg={toast} />}
       </Wrap>
