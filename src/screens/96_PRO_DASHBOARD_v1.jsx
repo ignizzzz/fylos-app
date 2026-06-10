@@ -40,6 +40,7 @@ const INIT_REQUESTS = [
   { id: 'r3', svc: '30 min walk · weekly', when: 'Every Fri · 16:00', who: 'Leo', meta: 'Golden Retriever · 3 yrs · 0.8 km away', owner: 'Anna M.', photo: LEO, price: 14 },
 ];
 const WEEK_BARS = [{ d: 'M', v: 180 }, { d: 'T', v: 220 }, { d: 'W', v: 140 }, { d: 'T', v: 260 }, { d: 'F', v: 95 }, { d: 'S', v: 200 }, { d: 'S', v: 145 }];
+const MONTH_BARS = [{ d: 'W1', v: 310 }, { d: 'W2', v: 287 }, { d: 'W3', v: 342 }, { d: 'W4', v: 301 }];
 const PAYOUTS = [
   { id: 'p1', label: 'Weekly payout', sub: 'Mon, Feb 9 · Stripe', amount: '+ CHF 287.30', ok: true },
   { id: 'p2', label: 'Weekly payout', sub: 'Mon, Feb 2 · Stripe', amount: '+ CHF 312.80', ok: true },
@@ -88,6 +89,27 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [tab]);
+  // today stat counts up when the Today tab opens
+  const [todayChf, setTodayChf] = useState(0);
+  useEffect(() => {
+    if (tab !== 'today') return;
+    let start = null, raf;
+    const tick = (t) => { if (!start) start = t; const p = Math.min(1, (t - start) / 350); setTodayChf(57 * (1 - Math.pow(1 - p, 3))); if (p < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [tab]);
+  // weekly chart: range toggle, staggered grow-in, tap-to-inspect
+  const [range, setRange] = useState('week');
+  const [barsIn, setBarsIn] = useState(false);
+  const [selBar, setSelBar] = useState(null);
+  useEffect(() => {
+    setBarsIn(false);
+    setSelBar(null);
+    if (tab !== 'earnings') return;
+    let raf1, raf2;
+    raf1 = requestAnimationFrame(() => { raf2 = requestAnimationFrame(() => setBarsIn(true)); });
+    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
+  }, [tab, range]);
 
   const accept = (r) => {
     setRequests((prev) => prev.filter((x) => x.id !== r.id));
@@ -96,7 +118,8 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
   };
   const decline = (r) => { setRequests((prev) => prev.filter((x) => x.id !== r.id)); act('Request declined'); };
 
-  const maxBar = Math.max(...WEEK_BARS.map((b) => b.v));
+  const bars = range === 'week' ? WEEK_BARS : MONTH_BARS;
+  const maxBar = Math.max(...bars.map((b) => b.v));
 
   const Header = (
     <div className="flex items-center px-5 pointer-events-auto" style={{ height: 46 }}>
@@ -125,7 +148,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
           <>
             {/* day stats */}
             <div className="rounded-[18px] bg-white flex items-center py-3.5" style={{ boxShadow: SHADOW }}>
-              {[['CHF 57', 'today', true], [`${schedule.length}`, 'jobs'], ['4.9', 'rating']].map(([v, l, accent], i) => (
+              {[[`CHF ${Math.round(todayChf)}`, 'today', true], [`${schedule.length}`, 'jobs'], ['4.9', 'rating']].map(([v, l, accent], i) => (
                 <div key={i} className="flex-1 flex flex-col items-center" style={{ borderLeft: i ? '1px solid ' + LINE : 'none' }}>
                   <span className="text-[17px] font-extrabold leading-none" style={{ color: accent ? CORAL : INK }}>{v}</span>
                   <span className="text-[10px] font-medium mt-1.5" style={{ color: TERT }}>{l}</span>
@@ -239,16 +262,26 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
 
             {/* weekly chart */}
             <SectionLabel>This week</SectionLabel>
-            <div className="bg-white rounded-[18px] px-4 pt-4 pb-3" style={{ boxShadow: SHADOW }}>
+            <div className="bg-white rounded-[18px] px-4 pt-3 pb-3" style={{ boxShadow: SHADOW }}>
+              <div className="flex items-center justify-end gap-1 mb-2">
+                {[['week', 'Week'], ['month', 'Month']].map(([id, label]) => (
+                  <button key={id} onClick={() => setRange(id)} className="h-[26px] px-2.5 text-[11px] font-bold rounded-full active:scale-95 transition-transform" style={range === id ? { background: '#FFF3EC', color: CORAL, boxShadow: 'inset 0 0 0 1.5px ' + CORAL } : { background: 'transparent', color: TERT }}>{label}</button>
+                ))}
+              </div>
               <div className="flex items-end justify-between gap-2" style={{ height: 96 }}>
-                {WEEK_BARS.map((b, i) => {
+                {bars.map((b, i) => {
                   const top = b.v === maxBar;
+                  const sel = selBar === i;
                   return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      {top && <span className="text-[10px] font-extrabold" style={{ color: CORAL }}>{b.v}</span>}
-                      <div className="w-full rounded-[6px]" style={{ height: `${(b.v / maxBar) * 72}px`, background: top ? CORAL : TINT, transition: 'height 0.4s' }} />
+                    <button key={i} onClick={() => setSelBar(sel ? null : i)} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end" style={{ opacity: selBar !== null && !sel ? 0.35 : 1, transition: 'opacity 0.25s' }}>
+                      <div className="relative w-full" style={{ height: `${(b.v / maxBar) * 72}px` }}>
+                        {sel && (
+                          <span className="absolute left-1/2 bottom-full mb-1.5 z-10 bg-white rounded-full px-2.5 py-1 whitespace-nowrap text-[11px] font-bold" style={{ color: INK, boxShadow: SHADOW, animation: 'pdChipPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both' }}>CHF {b.v} · {b.d}</span>
+                        )}
+                        <div className="absolute inset-0 rounded-[6px]" style={{ background: top ? CORAL : TINT, transform: barsIn ? 'scaleY(1)' : 'scaleY(0)', transformOrigin: 'bottom', transition: 'transform 0.5s cubic-bezier(0.34,1.56,0.64,1)', transitionDelay: `${i * 60}ms` }} />
+                      </div>
                       <span className="text-[10.5px] font-bold" style={{ color: top ? INK : '#C4BBB0' }}>{b.d}</span>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -403,6 +436,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
     @keyframes pdToast { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
     @keyframes pdFade { from { opacity: 0; } to { opacity: 1; } }
     @keyframes pdSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    @keyframes pdChipPop { from { opacity: 0; transform: translate(-50%, 4px) scale(0.8); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
   `}</style>;
 
   if (!standalone) return (<>{styleBlock}{inner}</>);

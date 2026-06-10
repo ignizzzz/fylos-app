@@ -6,6 +6,7 @@ import {
   Sun, Car, DoorOpen, Camera, Apple, CalendarDays, User, Share2, Clock,
 } from 'lucide-react';
 import ChatOverlay from './95_CHAT_v1';
+import { motion, AnimatePresence } from 'framer-motion';
 import InviteFriends from './60_INVITE_FRIENDS_v1';
 
 /**
@@ -192,10 +193,35 @@ const SubHeader = ({ title, sub, onBack, right, showTitle = true }) => (
   </div>
 );
 
+/* rAF count-up with ease-out cubic — drives live stats & profile numbers */
+const useCountUp = (target, duration = 700) => {
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    let raf; const t0 = performance.now();
+    const tick = (now) => { const k = Math.min(1, (now - t0) / duration); setVal(target * (1 - Math.pow(1 - k, 3))); if (k < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, duration]);
+  return val;
+};
+
+/* Profile stat value — counts up when it starts with a digit ('530', '92%'); '~1 h' renders unchanged */
+const StatValue = ({ v }) => {
+  const lead = String(v).match(/^\d+/);
+  const n = useCountUp(lead ? parseInt(lead[0], 10) : 0, 350);
+  return lead ? `${Math.round(n)}${String(v).slice(lead[0].length)}` : v;
+};
+
 /* Full-screen live walk tracking — the flagship "wow" view */
 const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
-  if (!b || !b.live) return null;
-  const pct = Math.round((b.live.done / b.live.total) * 100);
+  const live = b ? b.live : null;
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { const raf = requestAnimationFrame(() => setMounted(true)); return () => cancelAnimationFrame(raf); }, []);
+  const doneMin = useCountUp(live ? live.done : 0);
+  const kmVal = useCountUp(live ? parseFloat(live.km) : 0);
+  const photoN = useCountUp(2);
+  if (!b || !live) return null;
+  const pct = Math.round((live.done / live.total) * 100);
   return (
     <div className="absolute inset-0 z-[170] flex flex-col" style={{ background: CREAM, animation: 'svFade 0.22s ease both' }}>
       {/* header */}
@@ -221,17 +247,17 @@ const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
             <path d="M 240 290 C 250 250 280 240 320 244" stroke="#FFFFFF" strokeWidth="8" fill="none" strokeLinecap="round" />
             {/* route: remaining (dashed) then walked (solid coral) */}
             <path d="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" stroke="#D8CFC4" strokeWidth="4" strokeDasharray="1.5 7" fill="none" strokeLinecap="round" pathLength="100" />
-            <path d="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" stroke={CORAL} strokeWidth="4.5" fill="none" strokeLinecap="round" pathLength="100" strokeDasharray="40 60" />
+            <path d="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" stroke={CORAL} strokeWidth="4.5" fill="none" strokeLinecap="round" pathLength="100" strokeDasharray="40 60" style={{ strokeDashoffset: mounted ? 0 : 40, transition: 'stroke-dashoffset 0.9s cubic-bezier(0.22,1,0.36,1)' }} />
             {/* start + destination markers */}
             <circle cx="36" cy="254" r="6" fill="#FFFFFF" stroke={CORAL} strokeWidth="3" />
             <circle cx="318" cy="44" r="6" fill="#FFFFFF" stroke="#C9BBAE" strokeWidth="3" />
-            {/* walker — travels the walked stretch */}
-            <g>
+            {/* walker — travels the walked stretch, appears as the route finishes drawing */}
+            <g style={{ opacity: mounted ? 1 : 0, transition: 'opacity 0.2s 0.9s' }}>
               <circle r="11" fill={CORAL} opacity="0.25">
-                <animateMotion dur="9s" repeatCount="indefinite" keyPoints="0;0.4;0.36;0.4" keyTimes="0;0.6;0.8;1" calcMode="linear" path="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" />
+                <animateMotion dur="9s" begin="0.9s" repeatCount="indefinite" keyPoints="0;0.4;0.36;0.4" keyTimes="0;0.6;0.8;1" calcMode="linear" path="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" />
               </circle>
               <circle r="6.5" fill={CORAL} stroke="#FFFFFF" strokeWidth="2.5">
-                <animateMotion dur="9s" repeatCount="indefinite" keyPoints="0;0.4;0.36;0.4" keyTimes="0;0.6;0.8;1" calcMode="linear" path="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" />
+                <animateMotion dur="9s" begin="0.9s" repeatCount="indefinite" keyPoints="0;0.4;0.36;0.4" keyTimes="0;0.6;0.8;1" calcMode="linear" path="M 36 254 C 90 236 70 180 130 168 C 190 156 196 122 238 106 C 280 90 296 64 318 44" />
               </circle>
             </g>
           </svg>
@@ -244,7 +270,7 @@ const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
 
         {/* stats */}
         <div className="rounded-[16px] bg-white flex items-center py-3.5 mt-3.5" style={{ boxShadow: SHADOW }}>
-          {[[`${b.live.done} min`, `of ${b.live.total} min`], [`${b.live.km} km`, 'so far'], ['2', 'photos']].map(([v, l], i) => (
+          {[[`${Math.round(doneMin)} min`, `of ${live.total} min`], [`${kmVal.toFixed(1)} km`, 'so far'], [String(Math.round(photoN)), 'photos']].map(([v, l], i) => (
             <div key={i} className="flex-1 flex flex-col items-center" style={{ borderLeft: i ? '1px solid ' + LINE : 'none' }}>
               <span className="text-[16px] font-extrabold leading-none" style={{ color: CORAL }}>{v}</span>
               <span className="text-[10px] font-medium mt-1.5" style={{ color: TERT }}>{l}</span>
@@ -252,13 +278,13 @@ const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
           ))}
         </div>
         <div className="h-[6px] rounded-full overflow-hidden mt-2.5" style={{ background: '#EAE3DB' }}>
-          <div className="h-full rounded-full" style={{ width: `${pct}%`, background: CORAL, transition: 'width 0.4s' }} />
+          <div className="h-full rounded-full" style={{ width: mounted ? `${pct}%` : '0%', background: CORAL, transition: 'width 0.9s cubic-bezier(0.22,1,0.36,1)' }} />
         </div>
         <div className="text-[10.5px] font-medium mt-1.5 text-right" style={{ color: TERT }}>Back home ~09:48</div>
 
         {/* latest photo */}
         <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] mb-2 ml-1.5 mt-4" style={{ color: '#A8A29C' }}>Latest update</div>
-        <div className="bg-white rounded-[18px] p-3" style={{ boxShadow: SHADOW }}>
+        <div className="bg-white rounded-[18px] p-3" style={{ boxShadow: SHADOW, animation: 'svRiseIn 0.45s 0.55s cubic-bezier(0.22,1,0.36,1) both' }}>
           <img src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?auto=format&fit=crop&q=80&w=700" alt="" className="w-full h-[150px] rounded-[12px] object-cover" />
           <div className="flex items-center justify-between mt-2.5 px-0.5">
             <span className="text-[12.5px] font-semibold" style={{ color: INK }}>{b.pet} made a friend at the park</span>
@@ -270,6 +296,32 @@ const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
           <MessageCircle size={15} color={INK} strokeWidth={2} /><span className="text-[14px] font-bold" style={{ color: INK }}>Message {b.provider.split(' ')[0]}</span>
         </button>
         <p className="text-[11px] text-center mt-3" style={{ color: TERT }}>You’ll get a full summary when the walk ends.</p>
+      </div>
+    </div>
+  );
+};
+
+/* Past-walk summary — route redraws and stats rise in each time the summary expands */
+const WalkSummary = () => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { const raf = requestAnimationFrame(() => setMounted(true)); return () => cancelAnimationFrame(raf); }, []);
+  return (
+    <div className="rounded-[16px] overflow-hidden" style={{ boxShadow: 'inset 0 0 0 1px ' + LINE }}>
+      {/* walk summary mini-map */}
+      <svg viewBox="0 0 350 120" className="w-full block" style={{ background: '#EFEAE2' }}>
+        <path d="M 230 8 C 300 4 345 40 343 70 C 341 100 300 116 250 114 C 210 112 190 95 192 70 C 194 40 180 12 230 8 Z" fill="#E5EEDF" />
+        <path d="M 0 64 C 60 56 110 76 170 62" stroke="#FFFFFF" strokeWidth="8" fill="none" strokeLinecap="round" />
+        <path d="M 30 104 C 80 84 70 56 130 48 C 190 40 220 60 262 44 C 296 32 312 26 330 18" stroke={CORAL} strokeWidth="4" fill="none" strokeLinecap="round" pathLength="100" strokeDasharray="100" style={{ strokeDashoffset: mounted ? 0 : 100, transition: 'stroke-dashoffset 0.6s cubic-bezier(0.22,1,0.36,1)' }} />
+        <circle cx="30" cy="104" r="5.5" fill="#FFFFFF" stroke={CORAL} strokeWidth="2.5" />
+        <circle cx="330" cy="18" r="5.5" fill="#FFFFFF" stroke={GREEN} strokeWidth="2.5" />
+      </svg>
+      <div className="flex items-center py-2.5 bg-white">
+        {[['45 min', 'duration'], ['3.2 km', 'distance'], ['4', 'photos']].map(([v, l], si) => (
+          <div key={si} className="flex-1 flex flex-col items-center" style={{ borderLeft: si ? '1px solid ' + LINE : 'none', animation: `svRiseIn 0.35s ${(0.15 + si * 0.08).toFixed(2)}s both` }}>
+            <span className="text-[13.5px] font-extrabold leading-none" style={{ color: CORAL }}>{v}</span>
+            <span className="text-[10px] font-medium mt-1" style={{ color: TERT }}>{l}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -358,6 +410,7 @@ const Wrap = ({ embedded, children }) => {
     @keyframes svBadge { 0% { opacity: 0; transform: scale(0); } 70% { transform: scale(1.25); } 100% { opacity: 1; transform: scale(1); } }
     @keyframes svPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
     @keyframes svBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes svRiseIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
   `}</style>;
   if (embedded) return (<>{styleBlock}<div className="absolute inset-0" style={{ background: CREAM }}>{children}</div></>);
   return (
@@ -482,7 +535,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           <div className="rounded-[16px] bg-white flex items-center py-3 mt-5" style={{ boxShadow: SHADOW }}>
             {p.stats.map((s, i) => (
               <div key={i} className="flex-1 flex flex-col items-center" style={{ borderLeft: i ? '1px solid ' + LINE : 'none' }}>
-                <span className="text-[16px] font-extrabold leading-none" style={{ color: CORAL }}>{s[0]}</span>
+                <span className="text-[16px] font-extrabold leading-none" style={{ color: CORAL }}><StatValue v={s[0]} /></span>
                 <span className="text-[10px] font-medium mt-1.5" style={{ color: TERT }}>{s[1]}</span>
               </div>
             ))}
@@ -602,11 +655,15 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             onPick={(d) => { setPickedAvail(d); const s = slotsFor(d.n); if (!s.includes(time)) setTime(s[0] ?? 0); setPickCtx(null); }} />
         )}
 
-        {/* Payment confirm — hold now, charge after the service */}
+        {/* Payment confirm — hold now, charge after the service.
+            Framer Motion: spring entrance and a real exit (sheet slides down, scrim fades). */}
+        <AnimatePresence>
         {payFor && (
-          <>
-            <div className="absolute inset-0 z-[150]" style={{ background: 'rgba(20,12,8,0.4)', animation: 'svFade 0.2s ease both' }} onClick={() => payStep === 'review' && setPayFor(null)} />
-            <div className="absolute left-0 right-0 bottom-0 z-[160] rounded-t-[26px] px-5" style={{ background: CREAM, boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', animation: 'svSheet 0.3s cubic-bezier(0.22,1,0.36,1) both', paddingBottom: embedded ? 100 : 30 }}>
+          <React.Fragment key="paySheet">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
+              className="absolute inset-0 z-[150]" style={{ background: 'rgba(20,12,8,0.4)' }} onClick={() => payStep === 'review' && setPayFor(null)} />
+            <motion.div initial={{ y: '104%' }} animate={{ y: 0 }} exit={{ y: '104%' }} transition={{ type: 'spring', damping: 32, stiffness: 340 }}
+              className="absolute left-0 right-0 bottom-0 z-[160] rounded-t-[26px] px-5" style={{ background: CREAM, boxShadow: '0 -12px 40px rgba(0,0,0,0.2)', paddingBottom: embedded ? 100 : 30 }}>
               <div className="flex justify-center pt-2.5 pb-1"><div style={{ width: 38, height: 5, borderRadius: 9999, background: '#DDD4C9' }} /></div>
               {payStep === 'review' ? (
                 <>
@@ -637,9 +694,10 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                   <span className="text-[11.5px] mt-1" style={{ color: TERT }}>Visa ··4242 · CHF {payFor.sel.p}</span>
                 </div>
               )}
-            </div>
-          </>
+            </motion.div>
+          </React.Fragment>
         )}
+        </AnimatePresence>
         {toast && <Toast embedded={embedded} msg={toast} />}
       </Wrap>
     );
@@ -929,26 +987,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                   ))}</span>
                                 </div>
                               )}
-                              {b.checkIns && b.when === 'past' && b.status === 'Completed' && (
-                                <div className="rounded-[16px] overflow-hidden" style={{ boxShadow: 'inset 0 0 0 1px ' + LINE }}>
-                                  {/* walk summary mini-map */}
-                                  <svg viewBox="0 0 350 120" className="w-full block" style={{ background: '#EFEAE2' }}>
-                                    <path d="M 230 8 C 300 4 345 40 343 70 C 341 100 300 116 250 114 C 210 112 190 95 192 70 C 194 40 180 12 230 8 Z" fill="#E5EEDF" />
-                                    <path d="M 0 64 C 60 56 110 76 170 62" stroke="#FFFFFF" strokeWidth="8" fill="none" strokeLinecap="round" />
-                                    <path d="M 30 104 C 80 84 70 56 130 48 C 190 40 220 60 262 44 C 296 32 312 26 330 18" stroke={CORAL} strokeWidth="4" fill="none" strokeLinecap="round" />
-                                    <circle cx="30" cy="104" r="5.5" fill="#FFFFFF" stroke={CORAL} strokeWidth="2.5" />
-                                    <circle cx="330" cy="18" r="5.5" fill="#FFFFFF" stroke={GREEN} strokeWidth="2.5" />
-                                  </svg>
-                                  <div className="flex items-center py-2.5 bg-white">
-                                    {[['45 min', 'duration'], ['3.2 km', 'distance'], ['4', 'photos']].map(([v, l], si) => (
-                                      <div key={si} className="flex-1 flex flex-col items-center" style={{ borderLeft: si ? '1px solid ' + LINE : 'none' }}>
-                                        <span className="text-[13.5px] font-extrabold leading-none" style={{ color: CORAL }}>{v}</span>
-                                        <span className="text-[10px] font-medium mt-1" style={{ color: TERT }}>{l}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
+                              {b.checkIns && b.when === 'past' && b.status === 'Completed' && <WalkSummary />}
                               {b.checkIns && b.when === 'past' && (
                                 <div className="rounded-[12px] px-3.5 py-3 mt-0.5" style={{ background: PEACH }}>
                                   <div className="text-[10px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: '#A8A29C' }}>How it went</div>

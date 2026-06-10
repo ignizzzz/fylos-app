@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { line, area, curveCatmullRom } from 'd3-shape';
 import {
   ChevronLeft, Share2, Pencil, ChevronRight, Syringe, Pill, Stethoscope, Phone,
   FileText, ShieldAlert, Heart, AlertTriangle, Check, Bone, Bell,
@@ -267,6 +268,85 @@ const LostDialog = ({ onClose, onActivate }) => (
   </div>
 );
 
+// Weight trend — static six-month series powering the Health tab sparkline + expanded chart
+const WEIGHTS = [27.1, 27.4, 27.8, 28.2, 28.0, 28.0];
+const W_MONTHS = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
+const W_MIN = Math.min(...WEIGHTS);
+const W_MAX = Math.max(...WEIGHTS);
+const W_COLOR = Math.abs(WEIGHTS[WEIGHTS.length - 1] - WEIGHTS[0]) <= 0.5 ? GREEN : CORAL;
+
+const WeightSection = ({ weight, unit }) => {
+  const [open, setOpen] = useState(false);
+  const [drawn, setDrawn] = useState(false);
+  const [scrub, setScrub] = useState(null);
+  const chartRef = useRef(null);
+  // Mounts fresh each time the Health tab opens, so the draw-on re-triggers every visit
+  useEffect(() => { const t = setTimeout(() => setDrawn(true), 60); return () => clearTimeout(t); }, []);
+
+  // Sparkline (90×28)
+  const SW = 90, SH = 28, SP = 4;
+  const sx = (i) => SP + (i * (SW - SP * 2)) / (WEIGHTS.length - 1);
+  const sy = (v) => SP + ((W_MAX - v) * (SH - SP * 2)) / (W_MAX - W_MIN);
+  const sparkD = line().x((_, i) => sx(i)).y((v) => sy(v)).curve(curveCatmullRom)(WEIGHTS);
+
+  // Expanded chart (full width × 110)
+  const VW = 318, VH = 110, PX = 10, PT = 14, PB = 8;
+  const cx = (i) => PX + (i * (VW - PX * 2)) / (WEIGHTS.length - 1);
+  const cy = (v) => PT + ((W_MAX - v) * (VH - PT - PB)) / (W_MAX - W_MIN);
+  const lineD = line().x((_, i) => cx(i)).y((v) => cy(v)).curve(curveCatmullRom)(WEIGHTS);
+  const areaD = area().x((_, i) => cx(i)).y0(VH).y1((v) => cy(v)).curve(curveCatmullRom)(WEIGHTS);
+  const toIdx = (e) => {
+    const r = chartRef.current.getBoundingClientRect();
+    const f = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+    return Math.round(f * (WEIGHTS.length - 1));
+  };
+
+  return (
+    <>
+      <Card>
+        <button onClick={() => setOpen(!open)} className="w-full flex items-center gap-3.5 px-4 py-3.5 text-left active:bg-black/[0.02]">
+          <span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: TINT }}><Scale size={18} color={CORAL} strokeWidth={2} /></span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-baseline gap-1"><span className="text-[22px] font-extrabold" style={{ color: INK }}>{weight}</span><span className="text-[13px] font-bold" style={{ color: TERT }}>{unit}</span></div>
+            <div className="text-[11.5px] mt-0.5 font-semibold" style={{ color: GREEN }}>Healthy range</div>
+          </div>
+          <svg width={SW} height={SH} viewBox={`0 0 ${SW} ${SH}`} className="shrink-0">
+            <path d={sparkD} fill="none" stroke={W_COLOR} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" pathLength="100" strokeDasharray="100" strokeDashoffset={drawn ? 0 : 100} style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.22,1,0.36,1)' }} />
+            <circle cx={sx(WEIGHTS.length - 1)} cy={sy(WEIGHTS[WEIGHTS.length - 1])} r={3} fill={W_COLOR} style={{ opacity: drawn ? 1 : 0, transition: 'opacity 0.2s ease 0.6s' }} />
+          </svg>
+        </button>
+      </Card>
+      <div style={{ maxHeight: open ? 220 : 0, opacity: open ? 1 : 0, overflow: 'hidden', transition: 'max-height 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s cubic-bezier(0.22,1,0.36,1)' }}>
+        <div className="bg-white rounded-[16px] p-4 mt-2.5" style={{ boxShadow: SHADOW }}>
+          <div ref={chartRef} className="relative" style={{ touchAction: 'none' }}
+            onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); setScrub(toIdx(e)); }}
+            onPointerMove={(e) => { if (e.buttons) setScrub(toIdx(e)); }}
+            onPointerUp={() => setTimeout(() => setScrub(null), 120)}
+            onPointerCancel={() => setScrub(null)}>
+            <svg width="100%" height={VH} viewBox={`0 0 ${VW} ${VH}`} preserveAspectRatio="none" style={{ display: 'block' }}>
+              <defs><linearGradient id="wTrendGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={CORAL} stopOpacity="0.3" /><stop offset="100%" stopColor={CORAL} stopOpacity="0" /></linearGradient></defs>
+              <path d={areaD} fill="url(#wTrendGrad)" />
+              <path d={lineD} fill="none" stroke={W_COLOR} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+              {scrub != null && <>
+                <line x1={cx(scrub)} x2={cx(scrub)} y1={0} y2={VH} stroke="#E0D7CC" strokeWidth={1} vectorEffect="non-scaling-stroke" />
+                <circle cx={cx(scrub)} cy={cy(WEIGHTS[scrub])} r={5} fill={CORAL} />
+              </>}
+            </svg>
+            {scrub != null && (
+              <div className="absolute bg-white rounded-full px-2 py-[3px] pointer-events-none whitespace-nowrap text-[10.5px] font-bold" style={{ color: INK, boxShadow: SHADOW, left: `${Math.min(Math.max((cx(scrub) / VW) * 100, 14), 86)}%`, top: cy(WEIGHTS[scrub]) - 12, transform: 'translate(-50%, -100%)' }}>
+                {WEIGHTS[scrub].toFixed(1)} {unit} · {W_MONTHS[scrub]}
+              </div>
+            )}
+          </div>
+          <div className="flex justify-between mt-1.5 px-0.5">
+            {W_MONTHS.map((m, i) => <span key={m} className={`text-[10px] ${i === W_MONTHS.length - 1 ? 'font-bold' : 'font-semibold'}`} style={{ color: i === W_MONTHS.length - 1 ? INK : TERT }}>{m}</span>)}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
 const PetProfile = ({ embedded = false, onBack, pet }) => {
   const [data, setData] = useState(() => ({
     ...INIT,
@@ -389,7 +469,7 @@ const PetProfile = ({ embedded = false, onBack, pet }) => {
               {tab === 'Health' && (
                 <>
                   <SectionLabel action="Log" onAction={() => setSheet({ k: 'field', title: 'Weight', val: data.weight, suffix: data.weightUnit, save: (v) => setField('weight', v) })}>Weight</SectionLabel>
-                  <Card><div className="flex items-center gap-3.5 px-4 py-3.5"><span className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: TINT }}><Scale size={18} color={CORAL} strokeWidth={2} /></span><div className="flex-1"><div className="flex items-baseline gap-1"><span className="text-[22px] font-extrabold" style={{ color: INK }}>{data.weight}</span><span className="text-[13px] font-bold" style={{ color: TERT }}>{data.weightUnit}</span></div><div className="text-[11.5px] mt-0.5 font-semibold" style={{ color: GREEN }}>Healthy range</div></div></div></Card>
+                  <WeightSection weight={data.weight} unit={data.weightUnit} />
 
                   <SectionLabel action="Add" onAction={() => openItem('vaccines')}>Vaccinations</SectionLabel>
                   <Card>

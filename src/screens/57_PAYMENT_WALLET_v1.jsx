@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { area as d3area, line as d3line, curveCatmullRom } from 'd3-shape';
 import { ChevronLeft, ChevronRight, Plus, TrendingUp, Ticket, Gift, RefreshCw, Receipt, Users, Scissors, Syringe } from 'lucide-react';
 
 /**
@@ -93,8 +94,8 @@ const OdoDigit = ({ digit }) => {
   );
 };
 
-const Odometer = ({ value }) => (
-  <span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em] tabular-nums" style={{ display: 'inline-flex', overflow: 'hidden', height: '1em' }}>
+const Odometer = ({ value, className = 'text-[38px] font-extrabold text-white leading-none tracking-[-0.02em] tabular-nums' }) => (
+  <span className={className} style={{ display: 'inline-flex', overflow: 'hidden', height: '1em' }}>
     {String(value).split('').map((ch, i) => (
       /\d/.test(ch)
         ? <OdoDigit key={`d${i}`} digit={Number(ch)} />
@@ -102,6 +103,116 @@ const Odometer = ({ value }) => (
     ))}
   </span>
 );
+
+/* ── Spend analytics: gradient area chart with scrub, plus category bars ── */
+const SPEND_MONTHS = ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'];
+const SPEND = [168, 192, 175, 228, 243, 214];
+const SPEND_CATS = [['Walks', 96, ICON_COLOR], ['Vet', 75, '#B07A3A'], ['Food', 43, GREEN]];
+
+const SpendCard = () => {
+  const W = 294, H = 110, PX = 7, PT = 12, PB = 10;
+  const [drawn, setDrawn] = useState(false);
+  const [barsIn, setBarsIn] = useState(false);
+  const [scrub, setScrub] = useState(null);
+  const boxRef = useRef(null);
+  useEffect(() => {
+    const r = requestAnimationFrame(() => requestAnimationFrame(() => { setDrawn(true); setBarsIn(true); }));
+    return () => cancelAnimationFrame(r);
+  }, []);
+  const { areaD, lineD, pts } = useMemo(() => {
+    const lo = Math.min(...SPEND) * 0.88, hi = Math.max(...SPEND) * 1.04;
+    const xs = (i) => PX + (i * (W - 2 * PX)) / (SPEND.length - 1);
+    const ys = (v) => PT + (1 - (v - lo) / (hi - lo)) * (H - PT - PB);
+    const data = SPEND.map((v, i) => [xs(i), ys(v)]);
+    return {
+      areaD: d3area().x((d) => d[0]).y0(H).y1((d) => d[1]).curve(curveCatmullRom.alpha(0.6))(data),
+      lineD: d3line().x((d) => d[0]).y((d) => d[1]).curve(curveCatmullRom.alpha(0.6))(data),
+      pts: data,
+    };
+  }, []);
+  const idx = scrub ?? SPEND.length - 1;
+  const onScrub = (e) => {
+    const r = boxRef.current?.getBoundingClientRect(); if (!r) return;
+    const i = Math.max(0, Math.min(SPEND.length - 1, Math.round(((e.clientX - r.left) / r.width) * (SPEND.length - 1))));
+    setScrub(i);
+  };
+  const maxCat = Math.max(...SPEND_CATS.map((c) => c[1]));
+  return (
+    <Card>
+      <div className="px-4 pt-4 pb-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: '#A8A29C' }}>Leo · {scrub != null ? SPEND_MONTHS[idx] : 'this month'}</div>
+            <div className="flex items-baseline gap-1 mt-1">
+              <span className="text-[13px] font-bold" style={{ color: TERT }}>CHF</span>
+              <Odometer value={String(SPEND[idx])} className="text-[26px] font-extrabold leading-none tracking-[-0.02em] tabular-nums text-[#111]" />
+            </div>
+          </div>
+          <span className="inline-flex items-center px-2 py-1 rounded-full text-[10.5px] font-bold" style={{ background: scrub != null ? PEACH : '#EAF7EF', color: scrub != null ? MUTED : GREEN, transition: 'all 0.2s' }}>
+            {scrub != null ? SPEND_MONTHS[idx] : '−12% vs Jan'}
+          </span>
+        </div>
+
+        {/* chart + scrub overlay */}
+        <div ref={boxRef} className="relative mt-2 select-none" style={{ touchAction: 'none' }}
+          onPointerDown={(e) => { e.currentTarget.setPointerCapture?.(e.pointerId); onScrub(e); }}
+          onPointerMove={(e) => { if (e.buttons || e.pointerType === 'touch') onScrub(e); }}
+          onPointerUp={() => setScrub(null)} onPointerCancel={() => setScrub(null)}>
+          <svg viewBox={'0 0 ' + W + ' ' + H} className="w-full block" style={{ height: 110 }}>
+            <defs>
+              <linearGradient id="spendFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={ICON_COLOR} stopOpacity="0.30" />
+                <stop offset="100%" stopColor={ICON_COLOR} stopOpacity="0" />
+              </linearGradient>
+              <clipPath id="spendReveal"><rect x="0" y="0" height={H} width={drawn ? W : 0} style={{ transition: 'width 0.7s cubic-bezier(0.22,1,0.36,1)' }} /></clipPath>
+            </defs>
+            <g clipPath="url(#spendReveal)">
+              <path d={areaD} fill="url(#spendFill)" />
+              <path d={lineD} fill="none" stroke={ICON_COLOR} strokeWidth="2.5" strokeLinecap="round" />
+            </g>
+            {/* scrub hairline + dot */}
+            {scrub != null && (
+              <g>
+                <line x1={pts[idx][0]} x2={pts[idx][0]} y1={6} y2={H - 2} stroke="#E0D7CC" strokeWidth="1" />
+                <circle cx={pts[idx][0]} cy={pts[idx][1]} r="5" fill={ICON_COLOR} stroke="#fff" strokeWidth="2" />
+              </g>
+            )}
+            {/* current month pulsing dot */}
+            {scrub == null && drawn && (
+              <g>
+                <circle cx={pts[5][0]} cy={pts[5][1]} r="5" fill={ICON_COLOR} opacity="0.2">
+                  <animate attributeName="r" values="5;11;5" dur="2.2s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.25;0;0.25" dur="2.2s" repeatCount="indefinite" />
+                </circle>
+                <circle cx={pts[5][0]} cy={pts[5][1]} r="4" fill="#fff" stroke={ICON_COLOR} strokeWidth="2.5" />
+              </g>
+            )}
+          </svg>
+          <div className="flex justify-between mt-1 px-0.5">
+            {SPEND_MONTHS.map((m, i) => (
+              <span key={m} className="text-[10px] font-semibold" style={{ color: i === idx ? INK : '#C4BBB0', fontWeight: i === idx ? 800 : 600, transition: 'color 0.2s' }}>{m}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px my-3.5" style={{ background: DIVIDER }} />
+
+        {/* category bars, staggered growth */}
+        <div className="flex flex-col gap-2.5">
+          {SPEND_CATS.map(([label, val, color], i) => (
+            <div key={label} className="flex items-center gap-3">
+              <span className="w-11 text-[12px] font-semibold shrink-0" style={{ color: MUTED }}>{label}</span>
+              <span className="flex-1 h-[6px] rounded-full overflow-hidden" style={{ background: '#F4EFE9' }}>
+                <span className="block h-full rounded-full" style={{ width: barsIn ? (val / maxCat) * 100 + '%' : '0%', background: color, transition: 'width 0.6s cubic-bezier(0.22,1,0.36,1)', transitionDelay: 150 + i * 90 + 'ms' }} />
+              </span>
+              <span className="w-14 text-right text-[12px] font-bold tabular-nums shrink-0" style={{ color: INK }}>CHF {val}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
+};
 
 const PaymentWalletScreen = () => {
   const [defaultId, setDefaultId] = useState('c1');
@@ -174,6 +285,10 @@ const PaymentWalletScreen = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Spend analytics */}
+              <SectionHead>Spend</SectionHead>
+              <SpendCard />
 
               {/* Your cards */}
               <SectionHead>Your cards</SectionHead>
