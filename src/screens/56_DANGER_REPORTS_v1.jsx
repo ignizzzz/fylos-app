@@ -714,16 +714,16 @@ export default function DangerReportsScreen() {
         <div className="flex justify-between items-center w-full pointer-events-auto">
           <button
             onClick={() => window.history.back()}
-            className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
-            style={{ background: '#F3EFEB' }}
+            className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-white active:scale-[0.97] transition-all"
+            style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}
           >
             <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
           </button>
-          <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Safety</h2>
+          <h2 className="text-[17px] font-bold text-[#111] tracking-tight">Safety</h2>
           <button
             onClick={() => setHistoryOpen(true)}
-            className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all"
-            style={{ background: '#F3EFEB' }}
+            className="relative w-[40px] h-[40px] flex items-center justify-center rounded-full bg-white active:scale-[0.97] transition-all"
+            style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}
             aria-label="My activity"
           >
             <History size={18} color="#111" strokeWidth={1.75} />
@@ -755,8 +755,9 @@ export default function DangerReportsScreen() {
       >
         <div className="flex bg-white/80 backdrop-blur-xl p-1.5 rounded-full border border-black/[0.04] relative">
           <div
-            className="absolute top-1.5 bottom-1.5 bg-[#111] rounded-full transition-all duration-[300ms]"
+            className="absolute top-1.5 bottom-1.5 rounded-full transition-all duration-[300ms]" 
             style={{
+              background: '#FBE7DD',
               width: `calc(50% - 12px)`,
               left: `calc(${viewMode === 'map' ? 0 : 50}% + 6px)`,
               transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)',
@@ -768,7 +769,7 @@ export default function DangerReportsScreen() {
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold capitalize transition-colors duration-[200ms] ${active ? 'text-white' : 'text-[#A09A94]'}`}
+                className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold capitalize transition-colors duration-[200ms] ${active ? 'text-[#E85D2A]' : 'text-[#A09A94]'}`}
               >
                 {mode}
               </button>
@@ -793,7 +794,7 @@ export default function DangerReportsScreen() {
                 key={chip.id}
                 onClick={() => setActiveFilter(chip.id)}
                 className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold transition-all backdrop-blur-md ${
-                  active ? 'bg-[#111] text-white' : 'bg-white/85 text-[#6E6058] border border-[#EDE8E2]'
+                  active ? 'bg-[#FFF3EC] text-[#E85D2A] border border-[#E85D2A]' : 'bg-white/85 text-[#6E6058] border border-[#EDE8E2]'
                 }`}
               >
                 {chip.label}
@@ -968,7 +969,7 @@ function MapView({
               <button
                 onClick={resetFilter}
                 className="mt-2 px-3 h-[28px] rounded-full text-[11px] font-semibold text-white"
-                style={{ background: '#111' }}
+                style={{ background: '#E85D2A' }}
               >
                 Show all
               </button>
@@ -995,8 +996,8 @@ function MapView({
                   onClick={() => setRadius(opt.value)}
                   className="h-[26px] px-2.5 rounded-full text-[11px] font-semibold transition-all"
                   style={{
-                    background: active ? '#111' : 'transparent',
-                    color: active ? '#FFF' : '#6E6058',
+                    background: active ? '#FBE7DD' : 'transparent',
+                    color: active ? '#E85D2A' : '#6E6058',
                   }}
                 >
                   {opt.label}
@@ -1103,7 +1104,7 @@ function MapPreviewPill({ report, onClose, onOpenDetails, onViewInFeed }) {
           <button
             onClick={onOpenDetails}
             className="flex-1 h-[36px] rounded-full text-[12px] font-semibold text-white flex items-center justify-center gap-1"
-            style={{ background: '#111' }}
+            style={{ background: '#E85D2A' }}
           >
             View details
             <ChevronRight size={13} strokeWidth={2.5} />
@@ -1224,7 +1225,7 @@ function EmptyState({ onReport, filtered, filterLabel, radiusLabel = '1km', onCl
       <button
         onClick={onReport}
         className="mt-3 px-5 h-[40px] rounded-full text-[13px] font-semibold text-[#FFF] active:scale-[0.97] transition-all"
-        style={{ background: '#111' }}
+        style={{ background: '#E85D2A', boxShadow: '0 6px 16px rgba(232,93,42,0.28)' }}
       >
         Report a danger
       </button>
@@ -1321,7 +1322,7 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
           </div>
           <button
             className="h-[36px] px-3 rounded-full flex items-center gap-1 text-[12px] font-medium text-[#FFF]"
-            style={{ background: '#111' }}
+            style={{ background: '#E85D2A' }}
           >
             <Navigation size={13} strokeWidth={2} />
             Directions
@@ -1477,8 +1478,8 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
               style={{
                 left: `calc(${(tabIndex * 100) / 3}% + 4px)`,
                 width: `calc(${100 / 3}% - 8px)`,
-                background: '#111',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                background: '#FBE7DD',
+                boxShadow: '0 2px 8px rgba(232,93,42,0.12)',
                 transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)',
               }}
             />
@@ -1490,15 +1491,15 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className="relative z-10 flex items-center justify-center gap-1 text-[11.5px] font-semibold transition-colors duration-200 px-1"
-                  style={{ color: active ? '#FFF' : '#6E6058' }}
+                  style={{ color: active ? '#E85D2A' : '#6E6058' }}
                 >
                   <Icon size={12} strokeWidth={2.25} />
                   <span>{t.label}</span>
                   <span
                     className="text-[9.5px] font-bold px-1.5 py-px rounded-full"
                     style={{
-                      background: active ? 'rgba(255,255,255,0.25)' : '#E6E1DA',
-                      color: active ? '#FFF' : '#6E6058',
+                      background: active ? 'rgba(232,93,42,0.16)' : '#E6E1DA',
+                      color: active ? '#E85D2A' : '#6E6058',
                     }}
                   >
                     {t.count}
@@ -1818,9 +1819,9 @@ function ReportFormPopup({
                       onClick={() => setSeverity(s)}
                       className="flex-1 h-[34px] rounded-full text-[12px] font-medium tracking-tight"
                       style={{
-                        background: active ? '#111' : '#FFFFFF',
-                        color: active ? '#FFF' : '#6E6058',
-                        border: '1px solid #EDE8E2',
+                        background: active ? '#FFF3EC' : '#FFFFFF',
+                        color: active ? '#E85D2A' : '#6E6058',
+                        border: active ? '1px solid #E85D2A' : '1px solid #EDE8E2',
                       }}
                     >
                       {s}
