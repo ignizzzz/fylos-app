@@ -5837,9 +5837,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                     const isLive = !!(MOCK_ACTIVE_SERVICE?.petIds?.includes(pet.id));
                     const pending = pendingFor(pet.id);
                     const top = pending[0];
-                    const C = 2 * Math.PI * 34;
-                    const arc = isLive || pending.length === 0 ? C : Math.min(0.75, pending.length * 0.25) * C;
-                    const ringColor = isLive ? '#3F8D63' : pending.length ? '#E85D2A' : '#3F8D63';
+                    const C = 2 * Math.PI * 29;
                     const on = deckIdx === i;
                     return (
                       <button
@@ -5848,56 +5846,47 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                           const img = e.currentTarget.querySelector('img');
                           if (img && onOpenPet) onOpenPet(pet.id, img.getBoundingClientRect(), pet.avatar);
                         }}
-                        className="relative shrink-0 text-left bg-white rounded-[24px] px-4 pt-4 pb-3.5 transition-all duration-300"
-                        style={{ width: CARD_W, scrollSnapAlign: 'start', transform: on ? 'scale(1)' : 'scale(0.95)', opacity: on ? 1 : 0.82, boxShadow: '0 2px 4px rgba(60,30,15,0.04), 0 10px 26px rgba(60,30,15,0.08)', transitionTimingFunction: 'cubic-bezier(0.22,1,0.36,1)' }}
+                        className="relative shrink-0 text-left bg-white rounded-[20px] px-4 py-3.5 flex items-center gap-3.5 transition-all duration-300"
+                        style={{ width: CARD_W, scrollSnapAlign: 'start', transform: on ? 'scale(1)' : 'scale(0.97)', opacity: on ? 1 : 0.75, boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)', transitionTimingFunction: 'cubic-bezier(0.22,1,0.36,1)' }}
                       >
-                        <span className="absolute top-4 right-4 text-[10px] font-extrabold" style={{ color: '#E5DCCF', fontFamily: '"Nunito", sans-serif', letterSpacing: '0.04em' }}>fylos</span>
-                        <div className="flex items-center gap-3.5">
-                          <span className="relative shrink-0" style={{ width: 76, height: 76 }}>
-                            <svg width="76" height="76" viewBox="0 0 76 76" className="absolute inset-0" style={{ transform: 'rotate(-90deg)' }}>
-                              <circle cx="38" cy="38" r="34" fill="none" stroke="#F1EDE8" strokeWidth="3.5" />
-                              <circle cx="38" cy="38" r="34" fill="none" stroke={ringColor} strokeWidth="3.5" strokeLinecap="round"
-                                strokeDasharray={`${arc} ${C}`} style={{ transition: 'stroke-dasharray 0.55s cubic-bezier(0.22,1,0.36,1), stroke 0.4s ease' }} />
+                        <span className="relative shrink-0" style={{ width: 60, height: 60 }}>
+                          {(isLive || pending.length > 0) && (
+                            <svg width="60" height="60" viewBox="0 0 60 60" className="absolute inset-0" style={{ transform: 'rotate(-90deg)' }}>
+                              <circle cx="30" cy="30" r="29" fill="none" stroke={isLive ? '#3F8D63' : '#E85D2A'} strokeWidth="2.5" strokeLinecap="round"
+                                strokeDasharray={isLive ? `${C} 0` : `${Math.min(0.72, pending.length * 0.24) * C} ${C}`}
+                                style={{ transition: 'stroke-dasharray 0.55s cubic-bezier(0.22,1,0.36,1), stroke 0.4s ease' }} />
                             </svg>
-                            <img src={pet.avatar} alt={pet.name} className="absolute rounded-full object-cover" style={{ inset: 7, width: 62, height: 62 }} />
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-[19px] font-extrabold text-[#111] leading-tight truncate">{pet.name}</div>
-                            <div className="text-[11.5px] text-[#9B9B9F] mt-0.5 truncate">{pet.breed} · {pet.age} yrs</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 mt-3 min-h-[26px]">
+                          )}
+                          <img src={pet.avatar} alt={pet.name} className="absolute rounded-full object-cover" style={{ inset: 5, width: 50, height: 50 }} />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[17px] font-extrabold text-[#111] leading-tight truncate">{pet.name}</div>
                           {isLive ? (
-                            <>
-                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#3F8D63', animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
-                              <span className="flex-1 text-[12.5px] font-semibold truncate" style={{ color: '#3F8D63' }}>Live · {MOCK_ACTIVE_SERVICE.provider.name.split(' ')[0]} is with {pet.name}</span>
-                            </>
+                            <div className="flex items-center gap-1.5 mt-[3px] min-w-0">
+                              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#3F8D63', animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
+                              <span className="text-[11.5px] font-semibold truncate" style={{ color: '#3F8D63' }}>Live · {MOCK_ACTIVE_SERVICE.provider.name.split(' ')[0]} is with {pet.name}</span>
+                            </div>
                           ) : top ? (
-                            <>
-                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#E85D2A' }} />
-                              <span className="flex-1 text-[12.5px] font-semibold text-[#111] truncate">{top.title}</span>
-                              <span className="text-[11px] font-bold shrink-0" style={{ color: '#D14E1F' }}>{top.time}</span>
-                              <span
-                                role="button"
-                                onClick={(e) => { e.stopPropagation(); handleCompleteReminder(top.id); }}
-                                className="w-[26px] h-[26px] rounded-full shrink-0 flex items-center justify-center active:scale-90 transition-transform"
-                                style={{ border: '1.6px solid #E0D7CC' }}
-                                aria-label={`Mark ${top.title} done`}
-                              />
-                            </>
+                            <div className="text-[11.5px] font-semibold mt-[3px] truncate" style={{ color: '#D14E1F' }}>{top.title} · {top.time}</div>
                           ) : (
-                            <>
-                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: '#3F8D63' }} />
-                              <span className="text-[12.5px] font-semibold" style={{ color: '#3F8D63' }}>All good today</span>
-                            </>
+                            <div className="text-[11.5px] text-[#9B9B9F] mt-[3px] truncate">{pet.breed} · {pet.age} yrs</div>
                           )}
                         </div>
+                        {top && !isLive && (
+                          <span
+                            role="button"
+                            onClick={(e) => { e.stopPropagation(); handleCompleteReminder(top.id); }}
+                            className="w-[26px] h-[26px] rounded-full shrink-0 flex items-center justify-center active:scale-90 transition-transform"
+                            style={{ border: '1.6px solid #E0D7CC' }}
+                            aria-label={`Mark ${top.title} done`}
+                          />
+                        )}
                       </button>
                     );
                   })}
                   {/* add-pet card */}
-                  <button onClick={() => onNavigate('pets')} className="shrink-0 rounded-[24px] flex flex-col items-center justify-center gap-2 transition-all duration-300" style={{ width: CARD_W, scrollSnapAlign: 'start', border: '1.6px dashed #DDD4C9', transform: deckIdx === deckPets.length ? 'scale(1)' : 'scale(0.95)', opacity: deckIdx === deckPets.length ? 1 : 0.75 }}>
-                    <span className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: '#FBE7DD' }}><Plus size={18} color="#E85D2A" strokeWidth={2.2} /></span>
+                  <button onClick={() => onNavigate('pets')} className="shrink-0 rounded-[20px] flex items-center justify-center gap-2.5 transition-all duration-300" style={{ width: CARD_W, scrollSnapAlign: 'start', border: '1.6px dashed #DDD4C9', transform: deckIdx === deckPets.length ? 'scale(1)' : 'scale(0.95)', opacity: deckIdx === deckPets.length ? 1 : 0.75 }}>
+                    <span className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#FBE7DD' }}><Plus size={16} color="#E85D2A" strokeWidth={2.2} /></span>
                     <span className="text-[12.5px] font-bold text-[#6E6058]">Add a pet</span>
                   </button>
                 </div>

@@ -308,7 +308,7 @@ const AddPet = () => {
   return (<>{styleBlock}{frame(
     <div className="absolute inset-0" style={{ background: CREAM }}>
       {/* Scrolling content — runs behind header & footer */}
-      <div className="absolute inset-0 overflow-y-auto overflow-x-hidden px-6" style={{ scrollbarWidth: 'none', paddingTop: 208, paddingBottom: 104 }}>
+      <div className="absolute inset-0 overflow-y-auto overflow-x-hidden px-6" style={{ scrollbarWidth: 'none', paddingTop: 118, paddingBottom: 104 }}>
         <div key={step} className="ap-step">
           <h1 className="text-[26px] font-extrabold text-[#111] tracking-[-0.03em] leading-[1.1]">{headline}</h1>
           <p className="text-[14px] mt-2 leading-[1.45]" style={{ color: TERT }}>{cfg.sub}</p>
@@ -447,9 +447,6 @@ const AddPet = () => {
           <button onClick={back} className="w-9 h-9 rounded-full flex items-center justify-center active:scale-95 transition-transform shrink-0 bg-white" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}><ChevronLeft size={18} color={INK} strokeWidth={2.2} /></button>
           <div className="flex-1 flex gap-1">{STEPS.map((_, i) => (<div key={i} className="flex-1 h-[5px] rounded-full overflow-hidden" style={{ background: '#EAE3DB' }}><div className="h-full rounded-full transition-all duration-[400ms]" style={{ width: i <= step ? '100%' : '0%', background: CORAL }} /></div>))}</div>
           {cfg.skip ? <button onClick={next} className="text-[13px] font-bold shrink-0 w-10 text-right" style={{ color: TERT }}>Skip</button> : <span className="shrink-0 w-10 text-right text-[12px] font-bold" style={{ color: TERT }}>{step + 1}/{TOTAL}</span>}
-        </div>
-        <div className="px-5 pt-3 pointer-events-auto">
-          <PetCard d={data} reached={step >= 2} />
         </div>
       </div>
 
