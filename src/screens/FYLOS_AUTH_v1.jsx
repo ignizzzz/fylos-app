@@ -223,7 +223,8 @@ export default function AuthShell({
                 width: 36,
                 height: 36,
                 borderRadius: '50%',
-                background: TAuth.coralSoft,
+                background: '#FFFFFF',
+                boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
@@ -231,7 +232,7 @@ export default function AuthShell({
                 justifyContent: 'center',
               }}
             >
-              <ChevronLeft size={18} color={TAuth.coralDark} />
+              <ChevronLeft size={18} color="#111111" strokeWidth={2.2} />
             </button>
           ) : (
             <div style={{ width: 36 }} />
@@ -241,18 +242,22 @@ export default function AuthShell({
               onClick={() => setHelpOpen(true)}
               aria-label="Help"
               style={{
-                background: 'transparent',
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
+                background: '#FFFFFF',
+                boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)',
                 border: 'none',
                 cursor: 'pointer',
-                padding: 6,
+                padding: 0,
                 margin: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: TAuth.coralDark,
+                color: '#6E6058',
               }}
             >
-              <HelpCircle size={22} strokeWidth={2} />
+              <HelpCircle size={17} strokeWidth={2} />
             </button>
           ) : (
             <div style={{ width: 36 }} />

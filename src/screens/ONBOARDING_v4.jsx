@@ -1609,7 +1609,7 @@ export default function OnboardingV4() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '16px 16px 8px',
+          padding: '52px 20px 12px',
           position: 'relative',
           zIndex: 5,
         }}
@@ -1621,7 +1621,8 @@ export default function OnboardingV4() {
               width: 36,
               height: 36,
               borderRadius: '50%',
-              background: T.coralSoft,
+              background: '#FFFFFF',
+              boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)',
               border: 'none',
               cursor: 'pointer',
               display: 'flex',
@@ -1630,7 +1631,7 @@ export default function OnboardingV4() {
             }}
             aria-label="Back"
           >
-            <ChevronLeft size={18} color={T.coralDark} />
+            <ChevronLeft size={18} color="#111111" strokeWidth={2.2} />
           </button>
         ) : (
           <div style={{ width: 36 }} />
@@ -1641,9 +1642,9 @@ export default function OnboardingV4() {
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              fontSize: 13.5,
-              fontWeight: 500,
-              color: T.textTertiary,
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#9B9B9F',
               padding: '8px 4px',
             }}
           >
