@@ -31,8 +31,14 @@ const ROLES = [
 ];
 const COMFORT = ['Small dogs', 'Medium dogs', 'Large dogs', 'Puppies', 'Reactive dogs', 'Cats'];
 const EXP = ['< 1 yr', '1–3 yrs', '3–5 yrs', '5+ yrs'];
-const WEEK = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-const DAYPARTS = ['Mornings', 'Afternoons', 'Evenings'];
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAYPARTS = ['Morning', 'Afternoon', 'Evening'];
+const FEE = 0.15; // fylos commission — pros keep 85%
+const SCHED_PRESETS = [
+  { label: 'Weekdays', make: () => WEEKDAYS.map((_, i) => i < 5 ? [true, true, false] : [false, false, false]) },
+  { label: 'Evenings & weekends', make: () => WEEKDAYS.map((_, i) => i < 5 ? [false, false, true] : [true, true, true]) },
+  { label: 'Anytime', make: () => WEEKDAYS.map(() => [true, true, true]) },
+];
 const DEFAULT_SERVICES = {
   walking: [{ n: '30 min walk', p: '14', d: '' }, { n: '60 min walk', p: '22', d: '' }, { n: '90 min walk', p: '33', d: '' }],
   sitting: [{ n: 'Day sitting', p: '25', d: '' }, { n: 'Overnight', p: '38', d: '' }],
@@ -83,7 +89,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
     roles: ['walking'], photo: true, name: 'Alex Mueller', area: 'Zürich · Seefeld', bio: '',
     exp: 1, ownDog: true, comfort: ['Small dogs', 'Medium dogs'],
     services: JSON.parse(JSON.stringify(DEFAULT_SERVICES)),
-    days: [true, true, true, true, true, false, false], parts: ['Mornings', 'Afternoons'],
+    sched: WEEKDAYS.map((_, i) => i < 5 ? [true, true, false] : [false, false, false]),
     gps: true, photos: true, policy: '24 h',
     idDone: false, selfieDone: false, refs: '',
     iban: '',
@@ -101,7 +107,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
     cfg.id === 'role' ? d.roles.length > 0 :
     cfg.id === 'about' ? !!(d.name.trim() && d.area.trim() && d.bio.trim().length >= 20) :
     cfg.id === 'services' ? d.roles.every((r) => d.services[r].every((s) => parseFloat(s.p) > 0)) :
-    cfg.id === 'availability' ? d.days.some(Boolean) && d.parts.length > 0 :
+    cfg.id === 'availability' ? d.sched.some((row) => row.some(Boolean)) :
     cfg.id === 'verify' ? d.idDone && d.selfieDone :
     cfg.id === 'payout' ? d.iban.trim().length >= 8 : true;
 
@@ -286,8 +292,11 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                           <span className="text-[13px] font-bold" style={{ color: TERT }}>CHF</span>
                           <input value={s.p} onChange={(e) => setSvc(role, i, 'p', e.target.value.replace(/[^\d.]/g, ''))} inputMode="decimal" className="w-14 bg-transparent outline-none text-right text-[17px] font-extrabold" style={{ color: CORAL }} />
                         </div>
+                        <div className="text-right text-[10.5px] font-semibold mt-0.5" style={{ color: parseFloat(s.p) > 0 ? GREEN : TERT }}>
+                          {parseFloat(s.p) > 0 ? `You receive CHF ${(parseFloat(s.p) * (1 - FEE)).toFixed(2)}` : 'Set a price'}
+                        </div>
                         <input value={s.d} onChange={(e) => setSvc(role, i, 'd', e.target.value)} placeholder="What’s included? (optional — owners see this)"
-                          className="w-full mt-2 pt-2 bg-transparent outline-none text-[12.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ borderTop: '1px solid ' + LINE }} />
+                          className="w-full mt-1.5 pt-2 bg-transparent outline-none text-[12.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ borderTop: '1px solid ' + LINE }} />
                       </div>
                     ))}
                   </div>
@@ -298,18 +307,37 @@ const ProRegistration = ({ embedded = false, onExit }) => {
           )}
 
           {cfg.id === 'availability' && (
-            <div className="mt-7 flex flex-col gap-6">
-              <div>
-                <Label>Days</Label>
-                <div className="flex justify-between">{WEEK.map((w, i) => { const on = d.days[i]; return (
-                  <button key={i} onClick={() => set('days', d.days.map((x, j) => j === i ? !x : x))} className="w-[42px] h-[42px] rounded-full text-[13px] font-bold active:scale-90 transition-all" style={{ background: on ? CORAL : '#fff', color: on ? '#fff' : MUTED, boxShadow: on ? '0 4px 12px rgba(232,93,42,0.25)' : SHADOW }}>{w}</button>
-                ); })}</div>
+            <div className="mt-6">
+              {/* quick presets */}
+              <div className="flex gap-2 mb-4">
+                {SCHED_PRESETS.map((p) => {
+                  const on = JSON.stringify(d.sched) === JSON.stringify(p.make());
+                  return <button key={p.label} onClick={() => set('sched', p.make())} className="px-3 h-[34px] rounded-full text-[12px] font-bold active:scale-95 transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.5px ${CORAL}` : SHADOW }}>{p.label}</button>;
+                })}
               </div>
-              <div>
-                <Label>Time of day</Label>
-                <div className="flex gap-2">{DAYPARTS.map((t) => { const on = d.parts.includes(t); return <button key={t} onClick={() => toggleIn('parts', t)} className="flex-1 h-[44px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{t}</button>; })}</div>
+              {/* weekly grid — every day × daypart is its own switch */}
+              <div className="bg-white rounded-[18px] p-3" style={{ boxShadow: SHADOW }}>
+                <div className="flex items-center gap-2 pb-2" style={{ borderBottom: '1px solid ' + LINE }}>
+                  <span className="w-[44px]" />
+                  {DAYPARTS.map((p) => <span key={p} className="flex-1 text-center text-[9.5px] font-bold uppercase tracking-[0.06em]" style={{ color: TERT }}>{p}</span>)}
+                </div>
+                {WEEKDAYS.map((w, di) => (
+                  <div key={w} className="flex items-center gap-2 py-[5px]">
+                    <span className="w-[44px] text-[12.5px] font-bold" style={{ color: d.sched[di].some(Boolean) ? INK : '#C4BBB0' }}>{w}</span>
+                    {DAYPARTS.map((_, pi) => {
+                      const on = d.sched[di][pi];
+                      return (
+                        <button key={pi} onClick={() => set('sched', d.sched.map((row, i) => i === di ? row.map((c, j) => j === pi ? !c : c) : row))}
+                          className="flex-1 h-[34px] rounded-[10px] flex items-center justify-center transition-all active:scale-95"
+                          style={{ background: on ? '#FFF3EC' : '#F7F4F0', boxShadow: on ? `inset 0 0 0 1.5px ${CORAL}` : 'none' }}>
+                          {on ? <Check size={13} color={CORAL} strokeWidth={3} /> : <span className="w-1 h-1 rounded-full" style={{ background: '#D8CFC4' }} />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
-              <p className="text-[11.5px] ml-1 -mt-1" style={{ color: TERT }}>You can block single days or holidays any time from your pro dashboard.</p>
+              <p className="text-[11.5px] ml-1 mt-3" style={{ color: TERT }}>Tap any slot — e.g. switch off Monday afternoons. Block single dates later from your dashboard.</p>
             </div>
           )}
 
