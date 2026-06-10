@@ -1493,7 +1493,7 @@ export default function OnboardingV4() {
 
   const next = () => {
     if (isLast) {
-      navigate('/create-account');
+      (() => { try { window.localStorage.setItem('fylos.intro', '1'); } catch (e) {} navigate('/create-account'); })();
       return;
     }
     setSlideIndex((i) => i + 1);
@@ -1805,7 +1805,7 @@ export default function OnboardingV4() {
           >
             Already have an account?{' '}
             <span
-              onClick={() => navigate('/sign-in')}
+              onClick={() => (() => { try { window.localStorage.setItem('fylos.intro', '1'); } catch (e) {} navigate('/sign-in'); })()}
               style={{ color: T.coral, fontWeight: 700, cursor: 'pointer' }}
             >
               Sign in

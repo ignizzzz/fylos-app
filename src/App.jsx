@@ -111,7 +111,7 @@ function App() {
     <Routes>
       {/* Default: the app, gated by auth. First run lands on sign-in so the
           journey is sign-in → welcome → first pet → dashboard, one thread. */}
-      <Route path="/" element={(() => { try { return window.localStorage.getItem('fylos.auth') === '1'; } catch (e) { return true; } })() ? <UnifiedApp /> : <Navigate to="/sign-in" replace />} />
+      <Route path="/" element={(() => { try { if (window.localStorage.getItem('fylos.auth') === '1') return <UnifiedApp />; return <Navigate to={window.localStorage.getItem('fylos.intro') === '1' ? '/sign-in' : '/onboarding-v4'} replace />; } catch (e) { return <UnifiedApp />; } })()} />
 
       {/* Standalone screens (for reference) */}
       <Route path="/app-shell" element={<AppShell />} />
