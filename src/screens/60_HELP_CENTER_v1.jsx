@@ -1,421 +1,84 @@
 import React, { useState } from 'react';
-import {
-  ChevronLeft,
-  Search,
-  MessageCircle,
-  Phone,
-  Mail,
-  ChevronDown,
-  ChevronRight,
-  AlertTriangle,
-  ArrowRight,
-  HelpCircle,
-  FileText,
-  Shield,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, CalendarClock, Wallet, PawPrint, ShieldCheck, MessageCircle } from 'lucide-react';
+const CORAL='#E85D2A';const CREAM='#F7F5F2';const PEACH='#F3EFEB';const TINT='#FBE7DD';const INK='#111111';const MUTED='#6E6058';const TERT='#9B9B9F';const GREEN='#3F8D63';const DANGER='#E5484D';const LINE='#F1EDE8';const SHADOW='0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)';
+const StatusBar=()=>(<div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{height:54}}><span style={{fontSize:15,fontWeight:600,color:INK}}>9:41</span><div className="flex items-center gap-1"><svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill={INK}/><rect x="4.5" y="4" width="3" height="8" rx="1" fill={INK}/><rect x="9" y="2" width="3" height="10" rx="1" fill={INK}/><rect x="13.5" y="0" width="3" height="12" rx="1" fill={INK}/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill={INK}/><path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke={INK} strokeWidth="1.5" strokeLinecap="round"/><path d="M2.2 4.4a8 8 0 0111.6 0" stroke={INK} strokeWidth="1.5" strokeLinecap="round"/></svg><svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke={INK} strokeOpacity="0.4"/><rect x="2" y="2" width="16" height="9" rx="2" fill={INK}/><path d="M23 4.5v4a2 2 0 000-4z" fill={INK} fillOpacity="0.5"/></svg></div></div>);
 
-/**
- * 60_HELP_CENTER_v1.jsx
- * Help center screen for the Fylos pet care app.
- * Search, quick actions, FAQ accordion, report issue, contact info.
- */
-
-const FAQ_ITEMS = [
-  {
-    q: 'How do I book a walker?',
-    a: 'Tap the "Book" tab, choose a service type, pick a date and time, then browse available providers in your area. Select a walker, review their profile, and confirm your booking.',
-  },
-  {
-    q: 'How do I cancel a booking?',
-    a: 'Go to your Bookings tab, select the booking you want to cancel, and tap "Cancel Booking." Cancellations made 24+ hours before the service receive a full refund.',
-  },
-  {
-    q: 'How does payment work?',
-    a: 'We accept Visa, Mastercard, Apple Pay, and Google Pay. Payment is processed after the service is completed. You can also use your Fylos Wallet balance.',
-  },
-  {
-    q: 'Is my data safe?',
-    a: 'Yes. We use end-to-end encryption for all personal data and comply with Swiss data protection regulations. You can manage your privacy settings at any time in Settings.',
-  },
-  {
-    q: 'How do I report an issue?',
-    a: 'Use the "Report an Issue" card below, or tap Chat / Call / Email in the quick actions above. Our support team typically responds within a few hours.',
-  },
+const SectionLabel=({children})=>(<div className="text-[10.5px] font-bold uppercase tracking-[0.12em] mb-2 ml-1.5 mt-6" style={{color:'#A8A29C'}}>{children}</div>);
+const Card=({children,className=''})=>(<div className={'bg-white rounded-[18px] overflow-hidden '+className} style={{boxShadow:SHADOW}}>{children}</div>);
+const Row=({icon:Icon,title,subtitle,rightValue,trailing,onClick,last,danger,iconBg,iconColor})=>(
+  <div className="relative">
+    <button onClick={onClick} className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left">
+      {Icon && <span className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center" style={{background:iconBg||(danger?'#FEE8E7':TINT)}}><Icon size={16} color={iconColor||(danger?DANGER:CORAL)} strokeWidth={2}/></span>}
+      <span className="flex-1 min-w-0"><span className="block text-[14px] font-semibold truncate leading-tight" style={{color:INK}}>{title}</span>{subtitle && <span className="block text-[11.5px] truncate mt-[3px] leading-tight" style={{color:TERT}}>{subtitle}</span>}</span>
+      {rightValue && <span className="text-[11.5px] font-semibold mr-1 shrink-0 px-2.5 py-[3px] rounded-full" style={{background:'#F4EFE9',color:'#9A8F84'}}>{rightValue}</span>}
+      {trailing!==undefined?trailing:<ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} className="shrink-0"/>}
+    </button>
+    {!last && <div className="absolute bottom-0 left-[62px] right-0 h-px" style={{background:LINE}}/>}
+  </div>);
+const Toggle=({value,onChange})=>(
+  <span onClick={(e)=>{e.stopPropagation();onChange(!value);}} className="shrink-0 cursor-pointer inline-block" style={{width:38,height:22,borderRadius:9999,backgroundColor:value?CORAL:'#E5E1DC',transition:'background-color 200ms ease',position:'relative'}}>
+    <span style={{position:'absolute',top:2,left:2,width:18,height:18,borderRadius:'50%',background:'white',transform:value?'translateX(16px)':'translateX(0)',transition:'transform 200ms cubic-bezier(0.34,1.56,0.64,1)',boxShadow:'0 1px 2px rgba(0,0,0,0.1)'}}/>
+  </span>);
+const Seg=({options,value,onChange})=>(<div className="flex gap-2">{options.map((o)=>{const on=value===o;return(<button key={o} onClick={()=>onChange(o)} className="flex-1 h-[42px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{background:on?'#FFF3EC':'#fff',color:on?CORAL:MUTED,boxShadow:on?'inset 0 0 0 1.6px '+CORAL:SHADOW}}>{o}</button>);})}</div>);
+const TOPICS=[[CalendarClock,'Bookings & cancellations','Reschedule, cancel, refunds'],[Wallet,'Payments & credits','Holds, payouts, fylos credits'],[PawPrint,'Pets & health records','Profiles, vaccines, documents'],[ShieldCheck,'Account & security','Sign in, 2FA, privacy']];
+const FAQ=[
+  ['When is my card charged?','Never upfront. We place a hold when a pro confirms and charge only after the service is done.'],
+  ['What if a walker cancels?','You get an instant notification, the hold is released and we suggest available pros nearby.'],
+  ['Are providers insured?','Yes. Every booking made through fylos is covered, and every pro passes ID checks.'],
 ];
-
-const QUICK_ACTIONS = [
-  { Icon: MessageCircle, label: 'Chat', sub: 'Usually instant', color: '#E85D2A', bg: 'rgba(232,93,42,0.08)' },
-  { Icon: Phone, label: 'Call', sub: 'Mon-Fri 9-18', color: '#007AFF', bg: 'rgba(0,122,255,0.08)' },
-  { Icon: Mail, label: 'Email', sub: '24h response', color: '#34C759', bg: 'rgba(52,199,89,0.08)' },
-];
-
 const HelpCenterScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [openFaq, setOpenFaq] = useState(null);
+  const [open,setOpen]=useState(null);
+  const [toast,setToast]=useState('');
+  const act=(m)=>{setToast(m);setTimeout(()=>setToast(''),1700);};
 
-  const filteredFaq = searchQuery.trim()
-    ? FAQ_ITEMS.filter(
-        (item) =>
-          item.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.a.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : FAQ_ITEMS;
-
+  const back=()=>{ if(window.history.length>1) window.history.back(); else window.location.href='/'; };
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#EDE8E2',
-        padding: 20,
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      }}
-    >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        .help-scroll::-webkit-scrollbar { display: none; }
-        .help-scroll { scrollbar-width: none; }
-        @keyframes helpFadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .help-fade { animation: helpFadeIn 200ms ease both; }
-      `}</style>
-
-      {/* iPhone Frame */}
-      <div
-        className="relative"
-        style={{
-          width: 390,
-          height: 844,
-          borderRadius: 50,
-          border: '8px solid #000',
-          overflow: 'hidden',
-          backgroundColor: '#F7F5F2',
-          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-          WebkitFontSmoothing: 'antialiased',
-        }}
-      >
-        {/* Notch */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 z-[100]"
-          style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }}
-        />
-
-        {/* Home indicator */}
-        <div
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
-          style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }}
-        />
-
-        {/* Status bar */}
-        <div
-          className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8"
-          style={{ height: 54 }}
-        >
-          <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
-          <div className="flex items-center gap-1">
-            <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#111"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111"/></svg>
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111"/><path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/><path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/></svg>
-            <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35"/><rect x="2" y="2" width="16" height="9" rx="2" fill="#111"/><path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4"/></svg>
-          </div>
-        </div>
-
-        {/* Scroll Content with canonical transparent header */}
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
-          <div
-            className="help-scroll absolute inset-0 overflow-y-auto pb-[140px]"
-            style={{ scrollbarWidth: 'none' }}
-          >
-            <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
-              <button
-                onClick={() => window.history.back()}
-                className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
-              >
-                <ChevronLeft size={18} strokeWidth={2.2} color="#111" />
-              </button>
-              <h1 className="text-[17px] font-semibold text-[#111]">Help</h1>
+    <>
+      <style>{'@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");'}</style>
+      <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',backgroundColor:'#EDE8E2',padding:20,fontFamily:'Inter, -apple-system, BlinkMacSystemFont, sans-serif'}}>
+        <div className="relative" style={{width:390,height:844,borderRadius:50,border:'8px solid #000',overflow:'hidden',backgroundColor:CREAM}}>
+          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{top:12,width:120,height:32,backgroundColor:'#000',borderRadius:9999}}/>
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{width:134,height:5,backgroundColor:'#000',borderRadius:9999}}/>
+          <StatusBar/>
+          <div className="absolute inset-0 overflow-y-auto" style={{background:CREAM,scrollbarWidth:'none'}}>
+            <div className="pt-14 pb-5 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none" style={{background:'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 56%, rgba(247,245,242,0) 100%)'}}>
+              <button onClick={back} className="absolute left-5 top-[52px] w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 transition-all pointer-events-auto" style={{boxShadow:'0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)'}}><ChevronLeft size={18} strokeWidth={2.2} color="#111"/></button>
+              <h1 className="text-[17px] font-bold" style={{color:INK}}>Help center</h1>
             </div>
-            <div className="px-5" style={{ display: 'flex', flexDirection: 'column', gap: 24, paddingBottom: 32 }}>
+            <div className="px-4 pb-12">
 
-              {/* Search Bar */}
-              <div
-                className="rounded-[16px]"
-                style={{
-                  background: '#F3EFEB',
-                  border: '1px solid #EDE8E2',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  height: 52,
-                  padding: '0 16px',
-                }}
-              >
-                <Search size={18} color="#A09A94" />
-                <input
-                  type="text"
-                  placeholder="Search for help..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  style={{
-                    flex: 1,
-                    border: 'none',
-                    outline: 'none',
-                    background: 'transparent',
-                    fontSize: 16,
-                    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                    color: '#111111',
-                  }}
-                />
+              <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px] mt-1" style={{boxShadow:SHADOW}}>
+                <Search size={16} color={TERT} strokeWidth={2}/>
+                <input placeholder="Search for help" className="flex-1 bg-transparent outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal"/>
               </div>
-
-              {/* Quick Actions */}
-              <div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: '#A09A94',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 12,
-                    paddingLeft: 4,
-                  }}
-                >
-                  Quick Actions
-                </span>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  {QUICK_ACTIONS.map((action) => (
-                    <div
-                      key={action.label}
-                      className="active:scale-[0.97] transition-all duration-[120ms]"
-                      style={{
-                        flex: 1,
-                        background: '#F3EFEB',
-                        border: '1px solid #EDE8E2',
-                        borderRadius: 20,
-                        padding: '18px 10px 14px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: 8,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <div
-                        className="rounded-full flex items-center justify-center"
-                        style={{
-                          width: 44,
-                          height: 44,
-                          background: action.bg,
-                        }}
-                      >
-                        <action.Icon size={20} color={action.color} />
-                      </div>
-                      <span
-                        style={{
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: '#111111',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {action.label}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 12,
-                          color: '#A09A94',
-                          textAlign: 'center',
-                        }}
-                      >
-                        {action.sub}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* FAQ Section */}
-              <div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: '#A09A94',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 12,
-                    paddingLeft: 4,
-                  }}
-                >
-                  Frequently Asked Questions
-                </span>
-                <div
-                  className="rounded-[20px]"
-                  style={{ padding: '2px 20px', background: '#F3EFEB', border: '1px solid #EDE8E2' }}
-                >
-                  {filteredFaq.length === 0 && (
-                    <div style={{ padding: '20px 0', textAlign: 'center' }}>
-                      <span style={{ fontSize: 14, color: '#A09A94' }}>No results found</span>
-                    </div>
-                  )}
-                  {filteredFaq.map((item, idx) => {
-                    const isOpen = openFaq === idx;
-                    const isLast = idx === filteredFaq.length - 1;
-
-                    return (
-                      <div key={idx}>
-                        {/* Question row */}
-                        <div
-                          onClick={() => setOpenFaq(isOpen ? null : idx)}
-                          className="active:scale-[0.97] transition-all duration-[120ms]"
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 10,
-                            padding: '15px 0',
-                            borderBottom: isLast && !isOpen ? 'none' : '1px dashed #CFCFD4',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <div
-                            className="rounded-full flex items-center justify-center"
-                            style={{
-                              width: 32,
-                              height: 32,
-                              background: isOpen ? 'rgba(232,93,42,0.08)' : '#EDE8E2',
-                              flexShrink: 0,
-                              transition: 'background 200ms ease',
-                            }}
-                          >
-                            <HelpCircle
-                              size={15}
-                              color={isOpen ? '#E85D2A' : '#A09A94'}
-                            />
-                          </div>
-                          <span
-                            style={{
-                              flex: 1,
-                              fontSize: 15,
-                              fontWeight: 600,
-                              color: '#111111',
-                              lineHeight: 1.4,
-                            }}
-                          >
-                            {item.q}
-                          </span>
-                          <ChevronDown
-                            size={18}
-                            color={isOpen ? '#E85D2A' : '#A09A94'}
-                            strokeWidth={2}
-                            style={{
-                              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                              transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                              flexShrink: 0,
-                            }}
-                          />
-                        </div>
-
-                        {/* Answer */}
-                        <div
-                          style={{
-                            overflow: 'hidden',
-                            maxHeight: isOpen ? 200 : 0,
-                            opacity: isOpen ? 1 : 0,
-                            transition: 'max-height 250ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease',
-                          }}
-                        >
-                          <div
-                            style={{
-                              paddingBottom: 14,
-                              paddingLeft: 42,
-                              fontSize: 13,
-                              lineHeight: 1.6,
-                              color: '#6E6058',
-                              borderBottom: isLast ? 'none' : '1px dashed #CFCFD4',
-                            }}
-                          >
-                            {item.a}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Report an Issue */}
-              <div>
-                <span
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: '#A09A94',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 12,
-                    paddingLeft: 4,
-                  }}
-                >
-                  Need more help?
-                </span>
-                <div
-                  className="rounded-[20px] p-5 active:scale-[0.97] transition-all duration-[120ms]"
-                  style={{
-                    background: '#F3EFEB',
-                    border: '1px solid #EDE8E2',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 14,
-                    cursor: 'pointer',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 14,
-                      background: 'rgba(232,93,42,0.08)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <AlertTriangle size={20} color="#E85D2A" />
+              <SectionLabel>Topics</SectionLabel>
+              <Card>{TOPICS.map(([I,t,s],i)=>(<Row key={t} icon={I} title={t} subtitle={s} onClick={()=>act(t)} last={i===TOPICS.length-1}/>))}</Card>
+              <SectionLabel>Popular questions</SectionLabel>
+              <Card>
+                {FAQ.map(([q,a],i)=>(
+                  <div key={q} className="relative">
+                    <button onClick={()=>setOpen(open===i?null:i)} className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-black/[0.02] text-left">
+                      <span className="flex-1 text-[14px] font-semibold leading-snug" style={{color:INK}}>{q}</span>
+                      <ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} className="shrink-0" style={{transform:open===i?'rotate(90deg)':'none',transition:'transform 0.18s'}}/>
+                    </button>
+                    {open===i && <div className="px-4 pb-3.5 -mt-1"><p className="text-[12.5px] leading-[1.5]" style={{color:MUTED}}>{a}</p></div>}
+                    {i<FAQ.length-1 && <div className="absolute bottom-0 left-4 right-0 h-px" style={{background:LINE}}/>}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 15, fontWeight: 600, color: '#111111', marginBottom: 2 }}>
-                      Report an Issue
-                    </div>
-                    <div style={{ fontSize: 13, color: '#6E6058' }}>
-                      Something not working? Let us know.
-                    </div>
-                  </div>
-                  <ArrowRight size={18} color="#A09A94" />
-                </div>
+                ))}
+              </Card>
+              <SectionLabel>Still stuck?</SectionLabel>
+              <div className="rounded-[18px] p-4 flex items-center gap-3.5" style={{background:TINT}}>
+                <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center shrink-0"><MessageCircle size={18} color={CORAL} strokeWidth={2}/></span>
+                <span className="flex-1 min-w-0"><span className="block text-[13.5px] font-bold" style={{color:INK}}>Message us</span><span className="block text-[11.5px] mt-0.5" style={{color:MUTED}}>A human replies, usually within an hour.</span></span>
+                <button onClick={()=>act('Opening chat with support')} className="shrink-0 px-3.5 h-9 rounded-full bg-white active:scale-95 transition-transform"><span className="text-[12.5px] font-bold" style={{color:CORAL}}>Chat</span></button>
               </div>
 
-              {/* Contact footer */}
-              <div style={{ textAlign: 'center', paddingTop: 4 }}>
-                <span style={{ fontSize: 13, color: '#6E6058' }}>Contact us at </span>
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#E85D2A' }}>
-                  support@fylos.com
-                </span>
-              </div>
             </div>
           </div>
+          {toast && <div className="absolute left-1/2 z-[200] px-4 py-2.5 rounded-full" style={{bottom:38,transform:'translateX(-50%)',background:INK}}><span className="text-[13px] font-semibold text-white whitespace-nowrap">{toast}</span></div>}
         </div>
       </div>
-    </div>
+    </>
   );
 };
-
 export default HelpCenterScreen;

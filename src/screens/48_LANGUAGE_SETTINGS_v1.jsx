@@ -1,335 +1,64 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Check, Search, Globe } from 'lucide-react';
+import { ChevronLeft, Check } from 'lucide-react';
+const CORAL='#E85D2A';const CREAM='#F7F5F2';const PEACH='#F3EFEB';const TINT='#FBE7DD';const INK='#111111';const MUTED='#6E6058';const TERT='#9B9B9F';const GREEN='#3F8D63';const DANGER='#E5484D';const LINE='#F1EDE8';const SHADOW='0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)';
+const StatusBar=()=>(<div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8" style={{height:54}}><span style={{fontSize:15,fontWeight:600,color:INK}}>9:41</span><div className="flex items-center gap-1"><svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill={INK}/><rect x="4.5" y="4" width="3" height="8" rx="1" fill={INK}/><rect x="9" y="2" width="3" height="10" rx="1" fill={INK}/><rect x="13.5" y="0" width="3" height="12" rx="1" fill={INK}/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill={INK}/><path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke={INK} strokeWidth="1.5" strokeLinecap="round"/><path d="M2.2 4.4a8 8 0 0111.6 0" stroke={INK} strokeWidth="1.5" strokeLinecap="round"/></svg><svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke={INK} strokeOpacity="0.4"/><rect x="2" y="2" width="16" height="9" rx="2" fill={INK}/><path d="M23 4.5v4a2 2 0 000-4z" fill={INK} fillOpacity="0.5"/></svg></div></div>);
 
-/**
- * 48_LANGUAGE_SETTINGS_v1.jsx
- * Language selection settings screen for the Fylos pet care app.
- * Warm minimal design system.
- */
-
-const LANGUAGES = [
-  { id: 'de', flag: '\u{1F1E9}\u{1F1EA}', name: 'German', nativeName: 'Deutsch' },
-  { id: 'en', flag: '\u{1F1EC}\u{1F1E7}', name: 'English', nativeName: 'English' },
-  { id: 'fr', flag: '\u{1F1EB}\u{1F1F7}', name: 'French', nativeName: 'Fran\u00e7ais' },
-  { id: 'it', flag: '\u{1F1EE}\u{1F1F9}', name: 'Italian', nativeName: 'Italiano' },
-  { id: 'el', flag: '\u{1F1EC}\u{1F1F7}', name: 'Greek', nativeName: '\u0395\u03BB\u03BB\u03B7\u03BD\u03B9\u03BA\u03AC' },
-];
-
+const SectionLabel=({children})=>(<div className="text-[10.5px] font-bold uppercase tracking-[0.12em] mb-2 ml-1.5 mt-6" style={{color:'#A8A29C'}}>{children}</div>);
+const Card=({children,className=''})=>(<div className={'bg-white rounded-[18px] overflow-hidden '+className} style={{boxShadow:SHADOW}}>{children}</div>);
+const Row=({icon:Icon,title,subtitle,rightValue,trailing,onClick,last,danger,iconBg,iconColor})=>(
+  <div className="relative">
+    <button onClick={onClick} className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left">
+      {Icon && <span className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center" style={{background:iconBg||(danger?'#FEE8E7':TINT)}}><Icon size={16} color={iconColor||(danger?DANGER:CORAL)} strokeWidth={2}/></span>}
+      <span className="flex-1 min-w-0"><span className="block text-[14px] font-semibold truncate leading-tight" style={{color:INK}}>{title}</span>{subtitle && <span className="block text-[11.5px] truncate mt-[3px] leading-tight" style={{color:TERT}}>{subtitle}</span>}</span>
+      {rightValue && <span className="text-[11.5px] font-semibold mr-1 shrink-0 px-2.5 py-[3px] rounded-full" style={{background:'#F4EFE9',color:'#9A8F84'}}>{rightValue}</span>}
+      {trailing!==undefined?trailing:<ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} className="shrink-0"/>}
+    </button>
+    {!last && <div className="absolute bottom-0 left-[62px] right-0 h-px" style={{background:LINE}}/>}
+  </div>);
+const Toggle=({value,onChange})=>(
+  <span onClick={(e)=>{e.stopPropagation();onChange(!value);}} className="shrink-0 cursor-pointer inline-block" style={{width:38,height:22,borderRadius:9999,backgroundColor:value?CORAL:'#E5E1DC',transition:'background-color 200ms ease',position:'relative'}}>
+    <span style={{position:'absolute',top:2,left:2,width:18,height:18,borderRadius:'50%',background:'white',transform:value?'translateX(16px)':'translateX(0)',transition:'transform 200ms cubic-bezier(0.34,1.56,0.64,1)',boxShadow:'0 1px 2px rgba(0,0,0,0.1)'}}/>
+  </span>);
+const Seg=({options,value,onChange})=>(<div className="flex gap-2">{options.map((o)=>{const on=value===o;return(<button key={o} onClick={()=>onChange(o)} className="flex-1 h-[42px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{background:on?'#FFF3EC':'#fff',color:on?CORAL:MUTED,boxShadow:on?'inset 0 0 0 1.6px '+CORAL:SHADOW}}>{o}</button>);})}</div>);
+const LANGS=[['English','English'],['Deutsch','German'],['Français','French'],['Italiano','Italian'],['Ελληνικά','Greek']];
 const LanguageSettingsScreen = () => {
-  const [selectedLang, setSelectedLang] = useState('en');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [sel,setSel]=useState('English');
 
-  const filteredLanguages = LANGUAGES.filter(
-    (l) =>
-      l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      l.nativeName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const currentLang = LANGUAGES.find((l) => l.id === selectedLang);
-
+  const back=()=>{ if(window.history.length>1) window.history.back(); else window.location.href='/'; };
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#E5E5E5',
-        padding: 20,
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-      }}
-    >
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        .lang-scroll::-webkit-scrollbar { display: none; }
-        .lang-scroll { scrollbar-width: none; }
-        @keyframes langCheckPop {
-          0%   { transform: scale(0); opacity: 0; }
-          60%  { transform: scale(1.15); opacity: 1; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-        .lang-check-pop { animation: langCheckPop 200ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-      `}</style>
+    <>
+      <style>{'@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");'}</style>
+      <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',backgroundColor:'#EDE8E2',padding:20,fontFamily:'Inter, -apple-system, BlinkMacSystemFont, sans-serif'}}>
+        <div className="relative" style={{width:390,height:844,borderRadius:50,border:'8px solid #000',overflow:'hidden',backgroundColor:CREAM}}>
+          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{top:12,width:120,height:32,backgroundColor:'#000',borderRadius:9999}}/>
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{width:134,height:5,backgroundColor:'#000',borderRadius:9999}}/>
+          <StatusBar/>
+          <div className="absolute inset-0 overflow-y-auto" style={{background:CREAM,scrollbarWidth:'none'}}>
+            <div className="pt-14 pb-5 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none" style={{background:'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 56%, rgba(247,245,242,0) 100%)'}}>
+              <button onClick={back} className="absolute left-5 top-[52px] w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 transition-all pointer-events-auto" style={{boxShadow:'0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)'}}><ChevronLeft size={18} strokeWidth={2.2} color="#111"/></button>
+              <h1 className="text-[17px] font-bold" style={{color:INK}}>Language</h1>
+            </div>
+            <div className="px-4 pb-12">
 
-      {/* iPhone Frame */}
-      <div
-        className="relative"
-        style={{
-          width: 390,
-          height: 844,
-          borderRadius: 50,
-          border: '8px solid #000',
-          overflow: 'hidden',
-          backgroundColor: '#F7F5F2',
-          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-          WebkitFontSmoothing: 'antialiased',
-        }}
-      >
-        {/* Notch */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 z-[100]"
-          style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }}
-        />
-
-        {/* Home indicator */}
-        <div
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]"
-          style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }}
-        />
-
-        {/* Status bar */}
-        <div
-          className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-8"
-          style={{ height: 54 }}
-        >
-          <span style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>9:41</span>
-          <div className="flex items-center gap-1">
-            <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#111"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#111"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#111"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#111"/></svg>
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1 1 0 110 2 1 1 0 010-2z" fill="#111"/><path d="M4.9 7.1a4.5 4.5 0 016.2 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/><path d="M2.2 4.4a8 8 0 0111.6 0" stroke="#111" strokeWidth="1.5" strokeLinecap="round"/></svg>
-            <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="21" height="12" rx="3.5" stroke="#111" strokeOpacity="0.35"/><rect x="2" y="2" width="16" height="9" rx="2" fill="#111"/><path d="M23 4.5v4a2 2 0 000-4z" fill="#111" fillOpacity="0.4"/></svg>
-          </div>
-        </div>
-
-        {/* Scroll Content with canonical transparent header */}
-        <div className="absolute inset-0 overflow-y-auto pb-[140px] lang-scroll">
-          <div className="pt-14 pb-3 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none">
-            <button
-              onClick={() => window.history.back()}
-              className="absolute left-5 w-9 h-9 rounded-full bg-white border border-black/[0.06] flex items-center justify-center active:scale-95 transition-all pointer-events-auto"
-            >
-              <ChevronLeft size={18} strokeWidth={2.2} color="#111" />
-            </button>
-            <h1 className="text-[17px] font-semibold text-[#111]">Language</h1>
-          </div>
-          <div className="px-5" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-
-            {/* Current Language Card */}
-            <div style={{ background: '#F3EFEB', borderRadius: 20, padding: 20, border: '1px solid #EDE8E2' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div
-                  style={{
-                    width: 44, height: 44, borderRadius: 9999,
-                    background: '#E85D2A',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                  }}
-                >
-                  <Globe size={20} color="#FFFFFF" strokeWidth={2} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: '#A09A94', display: 'block', lineHeight: 1.3 }}>
-                    Current language
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 3 }}>
-                    <span style={{ fontSize: 28, lineHeight: 1 }}>{currentLang?.flag}</span>
-                    <span style={{ fontSize: 17, fontWeight: 600, color: '#111' }}>
-                      {currentLang?.name}
-                    </span>
+              <Card className="mt-1">
+                {LANGS.map(([l,sub],i)=>(
+                  <div key={l} className="relative">
+                    <button onClick={()=>setSel(l)} className="w-full flex items-center gap-3 px-4 py-3.5 active:bg-black/[0.02] text-left">
+                      <span className="flex-1"><span className="block text-[14.5px] font-semibold" style={{color:INK}}>{l}</span><span className="block text-[11.5px] mt-[2px]" style={{color:TERT}}>{sub}</span></span>
+                      <span className="w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0" style={{background:sel===l?CORAL:'transparent',border:sel===l?'none':'1.6px solid #DDD4C9'}}>{sel===l && <Check size={13} color="#fff" strokeWidth={3}/>}</span>
+                    </button>
+                    {i<LANGS.length-1 && <div className="absolute bottom-0 left-4 right-0 h-px" style={{background:LINE}}/>}
                   </div>
-                </div>
-                <div
-                  style={{
-                    width: 28, height: 28, borderRadius: 9999,
-                    background: '#E85D2A',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                  }}
-                >
-                  <Check size={14} color="#FFFFFF" strokeWidth={3} />
-                </div>
-              </div>
+                ))}
+              </Card>
+              <p className="text-[11.5px] mt-4 ml-1.5" style={{color:TERT}}>Changes apply right away.</p>
+
             </div>
-
-            {/* Search Filter */}
-            <div
-              style={{
-                background: '#F3EFEB',
-                borderRadius: 16,
-                border: '1px solid #EDE8E2',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                height: 52,
-                padding: '0 16px',
-              }}
-            >
-              <Search size={18} color="#A09A94" />
-              <input
-                type="text"
-                placeholder="Search languages..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  outline: 'none',
-                  background: 'transparent',
-                  fontSize: 16,
-                  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-                  color: '#111',
-                }}
-              />
-            </div>
-
-            {/* Section Label */}
-            <div>
-              <span
-                style={{
-                  fontSize: 12,
-                  fontWeight: 700,
-                  color: '#A09A94',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  paddingLeft: 4,
-                }}
-              >
-                Select language
-              </span>
-            </div>
-
-            {/* Language List Card */}
-            <div
-              style={{
-                background: '#F3EFEB',
-                borderRadius: 20,
-                border: '1px solid #EDE8E2',
-                overflow: 'hidden',
-                marginTop: -12,
-              }}
-            >
-              {filteredLanguages.length === 0 && (
-                <div style={{ padding: '24px 20px', textAlign: 'center' }}>
-                  <span style={{ fontSize: 14, color: '#A09A94' }}>No languages found</span>
-                </div>
-              )}
-              {filteredLanguages.map((lang, idx) => {
-                const isSelected = selectedLang === lang.id;
-                const isLast = idx === filteredLanguages.length - 1;
-
-                return (
-                  <div key={lang.id}>
-                    <div
-                      onClick={() => setSelectedLang(lang.id)}
-                      className="active:scale-[0.97] transition-all duration-[120ms]"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 14,
-                        padding: '15px 20px',
-                        background: isSelected ? 'rgba(232,93,42,0.06)' : 'transparent',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {/* Flag in circle */}
-                      <div
-                        style={{
-                          width: 40, height: 40, borderRadius: 9999,
-                          background: isSelected ? 'rgba(232,93,42,0.10)' : '#EDE8E2',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                          transition: 'background 200ms ease',
-                        }}
-                      >
-                        <span style={{ fontSize: 22, lineHeight: 1 }}>{lang.flag}</span>
-                      </div>
-
-                      {/* Names */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p
-                          style={{
-                            fontSize: 15,
-                            fontWeight: isSelected ? 600 : 500,
-                            color: '#111',
-                            lineHeight: 1.3,
-                            marginBottom: 2,
-                          }}
-                        >
-                          {lang.name}
-                        </p>
-                        <p style={{ fontSize: 13, fontWeight: 400, color: '#A09A94', lineHeight: 1.3 }}>
-                          {lang.nativeName}
-                        </p>
-                      </div>
-
-                      {/* Radio button */}
-                      <div
-                        style={{
-                          flexShrink: 0,
-                          width: 24, height: 24,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}
-                      >
-                        {isSelected ? (
-                          <div
-                            className="lang-check-pop"
-                            style={{
-                              width: 24, height: 24, borderRadius: 9999,
-                              background: '#E85D2A',
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            }}
-                          >
-                            <Check size={14} color="#FFFFFF" strokeWidth={3} />
-                          </div>
-                        ) : (
-                          <div
-                            style={{
-                              width: 22, height: 22, borderRadius: 9999,
-                              border: '2px solid #A09A94',
-                            }}
-                          />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Divider */}
-                    {!isLast && (
-                      <div
-                        className="border-t border-dashed border-[#CFCFD4]"
-                        style={{ marginLeft: 74, marginRight: 20 }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Caption */}
-            <p
-              style={{
-                fontSize: 13,
-                fontWeight: 400,
-                color: '#A09A94',
-                textAlign: 'center',
-                lineHeight: 1.5,
-              }}
-            >
-              App will restart to apply changes
-            </p>
           </div>
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="absolute bottom-6 left-5 right-5 z-30">
-          <button
-            className="active:scale-[0.97] transition-all duration-[120ms]"
-            style={{
-              width: '100%',
-              padding: '14px 0',
-              borderRadius: 14,
-              background: '#111',
-              border: 'none',
-              color: '#FFFFFF',
-              fontSize: 16,
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-              fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-            }}
-          >
-            Save Changes
-          </button>
+          
         </div>
       </div>
-    </div>
+    </>
   );
 };
-
 export default LanguageSettingsScreen;
