@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ChevronRight, ChevronDown, Check, X, Star, BadgeCheck, Banknote, Inbox,
   CalendarDays, User, Footprints, MapPin, MessageCircle, Lock, Repeat, Eye, LifeBuoy, Camera,
@@ -67,7 +67,7 @@ const StatusBar = () => (
 const SectionLabel = ({ children, action, onAction, mt = 'mt-6' }) => (
   <div className={`flex items-center justify-between mb-2 ml-1.5 mr-0.5 ${mt}`}>
     <span className="text-[10.5px] font-bold uppercase tracking-[0.12em]" style={{ color: '#A8A29C' }}>{children}</span>
-    {action && <button onClick={onAction} className="text-[12px] font-bold active:opacity-60" style={{ color: CORAL }}>{action}</button>}
+    {action && <button onClick={onAction} className="text-[12px] font-bold active:opacity-60" style={{ color: INK }}>{action}</button>}
   </div>
 );
 
@@ -79,6 +79,15 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
   const [acctOpen, setAcctOpen] = useState(false);
   const [toast, setToast] = useState('');
   const act = (m) => { setToast(m); setTimeout(() => setToast(''), 1700); };
+  // balance counts up when Earnings opens, settles at the real figure
+  const [bal, setBal] = useState(0);
+  useEffect(() => {
+    if (tab !== 'earnings') return;
+    let start = null, raf;
+    const tick = (t) => { if (!start) start = t; const p = Math.min(1, (t - start) / 900); setBal(1240.55 * (1 - Math.pow(1 - p, 3))); if (p < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [tab]);
 
   const accept = (r) => {
     setRequests((prev) => prev.filter((x) => x.id !== r.id));
@@ -96,7 +105,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
         <img src={ME} alt="" className="w-7 h-7 rounded-full object-cover" />
         <span className="text-[13px] font-bold" style={{ color: INK }}>Alex</span>
         <span className="text-[8.5px] font-extrabold tracking-[0.08em] px-1.5 py-[2px] rounded-[6px]" style={{ background: INK, color: '#fff' }}>PRO</span>
-        <ChevronDown size={13} color={TERT} strokeWidth={2.6} />
+        <ChevronDown size={13} color={TERT} strokeWidth={2.4} />
       </button>
       <span className="flex-1" />
       {/* online toggle */}
@@ -139,8 +148,8 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                   <div className="h-full rounded-full" style={{ width: `${(s.done / s.total) * 100}%`, background: CORAL }} />
                 </div>
                 <div className="flex gap-2 mt-3">
-                  <button onClick={() => act('Photo update sent to Anna')} className="flex-1 h-10 rounded-[11px] bg-white flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.08)' }}><Camera size={14} color={CORAL} strokeWidth={2.2} /><span className="text-[12.5px] font-bold" style={{ color: CORAL }}>Send photo</span></button>
-                  <button onClick={() => act('Walk ended. Summary sent to Anna')} className="flex-1 h-10 rounded-[11px] flex items-center justify-center active:scale-[0.98]" style={{ background: CORAL }}><span className="text-[12.5px] font-bold text-white">End walk</span></button>
+                  <button onClick={() => act('Photo update sent to Anna')} className="flex-1 h-10 rounded-[12px] bg-white flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.08)' }}><Camera size={14} color={CORAL} strokeWidth={2.2} /><span className="text-[12.5px] font-bold" style={{ color: CORAL }}>Send photo</span></button>
+                  <button onClick={() => act('Walk ended. Summary sent to Anna')} className="flex-1 h-10 rounded-[12px] flex items-center justify-center active:scale-[0.98]" style={{ background: CORAL }}><span className="text-[12.5px] font-bold text-white">End walk</span></button>
                 </div>
               </div>
             ); })()}
@@ -148,9 +157,9 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
             {/* requests teaser */}
             {requests.length > 0 && (
               <button onClick={() => setTab('requests')} className="w-full mt-4 bg-white rounded-[16px] px-3.5 py-3 flex items-center gap-3 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
-                <span className="relative w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: TINT }}>
+                <span className="relative w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: TINT }}>
                   <Inbox size={16} color={CORAL} strokeWidth={2} />
-                  <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center text-[9.5px] font-extrabold text-white" style={{ background: CORAL }}>{requests.length}</span>
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] px-1 rounded-full flex items-center justify-center text-[10.5px] font-extrabold text-white" style={{ background: CORAL }}>{requests.length}</span>
                 </span>
                 <div className="flex-1"><div className="text-[13.5px] font-bold" style={{ color: INK }}>{requests.length} new requests</div><div className="text-[11px] mt-[1px]" style={{ color: TERT }}>Reply fast, it boosts your ranking</div></div>
                 <ChevronRight size={15} color="#CFC7BD" strokeWidth={2.2} />
@@ -168,7 +177,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                     <div className="text-[13.5px] font-bold truncate" style={{ color: INK }}>{s.svc}</div>
                     <div className="text-[11.5px] mt-0.5 truncate" style={{ color: TERT }}>{s.who}</div>
                   </div>
-                  {s.live ? <span className="text-[9.5px] font-extrabold px-1.5 py-[2px] rounded-full" style={{ background: TINT, color: CORAL }}>LIVE</span> : s.accepted ? <span className="text-[9.5px] font-extrabold px-1.5 py-[2px] rounded-full" style={{ background: '#EAF7EF', color: GREEN }}>NEW</span> : <button onClick={() => act('Directions to pickup')} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: PEACH }}><MapPin size={13} color={MUTED} strokeWidth={2.2} /></button>}
+                  {s.live ? <span className="text-[10.5px] font-extrabold px-1.5 py-[2px] rounded-full" style={{ background: TINT, color: CORAL }}>LIVE</span> : s.accepted ? <span className="text-[10.5px] font-extrabold px-1.5 py-[2px] rounded-full" style={{ background: '#EAF7EF', color: GREEN }}>NEW</span> : <button onClick={() => act('Directions to pickup')} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: PEACH }}><MapPin size={13} color={MUTED} strokeWidth={2.2} /></button>}
                   {i < schedule.length - 1 && <div className="absolute bottom-0 left-[60px] right-0 h-px" style={{ background: LINE }} />}
                 </div>
               ))}
@@ -182,7 +191,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
             {requests.length ? requests.map((r) => (
               <div key={r.id} className="bg-white rounded-[18px] p-3.5 mb-3" style={{ boxShadow: SHADOW }}>
                 <div className="flex items-center gap-3">
-                  <img src={r.photo} alt="" className="w-12 h-12 rounded-[13px] object-cover shrink-0" />
+                  <img src={r.photo} alt="" className="w-12 h-12 rounded-[12px] object-cover shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[14.5px] font-bold truncate" style={{ color: INK }}>{r.svc}</span>
@@ -193,7 +202,7 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-[15px] font-extrabold" style={{ color: INK }}>CHF {r.price}</div>
-                    <div className="text-[9.5px] font-semibold" style={{ color: GREEN }}>you get {(r.price * 0.85).toFixed(2)}</div>
+                    <div className="text-[10.5px] font-semibold" style={{ color: GREEN }}>you get {(r.price * 0.85).toFixed(2)}</div>
                   </div>
                 </div>
                 <div className="flex gap-2 mt-3">
@@ -216,14 +225,14 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
         {tab === 'earnings' && (
           <>
             {/* balance hero */}
-            <div className="relative rounded-[22px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)' }}>
+            <div className="relative rounded-[20px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)' }}>
               <div className="absolute inset-0" style={{ background: 'radial-gradient(130% 90% at 88% -10%, rgba(255,255,255,0.28), transparent 55%)' }} />
               <div className="relative">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: 'rgba(255,255,255,0.75)' }}>February earnings</span>
                   <span className="text-[10.5px] font-bold px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff' }}>38 jobs</span>
                 </div>
-                <div className="flex items-baseline gap-1.5 mt-3"><span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>CHF</span><span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em]">1,240.55</span></div>
+                <div className="flex items-baseline gap-1.5 mt-3"><span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>CHF</span><span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em] tabular-nums">{bal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                 <div className="text-[11.5px] mt-2.5" style={{ color: 'rgba(255,255,255,0.8)' }}>Next payout Mon · CHF 310.20 via Stripe</div>
               </div>
             </div>
@@ -236,9 +245,9 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
                   const top = b.v === maxBar;
                   return (
                     <div key={i} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                      {top && <span className="text-[9px] font-extrabold" style={{ color: CORAL }}>{b.v}</span>}
+                      {top && <span className="text-[10px] font-extrabold" style={{ color: CORAL }}>{b.v}</span>}
                       <div className="w-full rounded-[6px]" style={{ height: `${(b.v / maxBar) * 72}px`, background: top ? CORAL : TINT, transition: 'height 0.4s' }} />
-                      <span className="text-[9.5px] font-bold" style={{ color: top ? INK : '#C4BBB0' }}>{b.d}</span>
+                      <span className="text-[10.5px] font-bold" style={{ color: top ? INK : '#C4BBB0' }}>{b.d}</span>
                     </div>
                   );
                 })}
@@ -315,13 +324,13 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
             <SectionLabel>Account</SectionLabel>
             <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: SHADOW }}>
               <button onClick={() => act('Payout details')} className="relative w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-black/[0.02]">
-                <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: TINT }}><Lock size={15} color={CORAL} strokeWidth={2} /></span>
+                <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: TINT }}><Lock size={15} color={CORAL} strokeWidth={2} /></span>
                 <div className="flex-1"><div className="text-[14px] font-semibold" style={{ color: INK }}>Payout details</div><div className="text-[11.5px] mt-0.5" style={{ color: TERT }}>CH93 ···· 5295 7 · Stripe</div></div>
                 <ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} />
                 <div className="absolute bottom-0 left-[60px] right-0 h-px" style={{ background: LINE }} />
               </button>
               <button onClick={() => act('Pro support')} className="w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-black/[0.02]">
-                <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: PEACH }}><LifeBuoy size={15} color={MUTED} strokeWidth={2} /></span>
+                <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: PEACH }}><LifeBuoy size={15} color={MUTED} strokeWidth={2} /></span>
                 <div className="flex-1"><div className="text-[14px] font-semibold" style={{ color: INK }}>Pro support</div><div className="text-[11.5px] mt-0.5" style={{ color: TERT }}>Priority help, 24/7</div></div>
                 <ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} />
               </button>
@@ -346,12 +355,12 @@ const ProDashboard = ({ onExitPro, standalone = false }) => {
           const Icon = t.icon;
           const badge = t.id === 'requests' && requests.length > 0;
           return (
-            <button key={t.id} onClick={() => setTab(t.id)} className="relative flex flex-col items-center gap-1 px-3 py-1 active:scale-95 transition-transform" style={{ background: on ? TINT : 'transparent', borderRadius: 14 }}>
+            <button key={t.id} onClick={() => setTab(t.id)} className="relative flex flex-col items-center gap-1 px-3 py-1 active:scale-95 transition-transform" style={{ background: on ? PEACH : 'transparent', borderRadius: 16 }}>
               <span className="relative">
-                <Icon size={19} color={on ? CORAL : '#A8A29C'} strokeWidth={2} />
+                <Icon size={19} color={on ? INK : '#A8A29C'} strokeWidth={2} />
                 {badge && <span className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-0.5 rounded-full flex items-center justify-center text-[8.5px] font-extrabold text-white" style={{ background: CORAL }}>{requests.length}</span>}
               </span>
-              <span className="text-[9.5px] font-bold" style={{ color: on ? CORAL : '#A8A29C' }}>{t.label}</span>
+              <span className="text-[10.5px] font-bold" style={{ color: on ? INK : '#A8A29C' }}>{t.label}</span>
             </button>
           );
         })}

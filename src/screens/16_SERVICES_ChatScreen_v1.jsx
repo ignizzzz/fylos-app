@@ -97,7 +97,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -150,10 +150,10 @@ const IconWrapper = ({ icon: Icon, color = THEME.colors.primaryText, size = 24, 
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[#F7F7F8] text-[#6E6E73]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -194,7 +194,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:bg-[#E85D2A]",
     secondary: "bg-[#FFFFFF] text-[#111111] border border-[#E5E5E5] hover:bg-[#F7F7F8] shadow-sm",
     tertiary: "bg-transparent text-[#6E6E73] hover:bg-[#F7F7F8] hover:text-[#111111]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]"
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]"
   };
   
   const sizes = {
@@ -248,13 +248,13 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
       disabled={disabled}
       className={`w-full h-[52px] px-4 bg-[#FFFFFF] border text-[16px] text-[#111111] rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/10 ${
         error 
-          ? 'border-[#FF3B30] focus:border-[#FF3B30]' 
+          ? 'border-[#E5484D] focus:border-[#E5484D]' 
           : 'border-black/[0.08] focus:border-[#FF6B35]'
       } placeholder:text-[#8E8E93]`}
       {...props}
     />
     {error ? (
-      <span className="text-[12px] text-[#FF3B30] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
+      <span className="text-[12px] text-[#E5484D] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
     ) : helperText ? (
       <span className="text-[12px] text-[#8E8E93] ml-1">{helperText}</span>
     ) : null}
@@ -264,7 +264,7 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
 const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', className = '' }) => (
    <div className={`relative flex items-center w-full ${className}`}>
      <div className="absolute left-4 text-[#8E8E93] pointer-events-none">
-       <Search size={18} strokeWidth={2.5} />
+       <Search size={18} strokeWidth={2.4} />
      </div>
      <input 
        type="text"
@@ -275,7 +275,7 @@ const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', clas
      />
      {value && (
        <button onClick={onClear} className="absolute right-4 text-[#8E8E93] hover:text-[#111111] transition-colors p-1 rounded-full active:bg-black/5">
-         <X size={16} strokeWidth={2.5} />
+         <X size={16} strokeWidth={2.4} />
        </button>
      )}
    </div>
@@ -383,7 +383,7 @@ const BottomSheet = ({ isOpen, onClose, title, children }) => {
 
 const SegmentedControl = ({ segments, activeIndex, onChange, className = '' }) => {
   return (
-    <div className={`flex bg-[#F7F7F8] p-1 rounded-[14px] relative ${className}`}>
+    <div className={`flex bg-[#F7F7F8] p-1 rounded-[16px] relative ${className}`}>
       <div 
         className="absolute top-1 bottom-1 bg-[#FFFFFF] rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 ease-out"
         style={{ width: `calc(${100 / segments.length}% - 4px)`, left: `calc(${(100 / segments.length) * activeIndex}% + 2px)` }}
@@ -406,14 +406,14 @@ const InlineNotice = ({ variant = 'info', title, description, className = '' }) 
     info: { bg: 'bg-[#E5F0FF]', text: 'text-[#007AFF]', icon: Info },
     success: { bg: 'bg-[#E5F9ED]', text: 'text-[#00C060]', icon: CheckCircle2 },
     warning: { bg: 'bg-[#FFF4E5]', text: 'text-[#FF9500]', icon: AlertTriangle },
-    error: { bg: 'bg-[#FFE5E5]', text: 'text-[#FF3B30]', icon: AlertCircle }
+    error: { bg: 'bg-[#FFE5E5]', text: 'text-[#E5484D]', icon: AlertCircle }
   };
   const v = variants[variant];
   const Icon = v.icon;
   
   return (
     <div className={`flex items-start gap-3 p-4 rounded-[16px] ${v.bg} ${className}`}>
-      <Icon className={`shrink-0 ${v.text}`} size={20} strokeWidth={2.5} />
+      <Icon className={`shrink-0 ${v.text}`} size={20} strokeWidth={2.4} />
       <div className="flex flex-col gap-0.5 pt-0.5">
         {title && <span className={`text-[14px] font-bold ${v.text}`}>{title}</span>}
         {description && <span className={`text-[13px] ${v.text} opacity-90 leading-relaxed`}>{description}</span>}
@@ -450,7 +450,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
       <div className="mb-6">{illustration}</div>
     ) : (
       <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+        <Icon size={32} color="#CFCFD4" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
@@ -651,7 +651,7 @@ const VaultScreen = ({ setDisplayTab }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-[#EAF7EF] text-[#00C060] rounded-full flex items-center justify-center">
-                <CheckCircle2 size={20} strokeWidth={2.5} />
+                <CheckCircle2 size={20} strokeWidth={2.4} />
               </div>
               <div>
                 <h4 className="font-semibold text-[#111111]">Step 17: Booking Accepted</h4>
@@ -726,7 +726,7 @@ const BookingConfirmedScreen = ({ onClose, showToast }) => {
           className="w-[40px] h-[40px] flex items-center justify-center bg-[#F7F7F8] hover:bg-[#F0F0F2] rounded-full transition-colors active:scale-95"
           aria-label="Close"
         >
-          <X size={20} color="#111111" strokeWidth={2.5} />
+          <X size={20} color="#111111" strokeWidth={2.4} />
         </button>
       </div>
 

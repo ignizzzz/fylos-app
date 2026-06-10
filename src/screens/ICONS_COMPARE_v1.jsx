@@ -43,14 +43,14 @@ const CompareCard = ({ pair }) => {
       <div className="grid grid-cols-2 divide-x divide-[#E8C9A6]/40">
         {/* Current — lucide line icon */}
         <div className="flex flex-col items-center justify-center py-8 px-2 bg-white/40 relative">
-          <span className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-[#9A9AA0]">Now</span>
+          <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest text-[#9A9AA0]">Now</span>
           <div className="w-[140px] h-[140px] flex items-center justify-center">
-            <Lucide size={88} strokeWidth={1.6} color="#E85D2A" />
+            <Lucide size={88} strokeWidth={1.8} color="#E85D2A" />
           </div>
         </div>
         {/* Felt — proposed */}
         <div className="flex flex-col items-center justify-center py-8 px-2 bg-[#FFF7EE]/50 relative">
-          <span className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-[#A55E3F]">Felt</span>
+          <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-widest text-[#A55E3F]">Felt</span>
           <div className={`w-[140px] h-[140px] flex items-center justify-center ${anim}`}>
             <Felt />
           </div>

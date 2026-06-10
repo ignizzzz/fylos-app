@@ -73,7 +73,7 @@ function Frame({ title, subtitle, children }) {
           {title}
         </div>
         {subtitle && (
-          <div style={{ fontSize: 11.5, color: '#A09A94', marginTop: 2 }}>
+          <div style={{ fontSize: 11.5, color: '#9B9B9F', marginTop: 2 }}>
             {subtitle}
           </div>
         )}
@@ -229,7 +229,7 @@ function VariantOrbital() {
         style={{
           marginTop: 8,
           fontSize: 11,
-          color: '#A09A94',
+          color: '#9B9B9F',
           textAlign: 'center',
         }}
       >
@@ -262,7 +262,7 @@ function VariantTimeGrouped() {
               key={g.label}
               style={{
                 background: '#FFFFFF',
-                borderRadius: 14,
+                borderRadius: 16,
                 border: '1px solid rgba(0,0,0,0.05)',
                 padding: '10px 12px 12px',
                 boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
@@ -318,7 +318,7 @@ function VariantTimeGrouped() {
           );
         })}
       </div>
-      <div style={{ marginTop: 10, fontSize: 11, color: '#A09A94' }}>
+      <div style={{ marginTop: 10, fontSize: 11, color: '#9B9B9F' }}>
         {SOON.map((c) => c.label).join(' · ')} soon
       </div>
     </Frame>
@@ -409,7 +409,7 @@ function VariantSpecRows() {
           );
         })}
       </div>
-      <div style={{ marginTop: 10, fontSize: 11, color: '#A09A94' }}>
+      <div style={{ marginTop: 10, fontSize: 11, color: '#9B9B9F' }}>
         {SOON.map((c) => c.label).join(' · ')} coming later
       </div>
     </Frame>
@@ -467,7 +467,7 @@ function VariantFolderTabs() {
                   : 'none',
               }}
             >
-              <Icon size={12} color={isActive ? '#E85D2A' : '#A09A94'} strokeWidth={2.2} />
+              <Icon size={12} color={isActive ? '#E85D2A' : '#9B9B9F'} strokeWidth={2.2} />
               {c.label}
             </button>
           );
@@ -507,7 +507,7 @@ function VariantFolderTabs() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 10,
-                color: '#A09A94',
+                color: '#9B9B9F',
               }}
             >
               top {n}
@@ -515,7 +515,7 @@ function VariantFolderTabs() {
           ))}
         </div>
       </div>
-      <div style={{ marginTop: 12, fontSize: 11, color: '#A09A94' }}>
+      <div style={{ marginTop: 12, fontSize: 11, color: '#9B9B9F' }}>
         {SOON.map((c) => c.label).join(' · ')} soon
       </div>
     </Frame>
@@ -555,7 +555,7 @@ function VariantTickets() {
                 maskImage:
                   'radial-gradient(circle 8px at 0 50%, transparent 8px, black 8px)',
                 filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.04))',
-                borderRadius: 14,
+                borderRadius: 16,
               }}
             >
               {/* Coral left band */}
@@ -612,7 +612,7 @@ function VariantTickets() {
                 style={{
                   fontSize: 10,
                   fontWeight: 700,
-                  color: '#A09A94',
+                  color: '#9B9B9F',
                   letterSpacing: '0.08em',
                   alignSelf: 'flex-end',
                   paddingBottom: 2,
@@ -624,7 +624,7 @@ function VariantTickets() {
           );
         })}
       </div>
-      <div style={{ marginTop: 12, fontSize: 11, color: '#A09A94' }}>
+      <div style={{ marginTop: 12, fontSize: 11, color: '#9B9B9F' }}>
         {SOON.map((c) => c.label).join(' · ')} soon
       </div>
     </Frame>

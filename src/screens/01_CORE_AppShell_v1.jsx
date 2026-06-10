@@ -78,7 +78,7 @@ const TABS = [
 // Divider/border: #EEEEEE
 // App background: #FFFFFF
 // Accent: #FF6B35
-// Danger: #FF3B30
+// Danger: #E5484D
 
 // --- MODULAR COMPONENTS ---
 
@@ -88,7 +88,7 @@ const TABS = [
 const EmptyState = ({ icon: Icon, title, description }) => (
   <div className="flex flex-col items-center justify-center w-full h-full min-h-[50vh] px-6 text-center">
     <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-      <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+      <Icon size={32} color="#CFCFD4" strokeWidth={1.8} />
     </div>
     <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
     <p className="text-[15px] text-[#6E6E73] max-w-[260px] leading-relaxed">

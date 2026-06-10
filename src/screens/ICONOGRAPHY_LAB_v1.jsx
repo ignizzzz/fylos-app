@@ -102,7 +102,7 @@ const CeramicTabBar = () => {
       {tabs.map((t) => (
         <div key={t.id} className="flex flex-col items-center gap-1">
           {t.render()}
-          <span className={`text-[9px] font-semibold ${t.active ? 'text-[#E85D2A]' : 'text-[#9A9AA0]'}`}>
+          <span className={`text-[10px] font-semibold ${t.active ? 'text-[#E85D2A]' : 'text-[#9A9AA0]'}`}>
             {t.id === 'home' ? 'Home' : t.id === 'health' ? 'Health' : t.id === 'pack' ? 'Pack' : 'Reminders'}
           </span>
         </div>
@@ -238,7 +238,7 @@ const FeltTabBar = () => {
       {tabs.map((t) => (
         <div key={t.id} className="flex flex-col items-center gap-1">
           {t.render()}
-          <span className={`text-[9px] font-semibold ${t.active ? 'text-[#7A3014]' : 'text-[#A89070]'}`}>
+          <span className={`text-[10px] font-semibold ${t.active ? 'text-[#7A3014]' : 'text-[#A89070]'}`}>
             {t.id === 'home' ? 'Home' : t.id === 'health' ? 'Health' : t.id === 'pack' ? 'Pack' : 'Reminders'}
           </span>
         </div>
@@ -355,7 +355,7 @@ const WatercolorTabBar = () => {
       {tabs.map((t) => (
         <div key={t.id} className="flex flex-col items-center gap-1">
           {t.render()}
-          <span className={`text-[9px] font-semibold ${t.active ? 'text-[#A55E3F]' : 'text-[#A89886]'}`}>
+          <span className={`text-[10px] font-semibold ${t.active ? 'text-[#A55E3F]' : 'text-[#A89886]'}`}>
             {t.id === 'home' ? 'Home' : t.id === 'health' ? 'Health' : t.id === 'pack' ? 'Pack' : 'Reminders'}
           </span>
         </div>
@@ -479,7 +479,7 @@ const OrigamiTabBar = () => {
       {tabs.map((t) => (
         <div key={t.id} className="flex flex-col items-center gap-1">
           {t.render()}
-          <span className={`text-[9px] font-semibold ${t.active ? 'text-[#E85D2A]' : 'text-[#9A9AA0]'}`}>
+          <span className={`text-[10px] font-semibold ${t.active ? 'text-[#E85D2A]' : 'text-[#9A9AA0]'}`}>
             {t.id === 'home' ? 'Home' : t.id === 'health' ? 'Health' : t.id === 'pack' ? 'Pack' : 'Reminders'}
           </span>
         </div>

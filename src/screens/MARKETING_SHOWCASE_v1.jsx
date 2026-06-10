@@ -399,7 +399,7 @@ function PhoneMockMini({ variant }) {
           </svg>
           {/* pins */}
           <div className="absolute top-[30%] left-[20%] w-3 h-3 rounded-full"
-               style={{ background: '#FF3B30', boxShadow: `0 0 0 4px rgba(255,59,48,0.2)` }} />
+               style={{ background: '#E5484D', boxShadow: `0 0 0 4px rgba(229,72,77,0.2)` }} />
           <div className="absolute top-[55%] left-[60%] w-3 h-3 rounded-full"
                style={{ background: '#FF9500', boxShadow: `0 0 0 4px rgba(255,149,0,0.2)` }} />
           <div className="absolute top-[75%] left-[35%] w-3 h-3 rounded-full"
@@ -1234,7 +1234,7 @@ function CaptionCard({ lang, tag, body, target, held }) {
            border: '1px solid rgba(0,0,0,0.04)',
          }}>
       {held && (
-        <div className="absolute top-3 right-3 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider"
+        <div className="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
              style={{ background: INK, color: 'white' }}>
           Hold for Phase 3
         </div>

@@ -206,7 +206,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -256,7 +256,7 @@ const Badge = ({ variant = 'default', children, className = '' }) => {
     primary: "bg-[#111111] text-white border border-[#111111]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -298,7 +298,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
     secondary: "bg-[#FFFFFF] text-[#111111] border-[1.5px] border-black/[0.08] shadow-sm hover:bg-[#F7F7F8]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]",
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]",
     ghost: "bg-transparent text-[#6E6E73] hover:bg-black/5"
   };
   const sizes = {
@@ -311,7 +311,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const widthClass = fullWidth ? "w-full" : "w-auto inline-flex";
   
   // Default radius if none is passed in className
-  const radiusClass = className.includes('rounded-') ? '' : 'rounded-[14px]';
+  const radiusClass = className.includes('rounded-') ? '' : 'rounded-[16px]';
 
   return (
     <button 
@@ -353,12 +353,12 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
     <input 
       disabled={disabled}
       className={`w-full h-[48px] px-4 bg-[#FFFFFF] border text-[16px] text-[#111111] rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/10 ${
-        error ? 'border-[#FF3B30] focus:border-[#FF3B30]' : 'border-black/[0.08] focus:border-[#FF6B35]'
+        error ? 'border-[#E5484D] focus:border-[#E5484D]' : 'border-black/[0.08] focus:border-[#FF6B35]'
       } placeholder:text-[#8E8E93]`}
       {...props}
     />
     {error ? (
-      <span className="text-[12px] text-[#FF3B30] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
+      <span className="text-[12px] text-[#E5484D] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
     ) : helperText ? (
       <span className="text-[12px] text-[#8E8E93] ml-1">{helperText}</span>
     ) : null}
@@ -368,7 +368,7 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
 const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', className = '' }) => (
    <div className={`relative flex items-center w-full ${className}`}>
      <div className="absolute left-4 text-[#8E8E93] pointer-events-none">
-       <Search size={18} strokeWidth={2.5} />
+       <Search size={18} strokeWidth={2.4} />
      </div>
      <input 
        type="text"
@@ -379,7 +379,7 @@ const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', clas
      />
      {value && (
        <button onClick={onClear} className="absolute right-4 text-[#8E8E93] hover:text-[#111111] transition-colors p-1 rounded-full active:bg-black/5">
-         <X size={16} strokeWidth={2.5} />
+         <X size={16} strokeWidth={2.4} />
        </button>
      )}
    </div>
@@ -518,7 +518,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
       <div className="mb-6">{illustration}</div>
     ) : (
       <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+        <Icon size={32} color="#CFCFD4" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
@@ -748,7 +748,7 @@ const SectionHeader = ({ title, actionIcon: ActionIcon, onAction }) => (
     <h3 className="text-[16px] font-semibold text-[#111111]">{title}</h3>
     {ActionIcon && onAction && (
       <button onClick={onAction} className="p-1.5 text-[#FF6B35] hover:bg-[#FF6B35]/10 rounded-full transition-colors">
-        <ActionIcon size={18} strokeWidth={2.5} />
+        <ActionIcon size={18} strokeWidth={2.4} />
       </button>
     )}
   </div>
@@ -1208,7 +1208,7 @@ const PublicEmergencyViewer = ({ pet, onClose }) => {
               {pet.medical.allergies.map(a => (
                 <div key={a.id} className="flex justify-between text-[15px] font-medium text-[#111111]">
                   <span>{a.name}</span>
-                  <span className={a.severity === 'Severe' ? 'text-[#FF3B30]' : 'text-[#FF9500]'}>{a.severity}</span>
+                  <span className={a.severity === 'Severe' ? 'text-[#E5484D]' : 'text-[#FF9500]'}>{a.severity}</span>
                 </div>
               ))}
             </div>

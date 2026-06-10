@@ -118,14 +118,14 @@ const TodayOverview = () => {
     }}>
       <div style={{
         fontSize: 12, fontWeight: 500, textTransform: 'uppercase',
-        letterSpacing: '0.08em', color: '#A09A94', marginBottom: 14,
+        letterSpacing: '0.08em', color: '#9B9B9F', marginBottom: 14,
       }}>Today's Overview</div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 18 }}>
         {stats.map((s, i) => (
           <div key={i} style={{ textAlign: 'center', flex: 1 }}>
             <div style={{
-              width: 44, height: 44, borderRadius: 14,
+              width: 44, height: 44, borderRadius: 16,
               background: 'rgba(232,93,42,0.08)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 8px',
@@ -134,14 +134,14 @@ const TodayOverview = () => {
               <s.icon size={20} color="#E85D2A" strokeWidth={1.8} />
             </div>
             <div style={{ fontSize: 20, fontWeight: 700, color: '#111', letterSpacing: '-0.02em' }}>{s.value}</div>
-            <div style={{ fontSize: 12, color: '#A09A94', marginTop: 2 }}>{s.label}</div>
+            <div style={{ fontSize: 12, color: '#9B9B9F', marginTop: 2 }}>{s.label}</div>
           </div>
         ))}
       </div>
 
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <span style={{ fontSize: 13, fontWeight: 500, color: '#A09A94' }}>Day completion</span>
+          <span style={{ fontSize: 13, fontWeight: 500, color: '#9B9B9F' }}>Day completion</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: '#E85D2A' }}>{completion}%</span>
         </div>
         <div style={{ height: 6, borderRadius: 9999, background: '#EDE8E2', overflow: 'hidden' }}>
@@ -177,7 +177,7 @@ const WeekEarnings = () => {
         <div>
           <div style={{
             fontSize: 12, fontWeight: 500, textTransform: 'uppercase',
-            letterSpacing: '0.08em', color: '#A09A94', marginBottom: 4,
+            letterSpacing: '0.08em', color: '#9B9B9F', marginBottom: 4,
           }}>This Week</div>
           <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em', color: '#111' }}>CHF 1,240</div>
         </div>
@@ -205,7 +205,7 @@ const WeekEarnings = () => {
             }} />
             <span style={{
               fontSize: 11, fontWeight: 500,
-              color: i === 3 ? '#E85D2A' : '#A09A94',
+              color: i === 3 ? '#E85D2A' : '#9B9B9F',
             }}>{d.label}</span>
           </div>
         ))}
@@ -222,11 +222,11 @@ const NextBooking = () => (
   }}>
     <div style={{
       fontSize: 12, fontWeight: 500, textTransform: 'uppercase',
-      letterSpacing: '0.08em', color: '#A09A94', marginBottom: 14,
+      letterSpacing: '0.08em', color: '#9B9B9F', marginBottom: 14,
     }}>Next Booking</div>
 
     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-      <div style={{ width: 48, height: 48, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ width: 48, height: 48, borderRadius: 16, overflow: 'hidden', flexShrink: 0 }}>
         <img
           src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=96&h=96&fit=crop"
           alt="Pet"
@@ -237,24 +237,24 @@ const NextBooking = () => (
         <div style={{ fontSize: 16, fontWeight: 600, color: '#111', letterSpacing: '-0.02em' }}>
           Max — Golden Retriever
         </div>
-        <div style={{ fontSize: 13, color: '#A09A94', marginTop: 2 }}>Client: Emma Fischer</div>
+        <div style={{ fontSize: 13, color: '#9B9B9F', marginTop: 2 }}>Client: Emma Fischer</div>
       </div>
     </div>
 
     <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <Clock size={14} color="#A09A94" strokeWidth={1.8} />
+        <Clock size={14} color="#9B9B9F" strokeWidth={1.8} />
         <span style={{ fontSize: 13, color: '#6E6058' }}>2:00 PM — 3:30 PM</span>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <MapPin size={14} color="#A09A94" strokeWidth={1.8} />
+        <MapPin size={14} color="#9B9B9F" strokeWidth={1.8} />
         <span style={{ fontSize: 13, color: '#6E6058' }}>Seefeld</span>
       </div>
     </div>
 
     <div style={{ display: 'flex', gap: 10 }}>
       <button className="pro-tap" style={{
-        flex: 1, height: 48, borderRadius: 14, border: 'none',
+        flex: 1, height: 48, borderRadius: 16, border: 'none',
         background: '#111',
         color: '#FFFFFF', fontSize: 15, fontWeight: 600,
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -264,7 +264,7 @@ const NextBooking = () => (
         Start Walk
       </button>
       <button className="pro-tap" style={{
-        width: 48, height: 48, borderRadius: 14,
+        width: 48, height: 48, borderRadius: 16,
         border: '1px solid #EDE8E2', background: '#F3EFEB',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
@@ -289,7 +289,7 @@ const BottomTabBar = ({ activeTab, onTabChange }) => {
       position: 'absolute', bottom: 24, left: 16, right: 16,
       height: 64, background: 'rgba(247,245,242,0.92)',
       backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-      borderRadius: 22, boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+      borderRadius: 20, boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
       border: '1px solid #EDE8E2',
       display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '0 4px',
     }}>
@@ -307,14 +307,14 @@ const BottomTabBar = ({ activeTab, onTabChange }) => {
             }}
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-              padding: '6px 10px', borderRadius: 14,
+              padding: '6px 10px', borderRadius: 16,
               background: isActive ? 'rgba(232,93,42,0.08)' : 'transparent',
               transition: 'all 240ms cubic-bezier(0.34,1.56,0.64,1)',
               position: 'relative',
             }}
           >
             <div style={{ position: 'relative' }}>
-              <Icon size={20} color={isActive ? '#E85D2A' : '#A09A94'} strokeWidth={isActive ? 2 : 1.6} />
+              <Icon size={20} color={isActive ? '#E85D2A' : '#9B9B9F'} strokeWidth={isActive ? 2 : 1.6} />
               {tab.badge && (
                 <div style={{
                   position: 'absolute', top: -4, right: -8, minWidth: 16, height: 16,
@@ -327,7 +327,7 @@ const BottomTabBar = ({ activeTab, onTabChange }) => {
             </div>
             <span style={{
               fontSize: 10, fontWeight: isActive ? 600 : 500,
-              color: isActive ? '#E85D2A' : '#A09A94',
+              color: isActive ? '#E85D2A' : '#9B9B9F',
             }}>{tab.label}</span>
           </div>
         );

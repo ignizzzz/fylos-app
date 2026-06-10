@@ -94,7 +94,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -146,10 +146,10 @@ const IconWrapper = ({ icon: Icon, color = THEME.colors.primaryText, size = 24, 
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[#F7F7F8] text-[#6E6E73]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -190,7 +190,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A] active:shadow-[0_2px_8px_rgba(255,107,53,0.20)]",
     secondary: "bg-transparent text-[#111111] border-[1.5px] border-black/[0.08] hover:bg-[#F7F7F8]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]"
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]"
   };
   
   const sizes = {
@@ -251,8 +251,8 @@ const LikeButton = () => {
       <div className={`transition-all duration-300 ${animating ? 'scale-125 -rotate-12' : 'scale-100 rotate-0'}`}>
         <Heart
           size={22}
-          fill={liked ? '#FF3B30' : 'transparent'}
-          color={liked ? '#FF3B30' : '#111111'}
+          fill={liked ? '#E5484D' : 'transparent'}
+          color={liked ? '#E5484D' : '#111111'}
           className="transition-colors duration-200"
         />
       </div>
@@ -335,13 +335,13 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
       disabled={disabled}
       className={`w-full h-[52px] px-4 bg-[#FFFFFF] border text-[16px] text-[#111111] rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/10 ${
         error 
-          ? 'border-[#FF3B30] focus:border-[#FF3B30]' 
+          ? 'border-[#E5484D] focus:border-[#E5484D]' 
           : 'border-black/[0.08] focus:border-[#FF6B35]'
       } placeholder:text-[#8E8E93]`}
       {...props}
     />
     {error ? (
-      <span className="text-[12px] text-[#FF3B30] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
+      <span className="text-[12px] text-[#E5484D] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
     ) : helperText ? (
       <span className="text-[12px] text-[#8E8E93] ml-1">{helperText}</span>
     ) : null}
@@ -628,7 +628,7 @@ const PlaceholderScreen = ({ title }) => (
   <ScreenContainer>
     <div className="flex flex-col items-center justify-center w-full h-full min-h-[50vh] px-6 text-center">
       <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Activity size={32} color="#CFCFD4" strokeWidth={1.5} />
+        <Activity size={32} color="#CFCFD4" strokeWidth={1.8} />
       </div>
       <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
       <p className="text-[15px] text-[#6E6E73] max-w-[260px] leading-relaxed">

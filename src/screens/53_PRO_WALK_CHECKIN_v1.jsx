@@ -128,7 +128,7 @@ const PreWalkState = ({ onStartWalk }) => {
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>Sarah Mitchell</div>
-              <div style={{ fontSize: 13, color: '#A09A94', marginTop: 1 }}>Luna (Golden Retriever)</div>
+              <div style={{ fontSize: 13, color: '#9B9B9F', marginTop: 1 }}>Luna (Golden Retriever)</div>
             </div>
             <div style={{ background: '#EEF7F1', borderRadius: 9999, padding: '4px 10px', border: '1px solid #D7EBDD' }}>
               <span style={{ fontSize: 11, fontWeight: 700, color: '#3F8D63' }}>Confirmed</span>
@@ -153,7 +153,7 @@ const PreWalkState = ({ onStartWalk }) => {
         <Card style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 20px 12px' }}>
             <div style={{ fontWeight: 700, fontSize: 14, color: '#111' }}>Pre-Walk Checklist</div>
-            <div style={{ fontSize: 12, color: '#A09A94', marginTop: 2 }}>Complete all items to start</div>
+            <div style={{ fontSize: 12, color: '#9B9B9F', marginTop: 2 }}>Complete all items to start</div>
           </div>
           <div className="border-t border-dashed border-[#CFCFD4]" />
 
@@ -195,7 +195,7 @@ const PreWalkState = ({ onStartWalk }) => {
           onClick={allChecked ? onStartWalk : undefined}
           disabled={!allChecked}
           style={{
-            width: '100%', padding: '14px 0', border: 'none', borderRadius: 14,
+            width: '100%', padding: '14px 0', border: 'none', borderRadius: 16,
             background: allChecked ? '#111' : '#D5CEC7',
             color: '#fff', fontSize: 16, fontWeight: 700,
             cursor: allChecked ? 'pointer' : 'not-allowed',
@@ -208,7 +208,7 @@ const PreWalkState = ({ onStartWalk }) => {
           Start Walk
         </button>
         {!allChecked && (
-          <p style={{ textAlign: 'center', fontSize: 11, color: '#A09A94', marginTop: 6 }}>
+          <p style={{ textAlign: 'center', fontSize: 11, color: '#9B9B9F', marginTop: 6 }}>
             Complete all checklist items to begin
           </p>
         )}
@@ -246,7 +246,7 @@ const ActiveWalkState = ({ elapsedSecs, onEndWalk }) => {
             }}>
               {formatTime(elapsedSecs)}
             </div>
-            <div style={{ fontSize: 13, color: '#A09A94' }}>elapsed</div>
+            <div style={{ fontSize: 13, color: '#9B9B9F' }}>elapsed</div>
           </Card>
         </div>
 
@@ -265,7 +265,7 @@ const ActiveWalkState = ({ elapsedSecs, onEndWalk }) => {
                 <Icon size={18} color={color} />
               </div>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#A09A94', textTransform: 'uppercase', letterSpacing: 0.4 }}>{label}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#9B9B9F', textTransform: 'uppercase', letterSpacing: 0.4 }}>{label}</div>
                 <div style={{ fontSize: 18, fontWeight: 800, color: '#111' }}>{value}</div>
               </div>
             </Card>
@@ -286,8 +286,8 @@ const ActiveWalkState = ({ elapsedSecs, onEndWalk }) => {
                 backgroundImage: 'radial-gradient(#D5CEC7 1px, transparent 1px)',
                 backgroundSize: '20px 20px',
               }} />
-              <MapPin size={28} color="#A09A94" />
-              <span style={{ fontSize: 12, color: '#A09A94', fontWeight: 500 }}>Route tracking active</span>
+              <MapPin size={28} color="#9B9B9F" />
+              <span style={{ fontSize: 12, color: '#9B9B9F', fontWeight: 500 }}>Route tracking active</span>
             </div>
           </Card>
         </div>
@@ -316,7 +316,7 @@ const ActiveWalkState = ({ elapsedSecs, onEndWalk }) => {
         {/* End Walk Button */}
         <div className="slide-in" style={{ animationDelay: '160ms', paddingBottom: 8 }}>
           <button className="pro-tap" onClick={onEndWalk} style={{
-            width: '100%', padding: '14px 0', border: 'none', borderRadius: 14,
+            width: '100%', padding: '14px 0', border: 'none', borderRadius: 16,
             background: '#D96852', color: '#fff',
             fontSize: 16, fontWeight: 700,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
@@ -391,7 +391,7 @@ const WalkCompleteState = ({ elapsedSecs }) => {
                 </div>
                 <div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: '#111' }}>{value}</div>
-                  <div style={{ fontSize: 11, color: '#A09A94' }}>{label}</div>
+                  <div style={{ fontSize: 11, color: '#9B9B9F' }}>{label}</div>
                 </div>
               </div>
             ))}
@@ -400,11 +400,11 @@ const WalkCompleteState = ({ elapsedSecs }) => {
           {/* Route placeholder */}
           <div style={{
             height: 80, background: '#F7F5F2',
-            borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             border: '1px solid #EDE8E2',
           }}>
-            <MapPin size={18} color="#A09A94" />
-            <span style={{ fontSize: 12, color: '#A09A94', fontWeight: 500 }}>Route completed</span>
+            <MapPin size={18} color="#9B9B9F" />
+            <span style={{ fontSize: 12, color: '#9B9B9F', fontWeight: 500 }}>Route completed</span>
           </div>
         </Card>
       </div>
@@ -416,21 +416,21 @@ const WalkCompleteState = ({ elapsedSecs }) => {
           <div style={{ display: 'flex', gap: 8 }}>
             {[1, 2, 3].map(i => (
               <div key={i} style={{
-                flex: 1, height: 72, borderRadius: 14,
+                flex: 1, height: 72, borderRadius: 16,
                 background: '#F7F5F2',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: '1px solid #EDE8E2',
               }}>
-                <Camera size={18} color="#A09A94" />
+                <Camera size={18} color="#9B9B9F" />
               </div>
             ))}
             <div style={{
-              width: 72, height: 72, borderRadius: 14,
+              width: 72, height: 72, borderRadius: 16,
               border: '2px dashed #D5CEC7',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', flexShrink: 0,
             }}>
-              <Camera size={18} color="#A09A94" />
+              <Camera size={18} color="#9B9B9F" />
             </div>
           </div>
         </Card>
@@ -458,7 +458,7 @@ const WalkCompleteState = ({ elapsedSecs }) => {
       <div className="slide-in" style={{ animationDelay: '140ms' }}>
         <Card>
           <div style={{ fontWeight: 700, fontSize: 14, color: '#111', marginBottom: 4 }}>Rate this walk</div>
-          <div style={{ fontSize: 12, color: '#A09A94', marginBottom: 12 }}>How was your experience?</div>
+          <div style={{ fontSize: 12, color: '#9B9B9F', marginBottom: 12 }}>How was your experience?</div>
           <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
             {[1, 2, 3, 4, 5].map(i => (
               <button key={i} onClick={() => setRating(i)} style={{
@@ -468,7 +468,7 @@ const WalkCompleteState = ({ elapsedSecs }) => {
                 <Star size={28}
                   color={i <= rating ? '#E85D2A' : '#D5CEC7'}
                   fill={i <= rating ? '#E85D2A' : 'none'}
-                  strokeWidth={1.5}
+                  strokeWidth={1.8}
                 />
               </button>
             ))}
@@ -479,7 +479,7 @@ const WalkCompleteState = ({ elapsedSecs }) => {
       {/* Submit */}
       <div className="slide-in" style={{ animationDelay: '180ms', paddingBottom: 8 }}>
         <button className="pro-tap" onClick={() => setSubmitted(true)} style={{
-          width: '100%', padding: '14px 0', border: 'none', borderRadius: 14,
+          width: '100%', padding: '14px 0', border: 'none', borderRadius: 16,
           background: '#111',
           color: '#fff', fontSize: 16, fontWeight: 700,
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,

@@ -25,7 +25,7 @@ const T = {
   card: '#FFFFFF',
   text: '#111111',
   textMuted: '#6E6058',
-  textTertiary: '#A09A94',
+  textTertiary: '#9B9B9F',
   divider: '#E5E5E5',
 };
 
@@ -455,7 +455,7 @@ function LivePreview({ slideId }) {
             key={w.name}
             style={{
               background: T.card,
-              borderRadius: 14,
+              borderRadius: 16,
               border: '1px solid rgba(0,0,0,0.05)',
               boxShadow: '0 2px 10px rgba(60,40,25,0.05)',
               padding: 10,

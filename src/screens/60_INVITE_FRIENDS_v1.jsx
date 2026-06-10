@@ -48,7 +48,7 @@ const REFERRAL = {
 const STATUS_META = {
   earned: { label: 'Earned 10 CHF', bg: '#EEF7F1', fg: GREEN, ring: GREEN },
   joined: { label: 'Booking pending', bg: '#FFEDE3', fg: CORAL, ring: CORAL },
-  pending: { label: 'Invite sent', bg: PEACH, fg: '#A09A94', ring: '#D8D0C6' },
+  pending: { label: 'Invite sent', bg: PEACH, fg: '#9B9B9F', ring: '#D8D0C6' },
 };
 
 // Tiered bonus — a goal to keep the user inviting. When `current`
@@ -156,7 +156,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
         {/* Hero — compact, clean, on cream */}
         <div className="px-6 pt-2 pb-6 text-center">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-3.5" style={{ background: '#FFEDE3' }}>
-            <Gift size={25} color={CORAL} strokeWidth={1.9} />
+            <Gift size={25} color={CORAL} strokeWidth={2} />
           </div>
           <h2 className="text-[25px] font-extrabold text-[#111] tracking-[-0.02em] leading-[1.1]">
             You both get <span className="text-[#E85D2A]">10 CHF</span>
@@ -178,7 +178,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
               </div>
               <div className="text-[31px] font-extrabold text-[#111] tracking-[0.12em] leading-none" style={{ fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>{REFERRAL.code}</div>
               <button onClick={() => copy(REFERRAL.code, 'code')} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full mt-3.5 active:scale-[0.96] transition-transform" style={{ background: copied === 'code' ? '#EEF7F1' : '#FFFFFF', boxShadow: copied === 'code' ? 'none' : 'inset 0 0 0 1px #F0DDD0' }}>
-                {copied === 'code' ? <Check size={14} className="text-[#3F8D63]" strokeWidth={2.6} /> : <Copy size={14} className="text-[#E85D2A]" strokeWidth={2} />}
+                {copied === 'code' ? <Check size={14} className="text-[#3F8D63]" strokeWidth={2.4} /> : <Copy size={14} className="text-[#E85D2A]" strokeWidth={2} />}
                 <span className="text-[12.5px] font-bold" style={{ color: copied === 'code' ? GREEN : CORAL }}>{copied === 'code' ? 'Copied' : 'Copy code'}</span>
               </button>
             </div>
@@ -192,7 +192,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
             <button onClick={() => copy(`https://${REFERRAL.link}`, 'link')} className="w-full flex items-center justify-between gap-3 px-5 py-3 active:bg-[#FAF6F0] transition-colors">
               <span className="text-[13px] text-[#6E6058] truncate">{REFERRAL.link}</span>
               <span className="flex items-center gap-1.5 shrink-0">
-                {copied === 'link' ? <Check size={13} className="text-[#3F8D63]" strokeWidth={2.6} /> : <Copy size={13} className="text-[#A09A94]" strokeWidth={2} />}
+                {copied === 'link' ? <Check size={13} className="text-[#3F8D63]" strokeWidth={2.4} /> : <Copy size={13} className="text-[#9B9B9F]" strokeWidth={2} />}
                 <span className="text-[12px] font-semibold" style={{ color: copied === 'link' ? GREEN : MUTED }}>{copied === 'link' ? 'Copied' : 'Copy link'}</span>
               </span>
             </button>
@@ -207,12 +207,12 @@ const InviteFriends = ({ embedded = false, onExit }) => {
           {/* Secondary actions — the two things the native share sheet
               doesn't do well: copy link, and a QR for in-person. */}
           <div className="grid grid-cols-2 gap-2.5 -mt-1">
-            <button onClick={() => copy(`https://${REFERRAL.link}`, 'link')} className="flex items-center justify-center gap-2 py-2.5 rounded-[14px] active:scale-[0.97] transition-transform" style={{ background: PEACH }}>
-              {copied === 'link' ? <Check size={15} className="text-[#3F8D63]" strokeWidth={2.4} /> : <Copy size={15} className="text-[#111]" strokeWidth={1.9} />}
+            <button onClick={() => copy(`https://${REFERRAL.link}`, 'link')} className="flex items-center justify-center gap-2 py-2.5 rounded-[16px] active:scale-[0.97] transition-transform" style={{ background: PEACH }}>
+              {copied === 'link' ? <Check size={15} className="text-[#3F8D63]" strokeWidth={2.4} /> : <Copy size={15} className="text-[#111]" strokeWidth={2} />}
               <span className="text-[12.5px] font-semibold" style={{ color: copied === 'link' ? GREEN : INK }}>{copied === 'link' ? 'Copied' : 'Copy link'}</span>
             </button>
-            <button onClick={() => setQrOpen((v) => !v)} className="flex items-center justify-center gap-2 py-2.5 rounded-[14px] active:scale-[0.97] transition-transform" style={{ background: qrOpen ? '#FFEDE3' : PEACH, boxShadow: qrOpen ? `inset 0 0 0 1.5px ${CORAL}` : 'none' }}>
-              <QrCode size={15} color={qrOpen ? CORAL : '#111'} strokeWidth={1.9} />
+            <button onClick={() => setQrOpen((v) => !v)} className="flex items-center justify-center gap-2 py-2.5 rounded-[16px] active:scale-[0.97] transition-transform" style={{ background: qrOpen ? '#FFEDE3' : PEACH, boxShadow: qrOpen ? `inset 0 0 0 1.5px ${CORAL}` : 'none' }}>
+              <QrCode size={15} color={qrOpen ? CORAL : '#111'} strokeWidth={2} />
               <span className="text-[12.5px] font-semibold" style={{ color: qrOpen ? CORAL : INK }}>QR code</span>
             </button>
           </div>
@@ -221,7 +221,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
           {qrOpen && (
             <div className="flex flex-col items-center py-3" style={{ animation: 'invFade 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
               <QrMock />
-              <p className="text-[12px] text-[#A09A94] mt-3 text-center max-w-[240px] leading-[1.45]">Let a friend scan this in person. It opens fylos with your code applied.</p>
+              <p className="text-[12px] text-[#9B9B9F] mt-3 text-center max-w-[240px] leading-[1.45]">Let a friend scan this in person. It opens fylos with your code applied.</p>
             </div>
           )}
 
@@ -251,7 +251,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
               ].map((s, i) => (
                 <div key={s.k} className="flex-1 text-center" style={{ borderLeft: i ? '1px solid #F0EAE2' : 'none' }}>
                   <div className="text-[17px] font-extrabold tabular-nums leading-none" style={{ color: s.accent ? CORAL : INK }}>{s.v}</div>
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#A09A94] mt-1">{s.k}</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#9B9B9F] mt-1">{s.k}</div>
                 </div>
               ))}
             </div>
@@ -260,7 +260,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
           {/* Recent invites — clean list */}
           <div className="mt-1">
             <div className="flex items-center justify-between mb-2.5 px-0.5">
-              <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#A09A94]">Recent invites</h3>
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9B9B9F]">Recent invites</h3>
               <button className="flex items-center gap-1 active:opacity-70 transition-opacity">
                 <Wallet size={12} className="text-[#E85D2A]" strokeWidth={2.2} />
                 <span className="text-[11.5px] font-semibold text-[#E85D2A]">Wallet</span>
@@ -277,7 +277,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
                     </span>
                     <div className="flex-1 min-w-0">
                       <div className="text-[13.5px] font-semibold text-[#111]">{inv.name}</div>
-                      <div className="text-[11px] text-[#A09A94]">{inv.when}</div>
+                      <div className="text-[11px] text-[#9B9B9F]">{inv.when}</div>
                     </div>
                     <span className="text-[10.5px] font-bold px-2.5 py-1 rounded-full shrink-0" style={{ background: meta.bg, color: meta.fg }}>{meta.label}</span>
                   </div>
@@ -287,7 +287,7 @@ const InviteFriends = ({ embedded = false, onExit }) => {
           </div>
 
           {/* Terms — one quiet line */}
-          <p className="text-[11px] leading-[1.5] text-[#A09A94] text-center px-4 mt-1">
+          <p className="text-[11px] leading-[1.5] text-[#9B9B9F] text-center px-4 mt-1">
             Credit applies after your friend's first booking. <span className="font-semibold text-[#E85D2A]">Terms apply.</span>
           </p>
         </div>

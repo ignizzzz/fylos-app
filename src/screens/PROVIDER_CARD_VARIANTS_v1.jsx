@@ -62,7 +62,7 @@ function Frame({ title, subtitle, children }) {
           {title}
         </div>
         {subtitle && (
-          <div style={{ fontSize: 11.5, color: '#A09A94', marginTop: 2 }}>
+          <div style={{ fontSize: 11.5, color: '#9B9B9F', marginTop: 2 }}>
             {subtitle}
           </div>
         )}
@@ -283,7 +283,7 @@ function VariantTicket() {
           flexShrink: 0,
           width: 240,
           background: '#FFFFFF',
-          borderRadius: 14,
+          borderRadius: 16,
           border: '1px solid rgba(0,0,0,0.04)',
           boxShadow: '0 1px 2px rgba(0,0,0,0.025)',
           padding: '12px 12px 12px 16px',
@@ -464,7 +464,7 @@ function VariantSplit() {
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 2, marginTop: 2 }}>
             <Star size={10} fill="#E85D2A" color="#E85D2A" />
             <span style={{ fontSize: 11.5, color: '#111', fontWeight: 600 }}>{p.rating}</span>
-            <span style={{ fontSize: 11, color: '#A09A94' }}> · {p.reviews} reviews</span>
+            <span style={{ fontSize: 11, color: '#9B9B9F' }}> · {p.reviews} reviews</span>
           </div>
           <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 8 }}>
             <span style={{ fontSize: 12 }}>

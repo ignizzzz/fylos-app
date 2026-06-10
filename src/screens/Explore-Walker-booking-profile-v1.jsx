@@ -275,9 +275,9 @@ const StatusBar = () => (
   <div className="absolute top-0 left-0 w-full h-[54px] flex justify-between items-end px-7 pb-3 z-[150] text-[13px] font-semibold tracking-wide text-black pointer-events-none">
     <span>9:41</span>
     <div className="flex items-center gap-1.5">
-      <Signal size={16} strokeWidth={2.5} />
-      <Wifi size={16} strokeWidth={2.5} />
-      <Battery size={18} strokeWidth={2.5} />
+      <Signal size={16} strokeWidth={2.4} />
+      <Wifi size={16} strokeWidth={2.4} />
+      <Battery size={18} strokeWidth={2.4} />
     </div>
   </div>
 );
@@ -612,7 +612,7 @@ const RepeatDogsSection = ({ onShowDog }) => {
                             {/* Name Row */}
                             <div className="flex items-center gap-0.5 pl-1">
                                 <span className="text-[12px] font-semibold text-zinc-900">{dog.name}</span>
-                                <ChevronRight size={10} className="text-zinc-400/60" strokeWidth={2.5} />
+                                <ChevronRight size={10} className="text-zinc-400/60" strokeWidth={2.4} />
                             </div>
 
                             {/* Label Row */}

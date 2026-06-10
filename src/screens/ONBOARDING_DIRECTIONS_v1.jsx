@@ -33,7 +33,7 @@ const T = {
   card: '#FFFFFF',
   text: '#111111',
   textMuted: '#6E6058',
-  textTertiary: '#A09A94',
+  textTertiary: '#9B9B9F',
   divider: '#E5E5E5',
   peach: '#FBB07A',
   warm: '#EB8A4C',
@@ -234,7 +234,7 @@ function MockupProvidersA() {
               </span>
             </div>
             <span
-              className="inline-flex items-center h-[16px] px-1.5 rounded-full text-[9.5px] font-semibold"
+              className="inline-flex items-center h-[16px] px-1.5 rounded-full text-[10.5px] font-semibold"
               style={{ background: T.coralSoft, color: T.coralDark }}
             >
               {p.role}
@@ -505,7 +505,7 @@ function HeroStatsC() {
               <div className="text-[14px] font-bold" style={{ color: T.text }}>
                 {s.value}
               </div>
-              <div className="text-[9.5px]" style={{ color: T.textTertiary }}>
+              <div className="text-[10.5px]" style={{ color: T.textTertiary }}>
                 {s.label}
               </div>
             </div>
@@ -598,7 +598,7 @@ function MockupProvidersC() {
               </span>
             </div>
             <span
-              className="inline-flex items-center h-[16px] px-1.5 rounded-full text-[9.5px] font-semibold"
+              className="inline-flex items-center h-[16px] px-1.5 rounded-full text-[10.5px] font-semibold"
               style={{ background: T.coralSoft, color: T.coralDark }}
             >
               {p.role}

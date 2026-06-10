@@ -97,7 +97,7 @@ const BalanceCard = () => (
     position: 'relative', overflow: 'hidden',
   }}>
     <div style={{
-      fontSize: 12, fontWeight: 500, color: '#A09A94',
+      fontSize: 12, fontWeight: 500, color: '#9B9B9F',
       letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 6,
     }}>Available for payout</div>
 
@@ -107,7 +107,7 @@ const BalanceCard = () => (
     }}>CHF 1,240</div>
 
     <button className="pro-tap" style={{
-      width: '100%', height: 48, borderRadius: 14, border: 'none',
+      width: '100%', height: 48, borderRadius: 16, border: 'none',
       background: '#111',
       color: '#FFFFFF', fontSize: 15, fontWeight: 600,
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
@@ -139,7 +139,7 @@ const PeriodSelector = ({ active, onChange }) => {
           <div key={p.id} className="pro-tap" onClick={() => onChange(p.id)} style={{
             flex: 1, padding: '9px 0', borderRadius: 9999,
             background: isActive ? '#FFFFFF' : 'transparent',
-            color: isActive ? '#111' : '#A09A94',
+            color: isActive ? '#111' : '#9B9B9F',
             fontSize: 13, fontWeight: isActive ? 600 : 500, textAlign: 'center',
             boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
             transition: 'all 240ms cubic-bezier(0.34,1.56,0.64,1)',
@@ -204,7 +204,7 @@ const EarningsChart = ({ period }) => {
           <div key={label} style={{
             flex: 1, textAlign: 'center',
             fontSize: data.labels.length > 5 ? 10 : 11,
-            color: '#A09A94', fontWeight: 500,
+            color: '#9B9B9F', fontWeight: 500,
           }}>{label}</div>
         ))}
       </div>
@@ -216,7 +216,7 @@ const EarningsChart = ({ period }) => {
 const TransactionGroup = ({ label, items }) => (
   <div style={{ marginBottom: 14 }}>
     <div style={{
-      fontSize: 12, fontWeight: 500, color: '#A09A94',
+      fontSize: 12, fontWeight: 500, color: '#9B9B9F',
       textTransform: 'uppercase', letterSpacing: '0.06em',
       padding: '0 20px', marginBottom: 8,
     }}>{label}</div>
@@ -249,11 +249,11 @@ const TransactionGroup = ({ label, items }) => (
             </div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 3 }}>
               {tx.status === 'completed'
-                ? <Check size={11} color="#3F8D63" strokeWidth={2.5} />
-                : <Clock size={11} color="#A09A94" strokeWidth={2} />}
+                ? <Check size={11} color="#3F8D63" strokeWidth={2.4} />
+                : <Clock size={11} color="#9B9B9F" strokeWidth={2} />}
               <span style={{
                 fontSize: 11, fontWeight: 500,
-                color: tx.status === 'completed' ? '#3F8D63' : '#A09A94',
+                color: tx.status === 'completed' ? '#3F8D63' : '#9B9B9F',
               }}>{tx.status === 'completed' ? 'Completed' : 'Pending'}</span>
             </div>
           </div>
@@ -281,7 +281,7 @@ const PayoutSettingsLink = () => (
       <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>Payout Settings</div>
       <div style={{ fontSize: 12, color: '#6E6058', marginTop: 2 }}>Bank account, schedule, preferences</div>
     </div>
-    <ChevronRight size={18} color="#A09A94" strokeWidth={1.8} />
+    <ChevronRight size={18} color="#9B9B9F" strokeWidth={1.8} />
   </div>
 );
 
@@ -299,7 +299,7 @@ const BottomTabBar = () => {
     <div style={{
       position: 'absolute', bottom: 24, left: 16, right: 16, height: 64,
       background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-      borderRadius: 22, boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+      borderRadius: 20, boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
       border: '1px solid #EDE8E2',
       display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '0 4px',
     }}>
@@ -312,12 +312,12 @@ const BottomTabBar = () => {
             else if (tab.id === 'schedule') alert('Schedule coming soon');
           }} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-            padding: '6px 10px', borderRadius: 14,
+            padding: '6px 10px', borderRadius: 16,
             background: isActive ? 'rgba(232,93,42,0.08)' : 'transparent',
             transition: 'all 240ms cubic-bezier(0.34,1.56,0.64,1)',
           }}>
-            <Icon size={20} color={isActive ? '#E85D2A' : '#A09A94'} strokeWidth={isActive ? 2 : 1.6} />
-            <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 500, color: isActive ? '#E85D2A' : '#A09A94' }}>{tab.label}</span>
+            <Icon size={20} color={isActive ? '#E85D2A' : '#9B9B9F'} strokeWidth={isActive ? 2 : 1.6} />
+            <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 500, color: isActive ? '#E85D2A' : '#9B9B9F' }}>{tab.label}</span>
           </div>
         );
       })}

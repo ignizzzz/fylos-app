@@ -25,7 +25,7 @@ const THEME = {
     accent: '#E85D2A', accentHover: '#D04A1C',
     primaryText: '#111111', secondaryText: '#6E6E73', tertiaryText: '#8E8E93',
     background: '#F9F9FB', surface: '#FFFFFF', surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
+    danger: '#E5484D', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
   },
   radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
   shadows: { soft: '0 4px 20px rgba(0,0,0,0.03)', floating: '0 8px 24px rgba(0,0,0,0.08)' },
@@ -161,7 +161,7 @@ const ZurichMap = () => {
       </svg>
 
       <div style={{ position: 'absolute', left: `${startPos[0]}px`, top: `${startPos[1]}px`, transform: 'translate(-50%, -50%)', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <PawPrint size={12} color={THEME.colors.accent} strokeWidth={2.5} />
+        <PawPrint size={12} color={THEME.colors.accent} strokeWidth={2.4} />
       </div>
 
       <div style={{ position: 'absolute', left: `${walkerPos[0]}px`, top: `${walkerPos[1]}px`, transform: 'translate(-50%, -50%)' }}>
@@ -193,7 +193,7 @@ const TimelineItem = ({ label, time, done, isCurrent, isLast }) => (
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
       }}>
         {isCurrent ? <div style={{ width: 8, height: 8, borderRadius: '50%', background: THEME.colors.accent }} />
-          : done ? <Check size={11} color={THEME.colors.success} strokeWidth={2.5} />
+          : done ? <Check size={11} color={THEME.colors.success} strokeWidth={2.4} />
           : <Circle size={8} color={THEME.colors.tertiaryText} strokeWidth={2} />}
       </div>
       {!isLast && <div style={{ width: 2, flex: 1, minHeight: 18, background: THEME.colors.divider, marginTop: 4, marginBottom: 4, borderRadius: 1 }} />}
@@ -327,7 +327,7 @@ const GPSTrackingScreen = () => {
                   padding: '14px 0', borderRadius: THEME.radius.medium,
                   background: THEME.colors.surfaceAlt, border: `1.5px solid ${THEME.colors.divider}`
                 }}>
-                  <MessageCircle size={16} color={THEME.colors.accent} strokeWidth={2.5} />
+                  <MessageCircle size={16} color={THEME.colors.accent} strokeWidth={2.4} />
                   <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, fontWeight: 600, color: THEME.colors.primaryText }}>Message Walker</span>
                 </button>
                 <button className="gps-btn" style={{
@@ -335,7 +335,7 @@ const GPSTrackingScreen = () => {
                   background: 'transparent', border: `1.5px solid ${THEME.colors.divider}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}>
-                  <Phone size={20} color={THEME.colors.success} strokeWidth={2.5} />
+                  <Phone size={20} color={THEME.colors.success} strokeWidth={2.4} />
                 </button>
               </div>
             </div>

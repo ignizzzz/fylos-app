@@ -95,7 +95,7 @@ const CancelRequestDialog = ({ onKeepWaiting, onCancelRequest }) => (
         <PrimaryBtn onClick={onKeepWaiting}>Keep waiting</PrimaryBtn>
         <button
           onClick={onCancelRequest}
-          className="w-full h-11 rounded-[14px] text-[14.5px] font-semibold active:scale-[0.98] transition-transform"
+          className="w-full h-11 rounded-[16px] text-[14.5px] font-semibold active:scale-[0.98] transition-transform"
           style={{ backgroundColor: 'transparent', color: T.danger }}
         >
           Cancel request
@@ -279,7 +279,7 @@ END:VCALENDAR`;
             <DetailRow label="Booking ID">
               <button onClick={handleCopyId} className="flex items-center gap-2 active:opacity-60 transition-opacity w-fit">
                 <span className="text-[13.5px] font-medium" style={{ color: T.txt }}>#FY2024-00142</span>
-                {copied ? <Check size={13} color={T.success} strokeWidth={2.5} /> : <Copy size={13} color={T.muted} strokeWidth={2} />}
+                {copied ? <Check size={13} color={T.success} strokeWidth={2.4} /> : <Copy size={13} color={T.muted} strokeWidth={2} />}
               </button>
             </DetailRow>
             <Divider />

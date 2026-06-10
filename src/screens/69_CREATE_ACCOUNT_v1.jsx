@@ -124,7 +124,7 @@ const CreateAccountScreen = () => {
   })();
 
   const strengthLabel = ['', 'Weak', 'Fair', 'Good', 'Strong'][passwordStrength];
-  const strengthColor = ['#D5CFC8', '#FF3B30', '#FF9500', '#34C759', '#34C759'][passwordStrength];
+  const strengthColor = ['#D5CFC8', '#E5484D', '#FF9500', '#34C759', '#34C759'][passwordStrength];
 
   const inputStyle = (field) => ({
     display: 'flex', alignItems: 'center', gap: 12,
@@ -137,7 +137,7 @@ const CreateAccountScreen = () => {
     transition: 'all 200ms ease',
   });
 
-  const iconColor = (field) => focusedField === field ? '#E85D2A' : '#A09A94';
+  const iconColor = (field) => focusedField === field ? '#E85D2A' : '#9B9B9F';
 
   return (
     <>
@@ -293,7 +293,7 @@ const CreateAccountScreen = () => {
                   </h1>
                   <p style={{
                     fontFamily: '"Nunito", sans-serif',
-                    fontSize: 13, color: '#A09A94', lineHeight: 1.4, fontWeight: 600,
+                    fontSize: 13, color: '#9B9B9F', lineHeight: 1.4, fontWeight: 600,
                     letterSpacing: '0.01em',
                   }}>
                     Join thousands of pet owners.
@@ -343,7 +343,7 @@ const CreateAccountScreen = () => {
                       style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontSize: 15, fontWeight: 500, color: '#111', fontFamily: 'Inter, -apple-system, sans-serif' }}
                     />
                     <button onClick={() => setShowPassword(!showPassword)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, flexShrink: 0 }}>
-                      {showPassword ? <EyeOff size={17} color="#A09A94" /> : <Eye size={17} color="#A09A94" />}
+                      {showPassword ? <EyeOff size={17} color="#9B9B9F" /> : <Eye size={17} color="#9B9B9F" />}
                     </button>
                   </div>
 
@@ -387,7 +387,7 @@ const CreateAccountScreen = () => {
                 >
                   <span style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
                     Create Account
-                    <ArrowRight size={16} strokeWidth={2.5} />
+                    <ArrowRight size={16} strokeWidth={2.4} />
                   </span>
                 </button>
               </div>
@@ -446,7 +446,7 @@ const CreateAccountScreen = () => {
 
               {/* Terms */}
               <p style={{
-                fontSize: 11.5, color: '#A09A94', textAlign: 'center',
+                fontSize: 11.5, color: '#9B9B9F', textAlign: 'center',
                 lineHeight: 1.6, marginTop: 16, marginBottom: 4,
                 animation: 'ca-fadeUp 0.5s 0.45s cubic-bezier(0.22, 1, 0.36, 1) both',
               }}>
@@ -465,7 +465,7 @@ const CreateAccountScreen = () => {
                   onClick={() => navigate('/')}
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
-                    fontSize: 14, color: '#A09A94', fontWeight: 400,
+                    fontSize: 14, color: '#9B9B9F', fontWeight: 400,
                     fontFamily: 'Inter, -apple-system, sans-serif',
                   }}
                 >

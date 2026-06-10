@@ -199,7 +199,7 @@ const ChatScreen = ({ onBack, onViewBooking }) => {
               className="w-10 h-10 rounded-full flex items-center justify-center active:scale-95 transition-transform"
               style={{ backgroundColor: T.card, border: `1px solid ${T.border}`, boxShadow: SHADOWS.card }}
             >
-              <AlertTriangle size={18} color={T.danger} strokeWidth={2.1} />
+              <AlertTriangle size={18} color={T.danger} strokeWidth={2} />
             </button>
           </div>
         </div>
@@ -357,7 +357,7 @@ const ChatScreen = ({ onBack, onViewBooking }) => {
                               <textarea
                                 placeholder="Add a comment (optional)"
                                 rows={2}
-                                className="w-full max-w-[280px] rounded-[14px] px-4 py-3 text-[14px] resize-none outline-none transition-colors"
+                                className="w-full max-w-[280px] rounded-[16px] px-4 py-3 text-[14px] resize-none outline-none transition-colors"
                                 style={{
                                   backgroundColor: T.card,
                                   border: `1px solid ${T.border}`,
@@ -421,10 +421,10 @@ const ChatScreen = ({ onBack, onViewBooking }) => {
               className="w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-transform shrink-0"
               style={{ backgroundColor: T.card, border: `1px solid ${T.border}`, boxShadow: SHADOWS.card, color: T.txt }}
             >
-              <Camera size={20} strokeWidth={1.6} />
+              <Camera size={20} strokeWidth={1.8} />
             </button>
             <div
-              className="flex-1 rounded-[22px] flex items-end p-1 min-h-[44px]"
+              className="flex-1 rounded-[20px] flex items-end p-1 min-h-[44px]"
               style={{ backgroundColor: T.card, border: `1px solid ${T.border}`, boxShadow: SHADOWS.card }}
             >
               <textarea

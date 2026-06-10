@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   ChevronLeft, ChevronRight, ShieldCheck, ShieldAlert, AlertTriangle, MapPin,
-  Navigation, ThumbsUp, X, Plus, Skull, Wine, Dog, Snowflake, Construction, HelpCircle, History, Phone,
+  Navigation, ThumbsUp, X, Plus, Skull, Wine, Dog, Snowflake, Construction, HelpCircle, History, Phone, Crosshair,
 } from 'lucide-react';
 
 /**
@@ -158,6 +158,7 @@ const SafetyScreen = () => {
                   <span className="w-9" />
                 </div>
               </div>
+              <button onClick={() => act('Centered on you')} className="absolute right-5 z-30 w-11 h-11 rounded-full bg-white flex items-center justify-center active:scale-95 transition-transform" style={{ bottom: 92, boxShadow: '0 6px 18px rgba(60,30,15,0.16)' }}><Crosshair size={18} color={INK} strokeWidth={2} /></button>
               <div className="absolute left-5 right-5 z-30" style={{ bottom: 30 }}>
                 <div className="bg-white rounded-[16px] px-4 py-3 flex items-center gap-2.5" style={{ boxShadow: '0 8px 24px rgba(60,30,15,0.14)' }}>
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: heroColor }} />
@@ -179,8 +180,8 @@ const SafetyScreen = () => {
                 {/* STATUS HERO */}
                 <div className="flex flex-col items-center text-center pt-3 pb-1">
                   <div className="relative" style={{ width: 92, height: 92 }}>
-                    <span className="absolute inset-0 rounded-full" style={{ border: `2px solid ${heroColor}`, opacity: 0.4, animation: 'sfRing 2.6s ease-out infinite' }} />
-                    <span className="absolute inset-0 rounded-full" style={{ border: `2px solid ${heroColor}`, opacity: 0.4, animation: 'sfRing 2.6s 1.3s ease-out infinite' }} />
+                    <span className="absolute inset-0 rounded-full" style={{ border: `2px solid ${heroColor}`, opacity: 0.4, animation: 'sfRing 2.6s ease-out 3 both' }} />
+                    <span className="absolute inset-0 rounded-full" style={{ border: `2px solid ${heroColor}`, opacity: 0.4, animation: 'sfRing 2.6s 1.3s ease-out 3 both' }} />
                     <span className="absolute inset-0 rounded-full flex items-center justify-center" style={{ background: clear ? '#EAF7EF' : TINT }}>
                       {clear ? <ShieldCheck size={38} color={GREEN} strokeWidth={1.8} /> : <ShieldAlert size={38} color={heroColor} strokeWidth={1.8} />}
                     </span>
@@ -196,7 +197,7 @@ const SafetyScreen = () => {
                 {/* MAP CARD */}
                 <button onClick={() => setMapOpen(true)} className="w-full rounded-[20px] overflow-hidden mt-4 text-left active:scale-[0.99] transition-transform relative" style={{ boxShadow: SHADOW }}>
                   <SafetyMap alerts={alerts} compact />
-                  <span className="absolute bottom-2.5 right-2.5 bg-white rounded-full px-3 py-1.5 text-[11.5px] font-bold inline-flex items-center gap-1" style={{ color: INK, boxShadow: '0 2px 8px rgba(60,30,15,0.12)' }}>Open map <ChevronRight size={12} strokeWidth={2.6} /></span>
+                  <span className="absolute bottom-2.5 right-2.5 bg-white rounded-full px-3 py-1.5 text-[11.5px] font-bold inline-flex items-center gap-1" style={{ color: INK, boxShadow: '0 2px 8px rgba(60,30,15,0.12)' }}>Open map <ChevronRight size={12} strokeWidth={2.4} /></span>
                 </button>
 
                 {/* NEARBY */}
@@ -208,7 +209,7 @@ const SafetyScreen = () => {
                     return (
                       <div key={a.id} className="relative">
                         <button onClick={() => setDetail(a)} className="w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-black/[0.02] transition-colors">
-                          <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: tone.bg }}><Icon size={16} color={tone.c} strokeWidth={2} /></span>
+                          <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: tone.bg }}><Icon size={16} color={tone.c} strokeWidth={2} /></span>
                           <span className="flex-1 min-w-0">
                             <span className="block text-[14px] font-semibold truncate" style={{ color: INK }}>{a.title}</span>
                             <span className="block text-[11.5px] mt-0.5 truncate" style={{ color: TERT }}>{a.dist} · {a.where} · {a.when}</span>
@@ -232,7 +233,7 @@ const SafetyScreen = () => {
                 {/* emergency cross-link */}
                 <div className="bg-white rounded-[18px] overflow-hidden mt-5" style={{ boxShadow: SHADOW }}>
                   <button onClick={() => { window.location.href = '/emergency'; }} className="w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-black/[0.02]">
-                    <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: '#FEE8E7' }}><Phone size={15} color={DANGER} strokeWidth={2} /></span>
+                    <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: '#FEE8E7' }}><Phone size={15} color={DANGER} strokeWidth={2} /></span>
                     <span className="flex-1"><span className="block text-[14px] font-semibold" style={{ color: INK }}>Vet hotline & first aid</span><span className="block text-[11.5px] mt-0.5" style={{ color: TERT }}>If something already happened</span></span>
                     <ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} />
                   </button>
@@ -245,7 +246,7 @@ const SafetyScreen = () => {
           {detail && (() => { const a = alerts.find((x) => x.id === detail.id) || detail; const Icon = CATS[a.cat].icon; const tone = sevTone(a.sev); const mine = confirmedByMe.includes(a.id); return (
             <Sheet onClose={() => setDetail(null)}>
               <div className="px-5 pt-1 pb-2 flex items-start gap-3 shrink-0">
-                <span className="w-11 h-11 rounded-[13px] flex items-center justify-center shrink-0" style={{ background: tone.bg }}><Icon size={19} color={tone.c} strokeWidth={2} /></span>
+                <span className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: tone.bg }}><Icon size={19} color={tone.c} strokeWidth={2} /></span>
                 <span className="flex-1 min-w-0">
                   <span className="block text-[17px] font-extrabold tracking-[-0.01em]" style={{ color: INK }}>{a.title}</span>
                   <span className="block text-[12px] mt-0.5" style={{ color: TERT }}>{a.where} · {a.dist} from you · {a.when}</span>
@@ -257,10 +258,10 @@ const SafetyScreen = () => {
                 <p className="text-[13.5px] leading-[1.55] mt-3" style={{ color: MUTED }}>{a.note}</p>
                 <div className="flex items-center gap-1.5 mt-3"><ThumbsUp size={13} color={GREEN} strokeWidth={2.2} /><span className="text-[12px] font-semibold" style={{ color: GREEN }}>{a.confirmed} neighbour{a.confirmed === 1 ? '' : 's'} confirmed this</span></div>
                 <div className="flex gap-2 mt-5">
-                  <button onClick={() => confirm(a)} disabled={mine} className="flex-1 h-11 rounded-[13px] flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all" style={{ background: mine ? '#EAF7EF' : '#fff', boxShadow: mine ? 'none' : 'inset 0 0 0 1.4px #E5DED5' }}>
+                  <button onClick={() => confirm(a)} disabled={mine} className="flex-1 h-11 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all" style={{ background: mine ? '#EAF7EF' : '#fff', boxShadow: mine ? 'none' : 'inset 0 0 0 1.4px #E5DED5' }}>
                     <ThumbsUp size={14} color={mine ? GREEN : INK} strokeWidth={2.2} /><span className="text-[13.5px] font-bold" style={{ color: mine ? GREEN : INK }}>{mine ? 'Confirmed' : 'Still there'}</span>
                   </button>
-                  <button onClick={() => act('Opening directions')} className="flex-1 h-11 rounded-[13px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 4px 14px rgba(232,93,42,0.25)' }}>
+                  <button onClick={() => act('Opening directions')} className="flex-1 h-11 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 4px 14px rgba(232,93,42,0.25)' }}>
                     <Navigation size={14} color="#fff" strokeWidth={2.2} /><span className="text-[13.5px] font-bold text-white">Avoid route</span>
                   </button>
                 </div>
@@ -280,8 +281,8 @@ const SafetyScreen = () => {
                   {Object.entries(CATS).map(([id, c]) => {
                     const on = repCat === id;
                     return (
-                      <button key={id} onClick={() => setRepCat(id)} className="flex flex-col items-center gap-1.5 py-3 rounded-[14px] transition-all active:scale-[0.96]" style={{ background: on ? '#FFF3EC' : '#fff', boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>
-                        <c.icon size={19} color={on ? CORAL : MUTED} strokeWidth={1.9} />
+                      <button key={id} onClick={() => setRepCat(id)} className="flex flex-col items-center gap-1.5 py-3 rounded-[16px] transition-all active:scale-[0.96]" style={{ background: on ? '#FFF3EC' : '#fff', boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>
+                        <c.icon size={19} color={on ? CORAL : MUTED} strokeWidth={2} />
                         <span className="text-[10.5px] font-bold leading-tight text-center px-1" style={{ color: on ? CORAL : INK }}>{c.label}</span>
                       </button>
                     );
@@ -289,12 +290,12 @@ const SafetyScreen = () => {
                 </div>
                 <div className="text-[11px] font-bold uppercase tracking-[0.1em] mt-5 mb-2" style={{ color: TERT }}>How serious</div>
                 <div className="flex gap-2">{SEVS.map((s) => { const on = repSev === s; return <button key={s} onClick={() => setRepSev(s)} className="flex-1 h-[40px] rounded-[12px] text-[12.5px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{s}</button>; })}</div>
-                <div className="flex items-center gap-2.5 bg-white rounded-[13px] px-4 h-[48px] mt-4" style={{ boxShadow: SHADOW }}>
+                <div className="flex items-center gap-2.5 bg-white rounded-[12px] px-4 h-[48px] mt-4" style={{ boxShadow: SHADOW }}>
                   <MapPin size={15} color={CORAL} strokeWidth={2} />
                   <span className="flex-1 text-[13.5px] font-semibold" style={{ color: INK }}>Your current location</span>
                   <span className="text-[11.5px]" style={{ color: TERT }}>Seefeld</span>
                 </div>
-                <textarea value={repNote} onChange={(e) => setRepNote(e.target.value)} rows={3} placeholder="What should neighbours watch out for?" className="w-full mt-3 bg-white rounded-[13px] px-4 py-3 outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
+                <textarea value={repNote} onChange={(e) => setRepNote(e.target.value)} rows={3} placeholder="What should neighbours watch out for?" className="w-full mt-3 bg-white rounded-[12px] px-4 py-3 outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
                 <button onClick={submitReport} disabled={!repCat} className="w-full mt-5 py-4 rounded-[16px] transition-all active:scale-[0.98]" style={{ background: repCat ? CORAL : '#EAE3DB', boxShadow: repCat ? '0 8px 22px rgba(232,93,42,0.28)' : 'none' }}>
                   <span className="text-[15px] font-bold" style={{ color: repCat ? '#fff' : TERT }}>Share with neighbours</span>
                 </button>
@@ -314,7 +315,7 @@ const SafetyScreen = () => {
                 <div className="bg-white rounded-[16px] overflow-hidden" style={{ boxShadow: SHADOW }}>
                   {myReports.map((r, i) => (
                     <div key={r.id} className="relative flex items-center gap-3 px-4 py-3">
-                      <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: TINT }}><AlertTriangle size={15} color={CORAL} strokeWidth={2} /></span>
+                      <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: TINT }}><AlertTriangle size={15} color={CORAL} strokeWidth={2} /></span>
                       <span className="flex-1 min-w-0">
                         <span className="block text-[13.5px] font-semibold truncate" style={{ color: INK }}>{r.title}</span>
                         <span className="block text-[11.5px] mt-0.5" style={{ color: TERT }}>{r.where} · {r.when}</span>

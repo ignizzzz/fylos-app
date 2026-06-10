@@ -160,7 +160,7 @@ const TypingIndicator = () => (
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="w-[7px] h-[7px] rounded-full bg-[#A09A94]"
+          className="w-[7px] h-[7px] rounded-full bg-[#9B9B9F]"
           style={{ animation: `typingBounce 1.4s ease-in-out ${i * 0.2}s infinite` }}
         />
       ))}
@@ -186,7 +186,7 @@ const BookingCard = ({ service, date, status }) => {
           <div className="flex-1">
             <div className="text-[15px] font-semibold text-[#111111]">{service}</div>
           </div>
-          <ChevronRight size={14} color="#A09A94" />
+          <ChevronRight size={14} color="#9B9B9F" />
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
@@ -194,7 +194,7 @@ const BookingCard = ({ service, date, status }) => {
             <span className="text-[13px] text-[#6E6058]">{date}</span>
           </div>
           <span
-            className={`h-[18px] px-2.5 rounded-full text-[9px] font-semibold inline-flex items-center ${
+            className={`h-[18px] px-2.5 rounded-full text-[10px] font-semibold inline-flex items-center ${
               isConfirmed
                 ? 'bg-[#EEF7F1] text-[#3F8D63] border border-[#D7EBDD]'
                 : 'bg-[#F7F4EF] text-[#B07A3A] border border-[#ECDDC8]'
@@ -214,7 +214,7 @@ const BookingCard = ({ service, date, status }) => {
 const DateSeparator = ({ label }) => (
   <div className="flex items-center gap-3 my-4 px-5">
     <div className="flex-1 h-[0.5px] bg-black/[0.06]" />
-    <span className="text-[12px] font-bold text-[#A09A94] uppercase tracking-widest">{label}</span>
+    <span className="text-[12px] font-bold text-[#9B9B9F] uppercase tracking-widest">{label}</span>
     <div className="flex-1 h-[0.5px] bg-black/[0.06]" />
   </div>
 );
@@ -248,9 +248,9 @@ const MessageBubble = ({ message }) => {
         {message.text}
       </div>
       <div className="flex items-center gap-1 mt-[3px] px-1">
-        <span className="text-[11px] text-[#A09A94]">{message.time}</span>
+        <span className="text-[11px] text-[#9B9B9F]">{message.time}</span>
         {isSent && message.read && (
-          <CheckCheck size={13} color="#E85D2A" strokeWidth={2.5} />
+          <CheckCheck size={13} color="#E85D2A" strokeWidth={2.4} />
         )}
       </div>
     </div>
@@ -293,7 +293,7 @@ const ConversationItem = ({ conversation, onTap }) => (
         >
           {conversation.name}
         </span>
-        <span className="text-[12px] text-[#A09A94] shrink-0">{conversation.time}</span>
+        <span className="text-[12px] text-[#9B9B9F] shrink-0">{conversation.time}</span>
       </div>
 
       {conversation.bookingContext && (
@@ -358,19 +358,19 @@ const ConversationsListView = ({ onSelectConversation }) => {
         {/* Search bar */}
         <div className="px-5 pb-2">
           <div className="flex items-center gap-2 bg-[#F3EFEB] rounded-full px-3.5 h-[44px] border border-black/[0.03] shadow-[0_2px_8px_rgba(0,0,0,0.02),inset_0_0_0_1px_rgba(0,0,0,0.03)]">
-            <Search size={16} color="#A09A94" />
+            <Search size={16} color="#9B9B9F" />
             <input
               type="text"
               placeholder="Search conversations"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
-              className="border-none bg-transparent outline-none text-[15px] text-[#111111] w-full placeholder:text-[#A09A94]"
+              className="border-none bg-transparent outline-none text-[15px] text-[#111111] w-full placeholder:text-[#9B9B9F]"
               style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
             />
             {searchValue && (
               <div
                 onClick={() => setSearchValue('')}
-                className="w-[18px] h-[18px] rounded-full bg-[#A09A94] flex items-center justify-center cursor-pointer shrink-0"
+                className="w-[18px] h-[18px] rounded-full bg-[#9B9B9F] flex items-center justify-center cursor-pointer shrink-0"
               >
                 <X size={10} color="#FFFFFF" strokeWidth={3} />
               </div>
@@ -440,7 +440,7 @@ const ChatDetailView = ({ conversation, onBack }) => {
               <div className="text-[15px] font-semibold text-[#111111] leading-[1.2]">{conversation.name}</div>
               <div
                 className="text-[11px]"
-                style={{ color: conversation.online ? '#34C759' : '#A09A94' }}
+                style={{ color: conversation.online ? '#34C759' : '#9B9B9F' }}
               >
                 {conversation.online ? 'Online' : conversation.role}
               </div>
@@ -500,11 +500,11 @@ const ChatDetailView = ({ conversation, onBack }) => {
             placeholder="Message..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            className="border-none bg-transparent outline-none text-[15px] text-[#111111] w-full placeholder:text-[#A09A94]"
+            className="border-none bg-transparent outline-none text-[15px] text-[#111111] w-full placeholder:text-[#9B9B9F]"
             style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
           />
           {!inputText.trim() && (
-            <Smile size={20} color="#A09A94" className="shrink-0 ml-1" />
+            <Smile size={20} color="#9B9B9F" className="shrink-0 ml-1" />
           )}
         </div>
 
@@ -516,11 +516,11 @@ const ChatDetailView = ({ conversation, onBack }) => {
               boxShadow: '0 4px 12px rgba(232,93,42,0.3)',
             }}
           >
-            <Send size={16} color="#FFFFFF" strokeWidth={2.5} style={{ marginLeft: -1, marginTop: -1 }} />
+            <Send size={16} color="#FFFFFF" strokeWidth={2.4} style={{ marginLeft: -1, marginTop: -1 }} />
           </button>
         ) : (
           <button className="w-[38px] h-[38px] rounded-full bg-[#F3EFEB] flex items-center justify-center shrink-0 active:scale-[0.97] transition-all duration-[120ms]">
-            <Mic size={18} color="#A09A94" strokeWidth={2} />
+            <Mic size={18} color="#9B9B9F" strokeWidth={2} />
           </button>
         )}
       </div>
@@ -582,7 +582,7 @@ export default function ChatMessagingScreen() {
         .slide-out { animation: slideOut 200ms ease-in forwards; }
         .wallet-scroll::-webkit-scrollbar { display: none; }
         .wallet-scroll { scrollbar-width: none; }
-        input::placeholder { color: #A09A94; }
+        input::placeholder { color: #9B9B9F; }
       `}</style>
 
       {/* iPhone Frame */}

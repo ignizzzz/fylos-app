@@ -41,7 +41,7 @@ const T = {
   card: '#FFFFFF',
   text: '#1A1410',
   textMuted: '#6E6058',
-  textTertiary: '#A09A94',
+  textTertiary: '#9B9B9F',
   divider: '#ECE6DE',
 
   // Profile accents for pet cards
@@ -580,7 +580,7 @@ function HealthScene() {
         style={{
           width: 220,
           background: T.coralSofter,
-          borderRadius: 22,
+          borderRadius: 20,
           padding: 16,
           boxShadow:
             '0 10px 28px rgba(80,40,15,0.12), 0 2px 6px rgba(80,40,15,0.05)',

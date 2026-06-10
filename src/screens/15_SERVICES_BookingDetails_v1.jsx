@@ -83,7 +83,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#34C759', 
     successLight: '#E8F8EC',
     warning: '#FF9500',
@@ -129,7 +129,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
     secondary: "bg-[#FFFFFF] text-[#111111] border-[1px] border-[#E5E5E5] hover:bg-[#FAFAFA] shadow-[0_2px_8px_rgba(0,0,0,0.02)]",
-    destructiveOutline: "bg-[#FFFFFF] text-[#FF3B30] border-[1px] border-[#FF3B30]/30 hover:bg-[#FFF5F5]"
+    destructiveOutline: "bg-[#FFFFFF] text-[#E5484D] border-[1px] border-[#E5484D]/30 hover:bg-[#FFF5F5]"
   };
   const sizes = { 
     small: "px-3 py-[10px] text-[14px] h-[40px] rounded-[12px]",
@@ -284,27 +284,27 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
           <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA] shadow-[0_2px_12px_rgba(0,0,0,0.02)] p-4 space-y-4">
             
             <div className="flex gap-3 items-start">
-              <Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">Lukas has up to 24h to respond</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <CreditCard size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <CreditCard size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">CHF {mockRequestSentData.total.toFixed(2)} is on hold (not charged yet)</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <Bell size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <Bell size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">You’ll be notified when they respond</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <CheckCircle2 size={20} className="text-[#34C759] shrink-0" strokeWidth={1.5} />
+              <CheckCircle2 size={20} className="text-[#34C759] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If accepted → payment is processed</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <XCircle size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <XCircle size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If declined → hold is released automatically</span>
             </div>
             
@@ -430,7 +430,7 @@ const BookingDetailsScreen = ({ onBack }) => {
         {/* 2) STATUS BANNER */}
         <div className="w-full rounded-[20px] p-4 flex flex-col gap-2" style={{ backgroundColor: currentConfig.bg }}>
           <div className="flex items-center gap-2">
-            <currentConfig.icon size={18} color={currentConfig.color} strokeWidth={2.5} />
+            <currentConfig.icon size={18} color={currentConfig.color} strokeWidth={2.4} />
             <span className="text-[13px] font-bold uppercase tracking-wide" style={{ color: currentConfig.color }}>
               {currentConfig.label}
             </span>
@@ -457,7 +457,7 @@ const BookingDetailsScreen = ({ onBack }) => {
                   ) : step.state === 'current' ? (
                     <div className="w-4 h-4 rounded-full bg-[#FF6B35] border-[4px] border-[#FFF0EA]" />
                   ) : step.state === 'failed' ? (
-                    <div className="w-4 h-4 rounded-full bg-[#FF3B30] flex items-center justify-center border-2 border-white shadow-sm">
+                    <div className="w-4 h-4 rounded-full bg-[#E5484D] flex items-center justify-center border-2 border-white shadow-sm">
                       <X size={10} color="#FFFFFF" strokeWidth={3} />
                     </div>
                   ) : (
@@ -535,7 +535,7 @@ const BookingDetailsScreen = ({ onBack }) => {
           <h3 className="text-[16px] font-bold text-[#111111] mb-4">Service Details</h3>
           <div className="flex flex-col gap-4">
             <div className="flex gap-3">
-              <Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <div className="flex flex-col">
                 <span className="text-[15px] font-medium text-[#111111]">Mon, Feb 24 · 14:00–15:30</span>
                 <span className="text-[13px] text-[#6E6E73]">90 min Dog Walk</span>
@@ -543,7 +543,7 @@ const BookingDetailsScreen = ({ onBack }) => {
             </div>
             
             <div className="flex gap-3">
-              <MapPin size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <MapPin size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <div className="flex flex-col">
                 <span className="text-[15px] font-medium text-[#111111]">Bahnhofstrasse 12, Zurich</span>
                 <span className="text-[13px] text-[#6E6E73]">Pick-up & Drop-off</span>
@@ -643,7 +643,7 @@ const BookingDetailsScreen = ({ onBack }) => {
           </div>
           {(status === 'pending' || status === 'confirmed') && (
             <div className="flex justify-between items-center p-4 border-b border-[#F0F0F2] active:bg-[#F7F7F8] cursor-pointer">
-              <span className="text-[15px] font-medium text-[#FF3B30]">Cancel booking</span>
+              <span className="text-[15px] font-medium text-[#E5484D]">Cancel booking</span>
               <ChevronRight size={18} className="text-[#8E8E93]" />
             </div>
           )}
@@ -723,8 +723,8 @@ const BookingDetailsScreen = ({ onBack }) => {
           
           <div className="w-full h-[1px] bg-[#EAEAEA] my-2" />
           
-          <button className="w-full text-left px-4 py-4 text-[16px] font-bold text-[#FF3B30] active:bg-[#FFF5F5] rounded-[12px] flex items-center gap-3">
-            <AlertTriangle size={20} className="text-[#FF3B30]" /> Report Issue
+          <button className="w-full text-left px-4 py-4 text-[16px] font-bold text-[#E5484D] active:bg-[#FFF5F5] rounded-[12px] flex items-center gap-3">
+            <AlertTriangle size={20} className="text-[#E5484D]" /> Report Issue
           </button>
         </div>
       </BottomSheet>

@@ -107,7 +107,7 @@ export default function CalendarSyncScreen() {
               </span>
             </div>
 
-            <button className="w-full mt-2 py-2.5 rounded-[14px] font-semibold text-[13.5px] border border-black/[0.06] bg-white active:scale-[0.99] transition-all" style={{ color: '#FF3B30' }}>
+            <button className="w-full mt-2 py-2.5 rounded-[16px] font-semibold text-[13.5px] border border-black/[0.06] bg-white active:scale-[0.99] transition-all" style={{ color: '#E5484D' }}>
               Disconnect calendar
             </button>
           </div>

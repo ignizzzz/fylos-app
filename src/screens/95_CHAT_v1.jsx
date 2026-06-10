@@ -71,7 +71,7 @@ const ChatOverlay = ({ provider, onClose, embedded = false }) => {
               <div className="px-3.5 py-2.5" style={{ background: m.me ? CORAL : '#FFFFFF', color: m.me ? '#fff' : INK, borderRadius: m.me ? '16px 16px 4px 16px' : '16px 16px 16px 4px', boxShadow: m.me ? '0 4px 12px rgba(232,93,42,0.22)' : SHADOW }}>
                 <span className="text-[13.5px] leading-[1.45] font-medium">{m.text}</span>
               </div>
-              <div className={`text-[9.5px] font-medium mt-1 ${m.me ? 'text-right mr-1' : 'ml-1'}`} style={{ color: '#C4BBB0' }}>{m.time}</div>
+              <div className={`text-[10.5px] font-medium mt-1 ${m.me ? 'text-right mr-1' : 'ml-1'}`} style={{ color: '#C4BBB0' }}>{m.time}</div>
             </div>
           </div>
         ))}

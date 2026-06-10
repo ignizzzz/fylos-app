@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Phone, Mail, UserX, Copy, Info } from 'lucid
 const THEME = {
   bg: '#F7F5F2', card: '#FFFFFF', divider: '#F1EDE8',
   coral: '#E85D2A', txt: '#111111', muted: '#9B9B9F',
-  mutedDark: '#6E6E73', tint: '#FBE7DD', success: '#00C060', danger: '#FF3B30',
+  mutedDark: '#6E6E73', tint: '#FBE7DD', success: '#00C060', danger: '#E5484D',
 };
 
 const AppHeader = ({ title, onBack }) => (
@@ -141,7 +141,7 @@ const PrivacyDiscoverableScreen = () => {
             </div>
 
             {nothingOn && (
-              <div className="flex items-start gap-2 mt-4 px-3.5 py-2.5 rounded-[12px]" style={{ backgroundColor: 'rgba(255,59,48,0.08)' }}>
+              <div className="flex items-start gap-2 mt-4 px-3.5 py-2.5 rounded-[12px]" style={{ backgroundColor: 'rgba(229,72,77,0.08)' }}>
                 <Info size={13} color={THEME.danger} strokeWidth={2.2} className="shrink-0 mt-[2px]" />
                 <span className="text-[12px] leading-snug" style={{ color: '#8B1A14' }}>
                   You can't be found by search. People can only add you via the invite link above.

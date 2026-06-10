@@ -201,11 +201,11 @@ const ProProfileScreen = () => {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
                     <Star size={13} color="#E85D2A" fill="#E85D2A" />
                     <span style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>4.9</span>
-                    <span style={{ fontSize: 11, color: '#A09A94' }}>(47 reviews)</span>
+                    <span style={{ fontSize: 11, color: '#9B9B9F' }}>(47 reviews)</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <Clock size={11} color="#A09A94" />
-                    <span style={{ fontSize: 11, color: '#A09A94' }}>Member since March 2025</span>
+                    <Clock size={11} color="#9B9B9F" />
+                    <span style={{ fontSize: 11, color: '#9B9B9F' }}>Member since March 2025</span>
                   </div>
                 </div>
               </div>
@@ -218,11 +218,11 @@ const ProProfileScreen = () => {
                   { label: 'Avg rating', value: '4.9' },
                 ].map(stat => (
                   <div key={stat.label} style={{
-                    flex: 1, background: '#F7F5F2', borderRadius: 14, padding: '10px 8px',
+                    flex: 1, background: '#F7F5F2', borderRadius: 16, padding: '10px 8px',
                     textAlign: 'center', border: '1px solid #EDE8E2',
                   }}>
                     <div style={{ fontSize: 16, fontWeight: 700, color: '#E85D2A', lineHeight: 1.1 }}>{stat.value}</div>
-                    <div style={{ fontSize: 9, color: '#A09A94', marginTop: 3, fontWeight: 500, lineHeight: 1.2 }}>{stat.label}</div>
+                    <div style={{ fontSize: 9, color: '#9B9B9F', marginTop: 3, fontWeight: 500, lineHeight: 1.2 }}>{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -330,7 +330,7 @@ const ProProfileScreen = () => {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>{cert.title}</div>
-                      <div style={{ fontSize: 11, color: '#A09A94', marginTop: 2 }}>{cert.subtitle}</div>
+                      <div style={{ fontSize: 11, color: '#9B9B9F', marginTop: 2 }}>{cert.subtitle}</div>
                     </div>
                   </div>
                 ))}
@@ -352,7 +352,7 @@ const ProProfileScreen = () => {
                 </div>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>Zurich, 5km radius</div>
-                  <div style={{ fontSize: 11, color: '#A09A94', marginTop: 2 }}>Covers central Zurich area</div>
+                  <div style={{ fontSize: 11, color: '#9B9B9F', marginTop: 2 }}>Covers central Zurich area</div>
                 </div>
               </div>
             </Card>
@@ -388,7 +388,7 @@ const ProProfileScreen = () => {
         <div style={{
           position: 'absolute', bottom: 24, left: 16, right: 16, height: 64,
           background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-          borderRadius: 22, boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+          borderRadius: 20, boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
           border: '1px solid #EDE8E2',
           display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '0 4px',
         }}>
@@ -401,11 +401,11 @@ const ProProfileScreen = () => {
                 else if (tab.label === 'Schedule') alert('Schedule coming soon');
               }} style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-                padding: '6px 10px', borderRadius: 14,
+                padding: '6px 10px', borderRadius: 16,
                 background: isActive ? 'rgba(232,93,42,0.08)' : 'transparent',
               }}>
-                <Icon size={20} color={isActive ? '#E85D2A' : '#A09A94'} strokeWidth={isActive ? 2.2 : 1.8} />
-                <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 500, color: isActive ? '#E85D2A' : '#A09A94' }}>{tab.label}</span>
+                <Icon size={20} color={isActive ? '#E85D2A' : '#9B9B9F'} strokeWidth={isActive ? 2.2 : 1.8} />
+                <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 500, color: isActive ? '#E85D2A' : '#9B9B9F' }}>{tab.label}</span>
               </div>
             );
           })}

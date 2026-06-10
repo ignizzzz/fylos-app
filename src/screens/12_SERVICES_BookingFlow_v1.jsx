@@ -151,7 +151,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -229,10 +229,10 @@ const IconWrapper = ({ icon: Icon, color = THEME.colors.primaryText, size = 24, 
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[#F7F7F8] text-[#111111]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -271,7 +271,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
     secondary: "bg-transparent text-[#111111] border-[1.5px] border-black/[0.08] hover:bg-[#F7F7F8]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]"
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]"
   };
   
   const sizes = {
@@ -535,7 +535,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         {/* Validation Global Hint */}
         {showValidation && !isValid && (
           <div className="mb-5 text-center">
-            <span className="text-[13px] font-medium text-[#FF3B30] bg-[#FFF0F0] px-3 py-1.5 rounded-full">
+            <span className="text-[13px] font-medium text-[#E5484D] bg-[#FFF0F0] px-3 py-1.5 rounded-full">
               Please complete all required fields
             </span>
           </div>
@@ -545,7 +545,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <section className="mb-7 mt-2">
           <div className="flex justify-between items-end mb-4">
             <h3 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider">Select Service</h3>
-            {errors.service && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+            {errors.service && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
           </div>
           <div className="bg-[#FFFFFF] rounded-[20px] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
             {mockBookingData.provider.services.map((svc, idx) => {
@@ -559,7 +559,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                     <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
                         <span className={`text-[15px] ${isSelected ? 'font-semibold text-[#111111]' : 'font-medium text-[#111111]'}`}>{svc.label}</span>
-                        {svc.popular && <span className="text-[9px] font-bold text-[#FF6B35] bg-[#FF6B35]/[0.08] px-2.5 py-0.5 rounded-full uppercase tracking-wider">Popular</span>}
+                        {svc.popular && <span className="text-[10px] font-bold text-[#FF6B35] bg-[#FF6B35]/[0.08] px-2.5 py-0.5 rounded-full uppercase tracking-wider">Popular</span>}
                       </div>
                       <span className="text-[13px] text-[#8E8E93]">{svc.duration} minutes</span>
                     </div>
@@ -581,10 +581,10 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <section className="mb-7">
           <div className="flex justify-between items-end mb-4">
             <h3 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider">Date & Time</h3>
-            {errors.date && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+            {errors.date && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
           </div>
           
-          <div className={`bg-[#FFFFFF] rounded-[20px] border transition-colors ${errors.date ? 'border-[#FF3B30]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
+          <div className={`bg-[#FFFFFF] rounded-[20px] border transition-colors ${errors.date ? 'border-[#E5484D]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
             
             {/* Date Row */}
             <button onClick={openCalendar} className="w-full flex justify-between items-center py-4 px-4 hover:bg-[#FAFAFA] rounded-[20px] transition-colors">
@@ -650,9 +650,9 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
           <section className="mb-7">
             <div className="flex justify-between items-end mb-4">
               <h3 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider">Which pet is going?</h3>
-              {errors.pet && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+              {errors.pet && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
             </div>
-            <div className={`bg-[#FFFFFF] rounded-[20px] overflow-hidden border transition-colors ${errors.pet ? 'border-[#FF3B30]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
+            <div className={`bg-[#FFFFFF] rounded-[20px] overflow-hidden border transition-colors ${errors.pet ? 'border-[#E5484D]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
               {mockBookingData.userPets.map((pet, idx) => {
                 const isSelected = selectedPetId === pet.id;
                 return (
@@ -840,7 +840,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
             <div className="flex flex-col gap-3">
               <button 
                 onClick={() => { setShowCloseDialog(false); onClose(); }} 
-                className="w-full py-3.5 rounded-[16px] font-medium bg-[#FFF0F0] text-[#FF3B30] active:scale-[0.98] transition-transform"
+                className="w-full py-3.5 rounded-[16px] font-medium bg-[#FFF0F0] text-[#E5484D] active:scale-[0.98] transition-transform"
               >
                 Yes, discard
               </button>
@@ -883,8 +883,8 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
   const [galleryViewer, setGalleryViewer] = useState(null);
 
   const OptionRow = ({ icon: Icon, label, danger, onClick }) => (
-    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#FF3B30] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F7F7F8]'}`}>
-       <Icon size={20} className={danger ? "text-[#FF3B30]" : "text-[#111111]"} />
+    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#E5484D] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F7F7F8]'}`}>
+       <Icon size={20} className={danger ? "text-[#E5484D]" : "text-[#111111]"} />
        <span className="text-[16px] font-semibold">{label}</span>
     </button>
   );
@@ -1087,7 +1087,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                <Text variant="subtitle">Verified Information</Text>
                <div className="bg-[#F7F7F8] rounded-[20px] p-2">
                   {provider.certifications.map((cert, i) => (
-                     <div key={i} onClick={() => setCertSheet(cert)} className="flex items-center gap-3 px-3 py-3 active:bg-black/[0.04] cursor-pointer rounded-[14px] transition-colors">
+                     <div key={i} onClick={() => setCertSheet(cert)} className="flex items-center gap-3 px-3 py-3 active:bg-black/[0.04] cursor-pointer rounded-[16px] transition-colors">
                         <CheckCircle2 size={20} color="#00C060" className="shrink-0" />
                         <span className="text-[15px] font-medium text-[#111111] flex-1">{cert.label}</span>
                         <span className="text-[12px] text-[#8E8E93] shrink-0 font-medium">{cert.verifiedDate ? new Date(cert.verifiedDate).toLocaleDateString('en-US', {month:'short', year:'numeric'}) : ''}</span>

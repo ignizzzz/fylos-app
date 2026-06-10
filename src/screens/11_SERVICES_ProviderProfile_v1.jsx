@@ -142,7 +142,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -195,10 +195,10 @@ const IconWrapper = ({ icon: Icon, color = THEME.colors.primaryText, size = 24, 
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[#F7F7F8] text-[#111111]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -237,7 +237,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
     secondary: "bg-transparent text-[#111111] border-[1.5px] border-black/[0.08] hover:bg-[#F7F7F8]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]"
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]"
   };
   
   const sizes = {
@@ -392,7 +392,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
       <div className="mb-6">{illustration}</div>
     ) : (
       <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+        <Icon size={32} color="#CFCFD4" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
@@ -530,8 +530,8 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
   const [galleryViewer, setGalleryViewer] = useState(null);
 
   const OptionRow = ({ icon: Icon, label, danger, onClick }) => (
-    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#FF3B30] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F7F7F8]'}`}>
-       <Icon size={20} className={danger ? "text-[#FF3B30]" : "text-[#111111]"} />
+    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#E5484D] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F7F7F8]'}`}>
+       <Icon size={20} className={danger ? "text-[#E5484D]" : "text-[#111111]"} />
        <span className="text-[16px] font-semibold">{label}</span>
     </button>
   );
@@ -734,7 +734,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                <Text variant="subtitle">Verified Information</Text>
                <div className="bg-[#F7F7F8] rounded-[20px] p-2">
                   {provider.certifications.map((cert, i) => (
-                     <div key={i} onClick={() => setCertSheet(cert)} className="flex items-center gap-3 px-3 py-3 active:bg-black/[0.04] cursor-pointer rounded-[14px] transition-colors">
+                     <div key={i} onClick={() => setCertSheet(cert)} className="flex items-center gap-3 px-3 py-3 active:bg-black/[0.04] cursor-pointer rounded-[16px] transition-colors">
                         <CheckCircle2 size={20} color="#00C060" className="shrink-0" />
                         <span className="text-[15px] font-medium text-[#111111] flex-1">{cert.label}</span>
                         <span className="text-[12px] text-[#8E8E93] shrink-0 font-medium">{cert.verifiedDate ? new Date(cert.verifiedDate).toLocaleDateString('en-US', {month:'short', year:'numeric'}) : ''}</span>

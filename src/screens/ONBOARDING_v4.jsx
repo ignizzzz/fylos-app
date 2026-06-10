@@ -31,7 +31,7 @@ const T = {
   card: '#FFFFFF',
   text: '#111111',
   textMuted: '#6E6058',
-  textTertiary: '#A09A94',
+  textTertiary: '#9B9B9F',
   divider: '#ECE6DE',
   green: '#4D8A62',
   greenSoft: '#EEF6F0',
@@ -829,7 +829,7 @@ function HealthSceneLegacy() {
             style={{
               width: 36,
               height: 36,
-              borderRadius: 11,
+              borderRadius: 12,
               background: T.greenSoft,
               display: 'flex',
               alignItems: 'center',
@@ -919,7 +919,7 @@ function ServicesSceneLegacy() {
         style={{
           position: 'absolute',
           inset: 0,
-          borderRadius: 22,
+          borderRadius: 20,
           background:
             'radial-gradient(ellipse at 30% 20%, rgba(255,237,227,0.6) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(234,241,248,0.5) 0%, transparent 60%)',
           zIndex: 0,
@@ -1322,7 +1322,7 @@ function ProSceneLegacy() {
               style={{
                 flex: 1,
                 background: T.card,
-                borderRadius: 14,
+                borderRadius: 16,
                 padding: '10px 8px',
                 border: `1px solid ${T.divider}`,
                 boxShadow: '0 4px 12px rgba(60,30,15,0.05)',

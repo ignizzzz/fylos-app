@@ -97,7 +97,7 @@ const THEME = {
   txt: '#111111',
   muted: '#9B9B9F',
   mutedDark: '#6E6E73',
-  danger: '#FF3B30',
+  danger: '#E5484D',
   dangerTint: '#FEE8E7',
   success: '#00C060',
   warn: '#F59E0B',
@@ -120,7 +120,7 @@ const Row = ({ icon: Icon, title, value, onClick, last, danger, verified, locked
       className="w-full flex items-center gap-3 px-3.5 py-[12px] active:bg-black/[0.02] transition-colors text-left"
     >
       <div
-        className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center"
+        className="w-9 h-9 rounded-[12px] shrink-0 flex items-center justify-center"
         style={{ backgroundColor: danger ? THEME.dangerTint : THEME.tint }}
       >
         <Icon size={16} color={danger ? THEME.danger : THEME.coral} strokeWidth={2} />
@@ -200,7 +200,7 @@ const ProfileHero = ({ user, onChangePhoto }) => (
         {user.firstName} {user.lastName}
       </h2>
       <span
-        className="text-[9px] font-extrabold text-[#E85D2A] px-1.5 py-[2px] rounded-full tracking-[0.08em] leading-none"
+        className="text-[10px] font-extrabold text-[#E85D2A] px-1.5 py-[2px] rounded-full tracking-[0.08em] leading-none"
         style={{ background: '#FBE7DD' }}
       >
         FREE
@@ -376,7 +376,7 @@ const PrimaryBtn = ({ children, onClick, disabled }) => (
   <button
     onClick={onClick}
     disabled={disabled}
-    className="w-full h-11 rounded-[14px] font-semibold text-[14.5px] text-white active:scale-[0.98] transition-all"
+    className="w-full h-11 rounded-[16px] font-semibold text-[14.5px] text-white active:scale-[0.98] transition-all"
     style={{ backgroundColor: disabled ? '#D4D4D8' : THEME.coral, cursor: disabled ? 'not-allowed' : 'pointer' }}
   >
     {children}
@@ -386,7 +386,7 @@ const PrimaryBtn = ({ children, onClick, disabled }) => (
 const GhostBtn = ({ children, onClick }) => (
   <button
     onClick={onClick}
-    className="w-full h-11 rounded-[14px] font-semibold text-[14.5px] active:scale-[0.98] transition-all mt-2"
+    className="w-full h-11 rounded-[16px] font-semibold text-[14.5px] active:scale-[0.98] transition-all mt-2"
     style={{ backgroundColor: '#FFFFFF', color: THEME.txt, border: '1px solid rgba(0,0,0,0.06)' }}
   >
     {children}
@@ -611,7 +611,7 @@ const CompleteSheet = ({ user, onClose }) => (
       {user.profileChecklist.map((item, i) => (
         <div key={item.key} className="relative flex items-center gap-3 px-3.5 py-2.5">
           <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: item.done ? '#E4F9ED' : THEME.divider }}>
-            {item.done ? <Check size={13} color={THEME.success} strokeWidth={3} /> : <Plus size={12} color={THEME.muted} strokeWidth={2.5} />}
+            {item.done ? <Check size={13} color={THEME.success} strokeWidth={3} /> : <Plus size={12} color={THEME.muted} strokeWidth={2.4} />}
           </div>
           <span className="flex-1 text-[14px]" style={{ color: item.done ? THEME.txt : THEME.mutedDark }}>{item.label}</span>
           {!item.done && <span className="text-[11.5px] font-medium" style={{ color: THEME.coral }}>Add</span>}
@@ -667,7 +667,7 @@ const InviteSheet = ({ user, onClose }) => {
       <SheetHeader title="Invite friends" subtitle="Earn CHF 10 in fee credit for each friend you invite." onClose={onClose} />
       <div className="flex flex-col items-center py-2 mb-2">
         <div className="w-32 h-32 rounded-[16px] flex items-center justify-center mb-3" style={{ backgroundColor: THEME.tint }}>
-          <QrCode size={82} color={THEME.coral} strokeWidth={1.5} />
+          <QrCode size={82} color={THEME.coral} strokeWidth={1.8} />
         </div>
         <p className="text-[12.5px] mb-1" style={{ color: THEME.mutedDark }}>Your invite code</p>
         <p className="text-[20px] font-semibold tracking-[0.18em]" style={{ color: THEME.coral }}>{user.inviteCode}</p>
@@ -800,7 +800,7 @@ const ProfileOverviewMix = ({ user, onRowTap, onInvite, onLogout, onDeleteAccoun
             {/* wallet stack — hints future cards (e.g. a vet card) */}
             <div className="absolute left-5 right-5 rounded-[18px]" style={{ bottom: -13, height: 44, background: '#EFCBB8' }} />
             <div className="absolute left-3 right-3 rounded-[20px]" style={{ bottom: -6, height: 44, background: '#F4D5C5' }} />
-            <button onClick={() => onRowTap('photo')} className="relative block w-full text-left rounded-[22px] overflow-hidden p-5 active:scale-[0.99] transition-transform" style={{ background: 'linear-gradient(150deg, #EF6A3C 0%, #E85D2A 52%, #D44D1B 100%)', boxShadow: '0 18px 36px rgba(212,77,27,0.34)' }}>
+            <button onClick={() => onRowTap('photo')} className="relative block w-full text-left rounded-[20px] overflow-hidden p-5 active:scale-[0.99] transition-transform" style={{ background: 'linear-gradient(150deg, #EF6A3C 0%, #E85D2A 52%, #D44D1B 100%)', boxShadow: '0 18px 36px rgba(212,77,27,0.34)' }}>
               <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(120% 90% at 14% 0%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 46%)' }} />
               <div className="relative flex items-center" style={{ gap: 4, fontFamily: '"Nunito", system-ui, sans-serif' }}>
                 <span style={{ fontSize: 16, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.4px', lineHeight: 1 }}>FYLOS</span>
@@ -946,8 +946,8 @@ const CenterDialog = ({ open, onClose, title, message, confirmLabel, onConfirm, 
       <div className="relative w-full rounded-[24px] bg-white p-5 animate-in fade-in zoom-in-95 duration-200" style={{ boxShadow: '0 24px 60px rgba(0,0,0,0.28)' }}>
         <h3 className="text-[17px] font-bold text-center" style={{ color: THEME.txt }}>{title}</h3>
         <p className="text-[12.5px] mt-2 mb-5 text-center leading-relaxed" style={{ color: THEME.mutedDark }}>{message}</p>
-        <button onClick={onConfirm} className="w-full flex items-center justify-center font-semibold text-[14.5px] mb-2.5 active:scale-[0.98] transition-all rounded-[14px] py-3" style={{ background: danger ? THEME.danger : THEME.coral, color: '#FFFFFF' }}>{confirmLabel}</button>
-        <button onClick={onClose} className="w-full flex items-center justify-center font-semibold text-[14.5px] active:scale-[0.98] transition-all rounded-[14px] py-3" style={{ background: '#F4EFE9', color: THEME.txt }}>Cancel</button>
+        <button onClick={onConfirm} className="w-full flex items-center justify-center font-semibold text-[14.5px] mb-2.5 active:scale-[0.98] transition-all rounded-[16px] py-3" style={{ background: danger ? THEME.danger : THEME.coral, color: '#FFFFFF' }}>{confirmLabel}</button>
+        <button onClick={onClose} className="w-full flex items-center justify-center font-semibold text-[14.5px] active:scale-[0.98] transition-all rounded-[16px] py-3" style={{ background: '#F4EFE9', color: THEME.txt }}>Cancel</button>
       </div>
     </div>
   );
@@ -976,7 +976,7 @@ const DeleteAccountDialog = ({ open, onClose, onConfirm }) => {
           <h3 className="text-[17px] font-bold" style={{ color: THEME.txt }}>Delete account?</h3>
           <p className="text-[12.5px] mt-1.5 text-center" style={{ color: THEME.mutedDark }}>This permanently removes:</p>
         </div>
-        <div className="mt-3 mb-3 rounded-[14px] p-3" style={{ background: '#FAF7F3' }}>
+        <div className="mt-3 mb-3 rounded-[16px] p-3" style={{ background: '#FAF7F3' }}>
           {items.map((t) => (
             <div key={t} className="flex items-center gap-2.5 py-1">
               <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: THEME.danger }} />
@@ -988,8 +988,8 @@ const DeleteAccountDialog = ({ open, onClose, onConfirm }) => {
           <span className="w-5 h-5 rounded-[6px] flex items-center justify-center shrink-0" style={{ background: ack ? THEME.danger : 'transparent', boxShadow: ack ? 'none' : 'inset 0 0 0 2px #D8D0C6' }}>{ack && <Check size={12} color="#FFFFFF" strokeWidth={3} />}</span>
           <span className="text-[12.5px] font-medium" style={{ color: THEME.txt }}>I understand this can't be undone.</span>
         </button>
-        <button disabled={!ack} onClick={confirm} className="w-full flex items-center justify-center font-semibold text-[14.5px] mb-2.5 rounded-[14px] py-3 transition-all active:scale-[0.98]" style={{ background: ack ? THEME.danger : '#EDE8E2', color: ack ? '#FFFFFF' : THEME.muted }}>Delete account</button>
-        <button onClick={close} className="w-full flex items-center justify-center font-semibold text-[14.5px] rounded-[14px] py-3" style={{ background: '#F4EFE9', color: THEME.txt }}>Cancel</button>
+        <button disabled={!ack} onClick={confirm} className="w-full flex items-center justify-center font-semibold text-[14.5px] mb-2.5 rounded-[16px] py-3 transition-all active:scale-[0.98]" style={{ background: ack ? THEME.danger : '#EDE8E2', color: ack ? '#FFFFFF' : THEME.muted }}>Delete account</button>
+        <button onClick={close} className="w-full flex items-center justify-center font-semibold text-[14.5px] rounded-[16px] py-3" style={{ background: '#F4EFE9', color: THEME.txt }}>Cancel</button>
       </div>
     </div>
   );

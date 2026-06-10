@@ -59,7 +59,7 @@ const THEME = {
     background: '#F9F9FB',
     surface: '#FFFFFF',
     surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -533,7 +533,7 @@ const ProviderCard = ({ provider }) => {
               {provider.service}
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-              <MapPin size={10} color={THEME.colors.tertiaryText} strokeWidth={2.5} />
+              <MapPin size={10} color={THEME.colors.tertiaryText} strokeWidth={2.4} />
               <span style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '11px', fontWeight: 500,
@@ -580,7 +580,7 @@ const ProviderCard = ({ provider }) => {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           gap: '6px'
         }}>
-          <ChevronRight size={14} color={THEME.colors.primaryText} strokeWidth={2.5} />
+          <ChevronRight size={14} color={THEME.colors.primaryText} strokeWidth={2.4} />
           <span style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '13px', fontWeight: 600,
@@ -601,7 +601,7 @@ const ProviderCard = ({ provider }) => {
           gap: '6px',
           boxShadow: '0 4px 14px rgba(232,93,42,0.35)'
         }}>
-          <Calendar size={14} color="#FFFFFF" strokeWidth={2.5} />
+          <Calendar size={14} color="#FFFFFF" strokeWidth={2.4} />
           <span style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: '13px', fontWeight: 700,
@@ -865,7 +865,7 @@ const MapProvidersScreen = () => {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               zIndex: 20
             }}>
-              <Navigation size={16} color={THEME.colors.accent} strokeWidth={2.5} />
+              <Navigation size={16} color={THEME.colors.accent} strokeWidth={2.4} />
             </button>
           </div>
 
@@ -919,7 +919,7 @@ const MapProvidersScreen = () => {
                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                   }}
                 >
-                  <X size={14} color={THEME.colors.secondaryText} strokeWidth={2.5} />
+                  <X size={14} color={THEME.colors.secondaryText} strokeWidth={2.4} />
                 </button>
               )}
             </div>

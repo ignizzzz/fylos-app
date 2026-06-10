@@ -141,7 +141,7 @@ const PreviewHeader = () => (
     <div className="flex justify-between items-center pointer-events-auto" style={{ fontFamily: '"Nunito", sans-serif' }}>
       <span className="flex items-center" style={{ gap: 4 }}><span style={{ fontSize: 22, fontWeight: 800, color: INK, letterSpacing: '-0.5px' }}>Services</span><span style={{ width: 6, height: 6, borderRadius: '50%', background: CORAL }} /></span>
       <div className="flex items-center gap-2">
-        <span className="w-[38px] h-[38px] flex items-center justify-center rounded-full" style={{ background: '#FFEBEA' }}><AlertTriangle size={15} className="text-[#FF3B30]" strokeWidth={2} /></span>
+        <span className="w-[38px] h-[38px] flex items-center justify-center rounded-full" style={{ background: '#FFEBEA' }}><AlertTriangle size={15} className="text-[#E5484D]" strokeWidth={2} /></span>
         <span className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full" style={{ background: PEACH }}><Bell size={17} className="text-[#6E6058]" strokeWidth={1.8} /><span className="absolute top-[6px] right-[7px] w-[7px] h-[7px] rounded-full" style={{ background: CORAL, border: '1.5px solid #F7F5F2' }} /></span>
         <span className="w-[44px] h-[44px] rounded-full overflow-hidden border-2" style={{ borderColor: '#EDE8E2' }}><img src={USER_AVATAR} alt="" className="w-full h-full object-cover" /></span>
       </div>
@@ -169,7 +169,7 @@ const DateScroller = ({ selected, onSelect }) => (
       const on = selected === i;
       return (
         <button key={i} onClick={() => onSelect(i)} className="shrink-0 rounded-[12px] px-1 py-2 active:scale-[0.95] transition-all" style={{ width: 52, background: on ? CORAL : '#fff', boxShadow: on ? '0 4px 12px rgba(232,93,42,0.25)' : SHADOW }}>
-          <div className="text-[9px] font-bold tracking-[0.04em]" style={{ color: on ? 'rgba(255,255,255,0.85)' : '#C4BBB0' }}>{d.label.toUpperCase()}</div>
+          <div className="text-[10px] font-bold tracking-[0.04em]" style={{ color: on ? 'rgba(255,255,255,0.85)' : '#C4BBB0' }}>{d.label.toUpperCase()}</div>
           <div className="text-[15px] font-extrabold leading-tight mt-[1px]" style={{ color: on ? '#fff' : INK }}>{d.n}</div>
         </button>
       );
@@ -210,7 +210,7 @@ const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
 
       <div className="flex-1 overflow-y-auto px-5" style={{ scrollbarWidth: 'none', paddingBottom: embedded ? 104 : 30 }}>
         {/* stylised live map */}
-        <div className="rounded-[22px] overflow-hidden relative" style={{ boxShadow: SHADOW }}>
+        <div className="rounded-[20px] overflow-hidden relative" style={{ boxShadow: SHADOW }}>
           <svg viewBox="0 0 350 290" className="w-full block" style={{ background: '#EFEAE2' }}>
             {/* park + pond */}
             <path d="M 200 30 C 290 20 340 70 338 140 C 336 210 300 240 250 250 C 200 260 170 230 168 180 C 166 120 130 40 200 30 Z" fill="#E5EEDF" />
@@ -259,7 +259,7 @@ const LiveWalkView = ({ b, onClose, onMessage, embedded }) => {
         {/* latest photo */}
         <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] mb-2 ml-1.5 mt-4" style={{ color: '#A8A29C' }}>Latest update</div>
         <div className="bg-white rounded-[18px] p-3" style={{ boxShadow: SHADOW }}>
-          <img src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?auto=format&fit=crop&q=80&w=700" alt="" className="w-full h-[150px] rounded-[13px] object-cover" />
+          <img src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?auto=format&fit=crop&q=80&w=700" alt="" className="w-full h-[150px] rounded-[12px] object-cover" />
           <div className="flex items-center justify-between mt-2.5 px-0.5">
             <span className="text-[12.5px] font-semibold" style={{ color: INK }}>{b.pet} made a friend at the park</span>
             <span className="text-[10.5px]" style={{ color: TERT }}>{b.live.lastPhoto}</span>
@@ -317,6 +317,8 @@ const Wrap = ({ embedded, children }) => {
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap');
     @keyframes svToast { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
     @keyframes svFade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes svShimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+    .svSkel { background: linear-gradient(90deg, #F1ECE6 25%, #FAF7F3 50%, #F1ECE6 75%); background-size: 200% 100%; animation: svShimmer 1.2s linear infinite; }
     @keyframes svSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
     @keyframes svSpin { to { transform: rotate(360deg); } }
     @keyframes svPop { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
@@ -359,6 +361,13 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
   const [remIdx, setRemIdx] = useState({});
   const [rateFor, setRateFor] = useState(null);   // { booking, stars }
   const [chat, setChat] = useState(null);          // { name, photo }
+  const [browseLoading, setBrowseLoading] = useState(false); // brief skeleton when a category opens
+  useEffect(() => {
+    if (view.kind !== 'browse') return;
+    setBrowseLoading(true);
+    const t = setTimeout(() => setBrowseLoading(false), 550);
+    return () => clearTimeout(t);
+  }, [view.kind, view.cat]);
   const [liveOpen, setLiveOpen] = useState(false); // full-screen live walk view
   const [payFor, setPayFor] = useState(null);      // { p, sel, date, time } → payment confirm sheet
   const [payStep, setPayStep] = useState('review'); // 'review' | 'processing'
@@ -510,7 +519,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
 
           <SectionLabel>Note for {p.name.split(' ')[0]} <span className="lowercase tracking-normal" style={{ color: '#C4BBB0' }}>· optional</span></SectionLabel>
           <textarea value={bookNote} onChange={(e) => setBookNote(e.target.value)} placeholder="e.g. The leash hangs by the door, ring the bell twice." rows={2}
-            className="w-full bg-white rounded-[14px] px-4 py-3 outline-none text-[13.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
+            className="w-full bg-white rounded-[16px] px-4 py-3 outline-none text-[13.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
 
           <SectionLabel action={`See all (${p.reviews})`} onAction={() => setView({ kind: 'reviews', id: p.id })}>Latest review</SectionLabel>
           <div className="rounded-[16px] bg-white px-4 py-3.5" style={{ boxShadow: SHADOW }}>
@@ -679,8 +688,8 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                 {browseRec.map((p) => (
                   <button key={p.id} onClick={() => openProfile(p.id, 'browse')} className="shrink-0 bg-white rounded-[18px] p-3 text-left active:scale-[0.98] transition-transform" style={{ width: 150, boxShadow: SHADOW }}>
                     <div className="relative">
-                      <img src={p.photo} alt={p.name} className="w-full h-[92px] rounded-[13px] object-cover" />
-                      {p.today && <span className="absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.92)' }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /><span className="text-[9px] font-bold" style={{ color: GREEN }}>Today</span></span>}
+                      <img src={p.photo} alt={p.name} className="w-full h-[92px] rounded-[12px] object-cover" />
+                      {p.today && <span className="absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.92)' }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /><span className="text-[10px] font-bold" style={{ color: GREEN }}>Today</span></span>}
                     </div>
                     <div className="flex items-center gap-1 mt-2"><span className="text-[13px] font-bold truncate" style={{ color: INK }}>{p.name}</span>{p.verified && <BadgeCheck size={12} color={CORAL} strokeWidth={2.2} className="shrink-0" />}</div>
                     <div className="flex items-center justify-between mt-1"><Rating p={p} small /><span className="text-[11px] font-bold" style={{ color: INK }}>CHF {p.price}</span></div>
@@ -696,11 +705,11 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               {sort}<ChevronDown size={14} color={TERT} strokeWidth={2.4} style={{ transform: sortOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.18s' }} />
             </button>
             {sortOpen && (
-              <div className="absolute right-0 z-50 rounded-[14px] bg-white overflow-hidden" style={{ top: 24, width: 196, boxShadow: '0 8px 30px rgba(60,30,15,0.16)' }}>
+              <div className="absolute right-0 z-50 rounded-[16px] bg-white overflow-hidden" style={{ top: 24, width: 196, boxShadow: '0 8px 30px rgba(60,30,15,0.16)' }}>
                 {SORTS.map((s, i) => (
                   <button key={s} onClick={() => { setSort(s); setSortOpen(false); }} className="relative w-full flex items-center justify-between px-3.5 py-2.5 text-left active:bg-black/[0.03]">
                     <span className="text-[13px] font-semibold" style={{ color: sort === s ? CORAL : INK }}>{s}</span>
-                    {sort === s && <Check size={14} color={CORAL} strokeWidth={2.6} />}
+                    {sort === s && <Check size={14} color={CORAL} strokeWidth={2.4} />}
                     {i < SORTS.length - 1 && <div className="absolute bottom-0 left-3.5 right-0 h-px" style={{ background: LINE }} />}
                   </button>
                 ))}
@@ -710,7 +719,17 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
 
           {/* Marketplace cards — separate, photo-led, key facts */}
           <div className="flex flex-col gap-3">
-            {browseRest.map((p) => (
+            {browseLoading && [0, 1, 2, 3].map((i) => (
+              <div key={'sk' + i} className="bg-white rounded-[18px] p-3 flex gap-3.5" style={{ boxShadow: SHADOW }}>
+                <div className="svSkel w-[76px] h-[76px] rounded-[15px] shrink-0" />
+                <div className="flex-1 py-1">
+                  <div className="svSkel h-[14px] rounded-full" style={{ width: '55%' }} />
+                  <div className="svSkel h-[11px] rounded-full mt-2.5" style={{ width: '75%' }} />
+                  <div className="svSkel h-[11px] rounded-full mt-2" style={{ width: '40%' }} />
+                </div>
+              </div>
+            ))}
+            {!browseLoading && browseRest.map((p) => (
               <button key={p.id} onClick={() => openProfile(p.id, 'browse')} className="bg-white rounded-[18px] p-3 flex gap-3.5 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
                 <img src={p.photo} alt={p.name} className="w-[76px] h-[76px] rounded-[15px] object-cover shrink-0" />
                 <div className="flex-1 min-w-0 flex flex-col">
@@ -718,7 +737,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                     <span className="text-[14.5px] font-bold truncate" style={{ color: INK }}>{p.name}</span>
                     {p.verified && <BadgeCheck size={13} color={CORAL} strokeWidth={2.2} className="shrink-0" />}
                     <span className="flex-1" />
-                    {p.rating >= 4.8 && <span className="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase tracking-[0.03em] px-1.5 py-[2px] rounded-full shrink-0" style={{ background: '#FBF1E2', color: AMBER }}><Star size={8} color={AMBER} fill={AMBER} strokeWidth={0} /> Top rated</span>}
+                    {p.rating >= 4.8 && <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold uppercase tracking-[0.03em] px-1.5 py-[2px] rounded-full shrink-0" style={{ background: '#FBF1E2', color: AMBER }}><Star size={8} color={AMBER} fill={AMBER} strokeWidth={0} /> Top rated</span>}
                   </div>
                   <div className="flex items-center gap-1.5 mt-[3px]">
                     <Rating p={p} small />
@@ -772,7 +791,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                       const has = bookings.some((b) => b.when === 'upcoming' && b.dom === String(day.n));
                       return (
                         <div key={i} className="flex flex-col items-center gap-1 rounded-[10px] px-1.5 py-1.5" style={{ background: has ? TINT : 'transparent', minWidth: 34 }}>
-                          <span className="text-[9px] font-bold" style={{ color: has ? CORAL : '#C4BBB0' }}>{day.d}</span>
+                          <span className="text-[10px] font-bold" style={{ color: has ? CORAL : '#C4BBB0' }}>{day.d}</span>
                           <span className="text-[13px] font-extrabold leading-none" style={{ color: has ? INK : TERT }}>{day.n <= 28 ? day.n : day.n - 28}</span>
                           <span className="w-1 h-1 rounded-full" style={{ background: has ? CORAL : 'transparent' }} />
                         </div>
@@ -866,7 +885,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                   {b.checkIns && b.checkIns.map(([tt, txt], ci) => (
                                     <div key={ci} className="flex items-center gap-2 mt-2"><span className="text-[10px] font-bold" style={{ color: TERT }}>{tt}</span><span className="text-[11.5px] font-medium" style={{ color: MUTED }}>{txt}</span></div>
                                   ))}
-                                  <button onClick={() => setLiveOpen(true)} className="w-full mt-3 py-2.5 rounded-[11px] bg-white flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform" style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.08)' }}>
+                                  <button onClick={() => setLiveOpen(true)} className="w-full mt-3 py-2.5 rounded-[12px] bg-white flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform" style={{ boxShadow: '0 2px 8px rgba(60,30,15,0.08)' }}>
                                     <MapPin size={13} color={CORAL} strokeWidth={2.2} /><span className="text-[12.5px] font-bold" style={{ color: CORAL }}>Watch live</span>
                                   </button>
                                 </div>
@@ -881,7 +900,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                 </div>
                               )}
                               {b.checkIns && b.when === 'past' && b.status === 'Completed' && (
-                                <div className="rounded-[14px] overflow-hidden" style={{ boxShadow: 'inset 0 0 0 1px ' + LINE }}>
+                                <div className="rounded-[16px] overflow-hidden" style={{ boxShadow: 'inset 0 0 0 1px ' + LINE }}>
                                   {/* walk summary mini-map */}
                                   <svg viewBox="0 0 350 120" className="w-full block" style={{ background: '#EFEAE2' }}>
                                     <path d="M 230 8 C 300 4 345 40 343 70 C 341 100 300 116 250 114 C 210 112 190 95 192 70 C 194 40 180 12 230 8 Z" fill="#E5EEDF" />
@@ -894,7 +913,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
                                     {[['45 min', 'duration'], ['3.2 km', 'distance'], ['4', 'photos']].map(([v, l], si) => (
                                       <div key={si} className="flex-1 flex flex-col items-center" style={{ borderLeft: si ? '1px solid ' + LINE : 'none' }}>
                                         <span className="text-[13.5px] font-extrabold leading-none" style={{ color: CORAL }}>{v}</span>
-                                        <span className="text-[9px] font-medium mt-1" style={{ color: TERT }}>{l}</span>
+                                        <span className="text-[10px] font-medium mt-1" style={{ color: TERT }}>{l}</span>
                                       </div>
                                     ))}
                                   </div>
@@ -967,11 +986,11 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               <div className="flex justify-center gap-1.5 mt-3">
                 {[...Array(5)].map((_, si) => (
                   <button key={si} onClick={() => setRateFor({ ...rateFor, stars: si + 1 })} className="active:scale-90 transition-transform">
-                    <Star size={26} color="#E8B04A" fill={si < rateFor.stars ? '#E8B04A' : 'none'} strokeWidth={1.6} />
+                    <Star size={26} color="#E8B04A" fill={si < rateFor.stars ? '#E8B04A' : 'none'} strokeWidth={1.8} />
                   </button>
                 ))}
               </div>
-              <textarea placeholder="Add a note (optional)…" rows={2} className="w-full mt-4 rounded-[13px] px-3.5 py-2.5 outline-none text-[13.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] resize-none" style={{ background: PEACH }} />
+              <textarea placeholder="Add a note (optional)…" rows={2} className="w-full mt-4 rounded-[12px] px-3.5 py-2.5 outline-none text-[13.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] resize-none" style={{ background: PEACH }} />
               <button onClick={() => submitRating(rateFor.booking.id, rateFor.stars)} className="w-full mt-4 py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 6px 18px rgba(232,93,42,0.26)' }}><span className="text-[14.5px] font-bold text-white">Submit</span></button>
             </div>
           </div>
@@ -1082,9 +1101,9 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               {savedProviders.map((p) => (
                 <button key={p.id} onClick={() => openProfile(p.id, 'saved')} className="relative bg-white rounded-[18px] p-3 text-left active:scale-[0.98] transition-transform" style={{ boxShadow: SHADOW }}>
                   <div className="relative">
-                    <img src={p.photo} alt={p.name} className="w-full h-[110px] rounded-[13px] object-cover" />
+                    <img src={p.photo} alt={p.name} className="w-full h-[110px] rounded-[12px] object-cover" />
                     <button onClick={(e) => { e.stopPropagation(); toggleSave(p.id); }} className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center active:scale-90" style={{ background: 'rgba(255,255,255,0.94)' }}><Heart size={13} color={CORAL} fill={CORAL} strokeWidth={2} /></button>
-                    {p.today && <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.92)' }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /><span className="text-[9px] font-bold" style={{ color: GREEN }}>Today</span></span>}
+                    {p.today && <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.92)' }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /><span className="text-[10px] font-bold" style={{ color: GREEN }}>Today</span></span>}
                   </div>
                   <div className="flex items-center gap-1 mt-2"><span className="text-[13.5px] font-bold truncate" style={{ color: INK }}>{p.name}</span>{p.verified && <BadgeCheck size={12} color={CORAL} strokeWidth={2.2} className="shrink-0" />}</div>
                   <div className="text-[10.5px] mt-0.5" style={{ color: TERT }}>{p.cat === 'sitting' ? 'Pet sitter' : 'Dog walker'} · {p.dist} km</div>
@@ -1106,7 +1125,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
               <div className="flex flex-col gap-3">
                 {suggestions.map((p) => (
                   <button key={p.id} onClick={() => openProfile(p.id, 'saved')} className="bg-white rounded-[18px] p-3 flex gap-3 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
-                    <img src={p.photo} alt={p.name} className="w-[64px] h-[64px] rounded-[13px] object-cover shrink-0" />
+                    <img src={p.photo} alt={p.name} className="w-[64px] h-[64px] rounded-[12px] object-cover shrink-0" />
                     <div className="flex-1 min-w-0 flex flex-col">
                       <div className="flex items-center gap-1">
                         <span className="text-[13.5px] font-bold truncate" style={{ color: INK }}>{p.name}</span>
@@ -1136,7 +1155,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
       <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 116, paddingBottom: embedded ? 104 : 36, scrollbarWidth: 'none', background: CREAM }}>
         {/* Search */}
         <div className="relative">
-          <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px]" style={{ boxShadow: SHADOW }}>
+          <div className="flex items-center gap-2.5 bg-white rounded-[16px] px-3.5 h-[46px]" style={{ boxShadow: SHADOW }}>
             <Search size={16} color={TERT} strokeWidth={2} />
             <input placeholder={`Find care for ${petName}…`} className="flex-1 bg-transparent outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" />
             <div className="flex items-center -space-x-1.5">
@@ -1148,7 +1167,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
             <span className="text-[10px] font-extrabold leading-none" style={{ color: CORAL }}>!</span>
           </button>
           {petHint && (
-            <div className="absolute right-0 z-50 rounded-[14px] bg-white p-3.5" style={{ top: 52, width: 230, boxShadow: '0 8px 30px rgba(60,30,15,0.16)', animation: 'svPop 0.2s cubic-bezier(0.34,1.56,0.64,1) both' }}>
+            <div className="absolute right-0 z-50 rounded-[16px] bg-white p-3.5" style={{ top: 52, width: 230, boxShadow: '0 8px 30px rgba(60,30,15,0.16)', animation: 'svPop 0.2s cubic-bezier(0.34,1.56,0.64,1) both' }}>
               <div className="text-[12.5px] font-bold" style={{ color: INK }}>Booking for who?</div>
               <p className="text-[11.5px] leading-[1.45] mt-1" style={{ color: MUTED }}>Tap a pet to include or remove them. You can select <span style={{ color: CORAL, fontWeight: 700 }}>one or both</span> for the same booking.</p>
               <button onClick={() => setPetHint(false)} className="mt-2 text-[12px] font-bold active:opacity-70" style={{ color: CORAL }}>Got it</button>
@@ -1175,12 +1194,12 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         {/* My bookings + Saved — quiet entry points */}
         <div className="flex gap-3 mt-6">
           <button onClick={() => setView({ kind: 'bookings' })} className="flex-1 bg-white rounded-[16px] px-3.5 py-3 flex items-center gap-2.5 text-left active:scale-[0.98] transition-transform" style={{ boxShadow: SHADOW }}>
-            <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: TINT }}><CalendarClock size={16} color={CORAL} strokeWidth={2} /></span>
+            <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: TINT }}><CalendarClock size={16} color={CORAL} strokeWidth={2} /></span>
             <div className="flex-1 min-w-0"><div className="text-[13px] font-bold" style={{ color: INK }}>Bookings</div><div className="text-[10.5px] mt-[1px]" style={{ color: TERT }}>{upcoming.length} upcoming</div></div>
             <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
           </button>
           <button onClick={() => setView({ kind: 'saved' })} className="flex-1 bg-white rounded-[16px] px-3.5 py-3 flex items-center gap-2.5 text-left active:scale-[0.98] transition-transform" style={{ boxShadow: SHADOW }}>
-            <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: TINT }}><Heart size={15} color={CORAL} strokeWidth={2} /></span>
+            <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: TINT }}><Heart size={15} color={CORAL} strokeWidth={2} /></span>
             <div className="flex-1 min-w-0"><div className="text-[13px] font-bold" style={{ color: INK }}>Saved</div><div className="text-[10.5px] mt-[1px]" style={{ color: TERT }}>{saved.length} providers</div></div>
             <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
           </button>
@@ -1199,13 +1218,13 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         )}
 
         {/* Featured */}
-        <SectionLabel action="See all" onAction={() => { setSort('Recommended'); setView({ kind: 'browse', cat: 'walking' }); }}>Featured near you</SectionLabel>
+        <SectionLabel action="See all" onAction={() => { setSort('Recommended'); setView({ kind: 'browse', cat: 'walking' }); }}>Picked for {petName}</SectionLabel>
         <div className="flex gap-3 overflow-x-auto -mx-5 px-5 pb-1" style={{ scrollbarWidth: 'none' }}>
           {DETAILED.filter((p) => p.recommended).map((p) => (
             <button key={p.id} onClick={() => openProfile(p.id, 'home')} className="shrink-0 bg-white rounded-[18px] p-3 text-left active:scale-[0.98] transition-transform" style={{ width: 150, boxShadow: SHADOW }}>
               <div className="relative">
-                <img src={p.photo} alt={p.name} className="w-full h-[92px] rounded-[13px] object-cover" />
-                {p.today && <span className="absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.92)' }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /><span className="text-[9px] font-bold" style={{ color: GREEN }}>Today</span></span>}
+                <img src={p.photo} alt={p.name} className="w-full h-[92px] rounded-[12px] object-cover" />
+                {p.today && <span className="absolute top-2 left-2 inline-flex items-center gap-1 pl-1.5 pr-2 py-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.92)' }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /><span className="text-[10px] font-bold" style={{ color: GREEN }}>Today</span></span>}
               </div>
               <div className="flex items-center gap-1 mt-2"><span className="text-[13px] font-bold truncate" style={{ color: INK }}>{p.name}</span>{p.verified && <BadgeCheck size={12} color={CORAL} strokeWidth={2.2} className="shrink-0" />}</div>
               <div className="text-[10.5px] mt-0.5" style={{ color: TERT }}>{p.cat === 'sitting' ? 'Pet sitter' : 'Dog walker'}</div>
@@ -1234,7 +1253,7 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         <button onClick={() => setFutureOpen(true)} className="w-full bg-white rounded-[16px] px-3.5 py-3 flex items-center gap-3 text-left active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
           <span className="relative w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: TINT }}>
             <Sparkles size={16} color={CORAL} strokeWidth={2} />
-            <span className="absolute -top-0.5 -right-0.5 w-[14px] h-[14px] rounded-full flex items-center justify-center text-[9px] font-extrabold text-white" style={{ background: CORAL, border: '1.5px solid #fff' }}>!</span>
+            <span className="absolute -top-0.5 -right-0.5 w-[14px] h-[14px] rounded-full flex items-center justify-center text-[10px] font-extrabold text-white" style={{ background: CORAL, border: '1.5px solid #fff' }}>!</span>
           </span>
           <div className="flex-1 min-w-0">
             <div className="text-[13px] font-bold" style={{ color: INK }}>More services on the way</div>
@@ -1244,14 +1263,14 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
         </button>
 
         {/* Refer — slim */}
-        <div className="rounded-[14px] mt-5 px-3.5 py-2.5 flex items-center gap-3" style={{ background: TINT }}>
+        <div className="rounded-[16px] mt-5 px-3.5 py-2.5 flex items-center gap-3" style={{ background: TINT }}>
           <Gift size={16} color={CORAL} strokeWidth={2} className="shrink-0" />
           <span className="flex-1 text-[12.5px] font-semibold truncate" style={{ color: INK }}>Give CHF 10, get CHF 10</span>
           <button onClick={() => setInviteOpen(true)} className="shrink-0 text-[12.5px] font-bold active:opacity-70" style={{ color: CORAL }}>Invite</button>
         </div>
 
         {/* Become a pro — quiet entry */}
-        <button onClick={() => { window.location.href = '/pro-registration'; }} className="w-full rounded-[14px] mt-2.5 px-3.5 py-2.5 flex items-center gap-3 bg-white active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
+        <button onClick={() => { window.location.href = '/pro-registration'; }} className="w-full rounded-[16px] mt-2.5 px-3.5 py-2.5 flex items-center gap-3 bg-white active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
           <Footprints size={16} color={CORAL} strokeWidth={2} className="shrink-0" />
           <span className="flex-1 text-[12.5px] font-semibold truncate text-left" style={{ color: INK }}>Become a walker or sitter and earn up to CHF 35/h</span>
           <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />

@@ -113,7 +113,7 @@ function AssetCard({ name, file, sub, bg = 'cream', sizes = [400, 800, 1600], as
            style={previewStyle}>
         <img src={`/brand/${file}`} alt={name}
              className="max-w-[80%] max-h-[80%] object-contain pointer-events-none" />
-        <span className="absolute top-3 right-3 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest"
+        <span className="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest"
               style={{ background: 'rgba(255,255,255,0.7)', color: INK, backdropFilter: 'blur(8px)' }}>
           on {bg}
         </span>
@@ -417,11 +417,11 @@ function AppIconSection() {
                    style={{ boxShadow: '0 6px 20px rgba(232, 93, 42, 0.5)' }}>
                 <img src="/brand/fylos-app-icon.svg" alt="Fylos icon" className="w-full h-full" />
               </div>
-              {['#5856D6', '#AF52DE', '#FF3B30'].map((c, i) => (
+              {['#5856D6', '#AF52DE', '#E5484D'].map((c, i) => (
                 <div key={i} className="aspect-square rounded-2xl" style={{ background: c }} />
               ))}
             </div>
-            <div className="mt-3 grid grid-cols-4 gap-4 max-w-[300px] text-center text-[9px]"
+            <div className="mt-3 grid grid-cols-4 gap-4 max-w-[300px] text-center text-[10px]"
                  style={{ color: 'rgba(255,255,255,0.7)' }}>
               <div>Mail</div><div>Messages</div><div>Photos</div><div>Music</div>
               <div style={{ color: 'white', fontWeight: 600 }}>Fylos</div>

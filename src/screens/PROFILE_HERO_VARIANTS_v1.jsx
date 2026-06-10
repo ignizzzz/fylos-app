@@ -128,7 +128,7 @@ function AboutContent() {
       </div>
 
       {/* Health row */}
-      <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
+      <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
         {[
           { icon: '🩺', label: 'Last vet visit', value: 'Feb 2025 · Dr. Keller' },
           { icon: '💉', label: 'Vaccines', value: 'All up to date' },
@@ -264,7 +264,7 @@ function VariantB() {
           { n: PET.stats.rating, l: 'rating', icon: '⭐', accent: '#F59E0B' },
           { n: PET.stats.photos, l: 'photos', icon: '📸', accent: '#7C6AF7' },
         ].map((s, i) => (
-          <div key={i} style={{ background: '#fff', borderRadius: 14, padding: '12px 14px', border: '1px solid rgba(0,0,0,0.04)' }}>
+          <div key={i} style={{ background: '#fff', borderRadius: 16, padding: '12px 14px', border: '1px solid rgba(0,0,0,0.04)' }}>
             <div style={{ fontSize: 11, marginBottom: 4 }}>{s.icon}</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: '#111', lineHeight: 1 }}>{s.n}</div>
             <div style={{ fontSize: 11, color: '#9A9AA0', marginTop: 2 }}>{s.l}</div>
@@ -289,7 +289,7 @@ function VariantB() {
           </div>
           <p style={{ fontSize: 12.5, color: '#8B3A1E', margin: 0, lineHeight: 1.5 }}>{PET.archetypeDesc}</p>
         </div>
-        <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
+        <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
           {[
             { icon: '🩺', label: 'Last vet visit', value: 'Feb 2025 · Dr. Keller' },
             { icon: '💉', label: 'Vaccines', value: 'All up to date' },
@@ -370,12 +370,12 @@ function VariantC() {
         </div>
 
         {/* Personality description */}
-        <div style={{ background: '#FBF7F4', borderRadius: 14, padding: '12px 14px' }}>
+        <div style={{ background: '#FBF7F4', borderRadius: 16, padding: '12px 14px' }}>
           <p style={{ fontSize: 13, color: '#5C3D2E', margin: 0, lineHeight: 1.55 }}>{PET.archetypeDesc}</p>
         </div>
 
         {/* Health rows */}
-        <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
+        <div style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
           {[
             { icon: '🩺', label: 'Last vet visit', value: 'Feb 2025 · Dr. Keller' },
             { icon: '💉', label: 'Vaccines', value: 'All up to date' },

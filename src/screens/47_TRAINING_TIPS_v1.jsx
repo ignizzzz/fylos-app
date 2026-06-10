@@ -282,11 +282,11 @@ const TrainingTipsScreen = () => {
               {/* Badges */}
               <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: difficultyBg(tip.difficulty), borderRadius: 9999, padding: '5px 12px' }}>
-                  <Star size={12} color={difficultyColor(tip.difficulty)} strokeWidth={2.5} />
+                  <Star size={12} color={difficultyColor(tip.difficulty)} strokeWidth={2.4} />
                   <span style={{ fontSize: 12, fontWeight: 600, color: difficultyColor(tip.difficulty) }}>{tip.difficulty}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(232,93,42,0.08)', borderRadius: 9999, padding: '5px 12px' }}>
-                  <Clock size={12} color="#E85D2A" strokeWidth={2.5} />
+                  <Clock size={12} color="#E85D2A" strokeWidth={2.4} />
                   <span style={{ fontSize: 12, fontWeight: 600, color: '#E85D2A' }}>{tip.duration}</span>
                 </div>
               </div>
@@ -301,7 +301,7 @@ const TrainingTipsScreen = () => {
 
             {/* Steps */}
             <div style={{ background: '#F3EFEB', borderRadius: 20, padding: 20, border: '1px solid #EDE8E2' }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#A09A94', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 16 }}>Step-by-Step Guide</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#9B9B9F', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: 16 }}>Step-by-Step Guide</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {tip.steps.map((step, idx) => (
                   <div key={idx} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
@@ -328,14 +328,14 @@ const TrainingTipsScreen = () => {
             onClick={() => !isCompleted && markComplete(tip.id)}
             className="active:scale-[0.97] transition-all duration-[120ms]"
             style={{
-              width: '100%', height: 52, borderRadius: 14, border: 'none', cursor: 'pointer',
+              width: '100%', height: 52, borderRadius: 16, border: 'none', cursor: 'pointer',
               background: isCompleted ? '#4A9B6E' : '#111',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
               color: '#FFFFFF',
             }}
           >
-            {isCompleted && <Check size={20} color="#FFFFFF" strokeWidth={2.5} />}
+            {isCompleted && <Check size={20} color="#FFFFFF" strokeWidth={2.4} />}
             <span style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF' }}>
               {isCompleted ? 'Completed' : 'Mark Complete'}
             </span>
@@ -370,7 +370,7 @@ const TrainingTipsScreen = () => {
           {/* Progress Card */}
           <div style={{ background: '#F3EFEB', borderRadius: 20, padding: 20, border: '1px solid #EDE8E2' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#A09A94', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#9B9B9F', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Progress</span>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#E85D2A' }}>
                 {currentCompleted} of {totalCount}
               </span>
@@ -400,7 +400,7 @@ const TrainingTipsScreen = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-              <Star size={14} color="#E85D2A" strokeWidth={2.5} />
+              <Star size={14} color="#E85D2A" strokeWidth={2.4} />
               <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#E85D2A' }}>Featured Guide</span>
             </div>
             <h2 style={{ fontSize: 20, fontWeight: 600, color: '#111', lineHeight: 1.25, marginBottom: 10, letterSpacing: '-0.3px' }}>
@@ -411,11 +411,11 @@ const TrainingTipsScreen = () => {
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: difficultyBg(FEATURED_TIP.difficulty), borderRadius: 9999, padding: '4px 10px' }}>
-                <Star size={11} color={difficultyColor(FEATURED_TIP.difficulty)} strokeWidth={2.5} />
+                <Star size={11} color={difficultyColor(FEATURED_TIP.difficulty)} strokeWidth={2.4} />
                 <span style={{ fontSize: 12, fontWeight: 600, color: difficultyColor(FEATURED_TIP.difficulty) }}>{FEATURED_TIP.difficulty}</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(232,93,42,0.08)', borderRadius: 9999, padding: '4px 10px' }}>
-                <Clock size={11} color="#E85D2A" strokeWidth={2.5} />
+                <Clock size={11} color="#E85D2A" strokeWidth={2.4} />
                 <span style={{ fontSize: 12, fontWeight: 600, color: '#E85D2A' }}>{FEATURED_TIP.duration}</span>
               </div>
               <div style={{ marginLeft: 'auto' }}>
@@ -425,7 +425,7 @@ const TrainingTipsScreen = () => {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
                 }}>
-                  <ArrowRight size={16} color="#FFFFFF" strokeWidth={2.5} />
+                  <ArrowRight size={16} color="#FFFFFF" strokeWidth={2.4} />
                 </div>
               </div>
             </div>
@@ -501,15 +501,15 @@ const TrainingTipsScreen = () => {
                       <span style={{ fontSize: 11, fontWeight: 600, color: difficultyColor(tip.difficulty) }}>{tip.difficulty}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#EDE8E2', borderRadius: 9999, padding: '3px 9px' }}>
-                      <Clock size={10} color="#A09A94" strokeWidth={2.2} />
-                      <span style={{ fontSize: 11, fontWeight: 500, color: '#A09A94' }}>{tip.duration}</span>
+                      <Clock size={10} color="#9B9B9F" strokeWidth={2.2} />
+                      <span style={{ fontSize: 11, fontWeight: 500, color: '#9B9B9F' }}>{tip.duration}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Chevron */}
                 <div style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                  <ChevronRight size={16} color="#A09A94" />
+                  <ChevronRight size={16} color="#9B9B9F" />
                 </div>
               </div>
             );

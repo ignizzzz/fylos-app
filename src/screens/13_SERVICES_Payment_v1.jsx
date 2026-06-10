@@ -109,7 +109,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -176,10 +176,10 @@ const Spinner = ({ size = 'medium', color = 'primary', className = '' }) => {
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[#F7F7F8] text-[#111111]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -218,7 +218,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
     secondary: "bg-transparent text-[#111111] border-[1.5px] border-black/[0.08] hover:bg-[#F7F7F8]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]"
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]"
   };
   
   const sizes = {
@@ -441,7 +441,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
       <div className="absolute inset-0 overflow-y-auto custom-scrollbar pt-[130px] pb-[200px] px-5 bg-[#FFFFFF]">
         {showValidation && !isValid && (
           <div className="mb-5 text-center">
-            <span className="text-[13px] font-medium text-[#FF3B30] bg-[#FFF0F0] px-3 py-1.5 rounded-full">
+            <span className="text-[13px] font-medium text-[#E5484D] bg-[#FFF0F0] px-3 py-1.5 rounded-full">
               Please complete all required fields
             </span>
           </div>
@@ -451,7 +451,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <section className="mb-7 mt-2">
           <div className="flex justify-between items-end mb-4">
             <h3 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider">Select Service</h3>
-            {errors.service && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+            {errors.service && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
           </div>
           <div className="bg-[#FFFFFF] rounded-[20px] border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)] overflow-hidden">
             {mockBookingData.provider.services.map((svc, idx) => {
@@ -465,7 +465,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                     <div className="flex flex-col gap-0.5">
                       <div className="flex items-center gap-2">
                         <span className={`text-[15px] ${isSelected ? 'font-semibold text-[#111111]' : 'font-medium text-[#111111]'}`}>{svc.label}</span>
-                        {svc.popular && <span className="text-[9px] font-bold text-[#FF6B35] bg-[#FF6B35]/[0.08] px-2.5 py-0.5 rounded-full uppercase tracking-wider">Popular</span>}
+                        {svc.popular && <span className="text-[10px] font-bold text-[#FF6B35] bg-[#FF6B35]/[0.08] px-2.5 py-0.5 rounded-full uppercase tracking-wider">Popular</span>}
                       </div>
                       <span className="text-[13px] text-[#8E8E93]">{svc.duration} minutes</span>
                     </div>
@@ -487,9 +487,9 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <section className="mb-7">
           <div className="flex justify-between items-end mb-4">
             <h3 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider">Date & Time</h3>
-            {errors.date && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+            {errors.date && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
           </div>
-          <div className={`bg-[#FFFFFF] rounded-[20px] border transition-colors ${errors.date ? 'border-[#FF3B30]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
+          <div className={`bg-[#FFFFFF] rounded-[20px] border transition-colors ${errors.date ? 'border-[#E5484D]/30 shadow-sm' : 'border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]'}`}>
             <button onClick={() => { setTempDate(selectedDate); setIsCalendarOpen(true); }} className="w-full flex justify-between items-center py-4 px-4 hover:bg-[#FAFAFA] rounded-[20px] transition-colors">
               <div className="flex items-center gap-3.5">
                 <div className="w-9 h-9 rounded-full bg-[#FAFAFA] border border-black/[0.02] flex items-center justify-center shrink-0">
@@ -542,7 +542,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
           <section className="mb-7">
             <div className="flex justify-between items-end mb-4">
               <h3 className="text-[13px] font-semibold text-[#8E8E93] uppercase tracking-wider">Which pet?</h3>
-              {errors.pet && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+              {errors.pet && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
             </div>
             <div className={`bg-[#FFFFFF] rounded-[20px] overflow-hidden border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.02)]`}>
               {mockBookingData.userPets.map((pet, idx) => {
@@ -683,7 +683,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
             <h3 className="text-[18px] font-bold mb-2">Abandon Booking?</h3>
             <p className="text-[14px] text-[#6E6E73] mb-6">Your progress will be lost. Are you sure?</p>
             <div className="flex flex-col gap-2">
-              <button onClick={onClose} className="py-3.5 rounded-[16px] font-medium bg-[#FFF0F0] text-[#FF3B30]">Yes, discard</button>
+              <button onClick={onClose} className="py-3.5 rounded-[16px] font-medium bg-[#FFF0F0] text-[#E5484D]">Yes, discard</button>
               <button onClick={() => setShowCloseDialog(false)} className="py-3.5 rounded-[16px] font-medium bg-[#FAFAFA]">Keep editing</button>
             </div>
           </div>
@@ -1110,8 +1110,8 @@ const PaymentScreen = ({ onBack, onComplete }) => {
             onClick={() => setActiveSheet(null)}
             className="w-full flex items-center gap-4 px-4 py-4 rounded-[16px] hover:bg-[#FFE5E5] active:scale-[0.98] transition-all"
           >
-            <AlertTriangle size={20} className="text-[#FF3B30]" />
-            <span className="text-[16px] font-semibold text-[#FF3B30]">Remove card</span>
+            <AlertTriangle size={20} className="text-[#E5484D]" />
+            <span className="text-[16px] font-semibold text-[#E5484D]">Remove card</span>
           </button>
         </div>
       </BottomSheet>

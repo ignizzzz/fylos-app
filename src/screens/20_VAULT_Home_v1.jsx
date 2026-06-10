@@ -114,7 +114,7 @@ const Badge = ({ variant = 'default', children, className = '' }) => {
     default: "bg-black/[0.04] text-[#6E6E73]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -350,8 +350,8 @@ const CriticalInfoCard = ({ data, onCopyMicrochip }) => (
               <span className="text-black/20 mt-0.5">•</span>
               <span>
                 <strong className="text-[#111111] font-medium">{vac.name}:</strong>{' '}
-                <span className={vac.isWarning ? 'text-[#FF3B30] font-medium' : ''}>{vac.statusText}</span>
-                {vac.isWarning && <AlertTriangle size={14} className="inline ml-1 text-[#FF3B30] -mt-0.5" />}
+                <span className={vac.isWarning ? 'text-[#E5484D] font-medium' : ''}>{vac.statusText}</span>
+                {vac.isWarning && <AlertTriangle size={14} className="inline ml-1 text-[#E5484D] -mt-0.5" />}
               </span>
             </li>
           )) : <li className="text-[14px] text-[#6E6E73] italic">All up to date.</li>}
@@ -445,7 +445,7 @@ const DataManagementCard = () => (
       ].map((item, index) => (
         <React.Fragment key={index}>
           <button className="w-full flex items-center gap-3 p-4 hover:bg-black/[0.02] transition-colors text-left active:scale-[0.99]" onClick={() => alert(item.label)}>
-            <item.icon size={20} className="text-[#111111]" strokeWidth={1.5} />
+            <item.icon size={20} className="text-[#111111]" strokeWidth={1.8} />
             <span className="text-[15px] font-medium text-[#111111] flex-1">{item.label}</span>
             <ChevronRight size={18} className="text-black/20" />
           </button>
@@ -595,14 +595,14 @@ const VaultOptionsSheet = ({ isOpen, onClose }) => (
     <div className="space-y-2 pt-2 pb-4">
       {[ { label: 'Export all data', icon: DownloadCloud }, { label: 'Print emergency bundle', icon: FileText }, { label: 'Share vault access', icon: Share2 } ].map((item, i) => (
         <button key={i} className="w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm">
-          <item.icon size={20} className="text-[#111111]" strokeWidth={1.5} />
+          <item.icon size={20} className="text-[#111111]" strokeWidth={1.8} />
           <span className="text-[15px] font-medium text-[#111111]">{item.label}</span>
         </button>
       ))}
       <Divider spacing="medium" />
       {[ { label: 'Privacy settings', icon: Lock }, { label: 'Backup settings', icon: Cloud } ].map((item, i) => (
         <button key={i} className="w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm">
-          <item.icon size={20} className="text-[#6E6E73]" strokeWidth={1.5} />
+          <item.icon size={20} className="text-[#6E6E73]" strokeWidth={1.8} />
           <span className="text-[15px] font-medium text-[#111111]">{item.label}</span>
         </button>
       ))}

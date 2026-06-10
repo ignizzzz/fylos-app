@@ -143,13 +143,13 @@ const SegmentedControl = ({ tabs, active, onChange, counts }) => (
             flex: 1, textAlign: 'center', padding: '9px 0', position: 'relative', zIndex: 1,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
             background: isActive ? '#111' : 'transparent',
-            borderRadius: 14,
+            borderRadius: 16,
             transition: 'all 240ms cubic-bezier(0.34,1.56,0.64,1)',
           }}
         >
           <span style={{
             fontSize: 13, fontWeight: isActive ? 600 : 500,
-            color: isActive ? '#FFFFFF' : '#A09A94',
+            color: isActive ? '#FFFFFF' : '#9B9B9F',
             transition: 'color 200ms',
           }}>{tab}</span>
           {count > 0 && (
@@ -186,7 +186,7 @@ const NewRequestCard = ({ request, onAccept, onDecline }) => (
       <div style={{ flex: 1, minWidth: 0 }}>
         <span style={{ fontWeight: 600, fontSize: 15, color: '#111', display: 'block' }}>{request.client}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-          <PawPrint size={12} color="#A09A94" strokeWidth={2} />
+          <PawPrint size={12} color="#9B9B9F" strokeWidth={2} />
           <span style={{ fontSize: 13, color: '#6E6058' }}>{request.pet}</span>
         </div>
       </div>
@@ -214,11 +214,11 @@ const NewRequestCard = ({ request, onAccept, onDecline }) => (
 
     {/* Price */}
     <div style={{
-      background: '#FFFFFF', borderRadius: 14, padding: '10px 14px', marginBottom: 16,
+      background: '#FFFFFF', borderRadius: 16, padding: '10px 14px', marginBottom: 16,
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       border: '1px solid #EDE8E2',
     }}>
-      <span style={{ fontSize: 13, color: '#A09A94' }}>Earnings</span>
+      <span style={{ fontSize: 13, color: '#9B9B9F' }}>Earnings</span>
       <span style={{ fontSize: 16, fontWeight: 700, color: '#E85D2A' }}>{request.price}</span>
     </div>
 
@@ -226,17 +226,17 @@ const NewRequestCard = ({ request, onAccept, onDecline }) => (
     <div style={{ display: 'flex', gap: 10 }}>
       <button className="pro-tap" onClick={() => onAccept(request.id)} style={{
         flex: 1, background: '#111',
-        border: 'none', borderRadius: 14, padding: '14px 0',
+        border: 'none', borderRadius: 16, padding: '14px 0',
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
         boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
       }}>
-        <Check size={16} color="#FFFFFF" strokeWidth={2.5} />
+        <Check size={16} color="#FFFFFF" strokeWidth={2.4} />
         <span style={{ fontWeight: 600, fontSize: 14, color: '#FFFFFF' }}>Accept</span>
       </button>
       <button className="pro-tap" onClick={() => onDecline(request.id)} style={{
         flex: 1, background: '#F3EFEB',
         border: '1px solid #EDE8E2',
-        borderRadius: 14, padding: '14px 0',
+        borderRadius: 16, padding: '14px 0',
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
       }}>
         <X size={16} color="#6E6058" strokeWidth={2} />
@@ -263,7 +263,7 @@ const AcceptedCard = ({ booking }) => (
           }}>Confirmed</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 3 }}>
-          <PawPrint size={12} color="#A09A94" strokeWidth={2} />
+          <PawPrint size={12} color="#9B9B9F" strokeWidth={2} />
           <span style={{ fontSize: 13, color: '#6E6058' }}>{booking.pet}</span>
         </div>
       </div>
@@ -271,7 +271,7 @@ const AcceptedCard = ({ booking }) => (
 
     <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-        <Calendar size={13} color="#A09A94" strokeWidth={2} />
+        <Calendar size={13} color="#9B9B9F" strokeWidth={2} />
         <span style={{ fontSize: 12, color: '#6E6058' }}>{booking.date}</span>
       </div>
       <span style={{ fontSize: 14, fontWeight: 600, color: '#E85D2A' }}>{booking.price}</span>
@@ -280,17 +280,17 @@ const AcceptedCard = ({ booking }) => (
     <div style={{ display: 'flex', gap: 10 }}>
       <button className="pro-tap" style={{
         flex: 1, background: '#111',
-        border: 'none', borderRadius: 14, padding: '12px 0',
+        border: 'none', borderRadius: 16, padding: '12px 0',
         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
         boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
       }}>
-        <ArrowRight size={15} color="#FFFFFF" strokeWidth={2.5} />
+        <ArrowRight size={15} color="#FFFFFF" strokeWidth={2.4} />
         <span style={{ fontWeight: 600, fontSize: 13, color: '#FFFFFF' }}>Start</span>
       </button>
       <button className="pro-tap" style={{
         width: 44, height: 44, background: '#F3EFEB',
         border: '1px solid #EDE8E2',
-        borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
         <Clock size={18} color="#E85D2A" strokeWidth={2} />
       </button>
@@ -309,7 +309,7 @@ const CompletedCard = ({ booking }) => (
       <div style={{ flex: 1, minWidth: 0 }}>
         <span style={{ fontWeight: 600, fontSize: 15, color: '#111', display: 'block' }}>{booking.client}</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
-          <PawPrint size={12} color="#A09A94" strokeWidth={2} />
+          <PawPrint size={12} color="#9B9B9F" strokeWidth={2} />
           <span style={{ fontSize: 13, color: '#6E6058' }}>{booking.pet}</span>
         </div>
       </div>
@@ -318,7 +318,7 @@ const CompletedCard = ({ booking }) => (
 
     <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-        <Calendar size={13} color="#A09A94" strokeWidth={2} />
+        <Calendar size={13} color="#9B9B9F" strokeWidth={2} />
         <span style={{ fontSize: 12, color: '#6E6058' }}>{booking.date}</span>
       </div>
       <span style={{ color: '#EDE8E2' }}>|</span>
@@ -327,7 +327,7 @@ const CompletedCard = ({ booking }) => (
 
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      background: '#FFFFFF', borderRadius: 14, padding: '10px 14px',
+      background: '#FFFFFF', borderRadius: 16, padding: '10px 14px',
       border: '1px solid #EDE8E2',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -359,10 +359,10 @@ const EmptyState = ({ icon: Icon, title, subtitle }) => (
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       border: '1px solid #EDE8E2',
     }}>
-      <Icon size={28} color="#A09A94" strokeWidth={1.5} />
+      <Icon size={28} color="#9B9B9F" strokeWidth={1.8} />
     </div>
     <span style={{ fontWeight: 600, fontSize: 16, color: '#111', textAlign: 'center' }}>{title}</span>
-    <span style={{ fontSize: 13, color: '#A09A94', textAlign: 'center', maxWidth: 220, lineHeight: 1.5 }}>{subtitle}</span>
+    <span style={{ fontSize: 13, color: '#9B9B9F', textAlign: 'center', maxWidth: 220, lineHeight: 1.5 }}>{subtitle}</span>
   </div>
 );
 
@@ -387,7 +387,7 @@ const DeclineModal = ({ onConfirm, onCancel }) => {
             width: 30, height: 30, borderRadius: 9999, background: '#F3EFEB',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <X size={15} color="#6E6058" strokeWidth={2.5} />
+            <X size={15} color="#6E6058" strokeWidth={2.4} />
           </div>
         </div>
 
@@ -417,12 +417,12 @@ const DeclineModal = ({ onConfirm, onCancel }) => {
 
         <button className="pro-tap" onClick={() => selected && onConfirm(selected)} style={{
           width: '100%', background: selected ? '#111' : '#EDE8E2',
-          border: 'none', borderRadius: 14, padding: '15px 0',
+          border: 'none', borderRadius: 16, padding: '15px 0',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'background 200ms ease',
           boxShadow: selected ? '0 4px 20px rgba(0,0,0,0.12)' : 'none',
         }}>
-          <span style={{ fontWeight: 600, fontSize: 15, color: selected ? '#FFFFFF' : '#A09A94' }}>Confirm</span>
+          <span style={{ fontWeight: 600, fontSize: 15, color: selected ? '#FFFFFF' : '#9B9B9F' }}>Confirm</span>
         </button>
       </div>
     </div>
@@ -443,7 +443,7 @@ const BottomTabBar = () => {
     <div style={{
       position: 'absolute', bottom: 24, left: 16, right: 16, height: 64,
       background: 'rgba(247,245,242,0.92)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
-      borderRadius: 22, boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
+      borderRadius: 20, boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
       border: '1px solid #EDE8E2',
       display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '0 4px', zIndex: 20,
     }}>
@@ -456,12 +456,12 @@ const BottomTabBar = () => {
             else if (tab.id === 'schedule') alert('Schedule coming soon');
           }} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-            padding: '6px 10px', borderRadius: 14,
+            padding: '6px 10px', borderRadius: 16,
             background: isActive ? 'rgba(232,93,42,0.08)' : 'transparent',
             transition: 'all 240ms cubic-bezier(0.34,1.56,0.64,1)', position: 'relative',
           }}>
             <div style={{ position: 'relative' }}>
-              <Icon size={20} color={isActive ? '#E85D2A' : '#A09A94'} strokeWidth={isActive ? 2 : 1.6} />
+              <Icon size={20} color={isActive ? '#E85D2A' : '#9B9B9F'} strokeWidth={isActive ? 2 : 1.6} />
               {tab.badge && (
                 <div style={{
                   position: 'absolute', top: -4, right: -8, minWidth: 16, height: 16,
@@ -471,7 +471,7 @@ const BottomTabBar = () => {
                 }}>{tab.badge}</div>
               )}
             </div>
-            <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 500, color: isActive ? '#E85D2A' : '#A09A94' }}>{tab.label}</span>
+            <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 500, color: isActive ? '#E85D2A' : '#9B9B9F' }}>{tab.label}</span>
           </div>
         );
       })}

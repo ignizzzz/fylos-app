@@ -119,8 +119,8 @@ const PrivacyActivityScreen = () => {
             <SectionLabel>Always private</SectionLabel>
             <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
               <div className="flex items-center gap-3 px-3.5 py-3">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(255,59,48,0.10)' }}>
-                  <HeartPulse size={15} color="#FF3B30" strokeWidth={2} />
+                <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'rgba(229,72,77,0.10)' }}>
+                  <HeartPulse size={15} color="#E5484D" strokeWidth={2} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[14px] font-semibold leading-tight" style={{ color: THEME.txt }}>Health records</div>

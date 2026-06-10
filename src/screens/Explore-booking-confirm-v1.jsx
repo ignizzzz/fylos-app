@@ -202,7 +202,7 @@ const ConfirmationScreen = ({
         <div className="w-full p-1 opacity-0 animate-card-lift" style={{ animationDelay: '0.4s', backgroundColor: T.bg, borderRadius: 18 }}>
           <div className="p-3 rounded-[16px]" style={{ backgroundColor: T.card, border: `1px solid ${T.border}`, boxShadow: SHADOWS.card }}>
             <div className="flex items-center gap-2.5 mb-3 pb-3" style={{ borderBottom: `1px dashed ${T.divider}` }}>
-              <span className="text-[9px] font-bold uppercase tracking-wider min-w-[20px]" style={{ color: T.muted }}>FOR</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider min-w-[20px]" style={{ color: T.muted }}>FOR</span>
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 rounded-full overflow-hidden" style={{ backgroundColor: T.tint, border: `1px solid ${T.card}`, boxShadow: SHADOWS.card }}>
                   <img src={petImage} alt={petName} className="w-full h-full object-cover" />
@@ -212,10 +212,10 @@ const ConfirmationScreen = ({
             </div>
 
             <div className="flex justify-between items-center mb-1">
-              <span className="text-[9px] font-bold uppercase tracking-wider flex items-center gap-1" style={{ color: T.muted }}>
+              <span className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" style={{ color: T.muted }}>
                 <Calendar size={10} /> DATE
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-wider flex items-center gap-1" style={{ color: T.muted }}>
+              <span className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1" style={{ color: T.muted }}>
                 <Clock size={10} /> TIME
               </span>
             </div>
@@ -247,7 +247,7 @@ const ConfirmationScreen = ({
 
               <button
                 onClick={handleCopyAddress}
-                className="text-[9px] font-medium flex items-center gap-1 px-2.5 py-1 rounded-full max-w-full transition-colors"
+                className="text-[10px] font-medium flex items-center gap-1 px-2.5 py-1 rounded-full max-w-full transition-colors"
                 style={{ color: T.muted, backgroundColor: T.bg }}
               >
                 <span className="truncate max-w-[180px]">{address}</span>
@@ -256,17 +256,17 @@ const ConfirmationScreen = ({
             </div>
 
             <div className="flex items-center justify-center gap-2 mb-4 opacity-0 animate-subtle-slide" style={{ animationDelay: '0.5s' }}>
-              <a href={`sms:${phone}`} className="flex items-center justify-center gap-1.5 w-[85px] py-2 rounded-[14px] text-[10px] font-bold transition-all active:scale-95" style={{ backgroundColor: T.bg, color: T.txt }}>
+              <a href={`sms:${phone}`} className="flex items-center justify-center gap-1.5 w-[85px] py-2 rounded-[16px] text-[10px] font-bold transition-all active:scale-95" style={{ backgroundColor: T.bg, color: T.txt }}>
                 <MessageCircle size={12} style={{ color: T.muted }}/>
                 Message
               </a>
-              <a href={`tel:${phone}`} className="flex items-center justify-center gap-1.5 w-[85px] py-2 rounded-[14px] text-[10px] font-bold transition-all active:scale-95" style={{ backgroundColor: T.bg, color: T.txt }}>
+              <a href={`tel:${phone}`} className="flex items-center justify-center gap-1.5 w-[85px] py-2 rounded-[16px] text-[10px] font-bold transition-all active:scale-95" style={{ backgroundColor: T.bg, color: T.txt }}>
                 <Phone size={12} style={{ color: T.muted }}/>
                 Call
               </a>
             </div>
 
-            <p className="text-[9px] font-medium mb-5 text-center leading-relaxed max-w-[220px] opacity-0 animate-subtle-slide" style={{ animationDelay: '0.6s', color: T.muted }}>
+            <p className="text-[10px] font-medium mb-5 text-center leading-relaxed max-w-[220px] opacity-0 animate-subtle-slide" style={{ animationDelay: '0.6s', color: T.muted }}>
               {status === 'requested'
                 ? "We'll notify you as soon as the provider confirms."
                 : "We'll send a friendly reminder before the visit."}
@@ -538,7 +538,7 @@ const BookingFlow = ({ provider, showToast }) => {
             <button className="flex items-center gap-2 active:opacity-70" onClick={() => setShowFullCalendar(true)}>
               <h4 className="font-bold text-[16px]" style={{ color: T.txt }}>{currentStripMonth}</h4>
               <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: T.coralSoft, color: T.coral }}>
-                <ChevronDown size={13} strokeWidth={2.6} />
+                <ChevronDown size={13} strokeWidth={2.4} />
               </div>
             </button>
             <div className="flex gap-1">
@@ -622,7 +622,7 @@ const BookingFlow = ({ provider, showToast }) => {
                   >
                     <span>{slot.time}</span>
                     {selectedSlot === slot.time && <div className="w-1.5 h-1.5 rounded-full absolute right-2.5 top-1/2 -translate-y-1/2 animate-scale-in" style={{ backgroundColor: T.coral }} />}
-                    {!slot.available && <span className="text-[9px] font-bold" style={{ color: '#D1D5DB' }}>Full</span>}
+                    {!slot.available && <span className="text-[10px] font-bold" style={{ color: '#D1D5DB' }}>Full</span>}
                   </button>
                 ))}
               </div>

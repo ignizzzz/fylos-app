@@ -333,7 +333,7 @@ const PetSelectorPill = ({ pet }) => (
 );
 
 const EmergencyBundleCard = ({ petName, onShare, onDownload, isDownloading }) => (
-  <div className="bg-[#FFF4F4] border border-[#FF3B30]/40 rounded-[12px] p-5 relative overflow-hidden mb-8 shadow-[0_2px_8px_rgba(255,59,48,0.04)]">
+  <div className="bg-[#FFF4F4] border border-[#E5484D]/40 rounded-[12px] p-5 relative overflow-hidden mb-8 shadow-[0_2px_8px_rgba(229,72,77,0.04)]">
     <div className="flex items-start justify-between mb-4">
       <div>
         <div className="flex items-center gap-2 mb-2">
@@ -366,7 +366,7 @@ const QuickAccessGrid = ({ onNavigate }) => (
       ].map((item, i) => (
         <Card key={i} clickable className="p-4 flex flex-col items-center justify-center gap-3" onClick={() => onNavigate(item.route)}>
           <div className="w-10 h-10 rounded-full bg-[#F6F6F6] text-[#111111] flex items-center justify-center">
-            <item.icon size={20} strokeWidth={1.5} />
+            <item.icon size={20} strokeWidth={1.8} />
           </div>
           <span className="text-[14px] font-semibold text-[#111111] text-center">{item.label}</span>
         </Card>
@@ -491,7 +491,7 @@ const RecentDocumentsCard = ({ documents }) => (
         <React.Fragment key={doc.id}>
           <div className="p-4 flex items-center gap-4 active:bg-black/[0.02] cursor-pointer transition-colors" onClick={() => alert('Open PDF Viewer')}>
             <div className="w-10 h-10 rounded-[10px] bg-[#F6F6F6] text-[#111111] flex items-center justify-center shrink-0">
-              <doc.icon size={20} strokeWidth={1.5} />
+              <doc.icon size={20} strokeWidth={1.8} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-[15px] font-semibold text-[#111111] truncate mb-0.5">{doc.title}</div>
@@ -520,7 +520,7 @@ const DataManagementCard = () => (
       ].map((item, index) => (
         <React.Fragment key={index}>
           <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors text-left active:bg-black/[0.04]" onClick={() => alert(item.label)}>
-            <item.icon size={22} className="text-[#111111]" strokeWidth={1.5} />
+            <item.icon size={22} className="text-[#111111]" strokeWidth={1.8} />
             <span className="text-[14px] text-[#111111] flex-1">{item.label}</span>
           </button>
           {index < 2 && <Divider spacing="small" className="ml-12" />}
@@ -658,7 +658,7 @@ const EmergencyContactsScreen = ({ onBack }) => {
         </div>
 
         {/* Refined Emergency Alert Banner */}
-        <div className="bg-[#FFF4F4] border border-[#FF3B30]/40 rounded-[12px] p-5 mb-8 shadow-[0_2px_8px_rgba(255,59,48,0.04)]">
+        <div className="bg-[#FFF4F4] border border-[#E5484D]/40 rounded-[12px] p-5 mb-8 shadow-[0_2px_8px_rgba(229,72,77,0.04)]">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-[28px] leading-none">🚨</span>
             <h3 className="text-[14px] font-semibold text-[#D92D20] tracking-[0.05em] uppercase">In Case of Emergency</h3>
@@ -777,7 +777,7 @@ const EmergencyContactsScreen = ({ onBack }) => {
             ].map((action, idx) => (
               <React.Fragment key={idx}>
                 <button onClick={action.onClick} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors text-left active:bg-black/[0.04]">
-                  <action.icon size={22} className="text-[#111111]" strokeWidth={1.5} />
+                  <action.icon size={22} className="text-[#111111]" strokeWidth={1.8} />
                   <span className="text-[14px] text-[#111111] flex-1">{action.label}</span>
                 </button>
                 {idx < 3 && <div className="w-full h-[1px] bg-[#ECECEC] ml-12" />}
@@ -926,7 +926,7 @@ const ProtocolDetailsSheet = ({ isOpen, onClose, protocol, onCallEmergencyVet })
     <BottomSheet isOpen={isOpen} onClose={onClose} title={`${protocol.icon} ${protocol.title}`}>
       <div className="pt-2 pb-6">
         {protocol.severity === 'critical' && (
-          <div className="text-[13px] font-bold text-[#D92D20] tracking-[0.05em] uppercase mb-6 bg-[#FFF4F4] px-3 py-1.5 inline-block rounded-md border border-[#FF3B30]/20">
+          <div className="text-[13px] font-bold text-[#D92D20] tracking-[0.05em] uppercase mb-6 bg-[#FFF4F4] px-3 py-1.5 inline-block rounded-md border border-[#E5484D]/20">
             Severe Allergy - Act Fast
           </div>
         )}
@@ -951,7 +951,7 @@ const ProtocolDetailsSheet = ({ isOpen, onClose, protocol, onCallEmergencyVet })
           ))}
         </div>
 
-        <div className="bg-[#FFF4F4] border border-[#FF3B30]/20 rounded-[12px] p-4 mb-8">
+        <div className="bg-[#FFF4F4] border border-[#E5484D]/20 rounded-[12px] p-4 mb-8">
           <h4 className="text-[12px] font-medium text-[#D92D20] uppercase tracking-[0.05em] mb-3">Warning Signs</h4>
           <ul className="space-y-1.5">
             {protocol.warningSigns.map((sign, idx) => (
@@ -979,17 +979,17 @@ const ShareContactsSheet = ({ isOpen, onClose, onShareMessage }) => (
   <BottomSheet isOpen={isOpen} onClose={onClose} title="Share Emergency Contacts">
     <div className="space-y-0 pt-2 pb-4 bg-white border border-[#ECECEC] rounded-[12px] overflow-hidden shadow-sm">
       <button onClick={onShareMessage} className="w-full flex items-center gap-4 px-4 py-3 hover:bg-black/[0.02] transition-colors active:bg-black/[0.04]">
-        <MessageCircle size={22} className="text-[#111111]" strokeWidth={1.5} />
+        <MessageCircle size={22} className="text-[#111111]" strokeWidth={1.8} />
         <span className="text-[14px] text-[#111111] flex-1 text-left">Share as Message</span>
       </button>
       <div className="w-full h-[1px] bg-[#ECECEC] ml-12" />
       <button onClick={() => alert('Sharing via Email...')} className="w-full flex items-center gap-4 px-4 py-3 hover:bg-black/[0.02] transition-colors active:bg-black/[0.04]">
-        <Mail size={22} className="text-[#111111]" strokeWidth={1.5} />
+        <Mail size={22} className="text-[#111111]" strokeWidth={1.8} />
         <span className="text-[14px] text-[#111111] flex-1 text-left">Share as Email</span>
       </button>
       <div className="w-full h-[1px] bg-[#ECECEC] ml-12" />
       <button onClick={() => alert('Generating QR...')} className="w-full flex items-center gap-4 px-4 py-3 hover:bg-black/[0.02] transition-colors active:bg-black/[0.04]">
-        <QrCode size={22} className="text-[#111111]" strokeWidth={1.5} />
+        <QrCode size={22} className="text-[#111111]" strokeWidth={1.8} />
         <span className="text-[14px] text-[#111111] flex-1 text-left">Generate QR Code</span>
       </button>
     </div>
@@ -1003,7 +1003,7 @@ const EmergencyHeaderMenuSheet = ({ isOpen, onClose, onNavigate }) => (
         {[ { label: 'Share emergency contacts', icon: Share2 }, { label: 'Print contact list', icon: Printer }, { label: 'Export as vCard', icon: DownloadCloud } ].map((item, i) => (
           <React.Fragment key={i}>
             <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors active:bg-black/[0.04]" onClick={() => alert(item.label)}>
-              <item.icon size={22} className="text-[#111111]" strokeWidth={1.5} />
+              <item.icon size={22} className="text-[#111111]" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] flex-1 text-left">{item.label}</span>
             </button>
             {i < 2 && <div className="w-full h-[1px] bg-[#ECECEC] ml-12" />}
@@ -1013,12 +1013,12 @@ const EmergencyHeaderMenuSheet = ({ isOpen, onClose, onNavigate }) => (
       
       <div className="bg-white border border-[#ECECEC] rounded-[12px] overflow-hidden shadow-sm">
         <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors active:bg-black/[0.04]" onClick={onNavigate}>
-          <Settings size={22} className="text-[#111111]" strokeWidth={1.5} />
+          <Settings size={22} className="text-[#111111]" strokeWidth={1.8} />
           <span className="text-[14px] text-[#111111] flex-1 text-left">Edit contacts</span>
         </button>
         <div className="w-full h-[1px] bg-[#ECECEC] ml-12" />
         <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors active:bg-black/[0.04]" onClick={() => alert('Emergency Protocols')}>
-          <ShieldAlert size={22} className="text-[#111111]" strokeWidth={1.5} />
+          <ShieldAlert size={22} className="text-[#111111]" strokeWidth={1.8} />
           <span className="text-[14px] text-[#111111] flex-1 text-left">Manage protocols</span>
         </button>
       </div>
@@ -1054,7 +1054,7 @@ const VaultOptionsSheet = ({ isOpen, onClose }) => (
         {[ { label: 'Pet Profile Settings', icon: Settings }, { label: 'Manage Vault Access', icon: Lock } ].map((item, i) => (
           <React.Fragment key={i}>
             <button className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-black/[0.02] text-left" onClick={() => alert(item.label)}>
-              <item.icon size={20} className="text-[#111111]" strokeWidth={1.5} />
+              <item.icon size={20} className="text-[#111111]" strokeWidth={1.8} />
               <span className="text-[15px] font-medium text-[#111111] flex-1">{item.label}</span>
             </button>
             {i === 0 && <div className="w-full h-[1px] bg-[#ECECEC] ml-12" />}

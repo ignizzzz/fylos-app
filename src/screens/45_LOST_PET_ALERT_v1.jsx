@@ -27,7 +27,7 @@ const THEME = {
     accent: '#E85D2A', accentHover: '#D04A1C',
     primaryText: '#111111', secondaryText: '#6E6E73', tertiaryText: '#8E8E93',
     background: '#F9F9FB', surface: '#FFFFFF', surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
+    danger: '#E5484D', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
   },
   radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
   shadows: { soft: '0 4px 20px rgba(0,0,0,0.03)', floating: '0 8px 24px rgba(0,0,0,0.08)' },
@@ -198,7 +198,7 @@ const LostPetAlertScreen = () => {
 
             {/* Status card */}
             <div style={{
-              background: 'rgba(255,59,48,0.04)',
+              background: 'rgba(229,72,77,0.04)',
               borderRadius: 20, padding: 20,
               display: 'flex', alignItems: 'center', gap: 14
             }}>
@@ -207,7 +207,7 @@ const LostPetAlertScreen = () => {
                 <p style={{ fontFamily: '"Nunito", sans-serif', fontWeight: 800, fontSize: '1.1rem', color: THEME.colors.primaryText, marginBottom: 2 }}>Luna</p>
                 <p style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.82rem', color: THEME.colors.secondaryText, marginBottom: 6 }}>Golden Retriever</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <AlertTriangle size={13} color={THEME.colors.danger} strokeWidth={2.5} />
+                  <AlertTriangle size={13} color={THEME.colors.danger} strokeWidth={2.4} />
                   <span style={{ fontFamily: '"Inter", sans-serif', fontSize: '0.78rem', fontWeight: 600, color: THEME.colors.danger }}>Missing since Mar 15</span>
                 </div>
               </div>
@@ -273,7 +273,7 @@ const LostPetAlertScreen = () => {
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
               marginTop: 4
             }}>
-              <Check size={20} color={THEME.colors.success} strokeWidth={2.5} />
+              <Check size={20} color={THEME.colors.success} strokeWidth={2.4} />
               <span style={{ fontFamily: '"Nunito", sans-serif', fontWeight: 800, fontSize: '0.95rem', color: THEME.colors.success }}>
                 Mark as Found
               </span>

@@ -362,7 +362,7 @@ const BookingFlow = ({ provider, showToast }) => {
             <button className="flex items-center gap-2 active:opacity-70 transition-opacity" onClick={() => setShowFullCalendar(true)}>
               <h4 className="font-bold text-[16px]" style={{ color: T.txt }}>{currentStripMonth}</h4>
               <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: T.coralSoft, color: T.coral }}>
-                <ChevronDown size={13} strokeWidth={2.6} />
+                <ChevronDown size={13} strokeWidth={2.4} />
               </div>
             </button>
 
@@ -457,7 +457,7 @@ const BookingFlow = ({ provider, showToast }) => {
                   >
                     <span>{slot.time}</span>
                     {selectedSlot === slot.time && <div className="w-1.5 h-1.5 rounded-full absolute right-2.5 top-1/2 -translate-y-1/2 animate-scale-in" style={{ backgroundColor: T.coral }} />}
-                    {!slot.available && <span className="text-[9px] font-bold" style={{ color: '#D1D5DB' }}>Full</span>}
+                    {!slot.available && <span className="text-[10px] font-bold" style={{ color: '#D1D5DB' }}>Full</span>}
                   </button>
                 ))}
               </div>

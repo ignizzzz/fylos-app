@@ -71,7 +71,7 @@ const SubscriptionScreen = () => {
                 <div className="absolute inset-0" style={{ background: 'radial-gradient(120% 80% at 85% 0%, rgba(255,255,255,0.22), transparent 60%)' }} />
                 <div className="relative">
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3" style={{ background: 'rgba(255,255,255,0.92)' }}>
-                    <Crown size={12} color={CORAL} strokeWidth={2.5} /><span className="text-[10.5px] font-extrabold" style={{ color: CORAL }}>RECOMMENDED</span>
+                    <Crown size={12} color={CORAL} strokeWidth={2.4} /><span className="text-[10.5px] font-extrabold" style={{ color: CORAL }}>RECOMMENDED</span>
                   </div>
                   <div style={{ fontFamily: '"Nunito", sans-serif', fontSize: 26, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>fylos Plus</div>
                   <div className="mt-1 flex items-baseline gap-1.5">
@@ -83,7 +83,7 @@ const SubscriptionScreen = () => {
               </div>
 
               {/* cycle toggle */}
-              <div className="flex p-[3px] rounded-[13px] mt-4" style={{ background: '#EDE6DD' }}>
+              <div className="flex p-[3px] rounded-[12px] mt-4" style={{ background: '#EDE6DD' }}>
                 {[{ id: 'monthly', label: 'Monthly' }, { id: 'yearly', label: 'Yearly · −19%' }].map((o) => {
                   const on = cycle === o.id;
                   return <button key={o.id} onClick={() => setCycle(o.id)} className="flex-1 h-[40px] rounded-[10px] text-[13.5px] font-bold transition-all" style={{ background: on ? '#fff' : 'transparent', color: on ? CORAL : MUTED, boxShadow: on ? '0 1px 3px rgba(60,30,15,0.12)' : 'none' }}>{o.label}</button>;
@@ -96,9 +96,9 @@ const SubscriptionScreen = () => {
                   const Icon = p.icon;
                   return (
                     <div key={p.title} className="relative flex items-center gap-3 px-4 py-3.5">
-                      <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: TINT }}><Icon size={16} color={CORAL} strokeWidth={2} /></span>
+                      <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: TINT }}><Icon size={16} color={CORAL} strokeWidth={2} /></span>
                       <div className="flex-1 min-w-0"><div className="text-[14px] font-semibold" style={{ color: INK }}>{p.title}</div><div className="text-[12px] mt-0.5" style={{ color: TERT }}>{p.sub}</div></div>
-                      <Check size={17} color={GREEN} strokeWidth={2.6} className="shrink-0" />
+                      <Check size={17} color={GREEN} strokeWidth={2.4} className="shrink-0" />
                       {i < PERKS.length - 1 && <div className="absolute bottom-0 left-[60px] right-0 h-px" style={{ background: LINE }} />}
                     </div>
                   );

@@ -8,7 +8,7 @@ const Card=({children,className=''})=>(<div className={'bg-white rounded-[18px] 
 const Row=({icon:Icon,title,subtitle,rightValue,trailing,onClick,last,danger,iconBg,iconColor})=>(
   <div className="relative">
     <button onClick={onClick} className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left">
-      {Icon && <span className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center" style={{background:iconBg||(danger?'#FEE8E7':TINT)}}><Icon size={16} color={iconColor||(danger?DANGER:CORAL)} strokeWidth={2}/></span>}
+      {Icon && <span className="w-9 h-9 rounded-[12px] shrink-0 flex items-center justify-center" style={{background:iconBg||(danger?'#FEE8E7':TINT)}}><Icon size={16} color={iconColor||(danger?DANGER:CORAL)} strokeWidth={2}/></span>}
       <span className="flex-1 min-w-0"><span className="block text-[14px] font-semibold truncate leading-tight" style={{color:INK}}>{title}</span>{subtitle && <span className="block text-[11.5px] truncate mt-[3px] leading-tight" style={{color:TERT}}>{subtitle}</span>}</span>
       {rightValue && <span className="text-[11.5px] font-semibold mr-1 shrink-0 px-2.5 py-[3px] rounded-full" style={{background:'#F4EFE9',color:'#9A8F84'}}>{rightValue}</span>}
       {trailing!==undefined?trailing:<ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} className="shrink-0"/>}
@@ -47,7 +47,7 @@ const HelpCenterScreen = () => {
             </div>
             <div className="px-4 pb-12">
 
-              <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px] mt-1" style={{boxShadow:SHADOW}}>
+              <div className="flex items-center gap-2.5 bg-white rounded-[16px] px-3.5 h-[46px] mt-1" style={{boxShadow:SHADOW}}>
                 <Search size={16} color={TERT} strokeWidth={2}/>
                 <input placeholder="Search for help" className="flex-1 bg-transparent outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal"/>
               </div>

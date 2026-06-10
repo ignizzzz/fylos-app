@@ -86,7 +86,7 @@ export default function ExportDataScreen() {
             <div className="flex gap-2 mb-4">
               {[{k:'json',l:'JSON'},{k:'csv',l:'CSV'},{k:'both',l:'JSON + CSV'}].map(f => (
                 <button key={f.k} onClick={() => setFormat(f.k)}
-                  className="flex-1 py-2.5 rounded-[14px] font-semibold text-[13px] border transition-all active:scale-[0.98]"
+                  className="flex-1 py-2.5 rounded-[16px] font-semibold text-[13px] border transition-all active:scale-[0.98]"
                   style={{ backgroundColor: format === f.k ? THEME.coral : 'white', borderColor: format === f.k ? THEME.coral : 'rgba(0,0,0,0.06)', color: format === f.k ? '#FFF' : THEME.txt }}>
                   {f.l}
                 </button>
@@ -117,7 +117,7 @@ export default function ExportDataScreen() {
               ))}
             </div>
 
-            <button disabled={!anySelected} className="w-full py-3 rounded-[14px] font-semibold text-[14.5px] active:scale-[0.99] transition-all" style={{ backgroundColor: anySelected ? '#111' : '#CFCFD4', color: '#FFF', opacity: anySelected ? 1 : 0.7 }}>
+            <button disabled={!anySelected} className="w-full py-3 rounded-[16px] font-semibold text-[14.5px] active:scale-[0.99] transition-all" style={{ backgroundColor: anySelected ? '#111' : '#CFCFD4', color: '#FFF', opacity: anySelected ? 1 : 0.7 }}>
               Request export
             </button>
 

@@ -317,9 +317,9 @@ const StatusBar = ({ dark }) => (
   <div className={`absolute top-0 left-0 w-full h-[54px] flex justify-between items-end px-7 pb-3 z-[60] text-[13px] font-semibold tracking-wide ${dark ? 'text-white' : 'text-[#1A1A1A]'}`}>
     <span>9:41</span>
     <div className="flex items-center gap-1.5">
-      <Signal size={16} strokeWidth={2.5} />
-      <Wifi size={16} strokeWidth={2.5} />
-      <Battery size={18} strokeWidth={2.5} />
+      <Signal size={16} strokeWidth={2.4} />
+      <Wifi size={16} strokeWidth={2.4} />
+      <Battery size={18} strokeWidth={2.4} />
     </div>
   </div>
 );
@@ -376,7 +376,7 @@ const PartnershipFlow = ({ onClose }) => {
                 
                 <div className="flex-1 flex flex-col items-center justify-center p-8 text-center animate-fade-in">
                     <div className={`w-24 h-24 rounded-[32px] ${selectedRole.colorBg} flex items-center justify-center mb-6 shadow-xl`}>
-                        <selectedRole.icon size={40} className={selectedRole.colorText} strokeWidth={1.5} />
+                        <selectedRole.icon size={40} className={selectedRole.colorText} strokeWidth={1.8} />
                     </div>
                     <h1 className="text-2xl font-black text-[#1A1A1A] font-brand mb-3">Become a {selectedRole.title}</h1>
                     <p className="text-sm text-gray-500 font-medium leading-relaxed max-w-xs mb-8">
@@ -677,7 +677,7 @@ const ProviderProfile = ({ provider, onClose, onBookClick }) => {
                                  <img src={member.img} className="w-9 h-9 rounded-full object-cover ring-2 ring-gray-50"/>
                                  <div>
                                      <span className="text-xs font-bold block text-[#1A1A1A]">{member.name}</span>
-                                     <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wide">{member.role}</span>
+                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">{member.role}</span>
                                  </div>
                              </div>
                           ))}
@@ -849,7 +849,7 @@ const BookingFlow = ({ provider, service, onClose, showToast }) => {
                         disabled={item.busy === 'full'}
                         onClick={() => setSelectedDate(item.d)}
                         style={{ transitionDelay: `${i * 0.05}s` }}
-                        className={`flex flex-col items-center justify-center w-[44px] h-[66px] rounded-[14px] transition-all duration-300 animate-slide-up-fade ${
+                        className={`flex flex-col items-center justify-center w-[44px] h-[66px] rounded-[16px] transition-all duration-300 animate-slide-up-fade ${
                             selectedDate === item.d ? 'bg-[#FF5500] text-white shadow-lg shadow-orange-500/30 scale-105' : 
                             item.busy === 'full' ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-white text-gray-400 border border-gray-100 hover:border-gray-300'
                         }`}
@@ -895,7 +895,7 @@ const BookingFlow = ({ provider, service, onClose, showToast }) => {
                  <h4 className="font-extrabold text-[#1A1A1A] text-sm font-brand">Note</h4>
                  {/* Feature 8: Calendar Sync Toggle */}
                  <div className="flex items-center gap-1.5" onClick={() => setCalendarSync(!calendarSync)}>
-                     <span className="text-[9px] font-bold text-gray-400">Sync Calendar</span>
+                     <span className="text-[10px] font-bold text-gray-400">Sync Calendar</span>
                      <div className={`w-7 h-3.5 rounded-full p-0.5 transition-colors ${calendarSync ? 'bg-[#FF5500]' : 'bg-gray-200'}`}>
                          <div className={`w-2.5 h-2.5 bg-white rounded-full shadow-sm transition-transform ${calendarSync ? 'translate-x-3.5' : 'translate-x-0'}`}></div>
                      </div>
@@ -1023,13 +1023,13 @@ const TrendingListView = ({ onClose, onSelect }) => {
                                 <div className="flex-1 py-0.5 flex flex-col justify-center">
                                     <div className="flex justify-between items-start mb-0.5">
                                         <span className="text-[15px] font-black text-[#1A1A1A] block font-brand leading-tight tracking-tight">{service.name}</span>
-                                        <div className="bg-[#FAFAF9] px-1.5 py-0.5 rounded-[8px] text-[9px] font-bold border border-gray-100 flex items-center gap-1">
+                                        <div className="bg-[#FAFAF9] px-1.5 py-0.5 rounded-[8px] text-[10px] font-bold border border-gray-100 flex items-center gap-1">
                                             <Star size={9} className="fill-current" /> {service.rating}
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between mt-1">
                                         <span className={`text-[10px] font-medium flex items-center gap-1 text-gray-400`}>
-                                            <MapPin size={10} strokeWidth={1.5}/> {service.dist} • <span className={`text-[10px] ${statusColorClass}`}>{service.status}</span>
+                                            <MapPin size={10} strokeWidth={1.8}/> {service.dist} • <span className={`text-[10px] ${statusColorClass}`}>{service.status}</span>
                                         </span>
                                         <button 
                                             onClick={(e) => { 
@@ -1063,14 +1063,14 @@ const SortToggle = ({ current, onSort, compact }) => (
                 key={s.id}
                 onClick={() => onSort(s.id)}
                 className={`flex-1 rounded-full font-bold border filter-transition flex items-center justify-center gap-1.5 active-press whitespace-nowrap ${
-                    compact ? 'px-1 py-1.5 text-[9px]' : 'px-2 py-2 text-[10px]'
+                    compact ? 'px-1 py-1.5 text-[10px]' : 'px-2 py-2 text-[10px]'
                 } ${
                     current === s.id 
                     ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] shadow-md shadow-gray-200' 
                     : 'bg-white text-gray-500 border-gray-100 hover:border-gray-200 hover:bg-gray-50'
                 }`}
             >
-                <s.icon size={compact ? 10 : 11} strokeWidth={2.5} className={current === s.id ? 'text-[#FF5500]' : ''} />
+                <s.icon size={compact ? 10 : 11} strokeWidth={2.4} className={current === s.id ? 'text-[#FF5500]' : ''} />
                 <span className="truncate">{s.label}</span>
             </button>
         ))}
@@ -1308,7 +1308,7 @@ const ExploreView = ({ showToast, onOverlayChange }) => {
                             ].map((cat, i) => (
                                 <button key={cat.id} onClick={() => setSelectedCategory(cat.id === selectedCategory ? 'All' : cat.id)} className="flex flex-col items-center gap-1.5 active-press group">
                                     <div 
-                                        className={`rounded-[22px] flex items-center justify-center border-2 transition-all duration-75 bg-opacity-60 ${selectedCategory === cat.id ? 'bg-[#1A1A1A] border-[#1A1A1A] text-white shadow-lg' : 'bg-white border-transparent text-gray-400 group-hover:border-current/10'}`}
+                                        className={`rounded-[20px] flex items-center justify-center border-2 transition-all duration-75 bg-opacity-60 ${selectedCategory === cat.id ? 'bg-[#1A1A1A] border-[#1A1A1A] text-white shadow-lg' : 'bg-white border-transparent text-gray-400 group-hover:border-current/10'}`}
                                         style={{
                                             width: `${56 - (16 * scrollProgress)}px`, 
                                             height: `${56 - (16 * scrollProgress)}px`
@@ -1316,12 +1316,12 @@ const ExploreView = ({ showToast, onOverlayChange }) => {
                                     >
                                         <cat.icon 
                                             size={22 - (4 * scrollProgress)}
-                                            strokeWidth={2.5} 
+                                            strokeWidth={2.4} 
                                             className={selectedCategory === cat.id ? 'text-white' : cat.id === 'Grooming' ? 'text-[#FF5500]' : 'text-current'}
                                         />
                                     </div>
                                     <span 
-                                        className={`text-[9px] font-bold transition-colors ${selectedCategory === cat.id ? 'text-[#1A1A1A]' : 'text-gray-400 group-hover:text-[#1A1A1A]'}`}
+                                        className={`text-[10px] font-bold transition-colors ${selectedCategory === cat.id ? 'text-[#1A1A1A]' : 'text-gray-400 group-hover:text-[#1A1A1A]'}`}
                                         style={{
                                             opacity: 1 - (scrollProgress * 3),
                                             height: `${14 * (1 - scrollProgress)}px`,
@@ -1419,13 +1419,13 @@ const ExploreView = ({ showToast, onOverlayChange }) => {
                                             <div className="flex-1 py-0.5 flex flex-col justify-center">
                                                 <div className="flex justify-between items-start mb-0.5">
                                                     <span className="text-[15px] font-black text-[#1A1A1A] block font-brand leading-tight tracking-tight">{service.name}</span>
-                                                    <div className="bg-[#FAFAF9] px-1.5 py-0.5 rounded-[8px] text-[9px] font-bold border border-gray-100 flex items-center gap-1 group-hover:bg-[#FF5500]/10 group-hover:text-[#FF5500] group-hover:border-orange-100 transition-colors">
+                                                    <div className="bg-[#FAFAF9] px-1.5 py-0.5 rounded-[8px] text-[10px] font-bold border border-gray-100 flex items-center gap-1 group-hover:bg-[#FF5500]/10 group-hover:text-[#FF5500] group-hover:border-orange-100 transition-colors">
                                                         <Star size={9} className="fill-current" /> {service.rating}
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center justify-between mt-1">
                                                     <span className="text-[11px] text-gray-400 font-medium flex items-center gap-1">
-                                                        <MapPin size={10} strokeWidth={1.5}/> {service.dist} • <span className={service.status === 'Open' ? 'text-green-600 font-semibold' : 'text-gray-400'}>{service.status}</span>
+                                                        <MapPin size={10} strokeWidth={1.8}/> {service.dist} • <span className={service.status === 'Open' ? 'text-green-600 font-semibold' : 'text-gray-400'}>{service.status}</span>
                                                     </span>
                                                     <button 
                                                         onClick={(e) => { 
@@ -1515,7 +1515,7 @@ const ExploreView = ({ showToast, onOverlayChange }) => {
                                      <div className="flex-1">
                                          <h3 className="font-extrabold text-[#1A1A1A] text-sm font-brand">{previewProvider.name}</h3>
                                          <p className="text-[10px] text-gray-500 font-medium mb-1">{previewProvider.type} • {previewProvider.dist}</p>
-                                         <span className="text-[9px] font-bold text-[#FF5500] bg-[#FF5500]/10 px-1.5 py-0.5 rounded-md">{previewProvider.status} • {previewProvider.rating} ★</span>
+                                         <span className="text-[10px] font-bold text-[#FF5500] bg-[#FF5500]/10 px-1.5 py-0.5 rounded-md">{previewProvider.status} • {previewProvider.rating} ★</span>
                                      </div>
                                      <button className="w-9 h-9 rounded-full bg-[#1A1A1A] flex items-center justify-center text-white shadow-lg shadow-black/20"><ChevronRight size={18} /></button>
                                 </div>

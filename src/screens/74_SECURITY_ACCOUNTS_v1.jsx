@@ -4,7 +4,7 @@ import { ChevronLeft, Check, AlertCircle, Info } from 'lucide-react';
 const THEME = {
   bg: '#F7F5F2', card: '#FFFFFF', divider: '#F1EDE8',
   coral: '#E85D2A', txt: '#111111', muted: '#9B9B9F',
-  mutedDark: '#6E6E73', tint: '#FBE7DD', success: '#00C060', danger: '#FF3B30',
+  mutedDark: '#6E6E73', tint: '#FBE7DD', success: '#00C060', danger: '#E5484D',
 };
 
 const AppHeader = ({ title, onBack }) => (
@@ -134,7 +134,7 @@ const SecurityAccountsScreen = () => {
                         className="text-[12px] font-semibold px-3 py-1.5 rounded-full active:scale-95"
                         style={{
                           color: a.connected ? THEME.danger : '#FFFFFF',
-                          backgroundColor: a.connected ? 'rgba(255,59,48,0.08)' : THEME.coral,
+                          backgroundColor: a.connected ? 'rgba(229,72,77,0.08)' : THEME.coral,
                           opacity: onlyMethod ? 0.4 : 1,
                           cursor: onlyMethod ? 'not-allowed' : 'pointer',
                         }}
@@ -152,7 +152,7 @@ const SecurityAccountsScreen = () => {
             <div className="bg-white rounded-[16px] border border-black/[0.04] overflow-hidden">
               <div className="flex items-center gap-3 px-3.5 py-3">
                 <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: THEME.tint }}>
-                  <Check size={16} color={THEME.coral} strokeWidth={2.5} />
+                  <Check size={16} color={THEME.coral} strokeWidth={2.4} />
                 </div>
                 <div className="flex-1">
                   <div className="text-[14px] font-semibold leading-tight" style={{ color: THEME.txt }}>Email + password</div>
@@ -169,7 +169,7 @@ const SecurityAccountsScreen = () => {
             </div>
 
             {totalConnected === 0 && !usesPassword && (
-              <div className="flex items-start gap-2 mt-3 px-3.5 py-2.5 rounded-[12px]" style={{ backgroundColor: 'rgba(255,59,48,0.08)' }}>
+              <div className="flex items-start gap-2 mt-3 px-3.5 py-2.5 rounded-[12px]" style={{ backgroundColor: 'rgba(229,72,77,0.08)' }}>
                 <AlertCircle size={13} color={THEME.danger} strokeWidth={2.2} className="shrink-0 mt-[2px]" />
                 <span className="text-[12px] leading-snug" style={{ color: '#8B1A14' }}>
                   You have no sign-in method. Please set a password or link an account.

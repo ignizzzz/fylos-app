@@ -185,7 +185,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -238,10 +238,10 @@ const IconWrapper = ({ icon: Icon, color = THEME.colors.primaryText, size = 24, 
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[#F7F7F8] text-[#6E6E73] border border-black/[0.04]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]",
     outline: "bg-transparent border border-black/[0.08] text-[#6E6E73]"
   };
@@ -280,11 +280,11 @@ const Avatar = ({ src, initials, size = 48, badge, badgeColor = THEME.colors.dan
 };
 
 const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = true, icon: Icon, isLoading, disabled, className = '', ...props }) => {
-  const baseStyles = "relative flex items-center justify-center rounded-[14px] font-semibold transition-all duration-200 active:scale-[0.98] overflow-hidden gap-2";
+  const baseStyles = "relative flex items-center justify-center rounded-[16px] font-semibold transition-all duration-200 active:scale-[0.98] overflow-hidden gap-2";
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
     secondary: "bg-transparent text-[#111111] border-[1.5px] border-black/[0.08] hover:bg-[#F7F7F8]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]",
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]",
     ghost: "bg-transparent text-[#6E6E73] hover:bg-black/5",
     pill: "bg-[#F7F7F8] text-[#111111] border border-black/[0.04] hover:bg-[#EAEAEA] !rounded-[100px]"
   };
@@ -336,13 +336,13 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
     {label && <label className="text-[13px] font-medium text-[#6E6E73] ml-1">{label}</label>}
     <input 
       disabled={disabled}
-      className={`w-full h-[52px] px-4 bg-[#FFFFFF] border text-[16px] text-[#111111] rounded-[14px] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/10 ${
-        error ? 'border-[#FF3B30] focus:border-[#FF3B30]' : 'border-black/[0.08] focus:border-[#FF6B35]'
+      className={`w-full h-[52px] px-4 bg-[#FFFFFF] border text-[16px] text-[#111111] rounded-[16px] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/10 ${
+        error ? 'border-[#E5484D] focus:border-[#E5484D]' : 'border-black/[0.08] focus:border-[#FF6B35]'
       } placeholder:text-[#8E8E93]`}
       {...props}
     />
     {error ? (
-      <span className="text-[12px] text-[#FF3B30] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
+      <span className="text-[12px] text-[#E5484D] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
     ) : helperText ? (
       <span className="text-[12px] text-[#8E8E93] ml-1">{helperText}</span>
     ) : null}
@@ -352,7 +352,7 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
 const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', className = '' }) => (
    <div className={`relative flex items-center w-full ${className}`}>
      <div className="absolute left-4 text-[#8E8E93] pointer-events-none">
-       <Search size={18} strokeWidth={2.5} />
+       <Search size={18} strokeWidth={2.4} />
      </div>
      <input 
        type="text"
@@ -363,7 +363,7 @@ const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', clas
      />
      {value && (
        <button onClick={onClear} className="absolute right-4 text-[#8E8E93] hover:text-[#111111] transition-colors p-1 rounded-full active:bg-black/5">
-         <X size={16} strokeWidth={2.5} />
+         <X size={16} strokeWidth={2.4} />
        </button>
      )}
    </div>
@@ -377,7 +377,7 @@ const Select = ({ label, options = [], value, onChange, disabled, className = ''
         disabled={disabled}
         value={value}
         onChange={onChange}
-        className="w-full h-[52px] px-4 pr-10 bg-[#FFFFFF] border border-black/[0.08] text-[16px] text-[#111111] rounded-[14px] appearance-none transition-all duration-200 focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10"
+        className="w-full h-[52px] px-4 pr-10 bg-[#FFFFFF] border border-black/[0.08] text-[16px] text-[#111111] rounded-[16px] appearance-none transition-all duration-200 focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10"
       >
         {options.map((opt, i) => (
           <option key={i} value={opt.value}>{opt.label}</option>
@@ -532,7 +532,7 @@ const BottomSheet = ({ isOpen, onClose, title, footer, snap = 'default', childre
 
 const SegmentedControl = ({ segments, activeIndex, onChange, className = '' }) => {
   return (
-    <div className={`flex bg-[#F7F7F8] p-1 rounded-[14px] relative ${className}`}>
+    <div className={`flex bg-[#F7F7F8] p-1 rounded-[16px] relative ${className}`}>
       <div 
         className="absolute top-1 bottom-1 bg-[#FFFFFF] rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 ease-out"
         style={{ width: `calc(${100 / segments.length}% - 4px)`, left: `calc(${(100 / segments.length) * activeIndex}% + 2px)` }}
@@ -574,7 +574,7 @@ const RadioList = ({ options, value, onChange }) => (
       <button 
         key={opt.id} 
         onClick={() => onChange(opt.id)} 
-        className={`flex items-center justify-between w-full p-4 rounded-[14px] transition-all duration-200 active:scale-[0.98] border ${
+        className={`flex items-center justify-between w-full p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98] border ${
           value === opt.id ? 'bg-[#FF6B35]/5 border-[#FF6B35]/30' : 'bg-[#F7F7F8] border-transparent hover:bg-black/5'
         }`}
       >
@@ -596,7 +596,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
       <div className="mb-6">{illustration}</div>
     ) : (
       <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+        <Icon size={32} color="#CFCFD4" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
@@ -856,7 +856,7 @@ const AboutTab = ({
           <h3 className="text-[16px] font-semibold text-[#111111] mb-3">Anxiety Triggers</h3>
           <div className="flex flex-wrap gap-2">
             {pet.anxietyTriggers.map(trigger => (
-              <div key={trigger} className="flex items-center gap-1 pl-3 pr-2 py-1.5 bg-[#FF3B30]/10 text-[#FF3B30] rounded-full text-[14px] font-medium">
+              <div key={trigger} className="flex items-center gap-1 pl-3 pr-2 py-1.5 bg-[#E5484D]/10 text-[#E5484D] rounded-full text-[14px] font-medium">
                 {trigger}
                 <button onClick={() => onRemoveTrigger(trigger)} className="p-0.5 rounded-full opacity-85 hover:opacity-100 transition-opacity"><X size={14} /></button>
               </div>
@@ -895,7 +895,7 @@ const AboutTab = ({
                   <h4 className="text-[16px] font-semibold text-[#111111] mt-1">{m.title}</h4>
                   {m.note && <p className="text-[14px] text-[#6E6E73] mt-1.5 leading-relaxed">{m.note}</p>}
                 </div>
-                <button onClick={() => onDeleteMilestone(m.id)} className="p-2 text-[#CFCFD4] hover:text-[#FF3B30] hover:bg-[#FFF0F0] rounded-full transition-colors active:scale-95"><Trash2 size={16} /></button>
+                <button onClick={() => onDeleteMilestone(m.id)} className="p-2 text-[#CFCFD4] hover:text-[#E5484D] hover:bg-[#FFF0F0] rounded-full transition-colors active:scale-95"><Trash2 size={16} /></button>
               </div>
             </div>
           ))}
@@ -942,7 +942,7 @@ const ShareTab = ({ pet, shares, openSheet, onNavigateToFamily }) => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-[18px] font-bold text-[#111111]">Who has access</h3>
             <button onClick={() => openSheet('add')} className="w-8 h-8 flex items-center justify-center bg-[#F7F7F8] text-[#111111] rounded-full hover:bg-black/5 active:scale-[0.95] transition-all">
-              <Plus size={18} strokeWidth={2.5} />
+              <Plus size={18} strokeWidth={2.4} />
             </button>
           </div>
           
@@ -955,7 +955,7 @@ const ShareTab = ({ pet, shares, openSheet, onNavigateToFamily }) => {
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="text-[13px] text-[#6E6E73]">{share.role}</span>
                     <span className="w-1 h-1 rounded-full bg-black/10" />
-                    <Badge variant={getPermissionBadgeVariant(share.permission)} className="!text-[9px]">{share.permission}</Badge>
+                    <Badge variant={getPermissionBadgeVariant(share.permission)} className="!text-[10px]">{share.permission}</Badge>
                   </div>
                   <div className="text-[#8E8E93] text-[12px] mt-1">Added {share.added}</div>
                 </div>
@@ -1269,7 +1269,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onNavigateToFamily }) => {
           <SearchInput value={newTrigger} onChange={e => setNewTrigger(e.target.value)} onClear={() => setNewTrigger('')} placeholder="Search or type custom..." />
           <div className="space-y-3 max-h-[200px] overflow-y-auto custom-scrollbar">
             {COMMON_ANXIETY_TRIGGERS.filter(t => t.toLowerCase().includes(newTrigger.toLowerCase()) && !pet.anxietyTriggers.includes(t)).map(t => (
-              <button key={t} onClick={() => addTrigger(t)} className="w-full text-left px-4 py-3 bg-[#F7F7F8] rounded-[14px] text-[15px] font-medium text-[#111111] active:bg-[#E5E5E5]">
+              <button key={t} onClick={() => addTrigger(t)} className="w-full text-left px-4 py-3 bg-[#F7F7F8] rounded-[16px] text-[15px] font-medium text-[#111111] active:bg-[#E5E5E5]">
                 {t}
               </button>
             ))}
@@ -1353,7 +1353,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onNavigateToFamily }) => {
           ) : (
             <div className="text-center animate-in fade-in zoom-in-95 duration-300">
               <div className="w-[200px] h-[200px] mx-auto bg-white border border-black/10 rounded-2xl shadow-sm p-4 flex flex-col items-center justify-center relative mb-4 mt-2">
-                <QrCode size={140} color="#111111" strokeWidth={1.5} />
+                <QrCode size={140} color="#111111" strokeWidth={1.8} />
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/20 rounded-2xl pointer-events-none" />
                 <FylosLogo fontSize="12px" className="absolute bg-white px-2 py-1 rounded-full bottom-[-10px] shadow-sm border border-black/[0.04]" />
               </div>
@@ -1380,13 +1380,13 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onNavigateToFamily }) => {
           </div>
           <Select label="Expires in" options={EXPIRY_OPTIONS} value={shareConfig.expiry} onChange={e => setShareConfig({ ...shareConfig, expiry: e.target.value })} />
           
-          <div className="p-4 bg-[#FFF4E5] rounded-[14px] border border-[#FF9500]/20 flex items-start gap-3">
+          <div className="p-4 bg-[#FFF4E5] rounded-[16px] border border-[#FF9500]/20 flex items-start gap-3">
             <AlertTriangle size={20} className="text-[#FF9500] shrink-0 mt-0.5" />
             <p className="text-[13px] text-[#111111] leading-relaxed">Anyone with this generated link will be able to access {pet.name}'s profile until it expires.</p>
           </div>
           
           <div className="relative">
-            <input type="text" readOnly value="fylos.app/s/lx89q2m" className="w-full h-[52px] pl-4 pr-12 bg-[#F7F7F8] border border-black/[0.08] rounded-[14px] text-[16px] text-[#111111] font-medium" />
+            <input type="text" readOnly value="fylos.app/s/lx89q2m" className="w-full h-[52px] pl-4 pr-12 bg-[#F7F7F8] border border-black/[0.08] rounded-[16px] text-[16px] text-[#111111] font-medium" />
             <button onClick={() => handleCopyLink('fylos.app/s/lx89q2m')} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-[#6E6E73] hover:text-[#111111] transition-colors bg-white rounded-md shadow-sm border border-black/5">
               <Copy size={16} />
             </button>
@@ -1448,7 +1448,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onNavigateToFamily }) => {
               </div>
               {selectedShare.permission.includes('View') && (
                 <div>
-                  <h4 className="text-[14px] font-semibold text-[#111111] mb-2 flex items-center gap-2"><X size={16} className="text-[#FF3B30]"/> What they cannot do</h4>
+                  <h4 className="text-[14px] font-semibold text-[#111111] mb-2 flex items-center gap-2"><X size={16} className="text-[#E5484D]"/> What they cannot do</h4>
                   <ul className="space-y-1.5 text-[14px] text-[#6E6E73] pl-6">
                     <li>Edit any profile information</li>
                     <li>Delete records or milestones</li>
@@ -1476,7 +1476,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onNavigateToFamily }) => {
             </button>
           </div>
           <div className="bg-[#FFFFFF] rounded-[16px] overflow-hidden border border-black/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col">
-            <button onClick={() => openShareSheet('revoke', selectedShare)} className="w-full p-4 text-[16px] font-semibold text-[#FF3B30] hover:bg-[#FFF0F0] active:bg-[#FFE5E5] transition-colors">
+            <button onClick={() => openShareSheet('revoke', selectedShare)} className="w-full p-4 text-[16px] font-semibold text-[#E5484D] hover:bg-[#FFF0F0] active:bg-[#FFE5E5] transition-colors">
               Revoke access
             </button>
           </div>
@@ -1516,7 +1516,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onNavigateToFamily }) => {
       >
         <div className="flex flex-col items-center text-center px-2 py-2">
           <div className="w-16 h-16 bg-[#FFF0F0] rounded-full flex items-center justify-center mb-6 shadow-sm">
-            <AlertTriangle size={32} className="text-[#FF3B30]" />
+            <AlertTriangle size={32} className="text-[#E5484D]" />
           </div>
           <h3 className="text-[20px] font-bold text-[#111111] mb-3">Revoke access?</h3>
           <p className="text-[15px] text-[#6E6E73] mb-8 leading-relaxed max-w-[280px]">

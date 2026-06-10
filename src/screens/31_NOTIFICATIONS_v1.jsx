@@ -47,7 +47,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -183,10 +183,10 @@ const Divider = ({ spacing = 'medium', className = '' }) => {
 const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[#F7F7F8] text-[#6E6E73]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[#E5F9ED] text-[#00C060]",
     warning: "bg-[#FFF4E5] text-[#FF9500]",
-    error: "bg-[#FFE5E5] text-[#FF3B30]",
+    error: "bg-[#FFE5E5] text-[#E5484D]",
     info: "bg-[#E5F0FF] text-[#007AFF]"
   };
   return (
@@ -228,7 +228,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
   const variants = {
     primary: "bg-[#FF6B35] text-white shadow-[0_4px_14px_rgba(255,107,53,0.25)] hover:bg-[#E85D2A]",
     secondary: "bg-transparent text-[#111111] border-[1.5px] border-black/[0.08] hover:bg-[#F7F7F8]",
-    destructive: "bg-[#FFF0F0] text-[#FF3B30] hover:bg-[#FFE5E5]"
+    destructive: "bg-[#FFF0F0] text-[#E5484D] hover:bg-[#FFE5E5]"
   };
   const sizes = { small: "px-3 py-2 text-[13px] rounded-xl", medium: "px-4 py-[14px] text-[16px]", large: "px-6 py-4 text-[18px] rounded-[20px]" };
   const isDisabled = disabled || isLoading;
@@ -245,7 +245,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
 const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', className = '' }) => (
    <div className={`relative flex items-center w-full ${className}`}>
      <div className="absolute left-4 text-[#8E8E93] pointer-events-none">
-       <Search size={18} strokeWidth={2.5} />
+       <Search size={18} strokeWidth={2.4} />
      </div>
      <input 
        type="text" value={value} onChange={onChange} placeholder={placeholder}
@@ -253,14 +253,14 @@ const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', clas
      />
      {value && (
        <button onClick={onClear} className="absolute right-4 text-[#8E8E93] hover:text-[#111111] transition-colors p-1 rounded-full active:bg-black/5">
-         <X size={16} strokeWidth={2.5} />
+         <X size={16} strokeWidth={2.4} />
        </button>
      )}
    </div>
 );
 
 const SegmentedControl = ({ segments, activeIndex, onChange, className = '' }) => (
-  <div className={`flex bg-[#F7F7F8] p-1 rounded-[14px] relative ${className}`}>
+  <div className={`flex bg-[#F7F7F8] p-1 rounded-[16px] relative ${className}`}>
     <div 
       className="absolute top-1 bottom-1 bg-[#FFFFFF] rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-300 ease-out"
       style={{ width: `calc(${100 / segments.length}% - 4px)`, left: `calc(${(100 / segments.length) * activeIndex}% + 2px)` }}
@@ -277,7 +277,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
   <div className="flex flex-col items-center justify-center w-full h-full min-h-[50vh] px-6 text-center">
     {illustration ? <div className="mb-6">{illustration}</div> : (
       <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+        <Icon size={32} color="#CFCFD4" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>

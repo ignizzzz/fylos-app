@@ -106,7 +106,7 @@ export default function ProviderReviewsScreen() {
                             transition: 'width 0.6s ease',
                           }} />
                         </div>
-                        <span className="text-[11px] text-[#A09A94] w-6 text-right">{row.count}</span>
+                        <span className="text-[11px] text-[#9B9B9F] w-6 text-right">{row.count}</span>
                       </div>
                     ))}
                   </div>
@@ -169,7 +169,7 @@ function ReviewCard({ review, isLast }) {
           }}>{review.initials}</div>
           <div>
             <div className="text-[15px] font-semibold text-[#111]">{review.name}</div>
-            <div className="text-[13px] text-[#A09A94]">{review.date}</div>
+            <div className="text-[13px] text-[#9B9B9F]">{review.date}</div>
           </div>
         </div>
         <div className="flex gap-0.5">
@@ -219,7 +219,7 @@ function ReviewCard({ review, isLast }) {
               width: 64, height: 64, borderRadius: 12,
               background: '#EDE8E2', border: '1px solid #D5CEC7',
             }}>
-              <Camera size={18} className="text-[#A09A94]" />
+              <Camera size={18} className="text-[#9B9B9F]" />
             </div>
           ))}
         </div>
@@ -233,7 +233,7 @@ function ReviewCard({ review, isLast }) {
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
             fontSize: 12, fontWeight: 500,
-            color: helpful ? '#E85D2A' : '#A09A94',
+            color: helpful ? '#E85D2A' : '#9B9B9F',
             padding: '4px 10px', borderRadius: 9999,
             background: helpful ? 'rgba(232,93,42,0.08)' : 'transparent',
             border: 'none', cursor: 'pointer',

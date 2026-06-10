@@ -19,7 +19,7 @@ const PEACH = '#F3EFEB';
 const TINT = '#FBE7DD';
 const INK = '#111111';
 const MUTED = '#6E6058';
-const TERT = '#A09A94';
+const TERT = '#9B9B9F';
 const GREEN = '#3F8D63';
 const LINE = '#F1EDE8';
 const SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.05)';
@@ -74,7 +74,7 @@ const StatusBar = () => (
 const Label = ({ children }) => <div className="text-[12px] font-bold uppercase tracking-[0.1em] mb-2.5" style={{ color: TERT }}>{children}</div>;
 const RowInput = ({ value, onChange, placeholder, inputMode }) => (
   <input value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} inputMode={inputMode}
-    className="w-full bg-white rounded-[13px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: SHADOW }} />
+    className="w-full bg-white rounded-[12px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: SHADOW }} />
 );
 const Toggle = ({ value, onChange }) => (
   <div onClick={() => onChange(!value)} className="shrink-0 cursor-pointer" style={{ width: 38, height: 22, borderRadius: 9999, backgroundColor: value ? CORAL : '#E5E1DC', transition: 'background-color 200ms ease', position: 'relative' }}>
@@ -227,7 +227,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                 const Icon = r.icon;
                 return (
                   <button key={r.id} onClick={() => toggleIn('roles', r.id)} className="flex items-center gap-3.5 px-4 py-4 rounded-[18px] text-left transition-all active:scale-[0.98]" style={{ background: on ? '#FFF3EC' : '#fff', boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>
-                    <span className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ background: on ? CORAL : TINT }}><Icon size={22} color={on ? '#fff' : CORAL} strokeWidth={1.9} /></span>
+                    <span className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ background: on ? CORAL : TINT }}><Icon size={22} color={on ? '#fff' : CORAL} strokeWidth={2} /></span>
                     <div className="flex-1"><div className="text-[16px] font-bold" style={{ color: on ? CORAL : INK }}>{r.label}</div><div className="text-[12px] mt-0.5" style={{ color: TERT }}>{r.sub}</div></div>
                     <span className="w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0" style={{ background: on ? CORAL : 'transparent', border: on ? 'none' : '1.6px solid #DDD4C9' }}>{on && <Check size={13} color="#fff" strokeWidth={3} />}</span>
                   </button>
@@ -242,7 +242,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               <div className="flex flex-col items-center">
                 <button onClick={() => set('photo', !d.photo)} className="relative active:scale-[0.97] transition-transform">
                   <span className="w-[96px] h-[96px] rounded-full flex items-center justify-center overflow-hidden" style={{ background: '#fff', boxShadow: SHADOW }}>
-                    {d.photo ? <img src={USER_AVATAR} alt="" className="w-full h-full object-cover" /> : <Camera size={28} color={TERT} strokeWidth={1.7} />}
+                    {d.photo ? <img src={USER_AVATAR} alt="" className="w-full h-full object-cover" /> : <Camera size={28} color={TERT} strokeWidth={1.8} />}
                   </span>
                   <span className="absolute bottom-0 right-0 w-8 h-8 rounded-full flex items-center justify-center border-[3px]" style={{ background: CORAL, borderColor: CREAM }}><Plus size={15} color="#fff" strokeWidth={2.8} /></span>
                 </button>
@@ -253,7 +253,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               <div className="mt-5">
                 <Label>Bio</Label>
                 <textarea value={d.bio} onChange={(e) => set('bio', e.target.value)} rows={4} placeholder="Who are you, why pets, what makes your walks special? Owners read this before anything else."
-                  className="w-full bg-white rounded-[14px] px-4 py-3 outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
+                  className="w-full bg-white rounded-[16px] px-4 py-3 outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
                 <div className="text-[10.5px] mt-1.5 text-right" style={{ color: d.bio.trim().length >= 20 ? GREEN : TERT }}>{d.bio.trim().length >= 20 ? 'Looks good' : `${Math.max(0, 20 - d.bio.trim().length)} more characters`}</div>
               </div>
             </div>
@@ -271,7 +271,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               </div>
               <div>
                 <Label>Comfortable with</Label>
-                <button onClick={() => setSheet('comfort')} className="w-full flex items-center gap-3 bg-white rounded-[13px] px-4 h-[52px] active:scale-[0.99] transition-transform text-left" style={{ boxShadow: SHADOW }}>
+                <button onClick={() => setSheet('comfort')} className="w-full flex items-center gap-3 bg-white rounded-[12px] px-4 h-[52px] active:scale-[0.99] transition-transform text-left" style={{ boxShadow: SHADOW }}>
                   <span className="flex-1 text-[14.5px] font-semibold truncate" style={{ color: d.comfort.length ? INK : '#C4B8AC' }}>{d.comfort.length ? d.comfort.join(', ') : 'Select'}</span>
                   <ChevronRight size={17} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
                 </button>
@@ -319,7 +319,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               <div className="bg-white rounded-[18px] p-3" style={{ boxShadow: SHADOW }}>
                 <div className="flex items-center gap-2 pb-2" style={{ borderBottom: '1px solid ' + LINE }}>
                   <span className="w-[44px]" />
-                  {DAYPARTS.map((p) => <span key={p} className="flex-1 text-center text-[9.5px] font-bold uppercase tracking-[0.06em]" style={{ color: TERT }}>{p}</span>)}
+                  {DAYPARTS.map((p) => <span key={p} className="flex-1 text-center text-[10.5px] font-bold uppercase tracking-[0.06em]" style={{ color: TERT }}>{p}</span>)}
                 </div>
                 {WEEKDAYS.map((w, di) => (
                   <div key={w} className="flex items-center gap-2 py-[5px]">
@@ -366,7 +366,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                 const done = d[k];
                 return (
                   <button key={k} onClick={() => set(k, !done)} className="flex items-center gap-3.5 px-4 py-4 rounded-[18px] text-left transition-all active:scale-[0.98]" style={{ background: done ? '#EAF7EF' : '#fff', boxShadow: done ? 'inset 0 0 0 1.5px #BBDFC8' : SHADOW }}>
-                    <span className="w-11 h-11 rounded-[13px] flex items-center justify-center shrink-0" style={{ background: done ? '#fff' : TINT }}><Icon size={19} color={done ? GREEN : CORAL} strokeWidth={2} /></span>
+                    <span className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: done ? '#fff' : TINT }}><Icon size={19} color={done ? GREEN : CORAL} strokeWidth={2} /></span>
                     <div className="flex-1"><div className="text-[14.5px] font-bold" style={{ color: INK }}>{t}</div><div className="text-[11.5px] mt-0.5" style={{ color: TERT }}>{s}</div></div>
                     <span className="w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0" style={{ background: done ? GREEN : 'transparent', border: done ? 'none' : '1.6px solid #DDD4C9' }}>{done && <Check size={13} color="#fff" strokeWidth={3} />}</span>
                   </button>
@@ -402,10 +402,10 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                     <span className="text-[14.5px] font-bold truncate" style={{ color: INK }}>{d.name || 'Your name'}</span>
                     <BadgeCheck size={13} color={CORAL} strokeWidth={2.2} className="shrink-0" />
                     <span className="flex-1" />
-                    <span className="inline-flex items-center gap-0.5 text-[9px] font-extrabold uppercase px-1.5 py-[2px] rounded-full shrink-0" style={{ background: '#EAF7EF', color: GREEN }}>New</span>
+                    <span className="inline-flex items-center gap-0.5 text-[10px] font-extrabold uppercase px-1.5 py-[2px] rounded-full shrink-0" style={{ background: '#EAF7EF', color: GREEN }}>New</span>
                   </div>
                   <div className="flex items-center gap-1.5 mt-[3px]">
-                    <Star size={10} color="#E8B04A" strokeWidth={1.6} />
+                    <Star size={10} color="#E8B04A" strokeWidth={1.8} />
                     <span className="text-[11px]" style={{ color: TERT }}>No reviews yet · {d.area.split('·')[1]?.trim() || d.area}</span>
                   </div>
                   <div className="flex items-center justify-between mt-auto pt-2" style={{ borderTop: '1px solid ' + LINE }}>
@@ -472,7 +472,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               <button onClick={() => setSheet(null)} className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95" style={{ background: PEACH }}><X size={16} color={INK} strokeWidth={2.2} /></button>
             </div>
             <div className="px-5">
-              <div className="rounded-[14px] bg-white overflow-hidden" style={{ boxShadow: SHADOW }}>
+              <div className="rounded-[16px] bg-white overflow-hidden" style={{ boxShadow: SHADOW }}>
                 {COMFORT.map((o, i) => {
                   const on = d.comfort.includes(o);
                   return (

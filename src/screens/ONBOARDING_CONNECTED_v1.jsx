@@ -34,7 +34,7 @@ const T = {
   card: '#FFFFFF',
   text: '#111111',
   textMuted: '#6E6058',
-  textTertiary: '#A09A94',
+  textTertiary: '#9B9B9F',
   divider: '#E5E5E5',
   green: '#4D8A62',
   purple: '#6D52C7',
@@ -387,7 +387,7 @@ function HeroStatsCard({ compact = false }) {
               <div className="text-[12px] font-bold" style={{ color: T.text }}>
                 {s.value}
               </div>
-              <div className="text-[9px]" style={{ color: T.textTertiary }}>
+              <div className="text-[10px]" style={{ color: T.textTertiary }}>
                 {s.label}
               </div>
             </div>
@@ -477,7 +477,7 @@ function ProviderMiniCard({ p, delay = 0 }) {
       className="flex items-center gap-2.5"
       style={{
         background: T.card,
-        borderRadius: 14,
+        borderRadius: 16,
         padding: '10px 12px',
         border: `1px solid ${T.divider}`,
         boxShadow: '0 4px 14px rgba(0,0,0,0.06)',
@@ -502,7 +502,7 @@ function ProviderMiniCard({ p, delay = 0 }) {
           </span>
         </div>
         <span
-          className="inline-flex items-center h-[15px] px-1.5 rounded-full text-[9px] font-semibold"
+          className="inline-flex items-center h-[15px] px-1.5 rounded-full text-[10px] font-semibold"
           style={{ background: T.coralSoft, color: T.coralDark }}
         >
           {p.role}

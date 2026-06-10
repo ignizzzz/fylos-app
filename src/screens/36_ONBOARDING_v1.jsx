@@ -26,11 +26,11 @@ const THEME = {
     accentHover: '#D04A1C',
     primaryText: '#111111',
     secondaryText: '#6E6058',
-    tertiaryText: '#A09A94',
+    tertiaryText: '#9B9B9F',
     background: '#F7F5F2',
     surface: '#FFFFFF',
     surfaceAlt: '#F3EFEB',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -195,7 +195,7 @@ const AbstractIllustration = ({ shapes, mainIcon: MainIcon, accentIcon: AccentIc
       </div>
       {/* Floating accent badge */}
       <div
-        className="absolute -bottom-3 -right-3 w-11 h-11 rounded-[14px] bg-white flex items-center justify-center onb-float"
+        className="absolute -bottom-3 -right-3 w-11 h-11 rounded-[16px] bg-white flex items-center justify-center onb-float"
         style={{ boxShadow: THEME.shadows.floating, animationDelay: '0.5s' }}
       >
         <AccentIcon size={20} style={{ color: THEME.colors.accent }} strokeWidth={2} />
@@ -420,7 +420,7 @@ const OnboardingFlow = () => {
                       color: 'white',
                       fontSize: 15,
                       fontWeight: 700,
-                      borderRadius: 14,
+                      borderRadius: 16,
                       padding: '16px 0',
                       border: 'none',
                       cursor: 'pointer',
@@ -429,7 +429,7 @@ const OnboardingFlow = () => {
                     }}
                   >
                     Get Started
-                    <ArrowRight size={18} strokeWidth={2.5} />
+                    <ArrowRight size={18} strokeWidth={2.4} />
                   </button>
                 ) : (
                   <button
@@ -440,7 +440,7 @@ const OnboardingFlow = () => {
                       color: 'white',
                       fontSize: 15,
                       fontWeight: 700,
-                      borderRadius: 14,
+                      borderRadius: 16,
                       padding: '16px 0',
                       border: 'none',
                       cursor: 'pointer',
@@ -449,7 +449,7 @@ const OnboardingFlow = () => {
                     }}
                   >
                     {isFirst ? 'Get Started' : 'Next'}
-                    <ArrowRight size={18} strokeWidth={2.5} />
+                    <ArrowRight size={18} strokeWidth={2.4} />
                   </button>
                 )}
 

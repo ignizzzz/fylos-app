@@ -8,7 +8,7 @@ const Card=({children,className=''})=>(<div className={'bg-white rounded-[18px] 
 const Row=({icon:Icon,title,subtitle,rightValue,trailing,onClick,last,danger,iconBg,iconColor})=>(
   <div className="relative">
     <button onClick={onClick} className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left">
-      {Icon && <span className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center" style={{background:iconBg||(danger?'#FEE8E7':TINT)}}><Icon size={16} color={iconColor||(danger?DANGER:CORAL)} strokeWidth={2}/></span>}
+      {Icon && <span className="w-9 h-9 rounded-[12px] shrink-0 flex items-center justify-center" style={{background:iconBg||(danger?'#FEE8E7':TINT)}}><Icon size={16} color={iconColor||(danger?DANGER:CORAL)} strokeWidth={2}/></span>}
       <span className="flex-1 min-w-0"><span className="block text-[14px] font-semibold truncate leading-tight" style={{color:INK}}>{title}</span>{subtitle && <span className="block text-[11.5px] truncate mt-[3px] leading-tight" style={{color:TERT}}>{subtitle}</span>}</span>
       {rightValue && <span className="text-[11.5px] font-semibold mr-1 shrink-0 px-2.5 py-[3px] rounded-full" style={{background:'#F4EFE9',color:'#9A8F84'}}>{rightValue}</span>}
       {trailing!==undefined?trailing:<ChevronRight size={14} color="#D4D4D8" strokeWidth={2.2} className="shrink-0"/>}
@@ -22,7 +22,7 @@ const Toggle=({value,onChange})=>(
 const Seg=({options,value,onChange})=>(<div className="flex gap-2">{options.map((o)=>{const on=value===o;return(<button key={o} onClick={()=>onChange(o)} className="flex-1 h-[42px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{background:on?'#FFF3EC':'#fff',color:on?CORAL:MUTED,boxShadow:on?'inset 0 0 0 1.6px '+CORAL:SHADOW}}>{o}</button>);})}</div>);
 const Field=({label,value,onChange,placeholder})=>(
   <div className="mb-4"><div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-1.5 ml-0.5" style={{color:TERT}}>{label}</div>
-  <input type="password" value={value} onChange={(e)=>onChange(e.target.value)} placeholder={placeholder} className="w-full bg-white rounded-[13px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{boxShadow:SHADOW}}/></div>);
+  <input type="password" value={value} onChange={(e)=>onChange(e.target.value)} placeholder={placeholder} className="w-full bg-white rounded-[12px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{boxShadow:SHADOW}}/></div>);
 const SecurityPasswordScreen = () => {
   const [cur,setCur]=useState(''); const [nw,setNw]=useState(''); const [conf,setConf]=useState('');
   const [toast,setToast]=useState('');

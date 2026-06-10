@@ -78,7 +78,7 @@ export default function RegionScreen() {
               </div>
             )}
 
-            <div className="flex items-center gap-2 mb-3 px-3.5 py-2.5 rounded-[14px] bg-white border border-black/[0.04]">
+            <div className="flex items-center gap-2 mb-3 px-3.5 py-2.5 rounded-[16px] bg-white border border-black/[0.04]">
               <Search size={15} color={THEME.muted} strokeWidth={2.2} />
               <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search country or dial code"
                 className="flex-1 text-[13.5px] outline-none bg-transparent" style={{ color: THEME.txt }} />

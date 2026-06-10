@@ -476,7 +476,7 @@ const VaultPlacesScreen = () => {
             ].map((item, index) => (
               <React.Fragment key={index}>
                 <button className="w-full h-[52px] flex items-center gap-3.5 px-4 hover:bg-[#F7F7F5] transition-colors text-left active:scale-[0.99]" onClick={item.onClick}>
-                  <div className="text-[#6E6E73]"><item.icon size={20} strokeWidth={1.5} /></div>
+                  <div className="text-[#6E6E73]"><item.icon size={20} strokeWidth={1.8} /></div>
                   <span className="text-[15px] font-medium text-[#111111] flex-1">{item.label}</span>
                   <ChevronRight size={18} className="text-[#EAEAEA]" />
                 </button>
@@ -617,7 +617,7 @@ const PlaceDetailsSheet = ({ isOpen, onClose, place, onDirections, onLogVisit })
           
           <Divider />
           
-          <button className="w-full py-2 flex items-center justify-center gap-2 text-[#FF3B30] font-medium active:opacity-70 transition-opacity">
+          <button className="w-full py-2 flex items-center justify-center gap-2 text-[#E5484D] font-medium active:opacity-70 transition-opacity">
             <Trash2 size={16} /> Delete Place
           </button>
         </div>
@@ -687,7 +687,7 @@ const AddPlaceSheet = ({ isOpen, onClose, onSave }) => {
           </div>
         </div>
 
-        <button onClick={onSave} className="w-full bg-[#FF6B35] text-white font-medium py-[14px] rounded-[14px] active:scale-[0.98] transition-all shadow-[0_4px_12px_rgba(255,107,53,0.15)] mt-6">
+        <button onClick={onSave} className="w-full bg-[#FF6B35] text-white font-medium py-[14px] rounded-[16px] active:scale-[0.98] transition-all shadow-[0_4px_12px_rgba(255,107,53,0.15)] mt-6">
           Save Place
         </button>
       </div>

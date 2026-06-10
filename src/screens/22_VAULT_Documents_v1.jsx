@@ -134,7 +134,7 @@ const GenericActionSheet = ({ isOpen, onClose, title, options }) => (
         return (
           <button key={i} onClick={() => { opt.onClick?.(); onClose(); }} className={`w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm ${opt.style === 'cancel' ? 'justify-center' : ''}`}>
             {opt.icon && <span className="text-[20px]">{opt.icon}</span>}
-            {opt.LucideIcon && <opt.LucideIcon size={20} className={opt.style === 'cancel' ? 'text-red-500' : 'text-[#111111]'} strokeWidth={1.5} />}
+            {opt.LucideIcon && <opt.LucideIcon size={20} className={opt.style === 'cancel' ? 'text-red-500' : 'text-[#111111]'} strokeWidth={1.8} />}
             <span className={`text-[15px] font-medium ${opt.style === 'cancel' ? 'text-red-500' : 'text-[#111111]'}`}>{opt.label}</span>
           </button>
         );
@@ -373,7 +373,7 @@ const VaultDocumentsScreen = ({ onBack }) => {
               ].map((action, index) => (
                 <React.Fragment key={index}>
                   <button onClick={action.onClick} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#F9F9F9] transition-colors text-left active:scale-[0.99]">
-                    <action.icon size={18} className="text-[#8E8E93]" strokeWidth={1.5} />
+                    <action.icon size={18} className="text-[#8E8E93]" strokeWidth={1.8} />
                     <span className="text-[15px] font-medium text-[#111111] flex-1">{action.label}</span>
                   </button>
                   {index < 3 && <div className="w-full h-[1px] bg-[#ECECEC] ml-11" />}

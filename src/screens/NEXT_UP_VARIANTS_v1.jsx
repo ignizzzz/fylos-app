@@ -72,7 +72,7 @@ function Frame({ title, subtitle, children }) {
           {title}
         </div>
         {subtitle && (
-          <div style={{ fontSize: 11.5, color: '#A09A94', marginTop: 2 }}>
+          <div style={{ fontSize: 11.5, color: '#9B9B9F', marginTop: 2 }}>
             {subtitle}
           </div>
         )}
@@ -131,9 +131,9 @@ function VariantStack() {
           {b.service.label} for <strong style={{ color: '#3A2E22' }}>{b.pet.name}</strong>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.05)' }}>
-          <img src={b.provider.photo} alt="" style={{ width: 28, height: 28, borderRadius: 14, objectFit: 'cover' }} />
+          <img src={b.provider.photo} alt="" style={{ width: 28, height: 28, borderRadius: 16, objectFit: 'cover' }} />
           <span style={{ fontSize: 12.5, fontWeight: 600, color: '#111' }}>{b.provider.name}</span>
-          <span style={{ fontSize: 11.5, color: '#A09A94' }}>· ★ {b.provider.rating}</span>
+          <span style={{ fontSize: 11.5, color: '#9B9B9F' }}>· ★ {b.provider.rating}</span>
           <span style={{ marginLeft: 'auto', color: '#C4BBB3', fontSize: 16 }}>›</span>
         </div>
       </button>
@@ -324,7 +324,7 @@ function VariantStatusBanner() {
         </div>
         {/* Body */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14 }}>
-          <img src={b.provider.photo} alt="" style={{ width: 44, height: 44, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
+          <img src={b.provider.photo} alt="" style={{ width: 44, height: 44, borderRadius: 16, objectFit: 'cover', flexShrink: 0 }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 14.5, fontWeight: 700, color: '#111', letterSpacing: '-0.015em', lineHeight: 1.1 }}>
               {b.service.label}
@@ -397,7 +397,7 @@ function VariantCountdown() {
               {b.dateTime.formatted}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
-              <img src={b.provider.photo} alt="" style={{ width: 22, height: 22, borderRadius: 11, objectFit: 'cover' }} />
+              <img src={b.provider.photo} alt="" style={{ width: 22, height: 22, borderRadius: 12, objectFit: 'cover' }} />
               <span style={{ fontSize: 11.5, color: '#3A2E22', fontWeight: 600 }}>{b.provider.name}</span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10.5, fontWeight: 600, color: s.text, marginLeft: 'auto' }}>
                 <span style={{ width: 5, height: 5, borderRadius: 3, background: s.dot }} /> {s.label}

@@ -36,7 +36,7 @@ const THEME = {
     accent: '#E85D2A', accentHover: '#D04A1C',
     primaryText: '#111111', secondaryText: '#6E6E73', tertiaryText: '#8E8E93',
     background: '#F9F9FB', surface: '#FFFFFF', surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
+    danger: '#E5484D', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
   },
   radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
   shadows: { soft: '0 4px 20px rgba(0,0,0,0.03)', floating: '0 8px 24px rgba(0,0,0,0.08)' },
@@ -113,8 +113,8 @@ const ActionCard = ({ icon: Icon, title, subtitle, onClick, variant = 'default' 
     transition: `transform ${THEME.motion.tap} ${THEME.motion.spring}`
   }}>
     <div style={{
-      width: 44, height: 44, borderRadius: 14,
-      backgroundColor: variant === 'danger' ? 'rgba(255,59,48,0.06)' : THEME.colors.surfaceAlt,
+      width: 44, height: 44, borderRadius: 16,
+      backgroundColor: variant === 'danger' ? 'rgba(229,72,77,0.06)' : THEME.colors.surfaceAlt,
       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
     }}>
       <Icon size={20} color={variant === 'danger' ? THEME.colors.danger : THEME.colors.accent} />
@@ -146,7 +146,7 @@ const RescheduleView = ({ onConfirm }) => {
           return (
             <button key={d.date} disabled={!d.available} onClick={() => d.available && setSelectedDay(d.date)} style={{
               flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-              padding: '10px 0', borderRadius: 14, border: 'none', cursor: d.available ? 'pointer' : 'default',
+              padding: '10px 0', borderRadius: 16, border: 'none', cursor: d.available ? 'pointer' : 'default',
               backgroundColor: isSelected ? THEME.colors.accent : THEME.colors.surface,
               boxShadow: isSelected ? THEME.shadows.floating : THEME.shadows.soft,
               opacity: d.available ? 1 : 0.35, transition: `all ${THEME.motion.tap} ${THEME.motion.spring}`
@@ -234,7 +234,7 @@ const CancelView = ({ onConfirm }) => {
       {selectedReason && (
         <button onClick={onConfirm} style={{
           width: '100%', padding: '16px 0', borderRadius: THEME.radius.medium, border: 'none',
-          backgroundColor: 'rgba(255,59,48,0.05)', color: THEME.colors.danger, fontSize: 16, fontWeight: 700,
+          backgroundColor: 'rgba(229,72,77,0.05)', color: THEME.colors.danger, fontSize: 16, fontWeight: 700,
           cursor: 'pointer', transition: `transform ${THEME.motion.tap} ${THEME.motion.spring}`
         }}>Cancel Booking</button>
       )}
@@ -248,10 +248,10 @@ const DoneView = ({ type, onBack }) => {
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 40px', textAlign: 'center', gap: 16 }}>
       <div style={{
         width: 64, height: 64, borderRadius: THEME.radius.full,
-        backgroundColor: isReschedule ? 'rgba(0,192,96,0.08)' : 'rgba(255,59,48,0.06)',
+        backgroundColor: isReschedule ? 'rgba(0,192,96,0.08)' : 'rgba(229,72,77,0.06)',
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        {isReschedule ? <Check size={28} color={THEME.colors.success} strokeWidth={2.5} /> : <X size={28} color={THEME.colors.danger} strokeWidth={2.5} />}
+        {isReschedule ? <Check size={28} color={THEME.colors.success} strokeWidth={2.4} /> : <X size={28} color={THEME.colors.danger} strokeWidth={2.4} />}
       </div>
       <div style={{ fontSize: 20, fontWeight: 700, color: THEME.colors.primaryText }}>{isReschedule ? 'Booking Rescheduled' : 'Booking Cancelled'}</div>
       <div style={{ fontSize: 14, color: THEME.colors.secondaryText, lineHeight: 1.5 }}>
@@ -269,7 +269,7 @@ const DoneView = ({ type, onBack }) => {
 const RefundNote = () => (
   <div style={{
     display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 20px', margin: '0 20px',
-    borderRadius: 14, backgroundColor: 'rgba(0,122,255,0.04)'
+    borderRadius: 16, backgroundColor: 'rgba(0,122,255,0.04)'
   }}>
     <Info size={16} color={THEME.colors.info} style={{ marginTop: 1, flexShrink: 0 }} />
     <span style={{ fontSize: 12, color: THEME.colors.secondaryText, lineHeight: 1.5 }}>

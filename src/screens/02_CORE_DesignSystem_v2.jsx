@@ -48,7 +48,7 @@ const GlobalStyles = () => (
       --color-border: rgba(0, 0, 0, 0.04);
       
       /* Status Colors */
-      --color-danger: #FF3B30;
+      --color-danger: #E5484D;
       --color-danger-bg: #FFF0F0;
       --color-success: #34C759;
       --color-success-bg: #E5F9ED;
@@ -257,7 +257,7 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
         <Spinner size="small" color={variant === 'primary' || variant === 'success' ? 'white' : 'grey'} />
       ) : (
         <>
-          {Icon && <Icon size={size === 'small' ? 16 : 18} strokeWidth={1.5} />}
+          {Icon && <Icon size={size === 'small' ? 16 : 18} strokeWidth={1.8} />}
           {children}
         </>
       )}
@@ -309,7 +309,7 @@ const TextInput = ({ label, error, helperText, disabled, icon: Icon, className =
 const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', className = '' }) => (
    <div className={`relative flex items-center w-full ${className}`}>
      <div className="absolute left-4 text-[var(--color-tertiary-text)] pointer-events-none">
-       <Search size={18} strokeWidth={2.5} />
+       <Search size={18} strokeWidth={2.4} />
      </div>
      <input 
        type="text"
@@ -320,7 +320,7 @@ const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', clas
      />
      {value && (
        <button onClick={onClear} className="absolute right-4 text-[var(--color-tertiary-text)] hover:text-[var(--color-primary-text)] transition-colors p-1 rounded-full active:bg-black/5">
-         <X size={16} strokeWidth={2.5} />
+         <X size={16} strokeWidth={2.4} />
        </button>
      )}
    </div>
@@ -341,7 +341,7 @@ const Select = ({ label, options = [], value, onChange, disabled, className = ''
         ))}
       </select>
       <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-tertiary-text)]">
-        <ChevronDown size={18} strokeWidth={1.5} />
+        <ChevronDown size={18} strokeWidth={1.8} />
       </div>
     </div>
   </div>
@@ -364,7 +364,7 @@ const Toggle = ({ active, onChange }) => (
 
 const SegmentedControl = ({ segments, activeIndex, onChange, className = '' }) => {
   return (
-    <div className={`flex bg-[var(--color-surface-hover)] p-1 rounded-[14px] relative shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] ${className}`}>
+    <div className={`flex bg-[var(--color-surface-hover)] p-1 rounded-[16px] relative shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] ${className}`}>
       <div 
         className="absolute top-1 bottom-1 bg-[var(--color-surface)] rounded-[10px] shadow-[var(--shadow-level-1)] transition-all duration-[220ms] ease-[var(--ease-spring)]"
         style={{ width: `calc(${100 / segments.length}% - 4px)`, left: `calc(${(100 / segments.length) * activeIndex}% + 2px)` }}
@@ -394,7 +394,7 @@ const InlineNotice = ({ variant = 'info', title, description, className = '' }) 
   
   return (
     <div className={`flex items-start gap-3 p-4 rounded-[var(--radius-md)] ${v.bg} ${className}`}>
-      <Icon className={`shrink-0 ${v.text}`} size={20} strokeWidth={1.5} />
+      <Icon className={`shrink-0 ${v.text}`} size={20} strokeWidth={1.8} />
       <div className="flex flex-col gap-0.5 pt-0.5">
         {title && <span className={`text-[14px] font-semibold ${v.text}`}>{title}</span>}
         {description && <span className={`text-[13px] ${v.text} opacity-90 leading-relaxed`}>{description}</span>}
@@ -414,7 +414,7 @@ const ListRow = ({ icon: Icon, avatar, title, subtitle, rightAccessory, onClick,
   >
     {avatar ? <Avatar {...avatar} size={40} /> : Icon && (
       <div className="w-10 h-10 rounded-full bg-[var(--color-surface-hover)] flex items-center justify-center shrink-0">
-        <Icon size={18} color="var(--color-accent)" strokeWidth={1.5} />
+        <Icon size={18} color="var(--color-accent)" strokeWidth={1.8} />
       </div>
     )}
     <div className="flex-1 flex flex-col justify-center min-w-0">
@@ -469,7 +469,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
       <div className="mb-6">{illustration}</div>
     ) : (
       <div className="w-20 h-20 rounded-full bg-[var(--color-surface)] flex items-center justify-center mb-6">
-        <Icon size={32} color="var(--color-tertiary-text)" strokeWidth={1.5} />
+        <Icon size={32} color="var(--color-tertiary-text)" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[var(--color-primary-text)] mb-2">{title}</h2>
@@ -504,11 +504,11 @@ const Header = ({ title, variant = 'default', user, isStaticMock = false }) => {
           </h1>
           <div className="flex items-center bg-[var(--color-surface)] shadow-[var(--shadow-level-1)] rounded-[var(--radius-full)] p-1 h-[52px]">
             <button onClick={() => handleAction('Search')} className="w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[var(--color-surface-hover)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-              <Search size={18} color="var(--color-primary-text)" strokeWidth={1.5} />
+              <Search size={18} color="var(--color-primary-text)" strokeWidth={1.8} />
             </button>
             <div className="w-[1px] h-[20px] bg-[var(--color-border)]" />
             <button onClick={() => handleAction('Inbox')} className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full hover:bg-[var(--color-surface-hover)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-              <Bell size={18} color="var(--color-primary-text)" strokeWidth={1.5} />
+              <Bell size={18} color="var(--color-primary-text)" strokeWidth={1.8} />
               {user?.notifications > 0 && <span className="absolute top-[12px] right-[12px] w-[8px] h-[8px] bg-[var(--color-accent)] rounded-full border-[1.5px] border-white" />}
             </button>
             <div className="w-[1px] h-[20px] bg-[var(--color-border)]" />
@@ -522,11 +522,11 @@ const Header = ({ title, variant = 'default', user, isStaticMock = false }) => {
       {variant === 'detail' && (
         <div className={`flex justify-between items-center w-full pointer-events-auto ${isStaticMock ? 'px-3' : ''}`}>
           <button onClick={() => handleAction('Back')} className="w-[44px] h-[44px] flex items-center justify-center bg-[var(--color-surface)] shadow-[var(--shadow-level-1)] rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-            <ChevronLeft size={20} color="var(--color-primary-text)" strokeWidth={1.5} />
+            <ChevronLeft size={20} color="var(--color-primary-text)" strokeWidth={1.8} />
           </button>
           <h2 className="text-[17px] font-semibold text-[var(--color-primary-text)] tracking-tight">{title}</h2>
           <button onClick={() => handleAction('Menu')} className="w-[44px] h-[44px] flex items-center justify-center bg-[var(--color-surface)] shadow-[var(--shadow-level-1)] rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-            <MoreHorizontal size={20} color="var(--color-primary-text)" strokeWidth={1.5} />
+            <MoreHorizontal size={20} color="var(--color-primary-text)" strokeWidth={1.8} />
           </button>
         </div>
       )}
@@ -534,7 +534,7 @@ const Header = ({ title, variant = 'default', user, isStaticMock = false }) => {
       {variant === 'modal' && (
         <div className={`flex justify-between items-center w-full pointer-events-auto ${isStaticMock ? 'px-3' : ''}`}>
            <button onClick={() => handleAction('Close')} className="w-[44px] h-[44px] flex items-center justify-center bg-[var(--color-surface)] shadow-[var(--shadow-level-1)] rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]">
-            <X size={20} color="var(--color-primary-text)" strokeWidth={1.5} />
+            <X size={20} color="var(--color-primary-text)" strokeWidth={1.8} />
           </button>
           <h2 className="text-[17px] font-semibold text-[var(--color-primary-text)] tracking-tight">{title}</h2>
           <div className="w-[44px] h-[44px]" /> {/* Spacer */}

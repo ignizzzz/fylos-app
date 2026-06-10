@@ -72,7 +72,7 @@ const THEME = {
     background: '#FFFFFF',
     surface: '#F7F7F8',
     surfaceAlt: '#F0F0F2',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#34C759', 
     successLight: '#E8F8EC',
     warning: '#FF9500',
@@ -236,27 +236,27 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
           <div className="w-full bg-[#FFFFFF] rounded-[16px] border border-[#EAEAEA] shadow-[0_2px_12px_rgba(0,0,0,0.02)] p-4 space-y-4">
             
             <div className="flex gap-3 items-start">
-              <Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <Clock size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">Lukas has up to 24h to respond</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <CreditCard size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <CreditCard size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">CHF {mockRequestSentData.total.toFixed(2)} is on hold (not charged yet)</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <Bell size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <Bell size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">You’ll be notified when they respond</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <CheckCircle2 size={20} className="text-[#34C759] shrink-0" strokeWidth={1.5} />
+              <CheckCircle2 size={20} className="text-[#34C759] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If accepted → payment is processed</span>
             </div>
             
             <div className="flex gap-3 items-start">
-              <XCircle size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.5} />
+              <XCircle size={20} className="text-[#8E8E93] shrink-0" strokeWidth={1.8} />
               <span className="text-[14px] text-[#111111] leading-snug pt-[1px]">If declined → hold is released automatically</span>
             </div>
             

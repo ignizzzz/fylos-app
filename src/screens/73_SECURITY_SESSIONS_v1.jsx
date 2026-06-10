@@ -7,7 +7,7 @@ import {
 const THEME = {
   bg: '#F7F5F2', card: '#FFFFFF', divider: '#F1EDE8',
   coral: '#E85D2A', txt: '#111111', muted: '#9B9B9F',
-  mutedDark: '#6E6E73', tint: '#FBE7DD', success: '#00C060', danger: '#FF3B30',
+  mutedDark: '#6E6E73', tint: '#FBE7DD', success: '#00C060', danger: '#E5484D',
 };
 
 const AppHeader = ({ title, onBack }) => (
@@ -83,7 +83,7 @@ const SecuritySessionsScreen = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[14px] font-semibold leading-tight" style={{ color: THEME.txt }}>iPhone 15</span>
-                    <span className="text-[9.5px] font-bold px-1.5 py-[1px] rounded text-white" style={{ backgroundColor: THEME.success }}>CURRENT</span>
+                    <span className="text-[10.5px] font-bold px-1.5 py-[1px] rounded text-white" style={{ backgroundColor: THEME.success }}>CURRENT</span>
                   </div>
                   <div className="text-[11.5px] mt-[2px]" style={{ color: THEME.muted }}>Fylos app · Zürich, CH · Now</div>
                 </div>
@@ -100,14 +100,14 @@ const SecuritySessionsScreen = () => {
                 sessions.map((s, i) => (
                   <div key={s.id} className="relative">
                     <div className="flex items-center gap-3 px-3.5 py-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: s.suspicious ? 'rgba(255,59,48,0.10)' : '#F1EDE8' }}>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: s.suspicious ? 'rgba(229,72,77,0.10)' : '#F1EDE8' }}>
                         <s.Icon size={17} color={s.suspicious ? THEME.danger : THEME.mutedDark} strokeWidth={2} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <span className="text-[14px] font-semibold leading-tight" style={{ color: THEME.txt }}>{s.device}</span>
                           {s.suspicious && (
-                            <span className="inline-flex items-center gap-0.5 text-[9.5px] font-bold px-1.5 py-[1px] rounded" style={{ color: THEME.danger, backgroundColor: 'rgba(255,59,48,0.10)' }}>
+                            <span className="inline-flex items-center gap-0.5 text-[10.5px] font-bold px-1.5 py-[1px] rounded" style={{ color: THEME.danger, backgroundColor: 'rgba(229,72,77,0.10)' }}>
                               <AlertTriangle size={9} strokeWidth={2.4} /> NEW
                             </span>
                           )}
@@ -117,7 +117,7 @@ const SecuritySessionsScreen = () => {
                       <button
                         onClick={() => signOut(s.id)}
                         className="text-[12px] font-semibold px-2.5 py-1.5 rounded-full active:scale-95"
-                        style={{ color: THEME.danger, backgroundColor: 'rgba(255,59,48,0.08)' }}
+                        style={{ color: THEME.danger, backgroundColor: 'rgba(229,72,77,0.08)' }}
                       >
                         Sign out
                       </button>
@@ -131,7 +131,7 @@ const SecuritySessionsScreen = () => {
             {!showConfirmAll && sessions.length > 0 && (
               <button
                 onClick={() => setShowConfirmAll(true)}
-                className="w-full mt-4 h-11 rounded-[14px] bg-white border border-black/[0.06] flex items-center justify-center gap-2 text-[14px] font-semibold active:scale-[0.98]"
+                className="w-full mt-4 h-11 rounded-[16px] bg-white border border-black/[0.06] flex items-center justify-center gap-2 text-[14px] font-semibold active:scale-[0.98]"
                 style={{ color: THEME.danger }}
               >
                 <LogOut size={15} strokeWidth={2.2} /> Sign out of all other sessions
@@ -139,7 +139,7 @@ const SecuritySessionsScreen = () => {
             )}
 
             {showConfirmAll && (
-              <div className="mt-4 p-4 rounded-[14px]" style={{ backgroundColor: 'rgba(255,59,48,0.08)' }}>
+              <div className="mt-4 p-4 rounded-[16px]" style={{ backgroundColor: 'rgba(229,72,77,0.08)' }}>
                 <div className="flex items-start gap-2 mb-3">
                   <AlertTriangle size={14} color={THEME.danger} strokeWidth={2.2} className="shrink-0 mt-[2px]" />
                   <span className="text-[12.5px] leading-snug" style={{ color: '#8B1A14' }}>

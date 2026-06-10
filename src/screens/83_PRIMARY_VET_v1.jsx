@@ -39,7 +39,7 @@ export default function PrimaryVetScreen() {
           <AppHeader title="Primary vet" onBack={back} />
 
           <div className="px-4">
-            <div className="bg-white rounded-[22px] border border-black/[0.04] overflow-hidden mt-2 mb-4">
+            <div className="bg-white rounded-[20px] border border-black/[0.04] overflow-hidden mt-2 mb-4">
               <div className="p-4 flex items-start gap-3">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: THEME.tint }}>
                   <Stethoscope size={24} color={THEME.coral} strokeWidth={1.8} />
@@ -106,10 +106,10 @@ export default function PrimaryVetScreen() {
               ))}
             </div>
 
-            <button className="w-full py-3 rounded-[14px] font-semibold text-[14px] active:scale-[0.99] transition-all mb-2" style={{ backgroundColor: '#111', color: '#FFF' }}>
+            <button className="w-full py-3 rounded-[16px] font-semibold text-[14px] active:scale-[0.99] transition-all mb-2" style={{ backgroundColor: '#111', color: '#FFF' }}>
               Find another clinic
             </button>
-            <button className="w-full py-2.5 rounded-[14px] font-semibold text-[13.5px] border border-black/[0.06] bg-white active:scale-[0.99] transition-all" style={{ color: '#FF3B30' }}>
+            <button className="w-full py-2.5 rounded-[16px] font-semibold text-[13.5px] border border-black/[0.06] bg-white active:scale-[0.99] transition-all" style={{ color: '#E5484D' }}>
               Remove primary vet
             </button>
 

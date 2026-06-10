@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Plus, TrendingUp, Ticket, Gift, RefreshCw, Receipt, Users, Scissors, Syringe } from 'lucide-react';
 
 /**
@@ -53,9 +53,9 @@ const SetRow = ({ icon: Icon, iconBrand, title, subtitle, rightValue, rightTone,
   <div className="relative">
     <button onClick={onClick} className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left">
       {iconBrand ? (
-        <div className="w-11 h-8 rounded-[7px] shrink-0 flex items-center justify-center" style={{ background: iconBrand.color }}><span className="text-[9px] font-extrabold italic text-white tracking-tight">{iconBrand.label}</span></div>
+        <div className="w-11 h-8 rounded-[7px] shrink-0 flex items-center justify-center" style={{ background: iconBrand.color }}><span className="text-[10px] font-extrabold italic text-white tracking-tight">{iconBrand.label}</span></div>
       ) : (
-        <div className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center" style={{ backgroundColor: ICON_TINT }}><Icon size={16} color={ICON_COLOR} strokeWidth={2} /></div>
+        <div className="w-9 h-9 rounded-[12px] shrink-0 flex items-center justify-center" style={{ backgroundColor: ICON_TINT }}><Icon size={16} color={ICON_COLOR} strokeWidth={2} /></div>
       )}
       <div className="flex-1 min-w-0">
         <div className="text-[14px] font-semibold truncate leading-tight" style={{ color: INK }}>{title}</div>
@@ -77,6 +77,14 @@ const MiniToggle = ({ value, onChange }) => (
 const PaymentWalletScreen = () => {
   const [defaultId, setDefaultId] = useState('c1');
   const [autopay, setAutopay] = useState(true);
+  // credits balance counts up on open
+  const [bal, setBal] = useState(0);
+  useEffect(() => {
+    let start = null, raf;
+    const tick = (t) => { if (!start) start = t; const p = Math.min(1, (t - start) / 800); setBal(30 * (1 - Math.pow(1 - p, 3))); if (p < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
   const back = () => { if (window.history.length > 1) window.history.back(); else window.location.href = '/'; };
 
   return (
@@ -99,7 +107,7 @@ const PaymentWalletScreen = () => {
               <div className="relative" style={{ marginTop: 2 }}>
                 <div className="absolute left-4 right-4 rounded-[20px]" style={{ height: 30, bottom: -10, background: '#D9501F', opacity: 0.45 }} />
                 <div className="absolute left-2 right-2 rounded-[20px]" style={{ height: 30, bottom: -5, background: '#E0571F', opacity: 0.7 }} />
-                <div className="relative rounded-[22px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)', height: 178 }}>
+                <div className="relative rounded-[20px] overflow-hidden p-5" style={{ background: CARD_GRADIENT, boxShadow: '0 14px 34px rgba(232,93,42,0.3)', height: 178 }}>
                   <div className="absolute inset-0" style={{ background: 'radial-gradient(130% 90% at 88% -10%, rgba(255,255,255,0.28), transparent 55%)' }} />
                   <div className="relative h-full flex flex-col justify-between">
                     <div className="flex items-start justify-between">
@@ -110,21 +118,11 @@ const PaymentWalletScreen = () => {
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.16)' }}><TrendingUp size={12} color="#fff" strokeWidth={2.4} /><span className="text-[10.5px] font-bold text-white">+10 this month</span></span>
                     </div>
                     <div>
-                      <div className="flex items-baseline gap-1.5"><span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>CHF</span><span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em]">30.00</span></div>
+                      <div className="flex items-baseline gap-1.5"><span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.85)' }}>CHF</span><span className="text-[38px] font-extrabold text-white leading-none tracking-[-0.02em] tabular-nums">{bal.toFixed(2)}</span></div>
                       <div className="text-[11.5px] mt-1.5" style={{ color: 'rgba(255,255,255,0.78)' }}>Available toward any booking</div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* This month stats */}
-              <div className="rounded-[18px] bg-white flex items-center py-3.5 mt-7" style={{ boxShadow: SHADOW }}>
-                {[{ v: '+20.00', l: 'Earned', c: GREEN }, { v: '−30.00', l: 'Spent', c: INK }, { v: 'CHF 30', l: 'Balance', c: ICON_COLOR }].map((s, i) => (
-                  <div key={s.l} className="flex-1 flex flex-col items-center" style={{ borderLeft: i ? '1px solid ' + DIVIDER : 'none' }}>
-                    <span className="text-[16px] font-extrabold tabular-nums leading-none" style={{ color: s.c }}>{s.v}</span>
-                    <span className="text-[10px] font-medium mt-1.5" style={{ color: TERT }}>{s.l}</span>
-                  </div>
-                ))}
               </div>
 
               {/* Your cards */}
@@ -137,7 +135,7 @@ const PaymentWalletScreen = () => {
                     onClick={() => setDefaultId(c.id)} last={i === CARDS.length - 1} />
                 ))}
               </Card>
-              <button className="w-full mt-2.5 py-3 rounded-[14px] flex items-center justify-center gap-2 active:scale-[0.99] transition-transform" style={{ border: '1.5px dashed #D6CDC2' }}>
+              <button className="w-full mt-2.5 py-3 rounded-[16px] flex items-center justify-center gap-2 active:scale-[0.99] transition-transform" style={{ border: '1.5px dashed #D6CDC2' }}>
                 <Plus size={15} color={ICON_COLOR} strokeWidth={2.4} /><span className="text-[13.5px] font-semibold" style={{ color: INK }}>Add card</span>
               </button>
 

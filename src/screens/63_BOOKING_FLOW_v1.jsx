@@ -198,10 +198,10 @@ function Step1({ selectedService, onSelectService, onContinue }) {
             <div className="flex items-center gap-1 mt-0.5">
               <Star size={12} fill="#E85D2A" stroke="#E85D2A" />
               <span className="text-[13px] font-medium text-[#6E6058]">{PROVIDER.rating}</span>
-              <span className="text-[13px] text-[#A09A94]">({PROVIDER.reviews})</span>
+              <span className="text-[13px] text-[#9B9B9F]">({PROVIDER.reviews})</span>
             </div>
           </div>
-          <ChevronRight size={16} className="text-[#A09A94]" />
+          <ChevronRight size={16} className="text-[#9B9B9F]" />
         </div>
 
         <div className="mt-6">
@@ -303,7 +303,7 @@ function Step2({ selectedPets, onTogglePet, specialInstructions, onChangeInstruc
         </div>
 
         <div className="mt-6">
-          <label className="text-[12px] font-bold text-[#A09A94] uppercase tracking-widest">
+          <label className="text-[12px] font-bold text-[#9B9B9F] uppercase tracking-widest">
             Special Instructions (Optional)
           </label>
           <textarea
@@ -358,7 +358,7 @@ function Step3({ selectedDay, onSelectDay, selectedTime, onSelectTime, selectedS
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
             {WEEKDAYS.map(d => (
-              <div key={d} className="text-center text-[12px] font-medium text-[#A09A94]" style={{ padding: '4px 0' }}>{d}</div>
+              <div key={d} className="text-center text-[12px] font-medium text-[#9B9B9F]" style={{ padding: '4px 0' }}>{d}</div>
             ))}
             {cells.map((day, i) => {
               if (!day) return <div key={`b-${i}`} />;
@@ -379,7 +379,7 @@ function Step3({ selectedDay, onSelectDay, selectedTime, onSelectTime, selectedS
                     background: isSelected ? '#E85D2A' : 'transparent',
                     cursor: isAvailable ? 'pointer' : 'default',
                     fontSize: 14, fontWeight: isSelected || isToday ? 600 : 400,
-                    color: isSelected ? '#FFFFFF' : isPast || !isAvailable ? '#A09A94' : '#111111',
+                    color: isSelected ? '#FFFFFF' : isPast || !isAvailable ? '#9B9B9F' : '#111111',
                     opacity: isPast ? 0.35 : 1, padding: 0,
                     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
                   }}
@@ -516,7 +516,7 @@ function SummaryRow({ icon, label, value }) {
     <div className="flex items-start gap-3" style={{ padding: '10px 0' }}>
       <div className="w-5 flex justify-center shrink-0 mt-0.5">{icon}</div>
       <div style={{ flex: 1 }}>
-        <div className="text-[12px] font-bold text-[#A09A94] uppercase tracking-widest">{label}</div>
+        <div className="text-[12px] font-bold text-[#9B9B9F] uppercase tracking-widest">{label}</div>
         <div className="text-[15px] text-[#111111] mt-0.5">{value}</div>
       </div>
     </div>
@@ -526,7 +526,7 @@ function SummaryRow({ icon, label, value }) {
 /* ── Step 5: Confirmation ── */
 function Step5({ selectedService, selectedTime, selectedDay, onHome }) {
   const service = SERVICES.find(s => s.id === selectedService);
-  const confettiColors = ['#E85D2A', '#E85D2A', '#FFB800', '#34C759', '#007AFF', '#FF3B30'];
+  const confettiColors = ['#E85D2A', '#E85D2A', '#FFB800', '#34C759', '#007AFF', '#E5484D'];
   const dots = Array.from({ length: 18 }, (_, i) => ({
     id: i, left: `${10 + Math.random() * 80}%`, top: `${5 + Math.random() * 30}%`,
     color: confettiColors[i % confettiColors.length],
@@ -583,7 +583,7 @@ function Step5({ selectedService, selectedTime, selectedDay, onHome }) {
         <button
           className="active:scale-[0.97] transition-all duration-[120ms]"
           style={{
-            width: '100%', padding: 16, borderRadius: 14,
+            width: '100%', padding: 16, borderRadius: 16,
             border: '1px solid #EDE8E2', background: '#F3EFEB',
             color: '#111111', fontSize: 16, fontWeight: 600, cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -608,9 +608,9 @@ function PrimaryButton({ onClick, disabled, children }) {
       disabled={disabled}
       className="active:scale-[0.97] transition-all duration-[120ms]"
       style={{
-        width: '100%', padding: 16, borderRadius: 14, border: 'none',
+        width: '100%', padding: 16, borderRadius: 16, border: 'none',
         background: disabled ? '#F3EFEB' : '#111',
-        color: disabled ? '#A09A94' : '#FFFFFF',
+        color: disabled ? '#9B9B9F' : '#FFFFFF',
         boxShadow: disabled ? 'none' : '0 4px 20px rgba(0,0,0,0.12)',
         fontSize: 16, fontWeight: 600,
         cursor: disabled ? 'not-allowed' : 'pointer',

@@ -52,7 +52,7 @@ const BOOKINGS = [
 
 const SectionLabel = ({ children, action, onAction }) => (
   <div className="flex justify-between items-center mb-3">
-    <span className="text-[12px] font-bold text-[#A09A94] uppercase tracking-widest">{children}</span>
+    <span className="text-[12px] font-bold text-[#9B9B9F] uppercase tracking-widest">{children}</span>
     {action && (
       <button
         onClick={onAction}
@@ -180,7 +180,7 @@ const PetProfileDetailScreen = () => {
                 border: '1px solid #EDE8E2',
               }}
             >
-              <PawPrint size={64} color="rgba(232,93,42,0.2)" strokeWidth={1.5} />
+              <PawPrint size={64} color="rgba(232,93,42,0.2)" strokeWidth={1.8} />
             </div>
 
             {/* Name + breed + badges */}
@@ -212,7 +212,7 @@ const PetProfileDetailScreen = () => {
                       borderBottom: i < 2 ? '1px dashed #CFCFD4' : 'none',
                     }}
                   >
-                    <span className="block text-[12px] font-bold text-[#A09A94] uppercase tracking-widest mb-1">
+                    <span className="block text-[12px] font-bold text-[#9B9B9F] uppercase tracking-widest mb-1">
                       {item.label}
                     </span>
                     <span className="block text-[15px] font-semibold text-[#111]">{item.value}</span>
@@ -292,7 +292,7 @@ const PetProfileDetailScreen = () => {
                     />
                   )}
                   <span className="block text-[15px] font-medium text-[#111]">{act.title}</span>
-                  <span className="block text-[13px] text-[#A09A94] mt-0.5">{act.date}</span>
+                  <span className="block text-[13px] text-[#9B9B9F] mt-0.5">{act.date}</span>
                   <span className="block text-[13px] text-[#6E6058] mt-0.5">{act.detail}</span>
                 </div>
               ))}
@@ -331,7 +331,7 @@ const PetProfileDetailScreen = () => {
                     <span className="block text-[13px] text-[#6E6058] mt-0.5">{b.service} - {b.date}</span>
                   </div>
                   <span
-                    className="h-[18px] px-2.5 rounded-full text-[9px] font-semibold inline-flex items-center bg-[#EEF7F1] text-[#3F8D63] border border-[#D7EBDD]"
+                    className="h-[18px] px-2.5 rounded-full text-[10px] font-semibold inline-flex items-center bg-[#EEF7F1] text-[#3F8D63] border border-[#D7EBDD]"
                   >
                     {b.status}
                   </span>
@@ -350,7 +350,7 @@ const PetProfileDetailScreen = () => {
           >
             <button
               onClick={() => window.location.href = '/booking-flow'}
-              className="w-full bg-[#111] text-white rounded-[14px] py-3.5 font-semibold text-[16px] active:scale-[0.97] transition-all duration-[120ms] cursor-pointer"
+              className="w-full bg-[#111] text-white rounded-[16px] py-3.5 font-semibold text-[16px] active:scale-[0.97] transition-all duration-[120ms] cursor-pointer"
               style={{
                 border: 'none',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.12)',

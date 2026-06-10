@@ -25,7 +25,7 @@ const THEME = {
     accent: '#E85D2A', accentHover: '#D04A1C',
     primaryText: '#111111', secondaryText: '#6E6E73', tertiaryText: '#8E8E93',
     background: '#F9F9FB', surface: '#FFFFFF', surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
+    danger: '#E5484D', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
   },
   radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
   shadows: { soft: '0 4px 20px rgba(0,0,0,0.03)', floating: '0 8px 24px rgba(0,0,0,0.08)' },
@@ -310,7 +310,7 @@ export default function FeedingTrackerScreen() {
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, cursor: 'pointer'
             }}>
               <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg, #FF7240, #E85D2A)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(232,93,42,0.25)' }}>
-                <Plus size={20} color="#FFFFFF" strokeWidth={2.5} />
+                <Plus size={20} color="#FFFFFF" strokeWidth={2.4} />
               </div>
               <span className="fd-font-body" style={{ fontSize: 14, fontWeight: 600, color: THEME.colors.primaryText }}>Log Meal</span>
               <span className="fd-font-body" style={{ fontSize: 11, color: THEME.colors.tertiaryText }}>Add food entry</span>
@@ -321,7 +321,7 @@ export default function FeedingTrackerScreen() {
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, cursor: 'pointer'
             }}>
               <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg, #4DABFF, #007AFF)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,122,255,0.25)' }}>
-                <Droplets size={20} color="#FFFFFF" strokeWidth={2.5} />
+                <Droplets size={20} color="#FFFFFF" strokeWidth={2.4} />
               </div>
               <span className="fd-font-body" style={{ fontSize: 14, fontWeight: 600, color: THEME.colors.primaryText }}>Log Water</span>
               <span className="fd-font-body" style={{ fontSize: 11, color: THEME.colors.tertiaryText }}>Track hydration</span>

@@ -130,9 +130,9 @@ const StatusBar = () => (
   <div className="absolute top-0 left-0 w-full h-[54px] flex justify-between items-end px-7 pb-3 z-[60] text-[13px] font-semibold tracking-wide text-[#1A1A1A]">
     <span>9:41</span>
     <div className="flex items-center gap-1.5">
-      <Signal size={16} strokeWidth={2.5} />
-      <Wifi size={16} strokeWidth={2.5} />
-      <Battery size={18} strokeWidth={2.5} />
+      <Signal size={16} strokeWidth={2.4} />
+      <Wifi size={16} strokeWidth={2.4} />
+      <Battery size={18} strokeWidth={2.4} />
     </div>
   </div>
 );
@@ -388,7 +388,7 @@ const ProviderProfile = ({ provider, onBookClick }) => {
                     <span className="text-[10px] font-bold text-gray-500 bg-white/90 px-3 py-1.5 rounded-full backdrop-blur-sm shadow-sm border border-gray-100 tracking-wide">
                         Scroll to see services
                     </span>
-                    <ChevronDown size={16} className="text-gray-400 mt-1" strokeWidth={2.5} />
+                    <ChevronDown size={16} className="text-gray-400 mt-1" strokeWidth={2.4} />
                 </div>
             )}
 
@@ -644,7 +644,7 @@ const ProviderProfile = ({ provider, onBookClick }) => {
                                     <img src={member.img} className="w-8 h-8 rounded-full object-cover ring-2 ring-gray-50"/>
                                     <div>
                                         <span className="text-xs font-bold block text-[#1A1A1A]">{member.name}</span>
-                                        <span className="text-[9px] text-gray-400 font-bold tracking-wide">{member.role}</span>
+                                        <span className="text-[10px] text-gray-400 font-bold tracking-wide">{member.role}</span>
                                     </div>
                                 </div>
                             ))}

@@ -143,7 +143,7 @@ const UPCOMING_FEATURES = [
     launchDate: '2026-06-01T00:00:00Z',
     description: 'Instant alerts to nearby pet owners when your dog goes missing. The community helps bring your pet home.',
     waitlistCount: 634,
-    color: '#FF3B30',
+    color: '#E5484D',
     bg: '#FFE5E5'
   },
   {
@@ -167,7 +167,7 @@ const THEME = {
     secondaryText: '#6E6E73',
     tertiaryText: '#8E8E93',
     divider: '#E5E5E5',
-    danger: '#FF3B30'
+    danger: '#E5484D'
   }
 };
 
@@ -317,7 +317,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
       <div className="mb-6">{illustration}</div>
     ) : (
       <div className="w-20 h-20 rounded-full bg-[#F7F7F8] flex items-center justify-center mb-6">
-        <Icon size={32} color="#CFCFD4" strokeWidth={1.5} />
+        <Icon size={32} color="#CFCFD4" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[#111111] mb-2">{title}</h2>
@@ -547,14 +547,14 @@ const FeaturePreviewCard = ({ feature, onJoinWaitlist, hasJoined, size = 'medium
         <div className="h-[160px] w-full relative flex items-center justify-center overflow-hidden" style={{ backgroundColor: feature.bg }}>
           <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
           <div className="relative z-10 w-20 h-20 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <Icon size={32} color={feature.color} strokeWidth={1.5} />
+            <Icon size={32} color={feature.color} strokeWidth={1.8} />
           </div>
         </div>
       )}
 
       <div className="p-5">
         {!isLarge && (
-          <div className="w-12 h-12 rounded-[14px] flex items-center justify-center mb-4" style={{ backgroundColor: feature.bg }}>
+          <div className="w-12 h-12 rounded-[16px] flex items-center justify-center mb-4" style={{ backgroundColor: feature.bg }}>
             <Icon size={24} color={feature.color} />
           </div>
         )}
@@ -638,7 +638,7 @@ const WaitlistSuccess = ({ feature, onDone }) => {
   return (
     <div className="flex flex-col items-center text-center pt-6 pb-2 space-y-6 animate-in fade-in zoom-in-95 duration-400">
       <div className="w-20 h-20 bg-[#E5F9ED] rounded-full flex items-center justify-center mb-2 animate-spring-bump">
-        <CheckCircle2 size={40} color="#00C060" strokeWidth={2.5} />
+        <CheckCircle2 size={40} color="#00C060" strokeWidth={2.4} />
       </div>
       <div>
         <h3 className="text-[24px] font-bold text-[#111111] mb-2">You're on the list!</h3>

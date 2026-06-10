@@ -20,7 +20,7 @@ const INK = '#111111';
 const MUTED = '#6E6058';
 const TERT = '#9B9B9F';
 const GREEN = '#3F8D63';
-const AMBER = '#C68A3A';
+const AMBER = '#B07A3A';
 const LINE = '#F1EDE8';
 const SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)';
 const LEO = 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&q=80&w=200&h=200';
@@ -67,7 +67,7 @@ const PreviewHeader = () => (
     <div className="flex justify-between items-center pointer-events-auto" style={{ fontFamily: '"Nunito", sans-serif' }}>
       <span className="flex items-center" style={{ gap: 4 }}><span style={{ fontSize: 22, fontWeight: 800, color: INK, letterSpacing: '-0.5px' }}>Journal</span><span style={{ width: 6, height: 6, borderRadius: '50%', background: CORAL }} /></span>
       <div className="flex items-center gap-2">
-        <span className="w-[38px] h-[38px] flex items-center justify-center rounded-full" style={{ background: '#FFEBEA' }}><AlertTriangle size={15} className="text-[#FF3B30]" strokeWidth={2} /></span>
+        <span className="w-[38px] h-[38px] flex items-center justify-center rounded-full" style={{ background: '#FFEBEA' }}><AlertTriangle size={15} className="text-[#E5484D]" strokeWidth={2} /></span>
         <span className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full" style={{ background: PEACH }}><Bell size={17} className="text-[#6E6058]" strokeWidth={1.8} /><span className="absolute top-[6px] right-[7px] w-[7px] h-[7px] rounded-full" style={{ background: CORAL, border: '1.5px solid #F7F5F2' }} /></span>
         <span className="w-[44px] h-[44px] rounded-full overflow-hidden border-2" style={{ borderColor: '#EDE8E2' }}><img src={USER_AVATAR} alt="" className="w-full h-full object-cover" /></span>
       </div>
@@ -97,7 +97,7 @@ const AddEntrySheet = ({ defaultPet, defaultType = 'walk', onSave, onClose }) =>
             {Object.entries(TYPE).map(([id, t]) => {
               const Icon = t.icon; const on = type === id;
               return (
-                <button key={id} onClick={() => setType(id)} className="flex flex-col items-center gap-1.5 py-3 rounded-[14px] transition-all active:scale-[0.97]" style={{ background: on ? '#FFF3EC' : '#FFFFFF', boxShadow: on ? `inset 0 0 0 1.5px ${CORAL}` : SHADOW }}>
+                <button key={id} onClick={() => setType(id)} className="flex flex-col items-center gap-1.5 py-3 rounded-[16px] transition-all active:scale-[0.97]" style={{ background: on ? '#FFF3EC' : '#FFFFFF', boxShadow: on ? `inset 0 0 0 1.5px ${CORAL}` : SHADOW }}>
                   <Icon size={18} color={on ? CORAL : MUTED} strokeWidth={2} />
                   <span className="text-[11.5px] font-bold" style={{ color: on ? CORAL : INK }}>{t.label}</span>
                 </button>
@@ -118,10 +118,10 @@ const AddEntrySheet = ({ defaultPet, defaultType = 'walk', onSave, onClose }) =>
           </div>
           <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-2 mt-5 ml-0.5" style={{ color: TERT }}>Title</div>
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={type === 'walk' ? 'e.g. Morning lakefront walk' : type === 'meal' ? 'e.g. Dinner, new kibble' : 'Give it a title'} autoFocus
-            className="w-full bg-white rounded-[13px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: SHADOW }} />
+            className="w-full bg-white rounded-[12px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: SHADOW }} />
           <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-2 mt-4 ml-0.5" style={{ color: TERT }}>Notes <span className="lowercase tracking-normal font-semibold" style={{ color: '#C4B8AC' }}>· optional</span></div>
           <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="What happened? Anything worth remembering…" rows={3}
-            className="w-full bg-white rounded-[13px] px-4 py-3 outline-none text-[14.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
+            className="w-full bg-white rounded-[12px] px-4 py-3 outline-none text-[14.5px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: SHADOW }} />
           <div className="text-[11px] font-bold uppercase tracking-[0.1em] mb-2 mt-4 ml-0.5" style={{ color: TERT }}>Mood <span className="lowercase tracking-normal font-semibold" style={{ color: '#C4B8AC' }}>· optional</span></div>
           <div className="flex flex-wrap gap-2">
             {Object.keys(MOOD).map((m) => {
@@ -180,7 +180,7 @@ const Journal = ({ embedded = false }) => {
             {e.body && <p className="text-[13px] mt-1.5 leading-[1.45]" style={{ color: MUTED }}>{e.body}</p>}
           </div>
         </div>
-        {e.photo && <img src={e.photo} alt="" className="w-full h-[156px] rounded-[14px] object-cover mt-3" />}
+        {e.photo && <img src={e.photo} alt="" className="w-full h-[156px] rounded-[16px] object-cover mt-3" />}
         {e.tags && <div className="flex gap-1.5 mt-2.5 ml-[52px]">{e.tags.map((tg) => <span key={tg} className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ background: PEACH, color: TERT }}>#{tg}</span>)}</div>}
       </button>
     );
@@ -242,7 +242,7 @@ const Journal = ({ embedded = false }) => {
 
       {/* FAB */}
       <button onClick={() => setAddOpen(true)} className="absolute right-5 z-30 w-14 h-14 rounded-full flex items-center justify-center active:scale-95 transition-transform" style={{ bottom: embedded ? 96 : 30, background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.36)' }}>
-        <Plus size={26} color="#fff" strokeWidth={2.6} />
+        <Plus size={26} color="#fff" strokeWidth={2.4} />
       </button>
 
       {addOpen && <AddEntrySheet defaultPet={pet === 'all' ? 'leo' : pet} defaultType={addType} onSave={addEntry} onClose={() => setAddOpen(false)} />}
@@ -270,11 +270,11 @@ const Journal = ({ embedded = false }) => {
                     {detail.mood && <span className="inline-flex items-center gap-1 text-[12.5px] font-semibold" style={{ color: MOOD[detail.mood] }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: MOOD[detail.mood] }} /> {detail.mood}</span>}
                   </div>
                 )}
-                {detail.body && <p className="text-[14px] leading-[1.55] bg-white rounded-[14px] px-4 py-3.5" style={{ color: MUTED, boxShadow: SHADOW }}>{detail.body}</p>}
+                {detail.body && <p className="text-[14px] leading-[1.55] bg-white rounded-[16px] px-4 py-3.5" style={{ color: MUTED, boxShadow: SHADOW }}>{detail.body}</p>}
                 {detail.tags && <div className="flex gap-1.5 mt-3">{detail.tags.map((tg) => <span key={tg} className="text-[11.5px] font-semibold px-2.5 py-1 rounded-full" style={{ background: PEACH, color: TERT }}>#{tg}</span>)}</div>}
                 <div className="flex gap-2 mt-5">
-                  <button onClick={() => togglePin(detail.id)} className="flex-1 h-11 rounded-[13px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: TINT }}><Pin size={14} color={CORAL} strokeWidth={2.2} /><span className="text-[13.5px] font-bold" style={{ color: CORAL }}>{detail.pinned ? 'Unpin' : 'Pin'}</span></button>
-                  <button onClick={() => deleteEntry(detail.id)} className="flex-1 h-11 rounded-[13px] flex items-center justify-center active:scale-[0.98]" style={{ background: '#FEE8E7' }}><span className="text-[13.5px] font-bold" style={{ color: '#E5484D' }}>Delete</span></button>
+                  <button onClick={() => togglePin(detail.id)} className="flex-1 h-11 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.98]" style={{ background: TINT }}><Pin size={14} color={CORAL} strokeWidth={2.2} /><span className="text-[13.5px] font-bold" style={{ color: CORAL }}>{detail.pinned ? 'Unpin' : 'Pin'}</span></button>
+                  <button onClick={() => deleteEntry(detail.id)} className="flex-1 h-11 rounded-[12px] flex items-center justify-center active:scale-[0.98]" style={{ background: '#FEE8E7' }}><span className="text-[13.5px] font-bold" style={{ color: '#E5484D' }}>Delete</span></button>
                 </div>
               </div>
             </div>

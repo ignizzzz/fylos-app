@@ -48,7 +48,7 @@ export default function HealthSyncScreen() {
           <div className="px-4">
             {!connected ? (
               <>
-                <div className="bg-white rounded-[22px] p-6 text-center border border-black/[0.04] mt-2 mb-4">
+                <div className="bg-white rounded-[20px] p-6 text-center border border-black/[0.04] mt-2 mb-4">
                   <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-3" style={{ backgroundColor: THEME.tint }}>
                     <HeartPulse size={28} color={THEME.coral} strokeWidth={2} />
                   </div>
@@ -56,10 +56,10 @@ export default function HealthSyncScreen() {
                   <p className="text-[13px] mb-5 px-4 leading-snug" style={{ color: THEME.muted }}>
                     Sync your steps and activity so Fylos can match walks to your own fitness routine.
                   </p>
-                  <button onClick={() => setConnected(true)} className="w-full py-3 rounded-[14px] font-semibold text-[14.5px] active:scale-[0.99] transition-all" style={{ backgroundColor: '#111', color: '#FFF' }}>
+                  <button onClick={() => setConnected(true)} className="w-full py-3 rounded-[16px] font-semibold text-[14.5px] active:scale-[0.99] transition-all" style={{ backgroundColor: '#111', color: '#FFF' }}>
                     Connect Apple Health
                   </button>
-                  <button className="w-full mt-2 py-3 rounded-[14px] font-semibold text-[14.5px] border border-black/[0.06] active:scale-[0.99] transition-all bg-white" style={{ color: THEME.txt }}>
+                  <button className="w-full mt-2 py-3 rounded-[16px] font-semibold text-[14.5px] border border-black/[0.06] active:scale-[0.99] transition-all bg-white" style={{ color: THEME.txt }}>
                     Connect Google Fit
                   </button>
                 </div>
@@ -84,7 +84,7 @@ export default function HealthSyncScreen() {
                     </div>
                     <div className="text-[12px]" style={{ color: THEME.muted }}>Last sync · 4 min ago</div>
                   </div>
-                  <button onClick={() => setConnected(false)} className="text-[12.5px] font-semibold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#FFE5E5', color: '#FF3B30' }}>
+                  <button onClick={() => setConnected(false)} className="text-[12.5px] font-semibold px-3 py-1.5 rounded-full" style={{ backgroundColor: '#FFE5E5', color: '#E5484D' }}>
                     Disconnect
                   </button>
                 </div>

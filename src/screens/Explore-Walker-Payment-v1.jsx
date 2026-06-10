@@ -110,9 +110,9 @@ const StatusBar = ({ lightMode = false }) => (
   <div className={`absolute top-0 left-0 w-full h-[54px] flex justify-between items-end px-7 pb-3 z-[150] text-[13px] font-semibold tracking-wide pointer-events-none ${lightMode ? 'text-white' : 'text-black'}`}>
     <span>9:41</span>
     <div className="flex items-center gap-1.5">
-      <Signal size={16} strokeWidth={2.5} />
-      <Wifi size={16} strokeWidth={2.5} />
-      <Battery size={18} strokeWidth={2.5} />
+      <Signal size={16} strokeWidth={2.4} />
+      <Wifi size={16} strokeWidth={2.4} />
+      <Battery size={18} strokeWidth={2.4} />
     </div>
   </div>
 );
@@ -301,7 +301,7 @@ const RequestSentScreen = ({ onHome, state }) => {
             <div className="flex-1 flex flex-col items-center justify-center px-8 pb-20 pt-20">
                 {/* Icon */}
                 <div className="mb-6 animate-scale-in">
-                    <Clock size={56} className="text-[#FF6A3D]" strokeWidth={1.5} />
+                    <Clock size={56} className="text-[#FF6A3D]" strokeWidth={1.8} />
                 </div>
                 
                 {/* Title */}
@@ -448,11 +448,11 @@ const PaymentScreen = ({ state, onBack, onExit, onSuccess }) => {
                             <span className="text-[15px] font-medium text-[#111111]">{service?.name}</span>
                             <div className="flex flex-col gap-0.5">
                                 <div className="flex items-center gap-2 text-[14px] text-[#6E6E73]">
-                                    <DogIcon size={16} strokeWidth={1.5} className="text-[#8E8E93]" />
+                                    <DogIcon size={16} strokeWidth={1.8} className="text-[#8E8E93]" />
                                     <span>{dog?.name}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-[14px] text-[#6E6E73]">
-                                    <CalendarIcon size={16} strokeWidth={1.5} className="text-[#8E8E93]" />
+                                    <CalendarIcon size={16} strokeWidth={1.8} className="text-[#8E8E93]" />
                                     <span>{formattedDate} · {formattedTime}</span>
                                 </div>
                             </div>
@@ -474,7 +474,7 @@ const PaymentScreen = ({ state, onBack, onExit, onSuccess }) => {
                                 onClick={() => setShowFeeInfo(!showFeeInfo)}
                                 className="text-[#8E8E93] hover:text-[#6E6E73] transition-colors focus:outline-none"
                             >
-                                <Info size={16} strokeWidth={1.5} />
+                                <Info size={16} strokeWidth={1.8} />
                             </button>
                             {/* Popover */}
                             {showFeeInfo && (
@@ -523,12 +523,12 @@ const PaymentScreen = ({ state, onBack, onExit, onSuccess }) => {
                         >
                             <div className="flex items-center gap-3">
                                 <div className="w-8 h-6 rounded bg-white border border-[#E5E5E7] flex items-center justify-center text-[#8E8E93]">
-                                    <CreditCard size={14} strokeWidth={1.5} />
+                                    <CreditCard size={14} strokeWidth={1.8} />
                                 </div>
                                 <span className="text-[14px] font-medium text-[#111111]">Pay with card</span>
                             </div>
                             <div className={`text-[#6E6E73] transition-transform duration-200 ${isCardExpanded ? 'rotate-180' : ''}`}>
-                                <ChevronDown size={20} strokeWidth={1.5} />
+                                <ChevronDown size={20} strokeWidth={1.8} />
                             </div>
                         </button>
                         
@@ -539,7 +539,7 @@ const PaymentScreen = ({ state, onBack, onExit, onSuccess }) => {
                                 <div className="space-y-1.5">
                                     <div className="relative">
                                         <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8E8E93]">
-                                            <CreditCard size={18} strokeWidth={1.5} />
+                                            <CreditCard size={18} strokeWidth={1.8} />
                                         </div>
                                         <input 
                                             type="text" 
@@ -580,7 +580,7 @@ const PaymentScreen = ({ state, onBack, onExit, onSuccess }) => {
                                                 onClick={() => setShowCvcInfo(!showCvcInfo)}
                                                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8E8E93] focus:outline-none"
                                             >
-                                                <Info size={16} strokeWidth={1.5} />
+                                                <Info size={16} strokeWidth={1.8} />
                                             </button>
                                             
                                             {/* CVV Tooltip */}
@@ -624,8 +624,8 @@ const PaymentScreen = ({ state, onBack, onExit, onSuccess }) => {
                 </div>
 
                 {/* 4. Authorization Notice (Clean) */}
-                <div className="bg-[#F2F2F3] rounded-[14px] p-[14px] flex gap-3 items-start">
-                    <Info size={16} className="text-[#8E8E93] mt-0.5 flex-shrink-0" strokeWidth={1.5} />
+                <div className="bg-[#F2F2F3] rounded-[16px] p-[14px] flex gap-3 items-start">
+                    <Info size={16} className="text-[#8E8E93] mt-0.5 flex-shrink-0" strokeWidth={1.8} />
                     <p className="text-[14px] text-[#6E6E73] leading-snug">
                         Authorization hold only — charged when walker accepts (max 24h).
                     </p>

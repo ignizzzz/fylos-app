@@ -23,7 +23,7 @@ import {
 const THEME = {
   colors: {
     accent: '#FF6B35',
-    danger: '#FF3B30',
+    danger: '#E5484D',
   }
 };
 
@@ -323,7 +323,7 @@ const Avatar = ({ src, initials, icon: Icon, size = 36 }) => {
         <img src={src} className="w-full h-full rounded-full object-cover border border-black/[0.04]" alt="Avatar" />
       ) : Icon ? (
         <div className="w-full h-full rounded-full bg-[#F7F7F8] border border-black/[0.04] flex items-center justify-center text-[#FF6B35]">
-          <Icon size={size * 0.5} strokeWidth={2.5} />
+          <Icon size={size * 0.5} strokeWidth={2.4} />
         </div>
       ) : (
         <div className="w-full h-full rounded-full bg-[#F7F7F8] border border-black/[0.04] flex items-center justify-center text-[#111111] font-medium" style={{ fontSize }}>
@@ -466,7 +466,7 @@ const NotificationCard = ({
           </button>
           <button 
             onClick={() => { setSwipeOffset(0); onDelete(id); }}
-            className="flex-1 flex flex-col items-center justify-center bg-[#FF3B30] text-white active:brightness-95 transition-all"
+            className="flex-1 flex flex-col items-center justify-center bg-[#E5484D] text-white active:brightness-95 transition-all"
           >
             <Trash2 size={20} className="mb-1" />
             <span className="text-[10px] font-semibold">Delete</span>
@@ -516,7 +516,7 @@ const NotificationCard = ({
             }`}
           >
             <div className={`shrink-0 w-[20px] h-[20px] rounded-full border flex items-center justify-center transition-colors ${
-              isSelected ? 'bg-[#FF3B30] border-[#FF3B30]' : 'border-[#CFCFD4] bg-transparent'
+              isSelected ? 'bg-[#E5484D] border-[#E5484D]' : 'border-[#CFCFD4] bg-transparent'
             }`}>
               {isSelected && <Check size={12} color="white" strokeWidth={3} />}
             </div>
@@ -690,11 +690,11 @@ export default function App() {
                   disabled={selectedIds.size === 0}
                   className={`w-[44px] h-[44px] flex items-center justify-center rounded-[9999px] transition-all duration-200 ${
                     selectedIds.size > 0
-                      ? 'bg-[#FFF0F0] text-[#FF3B30] active:scale-[0.96]'
+                      ? 'bg-[#FFF0F0] text-[#E5484D] active:scale-[0.96]'
                       : 'bg-transparent text-[#CFCFD4]'
                   }`}
                 >
-                  <Trash2 size={22} strokeWidth={2.5} />
+                  <Trash2 size={22} strokeWidth={2.4} />
                 </button>
               </>
             ) : (
@@ -724,7 +724,7 @@ export default function App() {
                     className="w-[44px] h-[44px] flex items-center justify-center bg-[#FFFFFF] border border-black/[0.06] shadow-[0_8px_24px_rgba(0,0,0,0.06)] rounded-[9999px] active:scale-[0.98] active:opacity-85 transition-all duration-[120ms]"
                     title="Select to Delete"
                   >
-                    <Trash2 size={22} color="#FF3B30" />
+                    <Trash2 size={22} color="#E5484D" />
                   </button>
                 )}
               </>
@@ -785,7 +785,7 @@ export default function App() {
                   <Text variant="label" className={`mb-2 ml-1 transition-opacity ${isSelectionMode ? 'opacity-40' : 'opacity-100'}`}>{group}</Text>
                   
                   {/* Grouped Container */}
-                  <div className="bg-[#F9F9FB] rounded-[22px] overflow-hidden border border-black/[0.03]">
+                  <div className="bg-[#F9F9FB] rounded-[20px] overflow-hidden border border-black/[0.03]">
                     {items.map((notif, index) => (
                       <NotificationCard 
                         key={notif.id} 

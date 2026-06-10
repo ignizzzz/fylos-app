@@ -603,7 +603,7 @@ const VaultHealthScreen = () => {
             { icon: Share2, label: 'Share με caretaker', action: 'share' }
           ].map((item, index) => (
             <button key={index} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-black/[0.02] transition-colors text-left active:scale-[0.99] border-b-[0.5px] border-[#ECECEC] last:border-0" onClick={() => handleExport(item.action)}>
-              <item.icon size={18} className="text-[#7A7A7A]" strokeWidth={1.5} />
+              <item.icon size={18} className="text-[#7A7A7A]" strokeWidth={1.8} />
               <span className="text-[15px] text-[#111111] flex-1">{item.label}</span>
             </button>
           ))}
@@ -621,7 +621,7 @@ const VaultHealthScreen = () => {
             { label: 'Email to vet', icon: Mail } 
           ].map((item, i) => (
             <button key={i} onClick={() => { setMenuOpen(false); handleExport(item.label); }} className="w-full flex items-center gap-3 p-4 bg-white border border-[#ECECEC] hover:bg-black/[0.02] rounded-[12px] transition-colors active:scale-[0.98] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-              <item.icon size={18} className="text-[#111111]" strokeWidth={1.5} />
+              <item.icon size={18} className="text-[#111111]" strokeWidth={1.8} />
               <span className="text-[15px] font-medium text-[#111111]">{item.label}</span>
             </button>
           ))}
@@ -631,7 +631,7 @@ const VaultHealthScreen = () => {
             { label: 'Add new record', icon: Plus } 
           ].map((item, i) => (
             <button key={i} onClick={() => { setMenuOpen(false); handleAction(item.label); }} className="w-full flex items-center gap-3 p-4 bg-white border border-[#ECECEC] hover:bg-black/[0.02] rounded-[12px] transition-colors active:scale-[0.98] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-              <item.icon size={18} className="text-[#7A7A7A]" strokeWidth={1.5} />
+              <item.icon size={18} className="text-[#7A7A7A]" strokeWidth={1.8} />
               <span className="text-[15px] font-medium text-[#111111]">{item.label}</span>
             </button>
           ))}

@@ -52,7 +52,7 @@ const THEME = {
     background: '#F9F9FB',
     surface: '#FFFFFF',
     surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -284,7 +284,7 @@ const Toast = ({ message, visible, type = 'success' }) => {
       display: 'flex', alignItems: 'center', gap: 8, background: bg, color: '#FFFFFF',
       padding: '10px 20px', borderRadius: THEME.radius.full, boxShadow: THEME.shadows.floating
     }}>
-      <Ic size={16} strokeWidth={2.5} />
+      <Ic size={16} strokeWidth={2.4} />
       <span className="ep-font-body" style={{ fontSize: 14, fontWeight: 600 }}>{message}</span>
     </div>
   );
@@ -304,7 +304,7 @@ const DeleteModal = ({ visible, onCancel, onConfirm }) => {
         boxShadow: THEME.shadows.floating, textAlign: 'center'
       }}>
         <div style={{
-          width: 48, height: 48, borderRadius: THEME.radius.full, background: 'rgba(255,59,48,0.1)',
+          width: 48, height: 48, borderRadius: THEME.radius.full, background: 'rgba(229,72,77,0.1)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px'
         }}>
           <AlertTriangle size={22} color={THEME.colors.danger} strokeWidth={2} />
@@ -317,13 +317,13 @@ const DeleteModal = ({ visible, onCancel, onConfirm }) => {
         </p>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="ep-btn ep-font-body" onClick={onCancel} style={{
-            flex: 1, height: 48, borderRadius: 14, border: '1px solid rgba(0,0,0,0.08)',
+            flex: 1, height: 48, borderRadius: 16, border: '1px solid rgba(0,0,0,0.08)',
             background: THEME.colors.surface, color: THEME.colors.primaryText, fontSize: 15, fontWeight: 600, cursor: 'pointer'
           }}>
             Cancel
           </button>
           <button className="ep-btn ep-font-body" onClick={onConfirm} style={{
-            flex: 1, height: 48, borderRadius: 14, border: 'none',
+            flex: 1, height: 48, borderRadius: 16, border: 'none',
             background: THEME.colors.danger, color: '#FFFFFF', fontSize: 15, fontWeight: 600, cursor: 'pointer'
           }}>
             Delete
@@ -411,7 +411,7 @@ export default function Screen_38_EDIT_PET_v1() {
                   borderRadius: THEME.radius.full, background: THEME.colors.accent,
                   border: `2px solid ${THEME.colors.surface}`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
                 }}>
-                  <Camera size={13} color="#FFFFFF" strokeWidth={2.5} />
+                  <Camera size={13} color="#FFFFFF" strokeWidth={2.4} />
                 </button>
               </div>
             </div>

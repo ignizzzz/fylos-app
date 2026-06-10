@@ -63,7 +63,7 @@ const PreviewHeader = () => (
         <span style={{ width: 6, height: 6, borderRadius: '50%', background: CORAL }} />
       </span>
       <div className="flex items-center gap-2">
-        <span className="w-[38px] h-[38px] flex items-center justify-center rounded-full" style={{ background: '#FFEBEA' }}><AlertTriangle size={15} className="text-[#FF3B30]" strokeWidth={2} /></span>
+        <span className="w-[38px] h-[38px] flex items-center justify-center rounded-full" style={{ background: '#FFEBEA' }}><AlertTriangle size={15} className="text-[#E5484D]" strokeWidth={2} /></span>
         <span className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full" style={{ background: PEACH }}><Bell size={17} className="text-[#6E6058]" strokeWidth={1.8} /><span className="absolute top-[6px] right-[7px] w-[7px] h-[7px] rounded-full" style={{ background: CORAL, border: '1.5px solid #F7F5F2' }} /></span>
         <span className="w-[44px] h-[44px] rounded-full overflow-hidden border-2" style={{ borderColor: '#EDE8E2' }}><img src={USER_AVATAR} alt="" className="w-full h-full object-cover" /></span>
       </div>
@@ -82,12 +82,12 @@ const PetCard = ({ p, i, onOpenPet }) => (
     {p.status.tone === 'due' ? (
       <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 pl-1.5 pr-2 py-[3px] rounded-full" style={{ background: CORAL, boxShadow: '0 2px 6px rgba(232,93,42,0.4)' }}>
         <span className="w-1.5 h-1.5 rounded-full bg-white" />
-        <span className="text-[9.5px] font-bold text-white">{p.status.label}</span>
+        <span className="text-[10.5px] font-bold text-white">{p.status.label}</span>
       </span>
     ) : (
       <span className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 pl-1.5 pr-2 py-[3px] rounded-full" style={{ background: 'rgba(255,255,255,0.92)' }}>
         <span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} />
-        <span className="text-[9.5px] font-bold" style={{ color: GREEN }}>{p.status.label}</span>
+        <span className="text-[10.5px] font-bold" style={{ color: GREEN }}>{p.status.label}</span>
       </span>
     )}
     <div className="absolute left-3.5 right-3 bottom-3">
@@ -105,7 +105,7 @@ const AddPetCard = ({ onAddPet, delay }) => (
 );
 
 const AddPetBar = ({ onAddPet }) => (
-  <button onClick={() => onAddPet && onAddPet()} className="w-full mt-3 py-3.5 rounded-[14px] flex items-center justify-center gap-2 active:scale-[0.99] transition-transform" style={{ border: '1.5px dashed #D6CDC2' }}>
+  <button onClick={() => onAddPet && onAddPet()} className="w-full mt-3 py-3.5 rounded-[16px] flex items-center justify-center gap-2 active:scale-[0.99] transition-transform" style={{ border: '1.5px dashed #D6CDC2' }}>
     <Plus size={15} color={MUTED} strokeWidth={2.4} />
     <span className="text-[13.5px] font-semibold" style={{ color: MUTED }}>Add another pet</span>
   </button>
@@ -117,7 +117,7 @@ const EmptyPets = ({ onAddPet }) => (
     <h2 className="text-[20px] font-extrabold tracking-[-0.02em]" style={{ color: INK }}>No pets yet</h2>
     <p className="text-[13.5px] mt-2 leading-[1.5] max-w-[260px]" style={{ color: MUTED }}>Add your first pet to track their health, care and everything in between.</p>
     <button onClick={() => onAddPet && onAddPet()} className="mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-[16px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 20px rgba(232,93,42,0.28)' }}>
-      <Plus size={17} color="#fff" strokeWidth={2.6} />
+      <Plus size={17} color="#fff" strokeWidth={2.4} />
       <span className="text-[15px] font-bold text-white">Add your first pet</span>
     </button>
   </div>

@@ -66,7 +66,7 @@ const THEME = {
     background: '#F9F9FB',
     surface: '#FFFFFF',
     surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',

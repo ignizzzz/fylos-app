@@ -178,7 +178,7 @@ export default function InvitePublicScreen() {
         {/* RSVP state message (after click) */}
         {rsvp && (
           <div
-            className="mt-10 p-4 rounded-[14px] flex items-start gap-3"
+            className="mt-10 p-4 rounded-[16px] flex items-start gap-3"
             style={{
               backgroundColor: '#FFFFFF',
               border: '1px solid #E4DDD3',
@@ -279,7 +279,7 @@ function InfoRow({ icon: Icon, label, value }) {
         className="shrink-0 w-9 h-9 rounded-full flex items-center justify-center"
         style={{ backgroundColor: '#F3EFEB', border: '1px solid #E4DDD3' }}
       >
-        <Icon size={15} color="#9A5A3E" strokeWidth={1.75} />
+        <Icon size={15} color="#9A5A3E" strokeWidth={1.8} />
       </div>
       <div className="min-w-0 flex-1 pt-1">
         <div

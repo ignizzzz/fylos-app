@@ -53,9 +53,9 @@ const CATEGORIES = {
     id: 'poison',
     label: 'Poison bait',
     short: 'Poison',
-    color: '#FF3B30',
+    color: '#E5484D',
     bg: '#FFEBEA',
-    ring: 'rgba(255,59,48,0.18)',
+    ring: 'rgba(229,72,77,0.18)',
     severity: 'Critical',
   },
   glass: {
@@ -522,8 +522,8 @@ function FeedCard({ report, onTap }) {
         </div>
 
         {/* Location strip */}
-        <div className="flex items-center gap-1.5 text-[12px] text-[#A09A94]">
-          <MapPin size={11} strokeWidth={1.75} className="text-[#A09A94]" />
+        <div className="flex items-center gap-1.5 text-[12px] text-[#9B9B9F]">
+          <MapPin size={11} strokeWidth={1.8} className="text-[#9B9B9F]" />
           <span className="truncate">{report.location}</span>
           <span className="text-[#CFCAC3]">·</span>
           <span className="font-semibold text-[#6E6058]">{distanceLabel}</span>
@@ -556,15 +556,15 @@ function FeedCard({ report, onTap }) {
                 className="w-[20px] h-[20px] rounded-full flex items-center justify-center"
                 style={{ background: c.bg }}
               >
-                <CheckCheck size={11} strokeWidth={2.5} color={c.color} />
+                <CheckCheck size={11} strokeWidth={2.4} color={c.color} />
               </div>
               <span className="text-[12px] font-semibold text-[#111]">
                 {report.confirmations}
               </span>
-              <span className="text-[12px] text-[#A09A94]">confirmed</span>
+              <span className="text-[12px] text-[#9B9B9F]">confirmed</span>
             </div>
             {report.resolved > 0 && (
-              <div className="flex items-center gap-1 text-[12px] text-[#A09A94]">
+              <div className="flex items-center gap-1 text-[12px] text-[#9B9B9F]">
                 <Shield size={11} strokeWidth={2} />
                 <span>{report.resolved}</span>
               </div>
@@ -572,7 +572,7 @@ function FeedCard({ report, onTap }) {
           </div>
           <div className="flex items-center gap-1 text-[12px] font-semibold" style={{ color: c.color }}>
             <span>Details</span>
-            <ChevronRight size={12} strokeWidth={2.5} />
+            <ChevronRight size={12} strokeWidth={2.4} />
           </div>
         </div>
       </div>
@@ -717,7 +717,7 @@ export default function DangerReportsScreen() {
             className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-white active:scale-[0.97] transition-all"
             style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}
           >
-            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+            <ChevronLeft size={20} color="#111" strokeWidth={1.8} />
           </button>
           <h2 className="text-[17px] font-bold text-[#111] tracking-tight">Safety</h2>
           <button
@@ -726,7 +726,7 @@ export default function DangerReportsScreen() {
             style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}
             aria-label="My activity"
           >
-            <History size={18} color="#111" strokeWidth={1.75} />
+            <History size={18} color="#111" strokeWidth={1.8} />
             {(() => {
               const resolvedByMe = Object.values(resolvedOverrides).filter((v) => v === 'resolved').length;
               const total = MOCK_REPORTS.filter((r) => r.byMe).length + confirmedIds.size + resolvedByMe;
@@ -769,7 +769,7 @@ export default function DangerReportsScreen() {
               <button
                 key={mode}
                 onClick={() => setViewMode(mode)}
-                className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold capitalize transition-colors duration-[200ms] ${active ? 'text-[#E85D2A]' : 'text-[#A09A94]'}`}
+                className={`relative z-10 flex-1 py-1.5 text-[13px] font-semibold capitalize transition-colors duration-[200ms] ${active ? 'text-[#E85D2A]' : 'text-[#9B9B9F]'}`}
               >
                 {mode}
               </button>
@@ -845,11 +845,11 @@ export default function DangerReportsScreen() {
         onClick={openReportForm}
         className="absolute bottom-[72px] right-3 z-40 w-[56px] h-[56px] rounded-full flex items-center justify-center active:scale-[0.92] transition-all ease-soft"
         style={{
-          background: '#FF3B30',
-          boxShadow: '0 4px 20px rgba(255,59,48,0.35)',
+          background: '#E5484D',
+          boxShadow: '0 4px 20px rgba(229,72,77,0.35)',
         }}
       >
-        <Plus size={24} color="#FFF" strokeWidth={2.5} />
+        <Plus size={24} color="#FFF" strokeWidth={2.4} />
       </button>
 
       {/* Pin/Card detail sheet */}
@@ -950,7 +950,7 @@ function MapView({
         {/* Empty map */}
         {isEmpty && (
           <div
-            className="absolute left-1/2 top-[58%] -translate-x-1/2 px-4 py-3 rounded-[14px] text-center max-w-[260px]"
+            className="absolute left-1/2 top-[58%] -translate-x-1/2 px-4 py-3 rounded-[16px] text-center max-w-[260px]"
             style={{
               background: 'rgba(255,255,255,0.95)',
               border: '1px solid #EDE8E2',
@@ -1074,18 +1074,18 @@ function MapPreviewPill({ report, onClose, onOpenDetails, onViewInFeed }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <span
-                className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-px rounded-full"
+                className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-px rounded-full"
                 style={{ background: c.bg, color: c.color }}
               >
                 {c.severity}
               </span>
-              <span className="text-[11px] text-[#A09A94]">{report.time}</span>
+              <span className="text-[11px] text-[#9B9B9F]">{report.time}</span>
             </div>
             <div className="text-[14px] font-bold text-[#111] tracking-tight truncate mt-0.5">
               {report.title}
             </div>
             <div className="flex items-center gap-1 text-[11px] text-[#6E6058] mt-0.5">
-              <MapPin size={10} strokeWidth={1.75} />
+              <MapPin size={10} strokeWidth={1.8} />
               <span className="truncate">{report.location}</span>
               <span className="text-[#CFCAC3]">·</span>
               <span className="font-semibold">{distLabel}</span>
@@ -1107,7 +1107,7 @@ function MapPreviewPill({ report, onClose, onOpenDetails, onViewInFeed }) {
             style={{ background: '#E85D2A' }}
           >
             View details
-            <ChevronRight size={13} strokeWidth={2.5} />
+            <ChevronRight size={13} strokeWidth={2.4} />
           </button>
           <button
             onClick={onViewInFeed}
@@ -1142,7 +1142,7 @@ function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, o
       <div className="px-5">
         {/* Heading strip */}
         <div className="flex items-center justify-between mb-3">
-          <div className="text-[12px] text-[#A09A94] tracking-wide uppercase">
+          <div className="text-[12px] text-[#9B9B9F] tracking-wide uppercase">
             {isFiltered ? activeFilterChip.label : 'Nearby'}
           </div>
           <div className="text-[12px] text-[#6E6058]">
@@ -1164,10 +1164,10 @@ function FeedView({ reports, activeFilter, setActiveFilter, onSelect, isEmpty, o
             {grouped.map((group) => (
               <section key={group.id}>
                 <div className="flex items-center justify-between mb-2 px-1">
-                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#A09A94]">
+                  <h3 className="text-[11px] font-bold uppercase tracking-wider text-[#9B9B9F]">
                     {group.label}
                   </h3>
-                  <span className="text-[11px] text-[#A09A94]">
+                  <span className="text-[11px] text-[#9B9B9F]">
                     {group.items.length}
                   </span>
                 </div>
@@ -1197,9 +1197,9 @@ function EmptyState({ onReport, filtered, filterLabel, radiusLabel = '1km', onCl
         style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
       >
         {filtered ? (
-          <Filter size={26} color="#6E6058" strokeWidth={1.5} />
+          <Filter size={26} color="#6E6058" strokeWidth={1.8} />
         ) : (
-          <Shield size={28} color="#E85D2A" strokeWidth={1.5} />
+          <Shield size={28} color="#E85D2A" strokeWidth={1.8} />
         )}
       </div>
       <div className="text-[16px] font-semibold text-[#111] tracking-tight">
@@ -1218,7 +1218,7 @@ function EmptyState({ onReport, filtered, filterLabel, radiusLabel = '1km', onCl
           className="mt-4 px-4 h-[36px] rounded-full text-[12px] font-semibold flex items-center gap-1.5 active:scale-[0.97] transition-all"
           style={{ background: '#FFF', color: '#111', border: '1px solid #EDE8E2' }}
         >
-          <X size={12} strokeWidth={2.25} />
+          <X size={12} strokeWidth={2.2} />
           Clear filter
         </button>
       )}
@@ -1291,7 +1291,7 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
             className="w-[36px] h-[36px] rounded-full flex items-center justify-center"
             style={{ background: '#F3EFEB' }}
           >
-            <X size={16} color="#111" strokeWidth={1.75} />
+            <X size={16} color="#111" strokeWidth={1.8} />
           </button>
         </div>
 
@@ -1314,7 +1314,7 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
             className="w-[40px] h-[40px] rounded-full flex items-center justify-center"
             style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
           >
-            <MapPin size={16} color="#111" strokeWidth={1.75} />
+            <MapPin size={16} color="#111" strokeWidth={1.8} />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[14px] font-medium text-[#111] truncate">{report.location}</div>
@@ -1331,7 +1331,7 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
 
         {/* Description */}
         <div className="mt-4">
-          <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1">Details</div>
+          <div className="text-[11px] uppercase tracking-wide text-[#9B9B9F] mb-1">Details</div>
           <p className="text-[14px] leading-relaxed text-[#3F3A35]">{report.description}</p>
         </div>
 
@@ -1341,7 +1341,7 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
           style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
         >
           <div className="flex items-center gap-2">
-            <CheckCheck size={16} color={c.color} strokeWidth={1.75} />
+            <CheckCheck size={16} color={c.color} strokeWidth={1.8} />
             <div className="text-[14px] text-[#111]">
               <span className="font-semibold">
                 {report.confirmations + (confirmed ? 1 : 0)} people
@@ -1358,14 +1358,14 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
               border: confirmed ? `1px solid ${c.color}` : 'none',
             }}
           >
-            {confirmed ? <Check size={15} strokeWidth={2.25} /> : null}
+            {confirmed ? <Check size={15} strokeWidth={2.2} /> : null}
             {confirmed ? 'You confirmed' : 'I confirm too'}
           </button>
         </div>
 
         {/* Status toggle (sliding pill) */}
         <div className="mt-4">
-          <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-2">Status</div>
+          <div className="text-[11px] uppercase tracking-wide text-[#9B9B9F] mb-2">Status</div>
           <div
             className="relative grid grid-cols-2 p-1 rounded-full h-[44px]"
             style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}
@@ -1385,7 +1385,7 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
               className="relative z-10 flex items-center justify-center gap-1.5 text-[12px] font-semibold transition-colors duration-200"
               style={{ color: !isResolved ? '#FFF' : '#6E6058' }}
             >
-              <Loader2 size={13} strokeWidth={2.25} />
+              <Loader2 size={13} strokeWidth={2.2} />
               Active
             </button>
             <button
@@ -1393,11 +1393,11 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
               className="relative z-10 flex items-center justify-center gap-1.5 text-[12px] font-semibold transition-colors duration-200"
               style={{ color: isResolved ? '#FFF' : '#6E6058' }}
             >
-              <CheckCheck size={13} strokeWidth={2.25} />
+              <CheckCheck size={13} strokeWidth={2.2} />
               Resolved
             </button>
           </div>
-          <div className="mt-2 text-[11px] text-[#A09A94] text-center">
+          <div className="mt-2 text-[11px] text-[#9B9B9F] text-center">
             {isResolved
               ? 'Marked as resolved — thanks for the update.'
               : 'Still active. Mark resolved once it\u2019s handled.'}
@@ -1405,7 +1405,7 @@ function ReportDetailSheet({ report, onClose, confirmed, toggleConfirm, status, 
         </div>
 
         <button
-          className="mt-3 w-full text-[12px] text-[#A09A94] py-2"
+          className="mt-3 w-full text-[12px] text-[#9B9B9F] py-2"
           onClick={onClose}
         >
           Report inaccurate
@@ -1455,7 +1455,7 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
         {/* header */}
         <div className="px-5 pt-2 pb-4 flex items-start justify-between shrink-0">
           <div>
-            <div className="text-[11px] uppercase tracking-wide text-[#A09A94]">My activity</div>
+            <div className="text-[11px] uppercase tracking-wide text-[#9B9B9F]">My activity</div>
             <h3 className="text-[20px] font-bold text-[#111] tracking-tight mt-0.5">Safety history</h3>
           </div>
           <button
@@ -1463,7 +1463,7 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
             className="w-[36px] h-[36px] rounded-full flex items-center justify-center"
             style={{ background: '#F3EFEB' }}
           >
-            <X size={16} color="#111" strokeWidth={1.75} />
+            <X size={16} color="#111" strokeWidth={1.8} />
           </button>
         </div>
 
@@ -1493,10 +1493,10 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
                   className="relative z-10 flex items-center justify-center gap-1 text-[11.5px] font-semibold transition-colors duration-200 px-1"
                   style={{ color: active ? '#E85D2A' : '#6E6058' }}
                 >
-                  <Icon size={12} strokeWidth={2.25} />
+                  <Icon size={12} strokeWidth={2.2} />
                   <span>{t.label}</span>
                   <span
-                    className="text-[9.5px] font-bold px-1.5 py-px rounded-full"
+                    className="text-[10.5px] font-bold px-1.5 py-px rounded-full"
                     style={{
                       background: active ? 'rgba(232,93,42,0.16)' : '#E6E1DA',
                       color: active ? '#E85D2A' : '#6E6058',
@@ -1524,7 +1524,7 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
                 className="w-[44px] h-[44px] rounded-full flex items-center justify-center shrink-0"
                 style={{ background: '#FFFFFF', boxShadow: '0 2px 8px rgba(46,125,50,0.18)' }}
               >
-                <CheckCheck size={20} color="#2E7D32" strokeWidth={2.25} />
+                <CheckCheck size={20} color="#2E7D32" strokeWidth={2.2} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-[13px] font-bold text-[#1B5E20] tracking-tight">
@@ -1549,11 +1549,11 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
                 style={{ background: '#F3EFEB' }}
               >
                 {tab === 'reports' ? (
-                  <Megaphone size={22} color="#A09A94" strokeWidth={1.75} />
+                  <Megaphone size={22} color="#9B9B9F" strokeWidth={1.8} />
                 ) : tab === 'confirmed' ? (
-                  <ThumbsUp size={22} color="#A09A94" strokeWidth={1.75} />
+                  <ThumbsUp size={22} color="#9B9B9F" strokeWidth={1.8} />
                 ) : (
-                  <CheckCheck size={22} color="#A09A94" strokeWidth={1.75} />
+                  <CheckCheck size={22} color="#9B9B9F" strokeWidth={1.8} />
                 )}
               </div>
               <div className="text-[14px] font-semibold text-[#111]">
@@ -1608,8 +1608,8 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
                             {report.title}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-[12px] text-[#A09A94] mt-0.5">
-                          <MapPin size={10} strokeWidth={1.75} />
+                        <div className="flex items-center gap-1.5 text-[12px] text-[#9B9B9F] mt-0.5">
+                          <MapPin size={10} strokeWidth={1.8} />
                           <span className="truncate">{report.location}</span>
                           <span className="text-[#CFCAC3]">·</span>
                           <span>{report.time}</span>
@@ -1642,7 +1642,7 @@ function HistorySheet({ allReports, confirmedIds, resolvedOverrides, getReportSt
                           </span>
                         </div>
                       </div>
-                      <ChevronRight size={16} color="#A09A94" strokeWidth={2} />
+                      <ChevronRight size={16} color="#9B9B9F" strokeWidth={2} />
                     </button>
                   </li>
                 );
@@ -1699,7 +1699,7 @@ function ReportFormPopup({
               className="w-[32px] h-[32px] rounded-full flex items-center justify-center"
               style={{ background: '#F3EFEB' }}
             >
-              <ChevronLeft size={16} color="#111" strokeWidth={1.75} />
+              <ChevronLeft size={16} color="#111" strokeWidth={1.8} />
             </button>
           ) : (
             <div className="w-[32px]" />
@@ -1712,7 +1712,7 @@ function ReportFormPopup({
             className="w-[32px] h-[32px] rounded-full flex items-center justify-center"
             style={{ background: '#F3EFEB' }}
           >
-            <X size={14} color="#111" strokeWidth={1.75} />
+            <X size={14} color="#111" strokeWidth={1.8} />
           </button>
         </div>
 
@@ -1777,22 +1777,22 @@ function ReportFormPopup({
 
             {/* Location */}
             <div className="mt-4">
-              <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1.5">
+              <div className="text-[11px] uppercase tracking-wide text-[#9B9B9F] mb-1.5">
                 Location
               </div>
               <button
                 className="w-full flex items-center gap-2 px-3 h-[44px] rounded-[12px] text-left"
                 style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
               >
-                <MapPin size={15} color="#E85D2A" strokeWidth={1.75} />
+                <MapPin size={15} color="#E85D2A" strokeWidth={1.8} />
                 <span className="flex-1 text-[13px] text-[#111] truncate">{location}</span>
-                <ChevronRight size={14} color="#A09A94" strokeWidth={1.75} />
+                <ChevronRight size={14} color="#9B9B9F" strokeWidth={1.8} />
               </button>
             </div>
 
             {/* Description */}
             <div className="mt-3">
-              <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1.5">
+              <div className="text-[11px] uppercase tracking-wide text-[#9B9B9F] mb-1.5">
                 Description
               </div>
               <textarea
@@ -1800,14 +1800,14 @@ function ReportFormPopup({
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="What should others know?"
                 rows={3}
-                className="w-full px-3 py-2.5 rounded-[12px] text-[13px] text-[#111] placeholder-[#A09A94] resize-none focus:outline-none"
+                className="w-full px-3 py-2.5 rounded-[12px] text-[13px] text-[#111] placeholder-[#9B9B9F] resize-none focus:outline-none"
                 style={{ background: '#FFFFFF', border: '1px solid #EDE8E2' }}
               />
             </div>
 
             {/* Severity */}
             <div className="mt-3">
-              <div className="text-[11px] uppercase tracking-wide text-[#A09A94] mb-1.5">
+              <div className="text-[11px] uppercase tracking-wide text-[#9B9B9F] mb-1.5">
                 Severity
               </div>
               <div className="flex gap-1.5">
@@ -1840,7 +1840,7 @@ function ReportFormPopup({
                 <img src={photo} alt="Attached" className="w-full h-[120px] object-cover" />
                 <div className="absolute inset-x-0 bottom-0 px-3 py-2 flex items-center justify-between bg-gradient-to-t from-black/60 to-transparent">
                   <div className="flex items-center gap-1.5 text-white text-[11px] font-semibold">
-                    <Check size={12} strokeWidth={2.5} />
+                    <Check size={12} strokeWidth={2.4} />
                     Photo attached
                   </div>
                   <div className="flex items-center gap-2">
@@ -1848,7 +1848,7 @@ function ReportFormPopup({
                       className="h-[26px] px-2.5 rounded-full text-[11px] font-semibold flex items-center gap-1 cursor-pointer"
                       style={{ background: 'rgba(255,255,255,0.92)', color: '#111' }}
                     >
-                      <Camera size={11} strokeWidth={2.25} />
+                      <Camera size={11} strokeWidth={2.2} />
                       Replace
                       <input
                         type="file"
@@ -1870,7 +1870,7 @@ function ReportFormPopup({
                       style={{ background: 'rgba(0,0,0,0.55)' }}
                       aria-label="Remove photo"
                     >
-                      <X size={12} color="#FFF" strokeWidth={2.25} />
+                      <X size={12} color="#FFF" strokeWidth={2.2} />
                     </button>
                   </div>
                 </div>
@@ -1884,9 +1884,9 @@ function ReportFormPopup({
                   border: '1px solid #EDE8E2',
                 }}
               >
-                <Camera size={15} strokeWidth={1.75} />
+                <Camera size={15} strokeWidth={1.8} />
                 Add photo (optional)
-                <span className="ml-auto text-[11px] text-[#A09A94]">JPG/PNG</span>
+                <span className="ml-auto text-[11px] text-[#9B9B9F]">JPG/PNG</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -1908,14 +1908,14 @@ function ReportFormPopup({
               onClick={onClose}
               className="mt-5 w-full h-[48px] rounded-full text-[14px] font-semibold text-[#FFF] flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
               style={{
-                background: '#FF3B30',
-                boxShadow: '0 6px 20px rgba(255,59,48,0.3)',
+                background: '#E5484D',
+                boxShadow: '0 6px 20px rgba(229,72,77,0.3)',
               }}
             >
-              <AlertTriangle size={15} strokeWidth={2.25} />
+              <AlertTriangle size={15} strokeWidth={2.2} />
               Report danger
             </button>
-            <div className="mt-2 text-center text-[11px] text-[#A09A94]">
+            <div className="mt-2 text-center text-[11px] text-[#9B9B9F]">
               Your report helps keep the community safe
             </div>
           </>

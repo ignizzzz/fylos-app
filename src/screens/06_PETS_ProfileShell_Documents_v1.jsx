@@ -1107,11 +1107,11 @@ const THEME = {
     accentHover: '#D04A1C',
     primaryText: '#111111',
     secondaryText: '#6E6058',
-    tertiaryText: '#A09A94',
+    tertiaryText: '#9B9B9F',
     background: '#F7F5F2',
     surface: '#FFFFFF',
     surfaceAlt: '#F3EFEB',
-    danger: '#FF3B30',
+    danger: '#E5484D',
     success: '#00C060',
     warning: '#FF9500',
     info: '#007AFF',
@@ -1136,7 +1136,7 @@ const GlobalStyles = () => (
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap');
     @keyframes fy-orbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
     @keyframes fy-orbGlow { 0%, 100% { opacity: 0.45; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.08); } }
-    @keyframes fy-livePulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,59,48,0.45); } 50% { opacity: 0.85; box-shadow: 0 0 0 5px rgba(255,59,48,0); } }
+    @keyframes fy-livePulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(229,72,77,0.45); } 50% { opacity: 0.85; box-shadow: 0 0 0 5px rgba(229,72,77,0); } }
     @keyframes nextUpDone {
       0%   { opacity: 1; transform: translateY(0) scale(1); }
       40%  { opacity: 1; transform: translateY(0) scale(1); }
@@ -1148,13 +1148,13 @@ const GlobalStyles = () => (
       --color-accent-hover: #D04A1C;
       --color-primary-text: #111111;
       --color-secondary-text: #6E6058;
-      --color-tertiary-text: #A09A94;
+      --color-tertiary-text: #9B9B9F;
       --color-background: #F7F5F2;
       --color-surface: #FFFFFF;
       --color-surface-hover: #F3EFEB;
       --color-border: rgba(0, 0, 0, 0.04);
       --color-divider: #EDE8E2;
-      --color-danger: #FF3B30;
+      --color-danger: #E5484D;
       --color-danger-bg: #FFF0F0;
       --color-success: #34C759;
       --color-success-bg: #E5F9ED;
@@ -1212,7 +1212,7 @@ const Badge = ({ variant = 'default', children, className = '' }) => {
   const variants = {
     default: "bg-[var(--color-surface)] text-[var(--color-secondary-text)] border border-[var(--color-border)]",
     primary: "bg-[#111111] text-white border border-[#111111]",
-    count: "bg-[#FF3B30] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
+    count: "bg-[#E5484D] text-white px-1.5 py-0 min-w-[18px] justify-center text-[10px]",
     success: "bg-[var(--color-success-bg)] text-[var(--color-success)]",
     warning: "bg-[var(--color-warning-bg)] text-[var(--color-warning)]",
     error: "bg-[var(--color-danger-bg)] text-[var(--color-danger)]",
@@ -1259,12 +1259,12 @@ const Button = ({ children, variant = 'primary', size = 'medium', fullWidth = tr
     secondary: "bg-[#F3EFEB] text-[#6E6058] border border-[#EDE8E2]",
     destructive: "bg-[#FFF5F0] text-[#E85D2A] border border-[#FFE0D0]",
     destructiveOutline: "bg-transparent text-[#E85D2A] border border-[#FFE0D0]",
-    ghost: "bg-transparent text-[#A09A94]"
+    ghost: "bg-transparent text-[#9B9B9F]"
   };
   const sizes = {
     small: "px-3 py-2 text-[13px] rounded-[10px]",
     medium: "px-4 py-3 text-[14px] rounded-[12px]",
-    large: "px-6 py-3.5 text-[15px] rounded-[14px]"
+    large: "px-6 py-3.5 text-[15px] rounded-[16px]"
   };
   const isDisabled = disabled || isLoading;
   const disabledStyles = isDisabled ? "bg-[var(--color-surface-hover)] text-[var(--color-tertiary-text)] shadow-none cursor-not-allowed active:scale-100" : "";
@@ -1308,7 +1308,7 @@ const Card = ({ variant = 'default', clickable, children, className = '', ...pro
 
 const TextInput = ({ label, error, helperText, disabled, className = '', ...props }) => (
   <div className={`flex flex-col gap-1.5 w-full ${className} ${disabled ? 'opacity-50' : ''}`}>
-    {label && <label className="text-[12px] font-semibold text-[#A09A94] ml-0.5">{label}</label>}
+    {label && <label className="text-[12px] font-semibold text-[#9B9B9F] ml-0.5">{label}</label>}
     <input
       disabled={disabled}
       className={`w-full h-[46px] px-4 text-[15px] font-medium text-[#111] rounded-[12px] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#E85D2A]/15 ${
@@ -1318,7 +1318,7 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
       {...props}
     />
     {error ? (
-      <span className="text-[12px] text-[#FF3B30] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
+      <span className="text-[12px] text-[#E5484D] ml-1 flex items-center gap-1"><AlertCircle size={12}/>{error}</span>
     ) : helperText ? (
       <span className="text-[12px] text-[var(--color-tertiary-text)] ml-1">{helperText}</span>
     ) : null}
@@ -1328,7 +1328,7 @@ const TextInput = ({ label, error, helperText, disabled, className = '', ...prop
 const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', className = '' }) => (
    <div className={`relative flex items-center w-full ${className}`}>
      <div className="absolute left-4 text-[var(--color-tertiary-text)] pointer-events-none">
-       <Search size={18} strokeWidth={2.5} />
+       <Search size={18} strokeWidth={2.4} />
      </div>
      <input 
        type="text"
@@ -1339,7 +1339,7 @@ const SearchInput = ({ value, onChange, onClear, placeholder = 'Search...', clas
      />
      {value && (
        <button onClick={onClear} className="absolute right-4 text-[var(--color-tertiary-text)] hover:text-[var(--color-primary-text)] transition-colors p-1 rounded-full active:bg-black/5">
-         <X size={16} strokeWidth={2.5} />
+         <X size={16} strokeWidth={2.4} />
        </button>
      )}
    </div>
@@ -1384,7 +1384,7 @@ const CardModal = ({ isOpen, onClose, title, footer, children }) => {
         <div className="px-5 pt-5 pb-0 shrink-0">
           <div className="flex items-center justify-between">
             {title && <h3 className="text-[16px] font-bold text-[#111]">{title}</h3>}
-            <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9]" style={{ background: '#F3EFEB' }}><X size={14} className="text-[#A09A94]" /></button>
+            <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9]" style={{ background: '#F3EFEB' }}><X size={14} className="text-[#9B9B9F]" /></button>
           </div>
         </div>
         <div className="px-5 py-4 overflow-y-auto min-h-0 flex-1" style={{ scrollbarWidth: 'none' }}>{children}</div>
@@ -1411,7 +1411,7 @@ const BottomSheet = ({ isOpen, onClose, title, footer, snap, lockExpanded, fixed
         style={{ background: '#FBF9F7', boxShadow: '0 -8px 40px rgba(0,0,0,0.1)', maxHeight: fixedHeight || '85%', transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)', paddingBottom: 'env(safe-area-inset-bottom, 24px)' }}>
         <div className="px-5 pt-4 pb-2 shrink-0 flex items-center justify-between">
           {title && <h3 className="text-[16px] font-bold text-[#111]">{title}</h3>}
-          <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9]" style={{ background: '#F3EFEB' }}><X size={14} className="text-[#A09A94]" /></button>
+          <button onClick={onClose} className="w-7 h-7 rounded-full flex items-center justify-center active:scale-[0.9]" style={{ background: '#F3EFEB' }}><X size={14} className="text-[#9B9B9F]" /></button>
         </div>
         <div className={`px-5 pb-6 ${bodyScrollable ? 'overflow-y-auto' : 'overflow-hidden'} min-h-0 flex-1`} style={{ scrollbarWidth: 'none' }}>{children}</div>
         {footer && <div className="px-5 pb-6 pt-2 shrink-0 border-t border-[#EDE8E2]">{footer}</div>}
@@ -1433,7 +1433,7 @@ const Toggle = ({ checked, onChange }) => (
 
 const SegmentedControl = ({ segments, activeIndex, onChange, className = '' }) => {
   return (
-    <div className={`flex bg-[var(--color-surface-hover)] p-1 rounded-[14px] relative shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] ${className}`}>
+    <div className={`flex bg-[var(--color-surface-hover)] p-1 rounded-[16px] relative shadow-[inset_0_1px_2px_rgba(0,0,0,0.02)] ${className}`}>
       <div 
         className="absolute top-1 bottom-1 bg-[var(--color-surface)] rounded-[10px] shadow-[var(--shadow-level-1)] transition-all duration-[220ms] ease-[var(--ease-spring)]"
         style={{ width: `calc(${100 / segments.length}% - 4px)`, left: `calc(${(100 / segments.length) * activeIndex}% + 2px)` }}
@@ -1478,7 +1478,7 @@ const EmptyState = ({ icon: Icon, illustration, title, description, actionLabel,
       <div className="mb-6">{illustration}</div>
     ) : (
       <div className="w-20 h-20 rounded-full bg-[#F3EFEB] flex items-center justify-center mb-6">
-        <Icon size={32} color="#A09A94" strokeWidth={1.5} />
+        <Icon size={32} color="#9B9B9F" strokeWidth={1.8} />
       </div>
     )}
     <h2 className="text-[20px] font-semibold text-[#111] mb-2">{title}</h2>
@@ -1509,7 +1509,7 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
           {showActions && (
             <div className="flex items-center gap-2">
               <button onClick={() => { window.location.href = '/danger-reports'; }} className="w-[38px] h-[38px] flex items-center justify-center rounded-full active:scale-[0.9] transition-all" style={{ background: '#FFEBEA' }}>
-                <AlertTriangle size={15} className="text-[#FF3B30]" strokeWidth={2} />
+                <AlertTriangle size={15} className="text-[#E5484D]" strokeWidth={2} />
               </button>
               <button onClick={onInbox || (() => handleAction('Inbox'))} className="relative w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.95] transition-all" style={{ background: '#F3EFEB' }}>
                 <Bell size={17} className="text-[#6E6058]" strokeWidth={1.8} />
@@ -1526,7 +1526,7 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
       {variant === 'detail' && (
         <div className="flex justify-between items-center w-full pointer-events-auto">
           <button onClick={onBack || (() => handleAction('Back'))} className="w-[44px] h-[44px] flex items-center justify-center rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]" style={{ background: '#F3EFEB' }}>
-            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+            <ChevronLeft size={20} color="#111" strokeWidth={1.8} />
           </button>
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">{title}</h2>
           {rightActions ? (
@@ -1535,7 +1535,7 @@ const Header = ({ title, variant = 'default', user, onBack, onRightAction, right
             </div>
           ) : (
             <button onClick={onRightAction || (() => handleAction('Menu'))} className="w-[44px] h-[44px] flex items-center justify-center rounded-[var(--radius-full)] active:scale-[0.97] transition-all duration-[var(--motion-fast)]" style={{ background: '#F3EFEB' }}>
-              {RightIcon ? <RightIcon size={20} color="#111" strokeWidth={1.5} /> : <MoreHorizontal size={20} color="#111" strokeWidth={1.5} />}
+              {RightIcon ? <RightIcon size={20} color="#111" strokeWidth={1.8} /> : <MoreHorizontal size={20} color="#111" strokeWidth={1.8} />}
             </button>
           )}
         </div>
@@ -1605,7 +1605,7 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
                     style={{ animation: `fabIconBounce 0.4s ${0.06 + i * 0.05}s cubic-bezier(0.34, 1.56, 0.64, 1) both` }}
                   >
                     <div className="w-[54px] h-[54px] rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.1),0_0_0_0.5px_rgba(0,0,0,0.04)] flex items-center justify-center">
-                      <Icon size={22} className="text-[#111]" strokeWidth={1.75} />
+                      <Icon size={22} className="text-[#111]" strokeWidth={1.8} />
                     </div>
                     <span className="text-[11px] font-semibold text-[#111] text-center leading-[1.2]">{action.label}</span>
                   </button>
@@ -1646,7 +1646,7 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
                       transform: fabOpen ? 'rotate(45deg) scale(1.05)' : 'rotate(0deg) scale(1)',
                     }}
                   >
-                    <Plus size={22} color="#FFF" strokeWidth={2.5} />
+                    <Plus size={22} color="#FFF" strokeWidth={2.4} />
                   </button>
                 </div>
               );
@@ -1666,14 +1666,14 @@ const TabBar = ({ activeTab, onTabChange, visible = true }) => {
                   <Icon
                     size={20}
                     strokeWidth={isActive ? 2.2 : 1.5}
-                    className={`transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isActive ? 'text-[#E85D2A] scale-110' : 'text-[#A09A94]'}`}
+                    className={`transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isActive ? 'text-[#E85D2A] scale-110' : 'text-[#9B9B9F]'}`}
                   />
                 </div>
                 <span
-                  className={`text-[9px] font-bold tracking-[0.04em] mt-0.5 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  className={`text-[10px] font-bold tracking-[0.04em] mt-0.5 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                     isActive
                       ? 'text-[#E85D2A] opacity-100 translate-y-0 max-h-[12px]'
-                      : 'text-[#A09A94] opacity-0 translate-y-2 max-h-0'
+                      : 'text-[#9B9B9F] opacity-0 translate-y-2 max-h-0'
                   }`}
                   style={{ overflow: 'hidden' }}
                 >
@@ -1762,7 +1762,7 @@ const Toast = ({ message }) => {
   if (!message) return null;
   return (
     <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 z-50 pointer-events-none animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="bg-[#111]/90 backdrop-blur-md text-white px-5 py-3 rounded-[14px] shadow-[var(--shadow-level-2)] text-[14px] font-medium flex items-center gap-2">
+      <div className="bg-[#111]/90 backdrop-blur-md text-white px-5 py-3 rounded-[16px] shadow-[var(--shadow-level-2)] text-[14px] font-medium flex items-center gap-2">
         <CheckCircle2 size={16} className="text-[#34C759]" />
         {message}
       </div>
@@ -1779,27 +1779,27 @@ const PetProfileHeader = ({ pet, showToast }) => (
       <div className="relative shrink-0" onClick={() => showToast('Change photo — coming soon')}>
         <img src={pet.photo} alt={pet.name} className="w-[80px] h-[80px] rounded-[20px] object-cover shadow-sm" />
         <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-white border border-[#EDE8E2] rounded-full flex items-center justify-center shadow-sm">
-          <Camera size={13} className="text-[#A09A94]" />
+          <Camera size={13} className="text-[#9B9B9F]" />
         </div>
       </div>
       <div className="flex-1 min-w-0">
         <h2 className="text-[24px] font-bold text-[#111] tracking-[-0.3px]">{pet.name}</h2>
-        <p className="text-[14px] text-[#A09A94] mt-0.5">{pet.breed} · {pet.age} yrs</p>
+        <p className="text-[14px] text-[#9B9B9F] mt-0.5">{pet.breed} · {pet.age} yrs</p>
       </div>
     </div>
 
     {/* Stats pills */}
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-[#6E6058]" style={{ background: '#F3EFEB' }}>
-        <MapPin size={11} className="text-[#A09A94]" />
+        <MapPin size={11} className="text-[#9B9B9F]" />
         {pet.location}
       </div>
       <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-[#6E6058]" style={{ background: '#F3EFEB' }}>
-        <Scale size={11} className="text-[#A09A94]" />
+        <Scale size={11} className="text-[#9B9B9F]" />
         {pet.weight} {pet.weightUnit}
       </div>
       <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium text-[#6E6058]" style={{ background: '#F3EFEB' }}>
-        <Heart size={11} className="text-[#A09A94]" />
+        <Heart size={11} className="text-[#9B9B9F]" />
         {pet.sex}
       </div>
     </div>
@@ -1828,7 +1828,7 @@ const PetProfileTabs = ({ activeTab, onTabChange }) => {
               key={tab}
               ref={el => tabsRef.current[idx] = el}
               onClick={() => onTabChange(tab)}
-              className={`py-2 px-4 rounded-full text-[13px] font-semibold transition-all duration-200 active:scale-[0.96] ${isActive ? 'bg-[#111] text-white shadow-sm' : 'text-[#A09A94]'}`}
+              className={`py-2 px-4 rounded-full text-[13px] font-semibold transition-all duration-200 active:scale-[0.96] ${isActive ? 'bg-[#111] text-white shadow-sm' : 'text-[#9B9B9F]'}`}
             >
               {tab}
             </button>
@@ -1842,10 +1842,10 @@ const PetProfileTabs = ({ activeTab, onTabChange }) => {
 // Sub-components for About Tab
 const InfoRow = ({ label, value, onEdit, isCopy }) => (
   <div className="flex items-center justify-between min-h-[48px] py-2">
-    <span className="text-[13px] font-medium text-[#A09A94]">{label}</span>
+    <span className="text-[13px] font-medium text-[#9B9B9F]">{label}</span>
     <div className="flex items-center gap-2">
       <span className="text-[14px] font-semibold text-[#111] text-right max-w-[180px] truncate">{value}</span>
-      <button onClick={onEdit} className="p-1.5 rounded-full text-[#A09A94] active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>
+      <button onClick={onEdit} className="p-1.5 rounded-full text-[#9B9B9F] active:scale-95 transition-all" style={{ background: '#F3EFEB' }}>
         {isCopy ? <Copy size={14} /> : <Pencil size={14} />}
       </button>
     </div>
@@ -1927,7 +1927,7 @@ const AboutTab = ({
                   className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-all active:scale-[0.97] ${
                     isActive
                       ? 'bg-[#FFF5F0] border border-[#FFE0D0] text-[#E85D2A]'
-                      : 'border border-[#EDE8E2] text-[#A09A94]'
+                      : 'border border-[#EDE8E2] text-[#9B9B9F]'
                   }`} style={!isActive ? { background: '#F3EFEB' } : {}}
                 >
                   {chip}
@@ -1948,7 +1948,7 @@ const AboutTab = ({
                 </button>
               </div>
             ))}
-            <button onClick={onOpenTrigger} className="flex items-center gap-1 px-3 py-1.5 border border-[#EDE8E2] text-[#A09A94] rounded-full text-[13px] font-semibold active:scale-[0.97]" style={{ background: '#F3EFEB' }}>
+            <button onClick={onOpenTrigger} className="flex items-center gap-1 px-3 py-1.5 border border-[#EDE8E2] text-[#9B9B9F] rounded-full text-[13px] font-semibold active:scale-[0.97]" style={{ background: '#F3EFEB' }}>
               <Plus size={14} /> Add trigger
             </button>
           </div>
@@ -1989,7 +1989,7 @@ const AboutTab = ({
                 animation: `homeReveal 0.5s ${0.1 + idx * 0.1}s cubic-bezier(0.22,1,0.36,1) both`,
               }}>
                 {/* Polaroid-style card with rotation */}
-                <div className="rounded-[14px] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden active:scale-[0.96] transition-transform cursor-pointer group" style={{ border: '1px solid #EDE8E2', transform: `rotate(${rot}deg)` }}>
+                <div className="rounded-[16px] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden active:scale-[0.96] transition-transform cursor-pointer group" style={{ border: '1px solid #EDE8E2', transform: `rotate(${rot}deg)` }}>
                   {/* Icon area — warm gradient */}
                   <div className="h-[80px] flex items-center justify-center relative" style={{ background: 'linear-gradient(135deg, #F7F5F2 0%, #F3EFEB 100%)' }}>
                     <span className="text-[32px]">{renderLegacyIcon(m.icon, 32, '')}</span>
@@ -1997,15 +1997,15 @@ const AboutTab = ({
                   {/* Info */}
                   <div className="px-3 py-2.5">
                     <h4 className="text-[13px] font-bold text-[#111] leading-tight truncate">{m.title}</h4>
-                    {m.note && <p className="text-[11px] text-[#A09A94] mt-0.5 truncate">{m.note}</p>}
-                    <div className="text-[9px] font-semibold text-[#C4BBB3] mt-2 uppercase tracking-wider">{m.date}</div>
+                    {m.note && <p className="text-[11px] text-[#9B9B9F] mt-0.5 truncate">{m.note}</p>}
+                    <div className="text-[10px] font-semibold text-[#C4BBB3] mt-2 uppercase tracking-wider">{m.date}</div>
                   </div>
                 </div>
               </div>
             );
           })}
           {/* Add card */}
-          <div onClick={onOpenMilestone} className="shrink-0 w-[100px] flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-[0.95] transition-transform rounded-[14px] py-6" style={{ border: '1.5px dashed #DDD8D2' }}>
+          <div onClick={onOpenMilestone} className="shrink-0 w-[100px] flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-[0.95] transition-transform rounded-[16px] py-6" style={{ border: '1.5px dashed #DDD8D2' }}>
             <Plus size={18} className="text-[#C4B5A6]" />
             <span className="text-[10px] font-semibold text-[#C4B5A6]">Add</span>
           </div>
@@ -2019,10 +2019,10 @@ const AboutTab = ({
             <div className="w-9 h-9 rounded-full bg-[#E85D2A]/10 flex items-center justify-center"><Star size={16} className="text-[#E85D2A]" /></div>
             <div>
               <span className="text-[14px] font-medium text-[#111] block">Training guides</span>
-              <span className="text-[12px] text-[#A09A94]">3 of 12 completed</span>
+              <span className="text-[12px] text-[#9B9B9F]">3 of 12 completed</span>
             </div>
           </div>
-          <ChevronRight size={16} className="text-[#A09A94]" />
+          <ChevronRight size={16} className="text-[#9B9B9F]" />
         </button>
       </section>
     </div>
@@ -2037,7 +2037,7 @@ const DocumentCard = ({ doc, onClick }) => (
   <div onClick={onClick} className="flex items-center gap-3 py-2.5 cursor-pointer active:opacity-60 transition-opacity">
     <div className="flex-1 min-w-0">
       <h4 className="text-[13px] font-semibold text-[#111] truncate">{doc.title}</h4>
-      <span className="text-[10px] text-[#A09A94]">{doc.date} · {doc.size}</span>
+      <span className="text-[10px] text-[#9B9B9F]">{doc.date} · {doc.size}</span>
     </div>
     <ChevronRight size={13} className="text-[#D4CCC4] shrink-0" />
   </div>
@@ -2064,7 +2064,7 @@ const DocumentsTab = ({ documents = [], onAddDocument, onScanReceipt, onViewDocu
           <span className="text-[13px] font-semibold text-[#6E6058]">Add Document</span>
         </button>
         <button onClick={onScanReceipt} className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-          <Scan size={14} className="text-[#A09A94]" />
+          <Scan size={14} className="text-[#9B9B9F]" />
           <span className="text-[13px] font-semibold text-[#6E6058]">Scan Receipt</span>
         </button>
       </div>
@@ -2098,7 +2098,7 @@ const DocumentsTab = ({ documents = [], onAddDocument, onScanReceipt, onViewDocu
           <div className="text-center py-12">
             <Folder size={32} className="text-[#D4CCC4] mx-auto mb-3" />
             <p className="text-[14px] font-semibold text-[#111]">Vault is empty</p>
-            <p className="text-[12px] text-[#A09A94] mt-1">Add your pet's documents</p>
+            <p className="text-[12px] text-[#9B9B9F] mt-1">Add your pet's documents</p>
           </div>
         )}
       </div>
@@ -2179,21 +2179,21 @@ const AddDocumentSheet = ({ isOpen, onClose, onSave, showToast }) => {
            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf,.png,.jpeg,.jpg" className="hidden" />
            {!file ? (
              <button onClick={() => fileInputRef.current?.click()} className="w-full py-3 rounded-[12px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1.5px dashed #DDD8D2' }} disabled={uploading}>
-                <Upload size={14} className="text-[#A09A94]" />
+                <Upload size={14} className="text-[#9B9B9F]" />
                 <span className="text-[12px] font-semibold text-[#6E6058]">Upload file or photo</span>
              </button>
            ) : (
              <div className="flex items-center gap-3 py-2">
                 <span className="text-[13px] font-semibold text-[#111] flex-1 truncate">{file.name}</span>
-                <span className="text-[10px] text-[#A09A94]">{(file.size / (1024*1024)).toFixed(1)} MB</span>
-                {!uploading && <button onClick={() => setFile(null)} className="text-[#A09A94] active:text-[#E85D2A]"><X size={14} /></button>}
+                <span className="text-[10px] text-[#9B9B9F]">{(file.size / (1024*1024)).toFixed(1)} MB</span>
+                {!uploading && <button onClick={() => setFile(null)} className="text-[#9B9B9F] active:text-[#E85D2A]"><X size={14} /></button>}
              </div>
            )}
         </div>
 
         {uploading && (
           <div>
-            <div className="flex justify-between text-[11px] text-[#A09A94] mb-1"><span>Uploading...</span><span>{progress}%</span></div>
+            <div className="flex justify-between text-[11px] text-[#9B9B9F] mb-1"><span>Uploading...</span><span>{progress}%</span></div>
             <div className="w-full h-[3px] rounded-full overflow-hidden" style={{ background: '#EDE8E2' }}>
               <div className="h-full rounded-full transition-all duration-150" style={{ width: `${progress}%`, background: '#E85D2A' }} />
             </div>
@@ -2291,7 +2291,7 @@ const ScanReceiptFlow = ({ flowState, setFlowState, onSave, showToast }) => {
               </div>
             ) : (
               <div className="flex justify-between items-center bg-[#FFE5E5] px-3 py-1.5 rounded-lg mb-2">
-                <span className="text-[12px] font-bold text-[#FF3B30] flex items-center gap-1.5"><AlertCircle size={14}/> OCR failed, try again or enter manually</span>
+                <span className="text-[12px] font-bold text-[#E5484D] flex items-center gap-1.5"><AlertCircle size={14}/> OCR failed, try again or enter manually</span>
               </div>
             )}
 
@@ -2416,8 +2416,8 @@ const DocumentViewer = ({ doc, onClose, onDelete, showToast }) => {
                    onClose();
                 }
              }} className="w-full flex items-center gap-4 px-4 py-4 hover:bg-[#FFF0F0] active:bg-[#FFE5E5] rounded-xl transition-colors">
-                <Trash2 size={20} className="text-[#FF3B30]" />
-                <span className="text-[16px] font-semibold text-[#FF3B30]">Delete Document</span>
+                <Trash2 size={20} className="text-[#E5484D]" />
+                <span className="text-[16px] font-semibold text-[#E5484D]">Delete Document</span>
              </button>
           </div>
        </CardModal>
@@ -2436,7 +2436,7 @@ const calculateExpiryDays = (nextDateStr) => {
 const VaccinationCard = ({ item, onOpenSheet }) => {
   const days = calculateExpiryDays(item.nextDate);
   let statusColor = '#00C060', badgeLabel = 'Valid', badgeType = 'success';
-  if (days < 0) { statusColor = '#FF3B30'; badgeLabel = 'Overdue'; badgeType = 'error'; }
+  if (days < 0) { statusColor = '#E5484D'; badgeLabel = 'Overdue'; badgeType = 'error'; }
   else if (days <= 30) { statusColor = '#FF9500'; badgeLabel = 'Expiring'; badgeType = 'warning'; }
   return (
     <Card clickable onClick={() => onOpenSheet('VACCINE_DETAILS', item)} className="!p-4 bg-white border border-black/[0.04] shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
@@ -2460,7 +2460,7 @@ const VaccinationsSection = ({ data, onOpenSheet }) => (
           <div key={vac.id} className={`flex items-center justify-between py-3 cursor-pointer active:opacity-60 ${i < data.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => onOpenSheet('VACCINE_DETAILS', vac)}>
             <div className="flex-1 min-w-0">
               <span className="text-[14px] font-semibold text-[#111] block">{vac.name}</span>
-              <span className="text-[11px] text-[#A09A94]">Due {vac.nextDate}</span>
+              <span className="text-[11px] text-[#9B9B9F]">Due {vac.nextDate}</span>
             </div>
             <span className="text-[10px] font-bold uppercase" style={{ color: statusColor }}>{status}</span>
           </div>
@@ -2468,7 +2468,7 @@ const VaccinationsSection = ({ data, onOpenSheet }) => (
       })}
     </div>
     <button onClick={() => onOpenSheet('ADD_VACCINE')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-      <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add vaccine</span>
+      <Plus size={13} className="text-[#9B9B9F]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add vaccine</span>
     </button>
   </section>
 );
@@ -2482,12 +2482,12 @@ const VetVisitsSection = ({ data, onOpenSheet }) => (
             <span className="text-[14px] font-semibold text-[#111]">{visit.reason}</span>
             <span className="text-[11px] text-[#C4BBB3]">{visit.date}</span>
           </div>
-          <span className="text-[11px] text-[#A09A94]">{visit.vet} · {visit.clinic}</span>
+          <span className="text-[11px] text-[#9B9B9F]">{visit.vet} · {visit.clinic}</span>
         </div>
       ))}
     </div>
     <button onClick={() => onOpenSheet('ADD_VET')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-      <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add visit</span>
+      <Plus size={13} className="text-[#9B9B9F]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add visit</span>
     </button>
   </section>
 );
@@ -2500,8 +2500,8 @@ const VetVisitsSummaryCard = ({ onOpenSheet }) => {
   const fmtDate = (s) => new Date(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   return (
     <button onClick={() => onOpenSheet('VET_VISITS_SECTION')} className="w-full mb-6 p-4 rounded-[18px] flex flex-col text-left active:scale-[0.98] transition-transform" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
-      <div className="flex justify-between items-center w-full mb-2"><span className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em]">Vet Visits</span>{needsFollowUp ? <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#FFF8F0] text-[#B07A3A] border border-[#F0E4D0]">Follow-up</span> : <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#F0F7ED] text-[#3F8D63] border border-[#D7EBDD]">Recent</span>}</div>
-      <div className="flex justify-between items-end w-full"><div className="flex-1 pr-3 min-w-0"><p className="text-[16px] font-bold text-[#111] leading-tight mb-0.5 truncate">{latestVisit.reason}</p><p className="text-[12px] text-[#A09A94] truncate">{latestVisit.vet} · {latestVisit.clinic}</p></div><div className="flex items-center gap-1 shrink-0"><span className="text-[12px] font-medium text-[#C4BBB3]">{fmtDate(latestVisit.date)}</span><ChevronRight size={14} className="text-[#D4CCC4]" /></div></div>
+      <div className="flex justify-between items-center w-full mb-2"><span className="text-[10px] font-bold text-[#9B9B9F] uppercase tracking-[0.06em]">Vet Visits</span>{needsFollowUp ? <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFF8F0] text-[#B07A3A] border border-[#F0E4D0]">Follow-up</span> : <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F0F7ED] text-[#3F8D63] border border-[#D7EBDD]">Recent</span>}</div>
+      <div className="flex justify-between items-end w-full"><div className="flex-1 pr-3 min-w-0"><p className="text-[16px] font-bold text-[#111] leading-tight mb-0.5 truncate">{latestVisit.reason}</p><p className="text-[12px] text-[#9B9B9F] truncate">{latestVisit.vet} · {latestVisit.clinic}</p></div><div className="flex items-center gap-1 shrink-0"><span className="text-[12px] font-medium text-[#C4BBB3]">{fmtDate(latestVisit.date)}</span><ChevronRight size={14} className="text-[#D4CCC4]" /></div></div>
     </button>
   );
 };
@@ -2523,12 +2523,12 @@ const MedicationsSection = ({ data, onMarkTaken, onOpenSheet }) => {
   return (
     <section className="pb-4">
       {activeMeds.length > 0 && <div className="mb-4">
-        <div className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-2">Active</div>
+        <div className="text-[10px] font-bold text-[#9B9B9F] uppercase tracking-[0.06em] mb-2">Active</div>
         {activeMeds.map((m, i) => (
           <div key={m.id} className={`flex items-center justify-between py-3 cursor-pointer active:opacity-60 ${i < activeMeds.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => onOpenSheet('MED_DETAILS', m)}>
             <div className="flex-1 min-w-0">
               <span className="text-[14px] font-semibold text-[#111] block">{m.name}</span>
-              <span className="text-[11px] text-[#A09A94]">{m.purpose} · {m.dosage}</span>
+              <span className="text-[11px] text-[#9B9B9F]">{m.purpose} · {m.dosage}</span>
             </div>
             {m.isActive && !m.takenToday && <button onClick={(e) => { e.stopPropagation(); onMarkTaken(m.id); }} className="text-[11px] font-semibold text-[#E85D2A] px-2.5 py-1 rounded-full active:scale-[0.95]" style={{ background: '#FFF5F0' }}>Take</button>}
             {m.takenToday && <Check size={14} className="text-[#3F8D63]" />}
@@ -2536,18 +2536,18 @@ const MedicationsSection = ({ data, onMarkTaken, onOpenSheet }) => {
         ))}
       </div>}
       {pastMeds.length > 0 && <div>
-        <div className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-2">Past</div>
+        <div className="text-[10px] font-bold text-[#9B9B9F] uppercase tracking-[0.06em] mb-2">Past</div>
         {pastMeds.map((m, i) => (
           <div key={m.id} className={`flex items-center justify-between py-3 opacity-50 ${i < pastMeds.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
             <div className="flex-1 min-w-0">
               <span className="text-[13px] font-semibold text-[#111] block">{m.name}</span>
-              <span className="text-[11px] text-[#A09A94]">{m.startDate} – {m.endDate}</span>
+              <span className="text-[11px] text-[#9B9B9F]">{m.startDate} – {m.endDate}</span>
             </div>
           </div>
         ))}
       </div>}
       <button onClick={() => onOpenSheet('ADD_MED')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-        <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add medication</span>
+        <Plus size={13} className="text-[#9B9B9F]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add medication</span>
       </button>
     </section>
   );
@@ -2562,7 +2562,7 @@ const AllergiesSection = ({ data, onOpenSheet }) => (
           <div key={a.id} className={`flex items-center justify-between py-3 cursor-pointer active:opacity-60 ${i < data.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => onOpenSheet('ALLERGY_DETAILS', a)}>
             <div className="flex-1 min-w-0">
               <span className="text-[14px] font-semibold text-[#111] block">{a.allergen}</span>
-              <span className="text-[11px] text-[#A09A94]">{a.reaction}</span>
+              <span className="text-[11px] text-[#9B9B9F]">{a.reaction}</span>
             </div>
             <span className="text-[10px] font-bold uppercase" style={{ color: sevColor }}>{a.severity}</span>
           </div>
@@ -2570,7 +2570,7 @@ const AllergiesSection = ({ data, onOpenSheet }) => (
       })}
     </div>
     <button onClick={() => onOpenSheet('ADD_ALLERGY')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-      <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add allergy</span>
+      <Plus size={13} className="text-[#9B9B9F]" /><span className="text-[12px] font-semibold text-[#6E6058]">Add allergy</span>
     </button>
   </section>
 );
@@ -2583,7 +2583,7 @@ const WeightTrackerSection = ({ data, idealRange, currentWeight, weightUnit, onO
       {/* Current */}
       <div className="flex items-baseline gap-2 mb-1">
         <span className="text-[24px] font-bold text-[#111]">{currentWeight}</span>
-        <span className="text-[13px] text-[#A09A94]">{weightUnit}</span>
+        <span className="text-[13px] text-[#9B9B9F]">{weightUnit}</span>
         <span className={`text-[10px] font-bold uppercase ml-1 ${isHealthy ? 'text-[#3F8D63]' : 'text-[#B07A3A]'}`}>{isHealthy ? 'Healthy' : 'Monitor'}</span>
       </div>
       <span className="text-[11px] text-[#C4BBB3] block mb-4">Ideal: {idealRange} {weightUnit}</span>
@@ -2593,12 +2593,12 @@ const WeightTrackerSection = ({ data, idealRange, currentWeight, weightUnit, onO
         {data.slice().reverse().map((entry, i) => (
           <div key={entry.id} className={`flex items-center justify-between py-2.5 ${i < data.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
             <span className="text-[14px] font-semibold text-[#111]">{entry.weight} {weightUnit}</span>
-            <span className="text-[11px] text-[#A09A94]">{entry.date}</span>
+            <span className="text-[11px] text-[#9B9B9F]">{entry.date}</span>
           </div>
         ))}
       </div>
       <button onClick={() => onOpenSheet('ADD_WEIGHT')} className="w-full mt-3 py-2.5 rounded-[12px] flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-        <Plus size={13} className="text-[#A09A94]" /><span className="text-[12px] font-semibold text-[#6E6058]">Log weight</span>
+        <Plus size={13} className="text-[#9B9B9F]" /><span className="text-[12px] font-semibold text-[#6E6058]">Log weight</span>
       </button>
     </section>
   );
@@ -2606,8 +2606,8 @@ const WeightTrackerSection = ({ data, idealRange, currentWeight, weightUnit, onO
 
 const HealthTile = ({ title, icon: Icon, iconColor, badge, primaryValue, secondaryValue, onClick, sparkline }) => (
   <button onClick={onClick} className="p-4 rounded-[18px] flex flex-col gap-3 text-left active:scale-[0.96] transition-transform duration-200 h-full w-full" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
-    <div className="flex justify-between items-start w-full"><div className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: '#F3EFEB' }}><Icon size={16} color={iconColor} strokeWidth={2} /></div>{badge && <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full leading-tight shrink-0 ${badge.type === 'error' ? 'bg-[#FFF5F0] text-[#E85D2A] border border-[#FFE0D0]' : badge.type === 'warning' ? 'bg-[#FFF8F0] text-[#B07A3A] border border-[#F0E4D0]' : 'bg-[#F0F7ED] text-[#3F8D63] border border-[#D7EBDD]'}`}>{badge.label}</span>}</div>
-    <div className="mt-1 flex-1 flex flex-col justify-end w-full min-w-0"><h4 className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-1 truncate">{title}</h4><p className="text-[17px] font-bold text-[#111] leading-tight mb-0.5 truncate">{primaryValue}</p>{sparkline ? <div className="w-full h-[20px] mt-1 relative"><svg viewBox="0 0 100 20" className="w-full h-full overflow-visible" preserveAspectRatio="none"><polyline points={sparkline} fill="none" stroke="#E85D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></div> : <p className="text-[12px] text-[#A09A94] truncate">{secondaryValue}</p>}</div>
+    <div className="flex justify-between items-start w-full"><div className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: '#F3EFEB' }}><Icon size={16} color={iconColor} strokeWidth={2} /></div>{badge && <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full leading-tight shrink-0 ${badge.type === 'error' ? 'bg-[#FFF5F0] text-[#E85D2A] border border-[#FFE0D0]' : badge.type === 'warning' ? 'bg-[#FFF8F0] text-[#B07A3A] border border-[#F0E4D0]' : 'bg-[#F0F7ED] text-[#3F8D63] border border-[#D7EBDD]'}`}>{badge.label}</span>}</div>
+    <div className="mt-1 flex-1 flex flex-col justify-end w-full min-w-0"><h4 className="text-[10px] font-bold text-[#9B9B9F] uppercase tracking-[0.06em] mb-1 truncate">{title}</h4><p className="text-[17px] font-bold text-[#111] leading-tight mb-0.5 truncate">{primaryValue}</p>{sparkline ? <div className="w-full h-[20px] mt-1 relative"><svg viewBox="0 0 100 20" className="w-full h-full overflow-visible" preserveAspectRatio="none"><polyline points={sparkline} fill="none" stroke="#E85D2A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></div> : <p className="text-[12px] text-[#9B9B9F] truncate">{secondaryValue}</p>}</div>
   </button>
 );
 
@@ -2640,8 +2640,8 @@ const FeedItem = ({ data, isLast, onOpenSheet }) => {
   return (
     <div onClick={openDetails} className="relative flex gap-3 cursor-pointer group px-1 py-1">
       {!isLast && <div className="absolute left-[21px] top-[36px] bottom-[-10px] w-[1px] bg-[#EDE8E2] z-0" />}
-      <div className="relative z-10 w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 group-active:scale-95 transition-transform" style={{ background: '#F3EFEB' }}><data.Icon size={15} className="text-[#A09A94]" /></div>
-      <div className="flex-1 flex justify-between items-start pb-5 group-active:opacity-70 transition-opacity"><div><h4 className="text-[14px] font-semibold text-[#111] leading-tight mb-0.5">{data.title}</h4><p className="text-[12px] text-[#A09A94]">{data.subtitle}</p></div><span className="text-[11px] font-medium text-[#C4BBB3] ml-2 shrink-0">{data.displayDate}</span></div>
+      <div className="relative z-10 w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0 group-active:scale-95 transition-transform" style={{ background: '#F3EFEB' }}><data.Icon size={15} className="text-[#9B9B9F]" /></div>
+      <div className="flex-1 flex justify-between items-start pb-5 group-active:opacity-70 transition-opacity"><div><h4 className="text-[14px] font-semibold text-[#111] leading-tight mb-0.5">{data.title}</h4><p className="text-[12px] text-[#9B9B9F]">{data.subtitle}</p></div><span className="text-[11px] font-medium text-[#C4BBB3] ml-2 shrink-0">{data.displayDate}</span></div>
     </div>
   );
 };
@@ -2661,7 +2661,7 @@ const RecentMedicalFeed = ({ pet, meds, onOpenSheet }) => {
         <h3 className="text-[15px] font-semibold text-[#111]">Recent</h3>
         <div className="flex items-center gap-3">
           <button onClick={() => onOpenSheet('ADD_RECORD')} className="w-6 h-6 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
-            <Plus size={13} className="text-[#A09A94]" />
+            <Plus size={13} className="text-[#9B9B9F]" />
           </button>
         </div>
       </div>
@@ -2676,7 +2676,7 @@ const RecentMedicalFeed = ({ pet, meds, onOpenSheet }) => {
               <div className="w-[3px] h-[28px] rounded-full shrink-0" style={{ background: dots[item.type] || '#C4BBB3' }} />
               <div className="flex-1 min-w-0">
                 <span className="text-[14px] font-semibold text-[#111] block truncate">{item.title}</span>
-                <span className="text-[11px] text-[#A09A94]">{item.subtitle}</span>
+                <span className="text-[11px] text-[#9B9B9F]">{item.subtitle}</span>
               </div>
               <span className="text-[11px] text-[#C4BBB3] shrink-0">{item.displayDate}</span>
             </div>
@@ -2694,7 +2694,7 @@ const RecentMedicalFeed = ({ pet, meds, onOpenSheet }) => {
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
               <div className="w-[5px] h-[5px] rounded-full" style={{ background: l.color }} />
-              <span className="text-[10px] text-[#A09A94]">{l.label}</span>
+              <span className="text-[10px] text-[#9B9B9F]">{l.label}</span>
             </div>
           ))}
         </div>
@@ -2727,11 +2727,11 @@ const HealthTab = ({ pet, meds, onMarkTaken, onOpenSheet }) => {
       {/* Weight — Crypto-style chart */}
       <div className="rounded-[20px] p-5 active:scale-[0.98] transition-transform cursor-pointer relative" onClick={() => onOpenSheet('WEIGHT_SECTION')} style={{ background: '#F7F5F2', border: '1px solid #EDE8E2', animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
         <button onClick={(e) => { e.stopPropagation(); onOpenSheet('ADD_WEIGHT'); }} className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform" style={{ background: '#F3EFEB' }}>
-          <Plus size={13} className="text-[#A09A94]" />
+          <Plus size={13} className="text-[#9B9B9F]" />
         </button>
         <div className="flex items-baseline gap-3 mb-1">
           <span className="text-[32px] font-bold text-[#111] tracking-[-1px] leading-none">{cw}</span>
-          <span className="text-[14px] font-medium text-[#A09A94]">{pet.weightUnit}</span>
+          <span className="text-[14px] font-medium text-[#9B9B9F]">{pet.weightUnit}</span>
           {(() => {
             const prev = history.length > 1 ? history[history.length - 2].weight : cw;
             const diff = (cw - prev).toFixed(1);
@@ -2785,7 +2785,7 @@ const HealthTab = ({ pet, meds, onMarkTaken, onOpenSheet }) => {
         {/* Date labels */}
         <div className="flex justify-between mt-1 px-1">
           {history.filter((_, i) => i === 0 || i === Math.floor(history.length / 2) || i === history.length - 1).map((d, i) => (
-            <span key={i} className="text-[9px] text-[#C4BBB3]">
+            <span key={i} className="text-[10px] text-[#C4BBB3]">
               {new Date(d.date).toLocaleDateString('en', { month: 'short', year: '2-digit' })}
             </span>
           ))}
@@ -2794,23 +2794,23 @@ const HealthTab = ({ pet, meds, onMarkTaken, onOpenSheet }) => {
 
       {/* Status pills row */}
       <div className="grid grid-cols-3 gap-2" style={{ animation: 'homeReveal 0.4s 0.1s cubic-bezier(0.22,1,0.36,1) both' }}>
-        <button onClick={() => onOpenSheet('VACCINATIONS_SECTION')} className="rounded-[14px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: vacStatus === 'Overdue' ? '#FFF5F0' : '#F7F5F2', border: `1px solid ${vacStatus === 'Overdue' ? '#FFE0D0' : '#EDE8E2'}` }}>
-          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: vacStatus === 'Overdue' ? '#FFE0D0' : '#F3EFEB' }}><Plus size={10} className={vacStatus === 'Overdue' ? 'text-[#E85D2A]' : 'text-[#A09A94]'} /></div>
-          <Syringe size={14} className={vacStatus === 'Overdue' ? 'text-[#E85D2A]' : 'text-[#A09A94]'} />
+        <button onClick={() => onOpenSheet('VACCINATIONS_SECTION')} className="rounded-[16px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: vacStatus === 'Overdue' ? '#FFF5F0' : '#F7F5F2', border: `1px solid ${vacStatus === 'Overdue' ? '#FFE0D0' : '#EDE8E2'}` }}>
+          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: vacStatus === 'Overdue' ? '#FFE0D0' : '#F3EFEB' }}><Plus size={10} className={vacStatus === 'Overdue' ? 'text-[#E85D2A]' : 'text-[#9B9B9F]'} /></div>
+          <Syringe size={14} className={vacStatus === 'Overdue' ? 'text-[#E85D2A]' : 'text-[#9B9B9F]'} />
           <div className="text-[12px] font-bold text-[#111] mt-2">{vacStatus === 'Overdue' ? 'Overdue' : nextVac.name}</div>
-          <div className="text-[10px] text-[#A09A94] mt-0.5">Vaccines</div>
+          <div className="text-[10px] text-[#9B9B9F] mt-0.5">Vaccines</div>
         </button>
-        <button onClick={() => onOpenSheet('MEDICATIONS_SECTION')} className="rounded-[14px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: medsDue ? '#FFF8F0' : '#F7F5F2', border: `1px solid ${medsDue ? '#F0E4D0' : '#EDE8E2'}` }}>
-          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: medsDue ? '#F0E4D0' : '#F3EFEB' }}><Plus size={10} className={medsDue ? 'text-[#B07A3A]' : 'text-[#A09A94]'} /></div>
-          <Pill size={14} className={medsDue ? 'text-[#B07A3A]' : 'text-[#A09A94]'} />
+        <button onClick={() => onOpenSheet('MEDICATIONS_SECTION')} className="rounded-[16px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: medsDue ? '#FFF8F0' : '#F7F5F2', border: `1px solid ${medsDue ? '#F0E4D0' : '#EDE8E2'}` }}>
+          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: medsDue ? '#F0E4D0' : '#F3EFEB' }}><Plus size={10} className={medsDue ? 'text-[#B07A3A]' : 'text-[#9B9B9F]'} /></div>
+          <Pill size={14} className={medsDue ? 'text-[#B07A3A]' : 'text-[#9B9B9F]'} />
           <div className="text-[12px] font-bold text-[#111] mt-2">{activeMeds.length} active</div>
-          <div className="text-[10px] text-[#A09A94] mt-0.5">Meds</div>
+          <div className="text-[10px] text-[#9B9B9F] mt-0.5">Meds</div>
         </button>
-        <button onClick={() => onOpenSheet('ALLERGIES_SECTION')} className="rounded-[14px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
-          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}><Plus size={10} className="text-[#A09A94]" /></div>
-          <AlertTriangle size={14} className="text-[#A09A94]" />
+        <button onClick={() => onOpenSheet('ALLERGIES_SECTION')} className="rounded-[16px] p-3 text-left active:scale-[0.96] transition-transform relative" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}><Plus size={10} className="text-[#9B9B9F]" /></div>
+          <AlertTriangle size={14} className="text-[#9B9B9F]" />
           <div className="text-[12px] font-bold text-[#111] mt-2">{MOCK_HEALTH_DATA.allergies.length} logged</div>
-          <div className="text-[10px] text-[#A09A94] mt-0.5">Allergies</div>
+          <div className="text-[10px] text-[#9B9B9F] mt-0.5">Allergies</div>
         </button>
       </div>
 
@@ -2830,7 +2830,7 @@ const SectionHeader = ({ title, actionIcon: ActionIcon, onAction }) => (
     <h3 className="text-[16px] font-semibold text-[#111111]">{title}</h3>
     {ActionIcon && onAction && (
       <button onClick={onAction} className="p-1.5 text-[#FF6B35] hover:bg-[#FF6B35]/10 rounded-full transition-colors">
-        <ActionIcon size={18} strokeWidth={2.5} />
+        <ActionIcon size={18} strokeWidth={2.4} />
       </button>
     )}
   </div>
@@ -2967,7 +2967,7 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
         {/* ═══ TOP: One big call button — Emergency Vet ═══ */}
         {(() => { const eVet = pet.vets.find(v => v.type === 'Emergency') || pet.vets[0]; return eVet ? (
           <button onClick={(e) => handleCall(e, eVet.phone, eVet.clinic)}
-            className="w-full rounded-[14px] px-4 py-3.5 text-left active:scale-[0.97] transition-transform mb-4" style={{ background: '#FFF5F0', border: '1px solid #FFE0D0', animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
+            className="w-full rounded-[16px] px-4 py-3.5 text-left active:scale-[0.97] transition-transform mb-4" style={{ background: '#FFF5F0', border: '1px solid #FFE0D0', animation: 'homeReveal 0.4s 0.05s cubic-bezier(0.22,1,0.36,1) both' }}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: '#FFE0D0' }}>
                 <Phone size={17} className="text-[#E85D2A]" />
@@ -2993,52 +2993,52 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
                     <span className="text-[13px] font-semibold text-[#111]">{a.name}</span>
                     <span className={`text-[10px] font-bold uppercase tracking-wide ${
                       a.severity === 'Severe' ? 'text-[#E85D2A]' :
-                      a.severity === 'Moderate' ? 'text-[#B07A3A]' : 'text-[#A09A94]'
+                      a.severity === 'Moderate' ? 'text-[#B07A3A]' : 'text-[#9B9B9F]'
                     }`}>{a.severity}</span>
                   </div>
                 ))}
               </div>
-            ) : <span className="text-[12px] text-[#A09A94]">None recorded</span>}
+            ) : <span className="text-[12px] text-[#9B9B9F]">None recorded</span>}
           </div>
 
           {/* Active meds — grouped in one card */}
-          <div className="rounded-[14px] p-3.5" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
-            <div className="text-[10px] font-bold text-[#A09A94] uppercase tracking-[0.06em] mb-2">Active Medications</div>
+          <div className="rounded-[16px] p-3.5" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+            <div className="text-[10px] font-bold text-[#9B9B9F] uppercase tracking-[0.06em] mb-2">Active Medications</div>
             {pet.medical.medications.filter(m => m.status !== 'Inactive').length > 0 ? (
               pet.medical.medications.filter(m => m.status !== 'Inactive').map((m, i, arr) => (
                 <div key={m.id} className={`flex items-center justify-between py-2 ${i < arr.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`}>
                   <span className="text-[14px] font-semibold text-[#111]">{m.name}</span>
-                  <span className="text-[11px] text-[#A09A94]">{m.dosage}</span>
+                  <span className="text-[11px] text-[#9B9B9F]">{m.dosage}</span>
                 </div>
               ))
-            ) : <span className="text-[12px] text-[#A09A94]">None active</span>}
+            ) : <span className="text-[12px] text-[#9B9B9F]">None active</span>}
           </div>
 
         </div>
 
         {/* ═══ BOTTOM: Microchip + Share ═══ */}
         <div className="pt-4 mt-auto space-y-3" style={{ animation: 'homeReveal 0.4s 0.15s cubic-bezier(0.22,1,0.36,1) both' }}>
-          <div className="flex items-center gap-3 py-2.5 rounded-[14px] px-4" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+          <div className="flex items-center gap-3 py-2.5 rounded-[16px] px-4" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
             <div className="flex-1 min-w-0">
-              <span className="text-[10px] text-[#A09A94] block">Microchip</span>
+              <span className="text-[10px] text-[#9B9B9F] block">Microchip</span>
               <span className="text-[13px] font-semibold text-[#111] font-mono tracking-wide">{pet.microchip}</span>
             </div>
-            <button onClick={() => handleCopy(pet.microchip, 'Microchip')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#F3EFEB' }}><Copy size={13} className="text-[#A09A94]" /></button>
+            <button onClick={() => handleCopy(pet.microchip, 'Microchip')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#F3EFEB' }}><Copy size={13} className="text-[#9B9B9F]" /></button>
           </div>
           <button onClick={() => setShareSheet(true)} className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
-            <Share2 size={13} className="text-[#A09A94]" /> <span className="text-[12px] font-semibold text-[#6E6058]">Share emergency info</span>
+            <Share2 size={13} className="text-[#9B9B9F]" /> <span className="text-[12px] font-semibold text-[#6E6058]">Share emergency info</span>
           </button>
 
           {/* Lost pet action */}
           <button onClick={() => showToast('Opening lost pet alert...')} className="w-full flex items-center justify-between py-3.5 active:opacity-70">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#FF3B30]/10 flex items-center justify-center"><MapPin size={16} className="text-[#FF3B30]" /></div>
+              <div className="w-9 h-9 rounded-full bg-[#E5484D]/10 flex items-center justify-center"><MapPin size={16} className="text-[#E5484D]" /></div>
               <div>
                 <span className="text-[14px] font-medium text-[#111] block">Report lost pet</span>
-                <span className="text-[12px] text-[#A09A94]">Alert nearby users</span>
+                <span className="text-[12px] text-[#9B9B9F]">Alert nearby users</span>
               </div>
             </div>
-            <ChevronRight size={16} className="text-[#A09A94]" />
+            <ChevronRight size={16} className="text-[#9B9B9F]" />
           </button>
         </div>
       </div>
@@ -3101,13 +3101,13 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
       {/* Share Sheet — minimal */}
       <CardModal isOpen={shareSheet} onClose={() => setShareSheet(false)} title="Share Emergency">
         <div className="pt-1">
-          <div className="w-[120px] h-[120px] mx-auto rounded-[14px] flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}>
-            <QrCode size={80} color="#111" strokeWidth={1.5} />
+          <div className="w-[120px] h-[120px] mx-auto rounded-[16px] flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}>
+            <QrCode size={80} color="#111" strokeWidth={1.8} />
           </div>
-          <p className="text-[11px] text-[#A09A94] text-center mb-4">Temporary read-only access to {pet.name}'s critical info.</p>
+          <p className="text-[11px] text-[#9B9B9F] text-center mb-4">Temporary read-only access to {pet.name}'s critical info.</p>
           <div className="flex items-center gap-2 px-3 py-2.5 rounded-[12px] mb-3" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
             <span className="text-[12px] font-medium text-[#111] flex-1 truncate font-mono">fylos.com/e/luna-89x2</span>
-            <button onClick={() => handleCopy('fylos.com/e/luna-89x2', 'Link')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#EDE8E2' }}><Copy size={12} className="text-[#A09A94]" /></button>
+            <button onClick={() => handleCopy('fylos.com/e/luna-89x2', 'Link')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#EDE8E2' }}><Copy size={12} className="text-[#9B9B9F]" /></button>
           </div>
           <p className="text-[10px] text-[#C4BBB3] text-center mb-4">Expires in 24 hours</p>
           <div className="space-y-2">
@@ -3121,19 +3121,19 @@ const EmergencyTab = ({ pet, showToast, navigateToTab, onUpdate, onOpenPublicVie
       <CardModal isOpen={moreSheet} onClose={() => setMoreSheet(false)} title="Actions">
         <div className="pt-1 space-y-0">
           <button onClick={() => { setMoreSheet(false); handleCall({stopPropagation:()=>{}}, pet.vets.find(v=>v.type==='Primary')?.phone || '', 'Primary Vet'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
-            <Stethoscope size={15} className="text-[#A09A94]" />
+            <Stethoscope size={15} className="text-[#9B9B9F]" />
             <span className="text-[14px] font-semibold text-[#111]">Call Primary Vet</span>
           </button>
           <button onClick={() => { setMoreSheet(false); handleCall({stopPropagation:()=>{}}, pet.emergencyContacts.find(c=>c.isPrimary)?.phone || '', 'Primary Contact'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
-            <Phone size={15} className="text-[#A09A94]" />
+            <Phone size={15} className="text-[#9B9B9F]" />
             <span className="text-[14px] font-semibold text-[#111]">Call Primary Contact</span>
           </button>
           <button onClick={() => { setMoreSheet(false); handleCopy(pet.microchip, 'Microchip'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
-            <Copy size={15} className="text-[#A09A94]" />
+            <Copy size={15} className="text-[#9B9B9F]" />
             <span className="text-[14px] font-semibold text-[#111]">Copy Microchip ID</span>
           </button>
           <button onClick={() => { setMoreSheet(false); handleCopy(pet.address, 'Address'); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
-            <MapPin size={15} className="text-[#A09A94]" />
+            <MapPin size={15} className="text-[#9B9B9F]" />
             <span className="text-[14px] font-semibold text-[#111]">Copy Home Address</span>
           </button>
         </div>
@@ -3197,7 +3197,7 @@ const PublicEmergencyViewer = ({ pet, onClose }) => {
               {pet.medical.allergies.map(a => (
                 <div key={a.id} className="flex justify-between text-[15px] font-medium text-[#111111]">
                   <span>{a.name}</span>
-                  <span className={a.severity === 'Severe' ? 'text-[#FF3B30]' : 'text-[#FF9500]'}>{a.severity}</span>
+                  <span className={a.severity === 'Severe' ? 'text-[#E5484D]' : 'text-[#FF9500]'}>{a.severity}</span>
                 </div>
               ))}
             </div>
@@ -3228,7 +3228,7 @@ const RadioList = ({ options, value, onChange }) => (
       <button 
         key={opt.id} 
         onClick={() => onChange(opt.id)} 
-        className={`flex items-center justify-between w-full p-4 rounded-[14px] transition-all duration-200 active:scale-[0.98] border ${
+        className={`flex items-center justify-between w-full p-4 rounded-[16px] transition-all duration-200 active:scale-[0.98] border ${
           value === opt.id ? 'bg-[#FF6B35]/5 border-[#FF6B35]/30' : 'bg-[#F7F7F8] border-transparent hover:bg-black/5'
         }`}
       >
@@ -3257,13 +3257,13 @@ const ShareTab = ({ pet, shares, openSheet, onNavigateToFamily }) => {
     <div className="px-5 py-5 flex flex-col" style={{ minHeight: 'calc(100% - 80px)' }}>
       {/* Share button — prominent */}
       <button onClick={() => openSheet('link')}
-        className="w-full rounded-[14px] px-4 py-4 flex items-center gap-3 active:scale-[0.97] transition-transform mb-2" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
+        className="w-full rounded-[16px] px-4 py-4 flex items-center gap-3 active:scale-[0.97] transition-transform mb-2" style={{ background: '#F7F5F2', border: '1px solid #EDE8E2' }}>
         <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: '#F3EFEB' }}>
           <Share2 size={17} className="text-[#E85D2A]" />
         </div>
         <div className="flex-1 text-left">
           <div className="text-[14px] font-semibold text-[#111]">Share {pet.name}'s profile</div>
-          <div className="text-[11px] text-[#A09A94] mt-0.5">Via link or QR code</div>
+          <div className="text-[11px] text-[#9B9B9F] mt-0.5">Via link or QR code</div>
         </div>
         <ChevronRight size={15} className="text-[#D4CCC4]" />
       </button>
@@ -3277,7 +3277,7 @@ const ShareTab = ({ pet, shares, openSheet, onNavigateToFamily }) => {
               <Avatar src={share.avatar} initials={share.name.charAt(0)} size={32} />
               <div className="flex-1 min-w-0">
                 <span className="text-[13px] font-semibold text-[#111] truncate block">{share.name}</span>
-                <span className="text-[11px] text-[#A09A94]">{share.role}</span>
+                <span className="text-[11px] text-[#9B9B9F]">{share.role}</span>
               </div>
               <button onClick={() => openSheet('details', share)} className="text-[11px] font-medium text-[#E85D2A] active:opacity-70 shrink-0">Edit</button>
             </div>
@@ -3364,7 +3364,7 @@ const PetListScreen = ({ pets, onSelectPet }) => (
                 {/* Info */}
                 <div className="flex-1 min-w-0 py-0.5">
                   <h3 className="text-[18px] font-bold text-[#111] tracking-[-0.2px]">{pet.name}</h3>
-                  <p className="text-[13px] text-[#A09A94] mt-0.5">{pet.breed} · {pet.age} yrs</p>
+                  <p className="text-[13px] text-[#9B9B9F] mt-0.5">{pet.breed} · {pet.age} yrs</p>
                   <div className="flex items-center gap-3 mt-2.5">
                     <div className="flex items-center gap-1 text-[11px] text-[#6E6058] font-medium">
                       <Scale size={11} className="text-[#C4BBB3]" />
@@ -3387,25 +3387,25 @@ const PetListScreen = ({ pets, onSelectPet }) => (
             className="w-full rounded-[16px] py-3.5 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
             style={{ background: '#F3EFEB', border: '1.5px dashed #DDD8D2', animation: `homeReveal 0.4s ${0.05 + pets.length * 0.1}s cubic-bezier(0.22,1,0.36,1) both` }}
           >
-            <Plus size={15} className="text-[#A09A94]" />
-            <span className="text-[13px] font-semibold text-[#A09A94]">Add another pet</span>
+            <Plus size={15} className="text-[#9B9B9F]" />
+            <span className="text-[13px] font-semibold text-[#9B9B9F]">Add another pet</span>
           </button>
 
           {/* ═══ FAMILY OVERVIEW ═══ */}
           <div className="pt-2" style={{ animation: `homeReveal 0.4s ${0.15 + pets.length * 0.1}s cubic-bezier(0.22,1,0.36,1) both` }}>
             {/* Stats row */}
             <div className="flex items-center gap-2 mb-5">
-              <div className="flex-1 rounded-[14px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
+              <div className="flex-1 rounded-[16px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
                 <div className="text-[16px] font-bold text-[#111]">{pets.length}</div>
-                <div className="text-[10px] font-medium text-[#A09A94] mt-0.5">Pets</div>
+                <div className="text-[10px] font-medium text-[#9B9B9F] mt-0.5">Pets</div>
               </div>
-              <div className="flex-1 rounded-[14px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
+              <div className="flex-1 rounded-[16px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
                 <div className="text-[16px] font-bold text-[#E85D2A]">45</div>
-                <div className="text-[10px] font-medium text-[#A09A94] mt-0.5">Day streak</div>
+                <div className="text-[10px] font-medium text-[#9B9B9F] mt-0.5">Day streak</div>
               </div>
-              <div className="flex-1 rounded-[14px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
+              <div className="flex-1 rounded-[16px] px-3 py-2.5 text-center" style={{ background: '#F3EFEB' }}>
                 <div className="text-[16px] font-bold text-[#111]">12</div>
-                <div className="text-[10px] font-medium text-[#A09A94] mt-0.5">Walks/mo</div>
+                <div className="text-[10px] font-medium text-[#9B9B9F] mt-0.5">Walks/mo</div>
               </div>
             </div>
 
@@ -3419,8 +3419,8 @@ const PetListScreen = ({ pets, onSelectPet }) => (
                   { img: 'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=200&h=200&fit=crop', label: 'Nap time' },
                 ].map((m, i) => (
                   <div key={i} className="shrink-0">
-                    <img src={m.img} alt={m.label} className="w-[100px] h-[100px] rounded-[14px] object-cover" />
-                    <p className="text-[10px] text-[#A09A94] font-medium mt-1.5 text-center">{m.label}</p>
+                    <img src={m.img} alt={m.label} className="w-[100px] h-[100px] rounded-[16px] object-cover" />
+                    <p className="text-[10px] text-[#9B9B9F] font-medium mt-1.5 text-center">{m.label}</p>
                   </div>
                 ))}
               </div>
@@ -3435,12 +3435,12 @@ const PetListScreen = ({ pets, onSelectPet }) => (
                   { pet: 'Leo', task: 'Grooming in 2 weeks', urgent: false, icon: Scissors },
                   { pet: 'Tao', task: 'Annual checkup next month', urgent: false, icon: Stethoscope },
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 px-3.5 py-2.5 rounded-[14px]" style={{ background: item.urgent ? '#FFF5F0' : '#F3EFEB', border: item.urgent ? '1px solid #FFE0D0' : '1px solid #EDE8E2' }}>
-                    <item.icon size={14} className={item.urgent ? 'text-[#E85D2A]' : 'text-[#A09A94]'} />
+                  <div key={i} className="flex items-center gap-3 px-3.5 py-2.5 rounded-[16px]" style={{ background: item.urgent ? '#FFF5F0' : '#F3EFEB', border: item.urgent ? '1px solid #FFE0D0' : '1px solid #EDE8E2' }}>
+                    <item.icon size={14} className={item.urgent ? 'text-[#E85D2A]' : 'text-[#9B9B9F]'} />
                     <div className="flex-1 min-w-0">
                       <span className="text-[13px] font-semibold text-[#111]">{item.task}</span>
                     </div>
-                    <span className="text-[11px] font-medium text-[#A09A94]">{item.pet}</span>
+                    <span className="text-[11px] font-medium text-[#9B9B9F]">{item.pet}</span>
                   </div>
                 ))}
               </div>
@@ -3689,35 +3689,35 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
       <CardModal isOpen={healthSheet.type === 'WEIGHT_SECTION'} onClose={closeHealthSheet} title="Weight Tracker"><div className="pt-2"><WeightTrackerSection data={MOCK_HEALTH_DATA.weightHistory} idealRange={MOCK_HEALTH_DATA.idealWeightRange} currentWeight={pet.weight} weightUnit={pet.weightUnit} onOpenSheet={openHealthSheet} /></div></CardModal>
       <CardModal isOpen={healthSheet.type === 'VACCINE_DETAILS'} onClose={closeHealthSheet} title="Vaccination">
         {healthSheet.data && <div className="space-y-0 pt-1">
-          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Vaccine</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.name}</span></div>
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Vaccine</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.name}</span></div>
           <div className="h-[1px] bg-[#EDE8E2]" />
-          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Given</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.lastDate}</span></div>
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Given</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.lastDate}</span></div>
           <div className="h-[1px] bg-[#EDE8E2]" />
-          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Next Due</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.nextDate}</span></div>
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Next Due</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.nextDate}</span></div>
           <div className="flex gap-2 pt-4"><Button variant="secondary" onClick={closeHealthSheet}>Close</Button><Button variant="primary" onClick={() => { showToast('Edit coming soon'); closeHealthSheet(); }}>Edit</Button></div>
         </div>}
       </CardModal>
       <CardModal isOpen={healthSheet.type === 'VET_DETAILS'} onClose={closeHealthSheet} title="Vet Visit">
         {healthSheet.data && <div className="pt-1">
           <h4 className="text-[15px] font-bold text-[#111]">{healthSheet.data.reason}</h4>
-          <p className="text-[12px] text-[#A09A94] mt-1 mb-3">{healthSheet.data.date} · {healthSheet.data.vet}</p>
+          <p className="text-[12px] text-[#9B9B9F] mt-1 mb-3">{healthSheet.data.date} · {healthSheet.data.vet}</p>
           <div className="rounded-[12px] p-3 space-y-2" style={{ background: '#F3EFEB' }}>
-            <div><span className="text-[10px] font-bold text-[#A09A94] uppercase tracking-wide block mb-0.5">Notes</span><span className="text-[13px] text-[#111]">{healthSheet.data.notes}</span></div>
+            <div><span className="text-[10px] font-bold text-[#9B9B9F] uppercase tracking-wide block mb-0.5">Notes</span><span className="text-[13px] text-[#111]">{healthSheet.data.notes}</span></div>
             <div className="h-[1px] bg-[#EDE8E2]" />
-            <div><span className="text-[10px] font-bold text-[#A09A94] uppercase tracking-wide block mb-0.5">Cost</span><span className="text-[13px] text-[#111]">{healthSheet.data.cost}</span></div>
+            <div><span className="text-[10px] font-bold text-[#9B9B9F] uppercase tracking-wide block mb-0.5">Cost</span><span className="text-[13px] text-[#111]">{healthSheet.data.cost}</span></div>
           </div>
           <Button variant="secondary" onClick={closeHealthSheet} className="mt-4">Close</Button>
         </div>}
       </CardModal>
       <CardModal isOpen={healthSheet.type === 'MED_DETAILS'} onClose={closeHealthSheet} title="Medication">
         {healthSheet.data && <div className="space-y-0 pt-1">
-          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Name</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.name}</span></div>
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Name</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.name}</span></div>
           <div className="h-[1px] bg-[#EDE8E2]" />
-          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Purpose</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.purpose}</span></div>
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Purpose</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.purpose}</span></div>
           <div className="h-[1px] bg-[#EDE8E2]" />
-          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Dosage</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.dosage}</span></div>
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Dosage</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.dosage}</span></div>
           <div className="h-[1px] bg-[#EDE8E2]" />
-          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Frequency</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.frequency}</span></div>
+          <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Frequency</span><span className="text-[13px] font-semibold text-[#111]">{healthSheet.data.frequency}</span></div>
           <Button variant="secondary" onClick={closeHealthSheet} className="mt-3">Close</Button>
         </div>}
       </CardModal>
@@ -3737,9 +3737,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
       </CardModal>
       <CardModal isOpen={['ADD_VACCINE','ADD_VET','ADD_MED','ADD_ALLERGY','ADD_WEIGHT'].includes(healthSheet.type)} onClose={closeHealthSheet} title="Add Entry">
         <div className="text-center py-4">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: '#F3EFEB' }}><AlertCircle size={22} className="text-[#A09A94]" /></div>
+          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: '#F3EFEB' }}><AlertCircle size={22} className="text-[#9B9B9F]" /></div>
           <h3 className="text-[15px] font-semibold text-[#111]">Coming Soon</h3>
-          <p className="text-[13px] text-[#A09A94] mt-1 px-2">This feature will be available in the next update.</p>
+          <p className="text-[13px] text-[#9B9B9F] mt-1 px-2">This feature will be available in the next update.</p>
           <Button variant="primary" onClick={closeHealthSheet} className="mt-4">Got it</Button>
         </div>
       </CardModal>
@@ -3784,15 +3784,15 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
       <CardModal isOpen={shareActiveSheet === 'add'} onClose={closeShareSheet} title="Share">
         <div className="space-y-2 pt-1">
           <button onClick={() => openShareSheet('qr')} className="w-full flex items-center gap-3 py-3 active:opacity-60 transition-opacity text-left border-b border-[#EDE8E2]">
-            <QrCode size={16} className="text-[#A09A94]" />
+            <QrCode size={16} className="text-[#9B9B9F]" />
             <span className="text-[14px] font-semibold text-[#111]">QR Code</span>
           </button>
           <button onClick={() => openShareSheet('link')} className="w-full flex items-center gap-3 py-3 active:opacity-60 transition-opacity text-left border-b border-[#EDE8E2]">
-            <LinkIcon size={16} className="text-[#A09A94]" />
+            <LinkIcon size={16} className="text-[#9B9B9F]" />
             <span className="text-[14px] font-semibold text-[#111]">Share Link</span>
           </button>
           <button onClick={() => { showToast('Coming soon'); closeShareSheet(); }} className="w-full flex items-center gap-3 py-3 active:opacity-60 transition-opacity text-left">
-            <Mail size={16} className="text-[#A09A94]" />
+            <Mail size={16} className="text-[#9B9B9F]" />
             <span className="text-[14px] font-semibold text-[#111]">Email Invite</span>
           </button>
         </div>
@@ -3808,9 +3808,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
           ) : (
             <div className="text-center">
               <div className="w-[160px] h-[160px] mx-auto rounded-[16px] flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}>
-                <QrCode size={120} color="#111" strokeWidth={1.5} />
+                <QrCode size={120} color="#111" strokeWidth={1.8} />
               </div>
-              <p className="text-[11px] text-[#A09A94] mb-4">Expires in {EXPIRY_OPTIONS.find(o => o.value === shareConfig.expiry)?.label}</p>
+              <p className="text-[11px] text-[#9B9B9F] mb-4">Expires in {EXPIRY_OPTIONS.find(o => o.value === shareConfig.expiry)?.label}</p>
               <div className="flex gap-2">
                 <Button variant="secondary" onClick={() => { showToast('Saved'); closeShareSheet(); }}>Save</Button>
                 <Button variant="primary" onClick={() => { showToast('Sharing...'); closeShareSheet(); }}>Share</Button>
@@ -3825,9 +3825,9 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
           <Select label="Expires in" options={EXPIRY_OPTIONS} value={shareConfig.expiry} onChange={e => setShareConfig({ ...shareConfig, expiry: e.target.value })} />
           <div className="flex items-center gap-2 px-3 py-2.5 rounded-[12px]" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }}>
             <span className="text-[13px] font-medium text-[#111] flex-1 truncate font-mono">fylos.app/s/lx89q2m</span>
-            <button onClick={() => handleCopyLink('fylos.app/s/lx89q2m')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#EDE8E2' }}><Copy size={13} className="text-[#A09A94]" /></button>
+            <button onClick={() => handleCopyLink('fylos.app/s/lx89q2m')} className="p-1.5 rounded-full active:scale-[0.9]" style={{ background: '#EDE8E2' }}><Copy size={13} className="text-[#9B9B9F]" /></button>
           </div>
-          <p className="text-[11px] text-[#A09A94]">Anyone with this link can view {pet.name}'s profile until it expires.</p>
+          <p className="text-[11px] text-[#9B9B9F]">Anyone with this link can view {pet.name}'s profile until it expires.</p>
           <Button variant="primary" onClick={() => { showToast('Sharing...'); closeShareSheet(); }}>Share Link</Button>
         </div>
       </CardModal>
@@ -3839,12 +3839,12 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
               <Avatar src={selectedShare.avatar} initials={selectedShare.name.charAt(0)} size={40} />
               <div>
                 <h3 className="text-[15px] font-bold text-[#111]">{selectedShare.name}</h3>
-                <p className="text-[12px] text-[#A09A94]">{selectedShare.role} · Added {selectedShare.added}</p>
+                <p className="text-[12px] text-[#9B9B9F]">{selectedShare.role} · Added {selectedShare.added}</p>
               </div>
             </div>
             <div className="space-y-0 mb-4">
-              <div className="flex justify-between py-2.5 border-b border-[#EDE8E2]"><span className="text-[12px] text-[#A09A94]">Permission</span><span className="text-[13px] font-semibold text-[#111]">{selectedShare.permission}</span></div>
-              <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#A09A94]">Last accessed</span><span className="text-[13px] font-semibold text-[#111]">Today</span></div>
+              <div className="flex justify-between py-2.5 border-b border-[#EDE8E2]"><span className="text-[12px] text-[#9B9B9F]">Permission</span><span className="text-[13px] font-semibold text-[#111]">{selectedShare.permission}</span></div>
+              <div className="flex justify-between py-2.5"><span className="text-[12px] text-[#9B9B9F]">Last accessed</span><span className="text-[13px] font-semibold text-[#111]">Today</span></div>
             </div>
             <div className="space-y-2">
               <Button variant="secondary" onClick={() => { openShareSheet('change', selectedShare); }}>Change permissions</Button>
@@ -3868,7 +3868,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
             <Avatar src={selectedShare?.avatar} size={32} />
             <div>
               <span className="text-[14px] font-semibold text-[#111]">{selectedShare?.name}</span>
-              <span className="text-[11px] text-[#A09A94] block">Current: {selectedShare?.permission}</span>
+              <span className="text-[11px] text-[#9B9B9F] block">Current: {selectedShare?.permission}</span>
             </div>
           </div>
           <div className="mb-4">
@@ -3883,7 +3883,7 @@ const PetProfileScreen = ({ pet, onUpdate, showToast, onOpenPublicView, onNaviga
 
       <CardModal isOpen={shareActiveSheet === 'revoke' && !!selectedShare} onClose={closeShareSheet} title="Revoke access">
         <div className="text-center pt-2">
-          <p className="text-[13px] text-[#A09A94] mb-4">{selectedShare?.name} will lose access to {pet.name}'s profile.</p>
+          <p className="text-[13px] text-[#9B9B9F] mb-4">{selectedShare?.name} will lose access to {pet.name}'s profile.</p>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={() => openShareSheet('details', selectedShare)}>Cancel</Button>
             <Button variant="destructive" onClick={handleRevokeShare}>Revoke</Button>
@@ -4225,18 +4225,18 @@ const SafetyAlertPopup = ({ alerts, onClose, onMoreInfo, onAcknowledge, onConfir
                 {/* Header */}
                 <div className="pt-4 px-4 pb-3 flex items-start gap-3">
                   <span className="w-9 h-9 rounded-full bg-[#FFEBEA] flex items-center justify-center shrink-0">
-                    <AlertTriangle size={17} className="text-[#FF3B30]" strokeWidth={2.2} />
+                    <AlertTriangle size={17} className="text-[#E5484D]" strokeWidth={2.2} />
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="text-[15.5px] font-bold text-[#111] leading-[1.2]">{alert.title}</div>
-                    <div className="text-[11px] text-[#A09A94] mt-0.5">Reported {timeAgo}</div>
+                    <div className="text-[11px] text-[#9B9B9F] mt-0.5">Reported {timeAgo}</div>
                   </div>
                   <button
                     onClick={onClose}
                     aria-label="Close"
                     className="w-8 h-8 -mt-1 -mr-1 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all shrink-0"
                   >
-                    <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+                    <X size={16} className="text-[#9B9B9F]" strokeWidth={2} />
                   </button>
                 </div>
 
@@ -4252,7 +4252,7 @@ const SafetyAlertPopup = ({ alerts, onClose, onMoreInfo, onAcknowledge, onConfir
                         background: 'repeating-linear-gradient(135deg, #EDE7DE 0 12px, #F3EFEB 12px 24px)',
                       }}
                     >
-                      <span className="text-[10px] font-mono text-[#A09A94] bg-[#F7F5F2]/70 px-1.5 py-0.5 rounded">Reporter photo</span>
+                      <span className="text-[10px] font-mono text-[#9B9B9F] bg-[#F7F5F2]/70 px-1.5 py-0.5 rounded">Reporter photo</span>
                     </div>
                   )}
                 </div>
@@ -4260,9 +4260,9 @@ const SafetyAlertPopup = ({ alerts, onClose, onMoreInfo, onAcknowledge, onConfir
                 {/* Body */}
                 <div className="px-4 pb-3">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <MapPin size={13} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                    <MapPin size={13} className="text-[#9B9B9F] shrink-0" strokeWidth={2} />
                     <span className="text-[12.5px] font-semibold text-[#111]">{alert.area}</span>
-                    <span className="text-[11.5px] text-[#A09A94]">· {distanceLabel}</span>
+                    <span className="text-[11.5px] text-[#9B9B9F]">· {distanceLabel}</span>
                   </div>
                   {alert.description && (
                     <p className="text-[12.5px] leading-[1.5] text-[#3A3530]">{alert.description}</p>
@@ -4282,7 +4282,7 @@ const SafetyAlertPopup = ({ alerts, onClose, onMoreInfo, onAcknowledge, onConfir
                       className="flex flex-col items-center gap-1 py-2 rounded-[12px] active:scale-[0.97] transition-transform"
                       style={{ background: '#F3EFEB' }}
                     >
-                      <a.icon size={15} className="text-[#111]" strokeWidth={1.9} />
+                      <a.icon size={15} className="text-[#111]" strokeWidth={2} />
                       <span className="text-[11.5px] font-semibold text-[#111]">{a.label}</span>
                     </button>
                   ))}
@@ -4422,7 +4422,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
               aria-label="Close"
               className="w-8 h-8 -mt-1 -mr-1 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all"
             >
-              <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+              <X size={16} className="text-[#9B9B9F]" strokeWidth={2} />
             </button>
           </div>
         ) : (
@@ -4473,7 +4473,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
             {/* Top-left LIVE pill */}
             <div className="absolute top-2.5 left-2.5 flex items-center gap-1 bg-white/92 backdrop-blur-sm px-2 py-1 rounded-full pointer-events-none">
               <span className="w-1.5 h-1.5 rounded-full bg-[#3F8D63]" style={{ animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-[#3F8D63]">Live · {verb}</span>
+              <span className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#3F8D63]">Live · {verb}</span>
             </div>
             {/* Top-right X (stops propagation so it doesn't trigger Full walk) */}
             <button
@@ -4554,7 +4554,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
               <span className="text-[11px] font-semibold text-[#111]">
                 {isSitting ? `${minutesElapsed} min in` : `${minutesElapsed} min walked`}
               </span>
-              <span className="text-[11px] text-[#A09A94]">~{remaining} min left</span>
+              <span className="text-[11px] text-[#9B9B9F]">~{remaining} min left</span>
             </div>
           </div>
 
@@ -4580,7 +4580,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
                 ]
             ).map((s) => (
               <div key={s.label} className="rounded-[12px] py-2 px-2.5 text-center" style={{ background: '#F3EFEB' }}>
-                <div className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-[#A09A94]">{s.label}</div>
+                <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[#9B9B9F]">{s.label}</div>
                 <div className="text-[13px] font-bold text-[#111] mt-0.5 tabular-nums">{s.value}</div>
               </div>
             ))}
@@ -4649,7 +4649,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
             return (
               <div className="px-4 mb-3">
                 {/* Section header — name + position indicator */}
-                <h4 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#A09A94] mb-2">
+                <h4 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9B9B9F] mb-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#3F8D63]" style={{ animation: 'fy-livePulse 1.6s ease-in-out infinite' }} />
                   <span>Latest from {service.provider.name.split(' ')[0]}</span>
                   {msgHasMore && (
@@ -4664,7 +4664,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
 
                 {/* Carousel track */}
                 <div
-                  className="rounded-[14px] overflow-hidden select-none"
+                  className="rounded-[16px] overflow-hidden select-none"
                   style={{
                     border: '1px solid #EDE8E2',
                     boxShadow: '0 1px 2px rgba(60,30,15,0.03)',
@@ -4697,7 +4697,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
                             className="w-5 h-5 rounded-full object-cover shrink-0"
                           />
                           <span className="text-[11px] font-semibold text-[#111]">{service.provider.name.split(' ')[0]}</span>
-                          <span className="text-[10.5px] text-[#A09A94] ml-auto">{fmtAgo(u.receivedAtMs)}</span>
+                          <span className="text-[10.5px] text-[#9B9B9F] ml-auto">{fmtAgo(u.receivedAtMs)}</span>
                         </div>
                         {/* Content area — fixed 190px so every card (and
                             the whole popup) stays the same size whether
@@ -4766,7 +4766,7 @@ const LiveServicePopup = ({ service, pets, onClose, onMessage, onCall, onLiveMap
                 className="flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] active:scale-[0.97] transition-transform"
                 style={{ background: '#F3EFEB' }}
               >
-                <a.icon size={15} className="text-[#111]" strokeWidth={1.9} />
+                <a.icon size={15} className="text-[#111]" strokeWidth={2} />
                 <span className="text-[12.5px] font-semibold text-[#111]">{a.label}</span>
               </button>
             ))}
@@ -4824,14 +4824,14 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
         <div className="px-4 pt-3.5 pb-1 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Phone size={11} className="text-[#E85D2A]" strokeWidth={2.4} />
-            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#A09A94]">Vet hotline</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#9B9B9F]">Vet hotline</span>
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
             className="w-7 h-7 -mt-1 -mr-1 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all"
           >
-            <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+            <X size={16} className="text-[#9B9B9F]" strokeWidth={2} />
           </button>
         </div>
 
@@ -4846,7 +4846,7 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
                 <div className="text-[17px] font-bold text-[#111] leading-tight">{vet.name}</div>
                 <div className="text-[15px] font-semibold text-[#111] tabular-nums mt-1.5">{vet.phone}</div>
                 {vet.hours && (
-                  <div className="text-[11.5px] text-[#A09A94] mt-0.5">{vet.hours}</div>
+                  <div className="text-[11.5px] text-[#9B9B9F] mt-0.5">{vet.hours}</div>
                 )}
 
                 {/* Status pill — green dot when open, gray when closed.
@@ -4855,13 +4855,13 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
                   <div className="mt-2 flex items-center gap-1.5">
                     <span
                       className="inline-block w-1.5 h-1.5 rounded-full"
-                      style={{ background: isOpen ? '#3F8D63' : '#A09A94' }}
+                      style={{ background: isOpen ? '#3F8D63' : '#9B9B9F' }}
                     />
-                    <span className={`text-[11.5px] font-semibold ${isOpen ? 'text-[#3F8D63]' : 'text-[#A09A94]'}`}>
+                    <span className={`text-[11.5px] font-semibold ${isOpen ? 'text-[#3F8D63]' : 'text-[#9B9B9F]'}`}>
                       {statusLabel}
                     </span>
                     {vet.isEmergencyLine && (
-                      <span className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-[#E85D2A] ml-1 px-1.5 py-0.5 rounded-full" style={{ background: '#FFEDE3' }}>
+                      <span className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#E85D2A] ml-1 px-1.5 py-0.5 rounded-full" style={{ background: '#FFEDE3' }}>
                         Emergency
                       </span>
                     )}
@@ -4870,7 +4870,7 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
 
                 <button
                   onClick={onCall}
-                  className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-[14px] text-white active:scale-[0.98] transition-transform"
+                  className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-[16px] text-white active:scale-[0.98] transition-transform"
                   style={{ background: '#E85D2A', boxShadow: '0 2px 10px rgba(232,93,42,0.22)' }}
                 >
                   <Phone size={15} strokeWidth={2.4} />
@@ -4883,7 +4883,7 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
                 {showEmergencyFallback && (
                   <button
                     onClick={onFindNearby}
-                    className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-[14px] text-[#111] active:scale-[0.98] transition-transform"
+                    className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-[16px] text-[#111] active:scale-[0.98] transition-transform"
                     style={{ background: '#F3EFEB' }}
                   >
                     <Search size={13} className="text-[#111]" strokeWidth={2.2} />
@@ -4893,7 +4893,7 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
 
                 <button
                   onClick={onAddVet}
-                  className="text-[11px] text-[#A09A94] mt-2.5 mx-auto block active:opacity-70 hover:text-[#6E6058]"
+                  className="text-[11px] text-[#9B9B9F] mt-2.5 mx-auto block active:opacity-70 hover:text-[#6E6058]"
                 >
                   Change vet
                 </button>
@@ -4909,7 +4909,7 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
             </p>
             <button
               onClick={onAddVet}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-[14px] mb-2 text-white active:scale-[0.98] transition-transform"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-[16px] mb-2 text-white active:scale-[0.98] transition-transform"
               style={{ background: '#E85D2A', boxShadow: '0 2px 10px rgba(232,93,42,0.22)' }}
             >
               <Plus size={15} strokeWidth={2.4} />
@@ -4917,7 +4917,7 @@ const VetHotlinePopup = ({ vet, onClose, onCall, onAddVet, onFindNearby }) => {
             </button>
             <button
               onClick={onFindNearby}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-[14px] text-[#111] active:scale-[0.98] transition-transform"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-[16px] text-[#111] active:scale-[0.98] transition-transform"
               style={{ background: '#F3EFEB' }}
             >
               <Search size={14} className="text-[#111]" strokeWidth={2.2} />
@@ -5078,7 +5078,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
             aria-label="Close"
             className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-black/[0.04] active:scale-95 transition-all"
           >
-            <X size={16} className="text-[#A09A94]" strokeWidth={2} />
+            <X size={16} className="text-[#9B9B9F]" strokeWidth={2} />
           </button>
         </div>
 
@@ -5112,7 +5112,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                     <button
                       key={pet.id}
                       onClick={() => onPetTap(pet.id)}
-                      className="flex flex-col items-center gap-1.5 py-2.5 rounded-[14px] transition-all active:scale-[0.97]"
+                      className="flex flex-col items-center gap-1.5 py-2.5 rounded-[16px] transition-all active:scale-[0.97]"
                       style={{
                         background: isSelected ? '#FFEDE3' : '#F3EFEB',
                         boxShadow: isSelected ? 'inset 0 0 0 1.5px #E85D2A' : 'none',
@@ -5147,7 +5147,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                         }}
                       >
                         <span className="w-8 h-8 rounded-full bg-white flex items-center justify-center shrink-0">
-                          <Pill size={14} className="text-[#111]" strokeWidth={1.9} />
+                          <Pill size={14} className="text-[#111]" strokeWidth={2} />
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="text-[13.5px] font-semibold text-[#111] truncate">{med.name}</div>
@@ -5157,7 +5157,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                     );
                   })}
                   {selectedPetIds.length > 1 && (
-                    <p className="text-[12px] text-[#A09A94] px-1 py-2">Pack medication — add a new entry for everyone.</p>
+                    <p className="text-[12px] text-[#9B9B9F] px-1 py-2">Pack medication — add a new entry for everyone.</p>
                   )}
                   <button
                     onClick={() => setAddingNewMed(true)}
@@ -5171,29 +5171,29 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
               ) : (
                 <div className="space-y-2.5">
                   <div>
-                    <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94]">Medication name</label>
+                    <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#9B9B9F]">Medication name</label>
                     <input
                       type="text"
                       autoFocus
                       value={customMedName}
                       onChange={(e) => setCustomMedName(e.target.value)}
                       placeholder="e.g. Apoquel"
-                      className="w-full mt-1 px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94]"
+                      className="w-full mt-1 px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#9B9B9F]"
                     />
                   </div>
                   <div>
-                    <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94]">Dose (optional)</label>
+                    <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#9B9B9F]">Dose (optional)</label>
                     <input
                       type="text"
                       value={customMedDose}
                       onChange={(e) => setCustomMedDose(e.target.value)}
                       placeholder="e.g. 16mg or 1 tablet"
-                      className="w-full mt-1 px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94]"
+                      className="w-full mt-1 px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#9B9B9F]"
                     />
                   </div>
                   <button
                     onClick={() => { setAddingNewMed(false); setCustomMedName(''); setCustomMedDose(''); }}
-                    className="text-[12px] font-semibold text-[#A09A94] active:opacity-70"
+                    className="text-[12px] font-semibold text-[#9B9B9F] active:opacity-70"
                   >
                     ← Pick from saved
                   </button>
@@ -5226,7 +5226,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                 })}
               </div>
               <div>
-                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94]">Custom</label>
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#9B9B9F]">Custom</label>
                 <div className="flex items-center gap-2 mt-1">
                   <input
                     type="number"
@@ -5252,10 +5252,10 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="e.g. Limping a bit on the left front paw after the walk…"
                 rows={4}
-                className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94] resize-none"
+                className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#9B9B9F] resize-none"
               />
               <div className="mt-3">
-                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94] mb-1.5 block">Tag (optional)</label>
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#9B9B9F] mb-1.5 block">Tag (optional)</label>
                 <div className="flex flex-wrap gap-1.5">
                   {NOTE_TAGS.map((tag) => {
                     const isSelected = noteTag === tag;
@@ -5284,7 +5284,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
               <h3 className="text-[18px] font-bold text-[#111] mb-1">{typeMeta.step3Title}</h3>
               <p className="text-[12.5px] text-[#6E6058] mb-4">Defaults to right now. Tap to edit.</p>
               <div className="mb-3">
-                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94] mb-1.5 block">Time</label>
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#9B9B9F] mb-1.5 block">Time</label>
                 <input
                   type="time"
                   value={logTime}
@@ -5293,13 +5293,13 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                 />
               </div>
               <div>
-                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#A09A94] mb-1.5 block">Note (optional)</label>
+                <label className="text-[10.5px] font-semibold uppercase tracking-wider text-[#9B9B9F] mb-1.5 block">Note (optional)</label>
                 <input
                   type="text"
                   value={extraNote}
                   onChange={(e) => setExtraNote(e.target.value)}
                   placeholder={type === 'medication' ? 'e.g. with food' : 'e.g. park, met other dogs'}
-                  className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#A09A94]"
+                  className="w-full px-3.5 py-2.5 rounded-[12px] bg-[#F3EFEB] border-none outline-none text-[13.5px] text-[#111] placeholder:text-[#9B9B9F]"
                 />
               </div>
             </>
@@ -5316,7 +5316,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                 (step === 2 && type === 'medication' && !canAdvanceMeds) ||
                 (step === 2 && type === 'note' && !canAdvanceNote)
               }
-              className="w-full py-3 rounded-[14px] text-[14.5px] font-bold transition-all"
+              className="w-full py-3 rounded-[16px] text-[14.5px] font-bold transition-all"
               style={{
                 background: (
                   (step === 1 && canAdvancePet) ||
@@ -5329,7 +5329,7 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
                   (step === 2 && type === 'medication' && canAdvanceMeds) ||
                   (step === 2 && type === 'walk') ||
                   (step === 2 && type === 'note' && canAdvanceNote)
-                ) ? '#FFFFFF' : '#A09A94',
+                ) ? '#FFFFFF' : '#9B9B9F',
                 boxShadow: (
                   (step === 1 && canAdvancePet) ||
                   (step === 2 && type === 'medication' && canAdvanceMeds) ||
@@ -5344,10 +5344,10 @@ const TrackLogPopup = ({ type, pets, savedMedsByPet, onClose, onSave, onPetStepC
             <button
               onClick={handleSave}
               disabled={!canSave}
-              className="w-full py-3 rounded-[14px] text-[14.5px] font-bold transition-all"
+              className="w-full py-3 rounded-[16px] text-[14.5px] font-bold transition-all"
               style={{
                 background: canSave ? '#E85D2A' : '#EDE8E2',
-                color: canSave ? '#FFFFFF' : '#A09A94',
+                color: canSave ? '#FFFFFF' : '#9B9B9F',
                 boxShadow: canSave ? '0 2px 10px rgba(232,93,42,0.20)' : 'none',
               }}
             >
@@ -5706,33 +5706,34 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
         {/* ═══ 0. SAFETY RIBBON — single-line slim banner. Just enough
             signal to make the user tap; full detail lives behind the
             tap (danger-reports). Dismissable via X. ═══ */}
-        {safetyLive && !safetyRibbonDismissed && (
+        {/* One status slot: a live service outranks the safety ribbon. */}
+        {safetyLive && !safetyRibbonDismissed && !(MOCK_ACTIVE_SERVICE && MOCK_ACTIVE_SERVICE.petIds?.includes(displayPetId)) && (
           <div
             className="flex items-center gap-2.5 px-3 py-1.5 mb-2.5 rounded-full"
             style={{
-              background: 'rgba(255,59,48,0.08)',
-              border: '1px solid rgba(255,59,48,0.18)',
+              background: 'rgba(229,72,77,0.08)',
+              border: '1px solid rgba(229,72,77,0.18)',
               animation: 'homeReveal 0.4s cubic-bezier(0.22,1,0.36,1) both',
             }}
           >
             <span
               className="shrink-0 w-[7px] h-[7px] rounded-full"
-              style={{ background: '#FF3B30', animation: 'fy-livePulse 1.6s ease-in-out infinite' }}
+              style={{ background: '#E5484D', animation: 'fy-livePulse 1.6s ease-in-out infinite' }}
             />
             <button
               onClick={() => setSafetyPopupOpen(true)}
               className="flex-1 min-w-0 text-left active:opacity-70 truncate"
             >
               <span className="text-[12.5px] font-semibold text-[#111] whitespace-nowrap">Safety alert</span>
-              <span className="text-[12.5px] text-[#A09A94] whitespace-nowrap"> · Nearby · {MOCK_LIVE_SAFETY_ALERTS[0]?.area?.split(' ')[0] || 'Seefeld'}{MOCK_LIVE_SAFETY_ALERTS.length > 1 ? ` +${MOCK_LIVE_SAFETY_ALERTS.length - 1}` : ''}</span>
+              <span className="text-[12.5px] text-[#9B9B9F] whitespace-nowrap"> · Nearby · {MOCK_LIVE_SAFETY_ALERTS[0]?.area?.split(' ')[0] || 'Seefeld'}{MOCK_LIVE_SAFETY_ALERTS.length > 1 ? ` +${MOCK_LIVE_SAFETY_ALERTS.length - 1}` : ''}</span>
             </button>
-            <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+            <ChevronRight size={13} className="text-[#9B9B9F] shrink-0" />
             <button
               onClick={() => setSafetyRibbonDismissed(true)}
               aria-label="Dismiss safety alert"
               className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center active:scale-[0.9] transition-transform ml-0.5"
             >
-              <X size={12} className="text-[#A09A94]" />
+              <X size={12} className="text-[#9B9B9F]" />
             </button>
           </div>
         )}
@@ -5789,7 +5790,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 </span>
                 <span className="text-[12.5px] text-[#3F8D63] whitespace-nowrap"> · {minutes} min</span>
               </div>
-              <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+              <ChevronRight size={13} className="text-[#9B9B9F] shrink-0" />
             </button>
           );
         })()}
@@ -5799,7 +5800,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           <div className="flex items-center justify-between gap-3">
             {/* Left — date label + greeting with coral name */}
             <div className="flex-1 min-w-0">
-              <div className="text-[11px] font-semibold text-[#A09A94] uppercase tracking-[0.14em] mb-1.5">
+              <div className="text-[11px] font-semibold text-[#9B9B9F] uppercase tracking-[0.14em] mb-1.5">
                 {(() => {
                   const d = new Date();
                   const wd = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
@@ -5883,9 +5884,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.18s cubic-bezier(0.22,1,0.36,1) both' }}>
               {/* Soft section title — small uppercase muted, count in coral on the right. */}
               <div className="flex items-end justify-between mb-3">
-                <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">Booked</h3>
+                <h3 className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em]">Booked</h3>
                 {filteredBookings.length > 0 && (
-                  <span className="text-[11px] font-semibold text-[#E85D2A] tabular-nums">
+                  <span className="text-[11px] font-semibold text-[#D14E1F] tabular-nums">
                     {filteredBookings.length} upcoming
                   </span>
                 )}
@@ -5897,13 +5898,13 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
                 >
                   <span className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: '#F3EFEB' }}>
-                    <Calendar size={14} className="text-[#A09A94]" strokeWidth={1.9} />
+                    <Calendar size={14} className="text-[#9B9B9F]" strokeWidth={2} />
                   </span>
                   <div className="flex-1 text-left min-w-0">
                     <div className="text-[13px] font-semibold text-[#111]">No bookings yet</div>
                     <div className="text-[11.5px] text-[#6E6058] mt-0.5">Find a walker or sitter for {selectedPet.name}</div>
                   </div>
-                  <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+                  <ChevronRight size={13} className="text-[#9B9B9F] shrink-0" />
                 </button>
               ) : null}
               {filteredBookings.length > 0 && (() => {
@@ -5973,14 +5974,14 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                         <div className="text-[14px] font-bold text-[#111] leading-tight truncate">
                           {b.service} · {providerName}
                         </div>
-                        <div className="text-[11.5px] font-semibold text-[#E85D2A] mt-0.5 leading-tight truncate">
+                        <div className="text-[11.5px] font-semibold text-[#D14E1F] mt-0.5 leading-tight truncate">
                           {dayLabel}
                           {staffLine && (
-                            <span className="ml-1.5 font-medium text-[#A09A94]">· {staffLine}</span>
+                            <span className="ml-1.5 font-medium text-[#9B9B9F]">· {staffLine}</span>
                           )}
                         </div>
                       </div>
-                      <span className="text-[12.5px] text-[#A09A94] tabular-nums shrink-0">{b.time}</span>
+                      <span className="text-[12.5px] text-[#9B9B9F] tabular-nums shrink-0">{b.time}</span>
                       <ChevronRight size={13} className="text-[#C4B5A6] shrink-0 ml-0.5" />
                     </button>
                   );
@@ -5991,7 +5992,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   onClick={() => setBookedExpanded(v => !v)}
                   className="flex items-center gap-1.5 mt-3 active:opacity-70 transition-opacity"
                 >
-                  <span className="text-[12.5px] font-semibold text-[#E85D2A]">
+                  <span className="text-[12.5px] font-semibold text-[#D14E1F]">
                     {bookedExpanded ? 'Show less' : `Show ${hiddenCount} more`}
                   </span>
                   {bookedExpanded
@@ -6041,7 +6042,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="text-[12.5px] font-semibold text-[#111]">You're all set for today</div>
-                    <div className="text-[11px] text-[#A09A94] mt-0.5">No meds or vaccines pending</div>
+                    <div className="text-[11px] text-[#9B9B9F] mt-0.5">No meds or vaccines pending</div>
                   </div>
                 </div>
               );
@@ -6156,14 +6157,14 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                     {isJustDone && <Check size={12} className="text-white" strokeWidth={3} />}
                   </span>
                   <div className="flex-1 min-w-0 text-left">
-                    <div className="text-[9.5px] font-bold uppercase tracking-[0.16em] text-[#E85D2A]">Next up</div>
+                    <div className="text-[10.5px] font-bold uppercase tracking-[0.16em] text-[#E85D2A]">Next up</div>
                     <div className={`text-[14px] font-bold mt-0.5 truncate transition-colors duration-200 ${
-                      isJustDone ? 'text-[#A09A94] line-through' : 'text-[#111]'
+                      isJustDone ? 'text-[#9B9B9F] line-through' : 'text-[#111]'
                     }`}>
                       {current.title}
                     </div>
                   </div>
-                  <span className="text-[12px] text-[#A09A94] tabular-nums shrink-0">{current.time}</span>
+                  <span className="text-[12px] text-[#9B9B9F] tabular-nums shrink-0">{current.time}</span>
                 </button>
                 {hasMore && !isJustDone && (
                   <div className="flex items-center justify-center gap-1.5 mt-2.5" aria-label={`${currentIdx + 1} of ${total} items`}>
@@ -6189,27 +6190,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             );
           })()}
 
-          {/* ═══ 6. TRACK — 3 pill quick-actions (Meds · Walk · Note) ═══ */}
-          <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.28s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Track</h3>
-            <div className="grid grid-cols-3 gap-2.5">
-              {[
-                { label: 'Meds', icon: Pill, type: 'medication' },
-                { label: 'Walk', icon: Footprints, type: 'walk' },
-                { label: 'Note', icon: FileText, type: 'note' },
-              ].map((a, i) => (
-                <button
-                  key={i}
-                  onClick={() => setTrackPopupType(a.type)}
-                  className="flex items-center justify-center gap-1.5 py-2.5 rounded-full bg-white active:scale-[0.96] transition-transform"
-                  style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
-                >
-                  <a.icon size={15} className="text-[#E85D2A]" strokeWidth={1.8} />
-                  <span className="text-[13px] font-semibold text-[#111]">+ {a.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* ═══ 7. EXPLORE — quick entries + secondary actions.
               Has its own section title so it visually splits from Track
@@ -6217,17 +6197,17 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               pills → dark Pro card → edge-to-edge Invite row.
               ═══ */}
           <div className="mb-6" style={{ animation: 'homeReveal 0.4s 0.32s cubic-bezier(0.22,1,0.36,1) both' }}>
-            <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-2.5">Explore</h3>
+            <h3 className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em] mb-2.5">Explore</h3>
 
             {/* 7a. Deep navigation tiles — uniform, neutral utility */}
             <div className="grid grid-cols-3 gap-2.5 mb-3">
               {[
                 { label: 'Bookings', icon: Calendar, onClick: () => onOpenBookings?.() },
-                { label: 'Calendar', icon: CalendarDays, onClick: () => onNavigate('journal') },
+                { label: 'Wallet', icon: Wallet, onClick: () => homeNavigate('/wallet') },
                 { label: 'Health', icon: Stethoscope, onClick: () => onOpenHealthRecords?.() },
               ].map((e, i) => (
                 <button key={i} onClick={e.onClick} className="flex flex-col items-center gap-1.5 py-3 rounded-[16px] bg-white active:scale-[0.96] transition-transform" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
-                  <e.icon size={18} className="text-[#E85D2A]" strokeWidth={1.9} />
+                  <e.icon size={18} className="text-[#E85D2A]" strokeWidth={2} />
                   <span className="text-[11px] font-semibold text-[#111]">{e.label}</span>
                 </button>
               ))}
@@ -6242,7 +6222,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[16px] bg-white active:scale-[0.97] transition-transform"
                 style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
               >
-                <Phone size={14} className="text-[#E5484D] shrink-0" strokeWidth={1.9} />
+                <Phone size={14} className="text-[#E5484D] shrink-0" strokeWidth={2} />
                 <span className="text-[12.5px] font-semibold text-[#111] truncate">Vet hotline</span>
               </button>
               <button
@@ -6250,7 +6230,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-[16px] bg-white active:scale-[0.97] transition-transform"
                 style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}
               >
-                <LifeBuoy size={14} className="text-[#E5484D] shrink-0" strokeWidth={1.9} />
+                <LifeBuoy size={14} className="text-[#E5484D] shrink-0" strokeWidth={2} />
                 <span className="text-[12.5px] font-semibold text-[#111] truncate">First aid</span>
               </button>
             </div>
@@ -6282,11 +6262,11 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               onClick={() => setInviteOpen(true)}
               className="w-full flex items-center justify-center gap-2.5 py-2.5 active:opacity-70 transition-opacity"
             >
-              <Gift size={14} className="text-[#A09A94] shrink-0" strokeWidth={1.8} />
+              <Gift size={14} className="text-[#9B9B9F] shrink-0" strokeWidth={1.8} />
               <span className="text-[12.5px] text-[#6E6058]">
                 Invite a friend and get <span className="font-bold text-[#E85D2A]">CHF 10</span> each
               </span>
-              <ArrowRight size={13} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+              <ArrowRight size={13} className="text-[#9B9B9F] shrink-0" strokeWidth={2} />
             </button>
           </div>
 
@@ -6326,7 +6306,7 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                         style={{ background: '#F3EFEB', animation: `fabIconBounce 0.35s ${0.05 + i * 0.04}s cubic-bezier(0.34, 1.56, 0.64, 1) both` }}
                       >
                         <div className="w-[40px] h-[40px] rounded-full bg-white flex items-center justify-center shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-                          <Icon size={18} className="text-[#111]" strokeWidth={1.75} />
+                          <Icon size={18} className="text-[#111]" strokeWidth={1.8} />
                         </div>
                         <span className="text-[12px] font-semibold text-[#6E6058]">{option.label}</span>
                       </button>
@@ -6350,18 +6330,18 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                 <div className="space-y-4">
                   {selectedQuickLogType === 'manual' && (
                     <div>
-                      <label className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-[0.1em] mb-2 block">Title</label>
+                      <label className="text-[12px] font-semibold text-[#9B9B9F] uppercase tracking-[0.1em] mb-2 block">Title</label>
                       <input
                         type="text"
                         placeholder="e.g. Training session"
                         value={quickLogCustomTitle}
                         onChange={(e) => setQuickLogCustomTitle(e.target.value)}
-                        className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none focus:border-[#E85D2A]/40 transition-colors"
+                        className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] placeholder:text-[#9B9B9F] outline-none focus:border-[#E85D2A]/40 transition-colors"
                       />
                     </div>
                   )}
                   <div>
-                    <label className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-[0.1em] mb-2 block">Time</label>
+                    <label className="text-[12px] font-semibold text-[#9B9B9F] uppercase tracking-[0.1em] mb-2 block">Time</label>
                     <input
                       type="time"
                       value={quickLogTime}
@@ -6382,9 +6362,9 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
                   <button
                     onClick={handleSaveQuickLog}
                     disabled={!quickLogTime || (selectedQuickLogType === 'manual' && !quickLogCustomTitle.trim())}
-                    className={`w-full py-3.5 rounded-[14px] text-[14px] font-semibold transition-all flex items-center justify-center ${
+                    className={`w-full py-3.5 rounded-[16px] text-[14px] font-semibold transition-all flex items-center justify-center ${
                       !quickLogTime || (selectedQuickLogType === 'manual' && !quickLogCustomTitle.trim())
-                        ? 'bg-[#EDE8E2] text-[#A09A94] cursor-not-allowed'
+                        ? 'bg-[#EDE8E2] text-[#9B9B9F] cursor-not-allowed'
                         : 'bg-[#111] text-white active:scale-[0.97] shadow-[0_4px_20px_rgba(0,0,0,0.12)]'
                     }`}
                   >
@@ -6417,21 +6397,21 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-[12px] font-semibold text-[#A09A94] uppercase tracking-[0.1em] mb-2 block">Medication name</label>
+                <label className="text-[12px] font-semibold text-[#9B9B9F] uppercase tracking-[0.1em] mb-2 block">Medication name</label>
                 <input
                   type="text"
                   placeholder="e.g. Heartworm chew"
                   value={medName}
                   onChange={(e) => setMedName(e.target.value)}
-                  className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none focus:border-[#E85D2A]/40 transition-colors"
+                  className="w-full bg-white border border-[#EDE8E2] rounded-[12px] px-4 py-3 text-[14px] text-[#111] placeholder:text-[#9B9B9F] outline-none focus:border-[#E85D2A]/40 transition-colors"
                 />
               </div>
               <button
                 onClick={() => { alert("Saved (mock)"); setMedSheetOpen(false); setMedName(''); }}
                 disabled={!medName.trim()}
-                className={`w-full py-3.5 rounded-[14px] text-[14px] font-semibold transition-all flex items-center justify-center ${
+                className={`w-full py-3.5 rounded-[16px] text-[14px] font-semibold transition-all flex items-center justify-center ${
                   !medName.trim()
-                    ? 'bg-[#EDE8E2] text-[#A09A94] cursor-not-allowed'
+                    ? 'bg-[#EDE8E2] text-[#9B9B9F] cursor-not-allowed'
                     : 'bg-[#111] text-white active:scale-[0.97] shadow-[0_4px_20px_rgba(0,0,0,0.12)]'
                 }`}
               >
@@ -6653,9 +6633,9 @@ const ServicesScreen = ({ onNavigate }) => {
       <div className="px-5 pb-8 pt-2">
 
         {/* Search bar */}
-        <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-[14px] mb-4 cursor-pointer active:scale-[0.99] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }} onClick={() => onNavigate && onNavigate('services/walking')}>
-          <Search size={15} className="text-[#A09A94]" />
-          <span className="text-[13px] text-[#A09A94]">Find walkers, sitters, vets...</span>
+        <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-[16px] mb-4 cursor-pointer active:scale-[0.99] transition-transform" style={{ background: '#F3EFEB', border: '1px solid #EDE8E2' }} onClick={() => onNavigate && onNavigate('services/walking')}>
+          <Search size={15} className="text-[#9B9B9F]" />
+          <span className="text-[13px] text-[#9B9B9F]">Find walkers, sitters, vets...</span>
         </div>
 
         {/* Categories — horizontal scroll with icons */}
@@ -6697,11 +6677,11 @@ const ServicesScreen = ({ onNavigate }) => {
                     <div className="flex items-center gap-1.5">
                       <span className="text-[14px] font-semibold text-[#111] truncate">{booking.providerLabel || booking.provider}</span>
                       <Star size={9} className="fill-[#E85D2A] text-[#E85D2A] shrink-0" />
-                      <span className="text-[11px] text-[#A09A94]">{booking.providerRating || '4.9'}</span>
+                      <span className="text-[11px] text-[#9B9B9F]">{booking.providerRating || '4.9'}</span>
                     </div>
-                    <span className="text-[11px] text-[#A09A94]">{booking.serviceSummary || booking.title} · {booking.scheduleLabel || booking.date}</span>
+                    <span className="text-[11px] text-[#9B9B9F]">{booking.serviceSummary || booking.title} · {booking.scheduleLabel || booking.date}</span>
                   </div>
-                  <span className={`h-[17px] px-2 rounded-full text-[9px] font-semibold border inline-flex items-center shrink-0 ${statusMeta.className}`}>{statusMeta.label}</span>
+                  <span className={`h-[17px] px-2 rounded-full text-[10px] font-semibold border inline-flex items-center shrink-0 ${statusMeta.className}`}>{statusMeta.label}</span>
                 </div>
               )})}
             </div>
@@ -6714,14 +6694,14 @@ const ServicesScreen = ({ onNavigate }) => {
           <div>
             {MOCK_PROVIDERS.map((provider, i) => (
               <div key={provider.id} className={`flex items-center gap-3 py-3 cursor-pointer active:opacity-60 ${i < MOCK_PROVIDERS.length - 1 ? 'border-b border-[#EDE8E2]' : ''}`} onClick={() => provider.id === 'provider_001' && onNavigate && onNavigate('provider_profile')}>
-                <img src={provider.avatar} alt={provider.name} className="w-[48px] h-[48px] rounded-[14px] object-cover shrink-0" />
+                <img src={provider.avatar} alt={provider.name} className="w-[48px] h-[48px] rounded-[16px] object-cover shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[14px] font-semibold text-[#111]">{formatProviderDisplayName(provider.name)}</span>
                     <Star size={9} className="fill-[#E85D2A] text-[#E85D2A]" />
                     <span className="text-[11px] font-medium text-[#111]">{provider.rating}</span>
                   </div>
-                  <span className="text-[11px] text-[#A09A94] block mt-0.5">{provider.type}</span>
+                  <span className="text-[11px] text-[#9B9B9F] block mt-0.5">{provider.type}</span>
                 </div>
                 <span className="text-[13px] font-bold text-[#111] shrink-0">{provider.priceValue}</span>
               </div>
@@ -6735,7 +6715,7 @@ const ServicesScreen = ({ onNavigate }) => {
                 <div className="w-9 h-9 rounded-full bg-[#E85D2A]/10 flex items-center justify-center"><Navigation size={16} className="text-[#E85D2A]" /></div>
                 <span className="text-[14px] font-medium text-[#111]">Explore on map</span>
               </div>
-              <ChevronRight size={16} className="text-[#A09A94]" />
+              <ChevronRight size={16} className="text-[#9B9B9F]" />
             </button>
             <div className="border-t border-dashed border-[#CFCFD4]" />
             <button onClick={() => onNavigate('vet-telehealth')} className="w-full flex items-center justify-between py-3.5 active:opacity-70">
@@ -6743,7 +6723,7 @@ const ServicesScreen = ({ onNavigate }) => {
                 <div className="w-9 h-9 rounded-full bg-[#E85D2A]/10 flex items-center justify-center"><Stethoscope size={16} className="text-[#E85D2A]" /></div>
                 <span className="text-[14px] font-medium text-[#111]">Vet telehealth</span>
               </div>
-              <ChevronRight size={16} className="text-[#A09A94]" />
+              <ChevronRight size={16} className="text-[#9B9B9F]" />
             </button>
           </div>
         </div>
@@ -6806,11 +6786,11 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
         <div className="flex justify-between items-center w-full pointer-events-auto">
           <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+            <ChevronLeft size={20} color="#111" strokeWidth={1.8} />
           </button>
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Book</h2>
           <button onClick={() => setShowCloseDialog(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <X size={18} color="#111" strokeWidth={1.75} />
+            <X size={18} color="#111" strokeWidth={1.8} />
           </button>
         </div>
       </header>
@@ -6818,7 +6798,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
       <div className="absolute inset-0 overflow-y-auto bg-[#F7F5F2] pt-[110px] pb-[140px] px-5" style={{ scrollbarWidth: 'none' }}>
         {showValidation && !isValid && (
           <div className="mb-4 text-center">
-            <span className="text-[13px] font-medium text-[#FF3B30]">Please complete all required fields</span>
+            <span className="text-[13px] font-medium text-[#E5484D]">Please complete all required fields</span>
           </div>
         )}
 
@@ -6826,7 +6806,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <section className="mb-6">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-[15px] font-semibold text-[#111]">Service</h3>
-            {errors.service && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+            {errors.service && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
           </div>
           {mockBookingData.provider.services.map((svc, idx) => {
             const isSelected = selectedServiceId === svc.id;
@@ -6837,15 +6817,15 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                   className="flex items-center justify-between py-3 cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0 ${isSelected ? 'border-[#E85D2A]' : 'border-[#A09A94]'}`}>
+                    <div className={`w-[18px] h-[18px] rounded-full border-[1.5px] flex items-center justify-center shrink-0 ${isSelected ? 'border-[#E85D2A]' : 'border-[#9B9B9F]'}`}>
                       {isSelected && <div className="w-2.5 h-2.5 bg-[#E85D2A] rounded-full" />}
                     </div>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2">
                         <span className={`text-[14px] ${isSelected ? 'font-semibold' : 'font-medium'} text-[#111]`}>{svc.label}</span>
-                        {svc.popular && <span className="text-[9px] font-bold text-[#E85D2A] uppercase tracking-wider">Popular</span>}
+                        {svc.popular && <span className="text-[10px] font-bold text-[#E85D2A] uppercase tracking-wider">Popular</span>}
                       </div>
-                      <span className="text-[12px] text-[#A09A94]">{svc.duration} min</span>
+                      <span className="text-[12px] text-[#9B9B9F]">{svc.duration} min</span>
                     </div>
                   </div>
                   <span className="text-[14px] font-semibold text-[#111]">CHF {svc.price}</span>
@@ -6860,16 +6840,16 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <section className="mb-6">
           <div className="flex justify-between items-center mb-3">
             <h3 className="text-[15px] font-semibold text-[#111]">Date</h3>
-            {errors.date && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+            {errors.date && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
           </div>
-          <button onClick={openCalendar} className={`w-full flex justify-between items-center py-3 px-4 rounded-[12px] bg-[#F3EFEB] border transition-colors ${errors.date ? 'border-[#FF3B30]/30' : 'border-[#EDE8E2]'}`}>
+          <button onClick={openCalendar} className={`w-full flex justify-between items-center py-3 px-4 rounded-[12px] bg-[#F3EFEB] border transition-colors ${errors.date ? 'border-[#E5484D]/30' : 'border-[#EDE8E2]'}`}>
             <div className="flex items-center gap-2.5">
-              <CalendarDays size={16} color="#A09A94" />
-              <span className={`text-[14px] font-medium ${selectedDate ? 'text-[#111]' : 'text-[#A09A94]'}`}>
+              <CalendarDays size={16} color="#9B9B9F" />
+              <span className={`text-[14px] font-medium ${selectedDate ? 'text-[#111]' : 'text-[#9B9B9F]'}`}>
                 {formatDateLabel(selectedDate)}
               </span>
             </div>
-            <ChevronRight size={16} className="text-[#A09A94]" />
+            <ChevronRight size={16} className="text-[#9B9B9F]" />
           </button>
         </section>
 
@@ -6886,7 +6866,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                       key={idx}
                       disabled={!slot.available}
                       onClick={() => { setSelectedTime(slot.time); if(errors.date) setErrors(prev => ({...prev, date: false})); }}
-                      className={`px-4 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all ${!slot.available ? 'text-[#A09A94] cursor-not-allowed' : isSlotSelected ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] border border-[#EDE8E2] text-[#111]'}`}
+                      className={`px-4 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all ${!slot.available ? 'text-[#9B9B9F] cursor-not-allowed' : isSlotSelected ? 'bg-[#E85D2A] text-white' : 'bg-[#F3EFEB] border border-[#EDE8E2] text-[#111]'}`}
                     >
                       {slot.time}
                     </button>
@@ -6894,10 +6874,10 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                 })}
               </div>
             ) : (
-              <p className="text-[13px] text-[#A09A94]">No slots available for this date.</p>
+              <p className="text-[13px] text-[#9B9B9F]">No slots available for this date.</p>
             )}
             {selectedTime && selectedService && (
-              <p className="mt-2 text-[12px] text-[#A09A94]">
+              <p className="mt-2 text-[12px] text-[#9B9B9F]">
                 <Clock size={12} className="inline mr-1 -mt-0.5" />
                 {formatTimeRange(selectedTime, selectedService.duration)}
               </p>
@@ -6910,7 +6890,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
           <section className="mb-6">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-[15px] font-semibold text-[#111]">Pet</h3>
-              {errors.pet && <span className="text-[12px] text-[#FF3B30] font-medium">Required</span>}
+              {errors.pet && <span className="text-[12px] text-[#E5484D] font-medium">Required</span>}
             </div>
             <div className="flex gap-2">
               {mockBookingData.userPets.map((pet) => {
@@ -6945,11 +6925,11 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
                 >
                   <div className="flex-1">
                     <span className="text-[14px] font-medium text-[#111]">{addon.label}</span>
-                    <span className="text-[12px] text-[#A09A94] block mt-0.5">{addon.description}</span>
+                    <span className="text-[12px] text-[#9B9B9F] block mt-0.5">{addon.description}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[13px] font-medium text-[#A09A94]">+CHF {addon.price}</span>
-                    <div className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex shrink-0 items-center justify-center transition-colors ${isAddonSelected ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#A09A94]'}`}>
+                    <span className="text-[13px] font-medium text-[#9B9B9F]">+CHF {addon.price}</span>
+                    <div className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex shrink-0 items-center justify-center transition-colors ${isAddonSelected ? 'bg-[#E85D2A] border-[#E85D2A]' : 'border-[#9B9B9F]'}`}>
                       {isAddonSelected && <Check size={12} color="#FFF" strokeWidth={3} />}
                     </div>
                   </div>
@@ -6965,14 +6945,14 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
           <h3 className="text-[15px] font-semibold text-[#111] mb-3">Instructions</h3>
           <div className="relative">
             <textarea
-              className="w-full bg-[#F3EFEB] rounded-[12px] p-3.5 text-[14px] text-[#111] placeholder:text-[#A09A94] border border-[#EDE8E2] focus:border-[#E85D2A]/40 outline-none resize-none transition-colors pb-7"
+              className="w-full bg-[#F3EFEB] rounded-[12px] p-3.5 text-[14px] text-[#111] placeholder:text-[#9B9B9F] border border-[#EDE8E2] focus:border-[#E85D2A]/40 outline-none resize-none transition-colors pb-7"
               rows={3}
               maxLength={500}
               placeholder="e.g. Please lock the bottom gate..."
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
             />
-            <span className="absolute bottom-2.5 right-3.5 text-[10px] text-[#A09A94]">{instructions.length}/500</span>
+            <span className="absolute bottom-2.5 right-3.5 text-[10px] text-[#9B9B9F]">{instructions.length}/500</span>
           </div>
         </section>
 
@@ -6980,14 +6960,14 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <section className="mb-4">
           <div className="h-[1px] bg-[#EDE8E2] mb-4" />
           <div className="flex justify-between text-[14px] mb-2">
-            <span className="text-[#A09A94]">{selectedService?.label || 'Service'}</span>
+            <span className="text-[#9B9B9F]">{selectedService?.label || 'Service'}</span>
             <span className="font-semibold text-[#111]">CHF {selectedService?.price || 0}</span>
           </div>
           {selectedAddOns.map(id => {
             const addon = mockBookingData.provider.addOns.find(a => a.id === id);
             return addon ? (
               <div key={id} className="flex justify-between text-[14px] mb-2">
-                <span className="text-[#A09A94]">{addon.label}</span>
+                <span className="text-[#9B9B9F]">{addon.label}</span>
                 <span className="font-semibold text-[#111]">+CHF {addon.price}</span>
               </div>
             ) : null;
@@ -7002,7 +6982,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
 
       {/* Bottom Button */}
       <div className="absolute bottom-6 left-5 right-5 z-30">
-        <button onClick={handleContinue} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
+        <button onClick={handleContinue} className="w-full py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
           Continue
         </button>
       </div>
@@ -7012,10 +6992,10 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <div className="flex flex-col h-full relative">
           <div className="flex justify-between items-center text-center mb-6">
             <span className="text-[17px] font-bold text-[#111]">Select Date</span>
-            <span className="text-[14px] font-medium text-[#A09A94]">February 2026</span>
+            <span className="text-[14px] font-medium text-[#9B9B9F]">February 2026</span>
           </div>
           <div className="grid grid-cols-7 gap-y-3 text-center mb-6">
-            {['S','M','T','W','T','F','S'].map((d, i) => <span key={i} className="text-[12px] font-medium text-[#A09A94]">{d}</span>)}
+            {['S','M','T','W','T','F','S'].map((d, i) => <span key={i} className="text-[12px] font-medium text-[#9B9B9F]">{d}</span>)}
             {[...Array(28)].map((_, i) => {
               const day = i + 1;
               const dateStr = `2026-02-${day.toString().padStart(2, '0')}`;
@@ -7026,7 +7006,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
               const isDateSelected = tempDate === dateStr;
               return (
                 <button key={day} disabled={!isSelectable} onClick={() => setTempDate(dateStr)} className="flex flex-col items-center justify-center gap-1">
-                  <div className={`w-9 h-9 flex items-center justify-center rounded-full text-[14px] font-medium transition-all ${isDateSelected ? 'bg-[#E85D2A] text-white' : isSelectable ? 'text-[#111] hover:bg-[#F3EFEB]' : 'text-[#A09A94] cursor-not-allowed'}`}>
+                  <div className={`w-9 h-9 flex items-center justify-center rounded-full text-[14px] font-medium transition-all ${isDateSelected ? 'bg-[#E85D2A] text-white' : isSelectable ? 'text-[#111] hover:bg-[#F3EFEB]' : 'text-[#9B9B9F] cursor-not-allowed'}`}>
                     {day}
                   </div>
                   {isSelectable && isAvailable && <div className="w-1 h-1 rounded-full bg-[#E85D2A]" />}
@@ -7035,7 +7015,7 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
             })}
           </div>
           <div className="pt-4 border-t border-[#EDE8E2] mt-auto">
-            <button disabled={!tempDate} onClick={confirmDate} className={`w-full py-3.5 rounded-[12px] text-[15px] font-semibold transition-all ${!tempDate ? 'bg-[#EDE8E2] text-[#A09A94]' : 'bg-[#E85D2A] text-white active:scale-[0.98]'}`}>
+            <button disabled={!tempDate} onClick={confirmDate} className={`w-full py-3.5 rounded-[12px] text-[15px] font-semibold transition-all ${!tempDate ? 'bg-[#EDE8E2] text-[#9B9B9F]' : 'bg-[#E85D2A] text-white active:scale-[0.98]'}`}>
               Confirm Date
             </button>
           </div>
@@ -7047,9 +7027,9 @@ const BookingScreen = ({ provider, preselectedServiceId, onBack, onClose, onCont
         <div className="absolute inset-0 z-[120] bg-black/30 flex items-center justify-center p-5 animate-in fade-in duration-200">
           <div className="bg-[#FFFFFF] rounded-[16px] p-5 w-full max-w-[300px] border border-[#EDE8E2]">
             <h3 className="text-[17px] font-bold text-[#111] mb-1.5">Abandon Booking?</h3>
-            <p className="text-[14px] text-[#A09A94] mb-5 leading-relaxed">Your progress will be lost.</p>
+            <p className="text-[14px] text-[#9B9B9F] mb-5 leading-relaxed">Your progress will be lost.</p>
             <div className="flex flex-col gap-2.5">
-              <button onClick={() => { setShowCloseDialog(false); onClose(); }} className="w-full py-3 rounded-[12px] font-semibold text-[14px] bg-[#FFF0F0] text-[#FF3B30] active:scale-[0.98] transition-transform">
+              <button onClick={() => { setShowCloseDialog(false); onClose(); }} className="w-full py-3 rounded-[12px] font-semibold text-[14px] bg-[#FFF0F0] text-[#E5484D] active:scale-[0.98] transition-transform">
                 Discard
               </button>
               <button onClick={() => setShowCloseDialog(false)} className="w-full py-3 rounded-[12px] font-semibold text-[14px] bg-[#F3EFEB] text-[#6E6058] active:scale-[0.98] transition-transform">
@@ -7115,11 +7095,11 @@ const PaymentScreen = ({ onBack, onComplete }) => {
       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
         <div className="flex justify-between items-center w-full pointer-events-auto">
           <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+            <ChevronLeft size={20} color="#111" strokeWidth={1.8} />
           </button>
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Checkout</h2>
           <div className="w-[44px] h-[44px] flex items-center justify-center rounded-full" style={{ background: '#F3EFEB' }}>
-            <Lock size={15} color="#111" strokeWidth={1.75} />
+            <Lock size={15} color="#111" strokeWidth={1.8} />
           </div>
         </div>
       </header>
@@ -7129,12 +7109,12 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         <div className="flex items-start gap-3.5 mb-1">
           <Avatar src={paymentData.providerAvatar} size={48} />
           <div className="flex-1 min-w-0 pt-0.5">
-            <span className="text-[11px] text-[#A09A94] block leading-none tracking-wide">with</span>
+            <span className="text-[11px] text-[#9B9B9F] block leading-none tracking-wide">with</span>
             <span className="text-[20px] font-bold text-[#111] block leading-tight mt-1 tracking-[-0.02em]">{paymentData.providerName}</span>
             <p className="text-[13px] text-[#6E6058] leading-[1.5] mt-1.5">
               {paymentData.service} <span className="text-[#CFCFD4]">/</span> for {paymentData.pet.split(' · ')[0]}
             </p>
-            <p className="text-[12px] text-[#A09A94] leading-[1.5]">
+            <p className="text-[12px] text-[#9B9B9F] leading-[1.5]">
               {paymentData.datetime}
             </p>
           </div>
@@ -7159,7 +7139,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
               </div>
               <div className="mt-1.5 space-y-1">
                 {paymentData.addOns.map((a, i) => (
-                  <div key={i} className="flex items-baseline text-[12px] text-[#A09A94]">
+                  <div key={i} className="flex items-baseline text-[12px] text-[#9B9B9F]">
                     <span className="mr-2 text-[#CFCFD4]">—</span>
                     <span className="flex-1">{a.label}</span>
                     <span className="tracking-tight">+{a.price.toFixed(2)}</span>
@@ -7170,7 +7150,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
           )}
           <button className="w-full flex justify-between items-baseline text-[14px] active:opacity-70" onClick={() => setActiveSheet('service_fee')}>
             <span className="text-[#111] flex items-center gap-1.5">
-              Service fee <Info size={11} className="text-[#A09A94]" />
+              Service fee <Info size={11} className="text-[#9B9B9F]" />
             </span>
             <span className="text-[#111]">CHF {paymentData.platformFee.toFixed(2)}</span>
           </button>
@@ -7185,7 +7165,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         <div className="flex justify-between items-baseline mb-8">
           <span className="text-[15px] font-semibold text-[#111] tracking-tight">Total</span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-[11px] font-semibold text-[#A09A94] tracking-wide">CHF</span>
+            <span className="text-[11px] font-semibold text-[#9B9B9F] tracking-wide">CHF</span>
             <span className="text-[26px] font-bold text-[#111] leading-none tracking-[-0.02em]" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {paymentData.total.toFixed(2)}
             </span>
@@ -7230,7 +7210,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         </div>
 
         {/* ═══ HOLD NOTE ═══ */}
-        <p className="text-[11px] text-[#A09A94] leading-[1.6] mb-5 pl-3 border-l-2 border-[#EDE8E2]">
+        <p className="text-[11px] text-[#9B9B9F] leading-[1.6] mb-5 pl-3 border-l-2 border-[#EDE8E2]">
           Hold placed now. Released instantly if {paymentData.providerName.split(' ')[0]} declines.
         </p>
 
@@ -7252,14 +7232,14 @@ const PaymentScreen = ({ onBack, onComplete }) => {
         </div>
       </div>
 
-      {/* ═══ BOTTOM CTA — matches ProviderProfile motif (black #111, rounded-[14px], split composition) ═══ */}
+      {/* ═══ BOTTOM CTA — matches ProviderProfile motif (black #111, rounded-[16px], split composition) ═══ */}
       <div className="absolute bottom-6 left-5 right-5 z-30">
         <button
           disabled={!canSubmit}
           onClick={handleAuthorize}
-          className={`w-full py-3.5 rounded-[14px] text-[14px] font-semibold transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)] ${
+          className={`w-full py-3.5 rounded-[16px] text-[14px] font-semibold transition-all flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)] ${
             !canSubmit
-              ? 'bg-[#EDE8E2] text-[#A09A94] cursor-not-allowed shadow-none'
+              ? 'bg-[#EDE8E2] text-[#9B9B9F] cursor-not-allowed shadow-none'
               : 'bg-[#111] text-white active:scale-[0.97]'
           }`}
         >
@@ -7268,8 +7248,8 @@ const PaymentScreen = ({ onBack, onComplete }) => {
           ) : (
             <>
               <span>Authorize</span>
-              <span className={canSubmit ? 'text-white/40' : 'text-[#A09A94]'}>·</span>
-              <span className={`font-normal ${canSubmit ? 'text-white/70' : 'text-[#A09A94]'}`} style={{ fontVariantNumeric: 'tabular-nums' }}>
+              <span className={canSubmit ? 'text-white/40' : 'text-[#9B9B9F]'}>·</span>
+              <span className={`font-normal ${canSubmit ? 'text-white/70' : 'text-[#9B9B9F]'}`} style={{ fontVariantNumeric: 'tabular-nums' }}>
                 CHF {paymentData.total.toFixed(2)}
               </span>
             </>
@@ -7281,30 +7261,30 @@ const PaymentScreen = ({ onBack, onComplete }) => {
       <CardModal isOpen={activeSheet === 'add_card'} onClose={() => setActiveSheet(null)} title="Add card">
         <div className="flex flex-col gap-4 pb-6">
           <div>
-            <label className="text-[12px] text-[#A09A94] mb-2 block">Card number</label>
+            <label className="text-[12px] text-[#9B9B9F] mb-2 block">Card number</label>
             <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all flex items-center px-3.5">
-              <CreditCard size={16} className="text-[#A09A94] mr-2.5" />
-              <input type="text" placeholder="0000 0000 0000 0000" value={cardNumber} onChange={handleCardNumberChange} maxLength="19" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
+              <CreditCard size={16} className="text-[#9B9B9F] mr-2.5" />
+              <input type="text" placeholder="0000 0000 0000 0000" value={cardNumber} onChange={handleCardNumberChange} maxLength="19" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#9B9B9F] outline-none" />
             </div>
           </div>
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="text-[12px] text-[#A09A94] mb-2 block">Expiry</label>
+              <label className="text-[12px] text-[#9B9B9F] mb-2 block">Expiry</label>
               <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all px-3.5">
-                <input type="text" placeholder="MM / YY" maxLength="5" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
+                <input type="text" placeholder="MM / YY" maxLength="5" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#9B9B9F] outline-none" />
               </div>
             </div>
             <div className="flex-1">
-              <label className="text-[12px] text-[#A09A94] mb-2 block">CVV</label>
+              <label className="text-[12px] text-[#9B9B9F] mb-2 block">CVV</label>
               <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all px-3.5">
-                <input type="text" placeholder="123" maxLength="4" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
+                <input type="text" placeholder="123" maxLength="4" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#9B9B9F] outline-none" />
               </div>
             </div>
           </div>
           <div>
-            <label className="text-[12px] text-[#A09A94] mb-2 block">Cardholder name</label>
+            <label className="text-[12px] text-[#9B9B9F] mb-2 block">Cardholder name</label>
             <div className="bg-[#F3EFEB] rounded-[12px] border border-[#EDE8E2] focus-within:border-[#E85D2A]/40 transition-all px-3.5">
-              <input type="text" placeholder="Full name" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#A09A94] outline-none" />
+              <input type="text" placeholder="Full name" className="w-full bg-transparent py-3 text-[14px] text-[#111] placeholder:text-[#9B9B9F] outline-none" />
             </div>
           </div>
           <div onClick={() => setSameAsHome(!sameAsHome)} className="flex items-center gap-2.5 cursor-pointer mt-1">
@@ -7317,8 +7297,8 @@ const PaymentScreen = ({ onBack, onComplete }) => {
             Save card
           </button>
           <div className="flex justify-center items-center gap-1.5">
-            <Lock size={11} className="text-[#A09A94]" />
-            <span className="text-[11px] text-[#A09A94]">Secured by Stripe</span>
+            <Lock size={11} className="text-[#9B9B9F]" />
+            <span className="text-[11px] text-[#9B9B9F]">Secured by Stripe</span>
           </div>
         </div>
       </CardModal>
@@ -7327,11 +7307,11 @@ const PaymentScreen = ({ onBack, onComplete }) => {
       <CardModal isOpen={activeSheet === 'terms'} onClose={() => setActiveSheet(null)} title="Legal">
         <div className="flex flex-col gap-4 pb-20">
           <h4 className="font-bold text-[15px] text-[#111]">Terms of Service</h4>
-          <p className="text-[13px] text-[#A09A94] leading-relaxed">
+          <p className="text-[13px] text-[#9B9B9F] leading-relaxed">
             By accepting these terms, you agree to FYLOS's core platform policies. We facilitate connections between pet owners and care providers. Payment authorization holds are placed 24 hours prior to booking confirmation and are automatically released if the provider declines or fails to respond.
           </p>
           <h4 className="font-bold text-[15px] text-[#111] mt-2">Cancellation Policy</h4>
-          <p className="text-[13px] text-[#A09A94] leading-relaxed">
+          <p className="text-[13px] text-[#9B9B9F] leading-relaxed">
             Bookings can be cancelled free of charge up to 24 hours before the scheduled start time. Cancellations within 24 hours may be subject to a 50% fee. If the provider cancels, a full refund (and release of any holds) will be processed immediately.
           </p>
         </div>
@@ -7349,7 +7329,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
             <CheckCircle2 size={18} className="text-[#111]" /><span className="text-[15px] font-semibold text-[#111]">Set as default</span>
           </button>
           <button onClick={() => setActiveSheet(null)} className="w-full flex items-center gap-3 px-4 py-3.5 rounded-[12px] hover:bg-[#FFF0F0] active:scale-[0.98] transition-all">
-            <AlertTriangle size={18} className="text-[#FF3B30]" /><span className="text-[15px] font-semibold text-[#FF3B30]">Remove card</span>
+            <AlertTriangle size={18} className="text-[#E5484D]" /><span className="text-[15px] font-semibold text-[#E5484D]">Remove card</span>
           </button>
         </div>
       </CardModal>
@@ -7357,7 +7337,7 @@ const PaymentScreen = ({ onBack, onComplete }) => {
       {/* Service Fee Modal */}
       <CardModal isOpen={activeSheet === 'service_fee'} onClose={() => setActiveSheet(null)} title="Service fee" snap="compact">
         <div className="flex flex-col gap-5 pb-6">
-          <p className="text-[14px] text-[#A09A94] leading-relaxed">This fee covers secure payments, customer support, and platform protection.</p>
+          <p className="text-[14px] text-[#9B9B9F] leading-relaxed">This fee covers secure payments, customer support, and platform protection.</p>
           <button onClick={() => setActiveSheet(null)} className="w-full py-3.5 rounded-[12px] text-[15px] font-semibold bg-[#F3EFEB] border border-[#EDE8E2] text-[#6E6058] active:scale-[0.98] transition-all">
             Got it
           </button>
@@ -7387,7 +7367,7 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
           <div className="w-[44px] h-[44px]" />
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Sent</h2>
           <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <X size={18} color="#111" strokeWidth={1.75} />
+            <X size={18} color="#111" strokeWidth={1.8} />
           </button>
         </div>
       </header>
@@ -7402,7 +7382,7 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
             </div>
           </div>
           <div className="flex-1 min-w-0 pt-0.5">
-            <span className="text-[11px] text-[#A09A94] block leading-none tracking-wide">Request sent to</span>
+            <span className="text-[11px] text-[#9B9B9F] block leading-none tracking-wide">Request sent to</span>
             <span className="text-[20px] font-bold text-[#111] block leading-tight mt-1 tracking-[-0.02em]">{mockRequestSentData.providerName}</span>
           </div>
         </div>
@@ -7417,15 +7397,15 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
         {/* ═══ ITEMIZED LIST — what was requested ═══ */}
         <div className="space-y-3.5 mb-2" style={{ fontVariantNumeric: 'tabular-nums' }}>
           <div className="flex justify-between items-baseline text-[14px]">
-            <span className="text-[#A09A94]">Service</span>
+            <span className="text-[#9B9B9F]">Service</span>
             <span className="text-[#111] font-medium">{mockRequestSentData.service}</span>
           </div>
           <div className="flex justify-between items-baseline text-[14px]">
-            <span className="text-[#A09A94]">When</span>
+            <span className="text-[#9B9B9F]">When</span>
             <span className="text-[#111] font-medium">{mockRequestSentData.datetime}</span>
           </div>
           <div className="flex justify-between items-baseline text-[14px]">
-            <span className="text-[#A09A94]">Pet</span>
+            <span className="text-[#9B9B9F]">Pet</span>
             <span className="text-[#111] font-medium">{mockRequestSentData.pet.split(' · ')[0]}</span>
           </div>
           {mockRequestSentData.addOns.map((a, i) => (
@@ -7443,7 +7423,7 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
         <div className="flex justify-between items-baseline mb-6">
           <span className="text-[15px] font-semibold text-[#111] tracking-tight">Authorized</span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-[11px] font-semibold text-[#A09A94] tracking-wide">CHF</span>
+            <span className="text-[11px] font-semibold text-[#9B9B9F] tracking-wide">CHF</span>
             <span className="text-[26px] font-bold text-[#111] leading-none tracking-[-0.02em]" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {mockRequestSentData.total.toFixed(2)}
             </span>
@@ -7460,7 +7440,7 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
               </span>
               <span className="text-[12px] font-semibold text-[#111] uppercase tracking-wide">Hold active</span>
             </div>
-            <p className="text-[11px] text-[#A09A94] leading-[1.5]">
+            <p className="text-[11px] text-[#9B9B9F] leading-[1.5]">
               Released instantly if {mockRequestSentData.providerName.split(' ')[0]} declines or doesn't respond within 24h.
             </p>
           </div>
@@ -7471,12 +7451,12 @@ const RequestSentScreen = ({ onClose, onViewBooking }) => {
       <div className="absolute bottom-6 left-5 right-5 z-30 flex flex-col items-center gap-1">
         <button
           onClick={onViewBooking}
-          className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
+          className="w-full py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
         >
           View booking
           <ArrowRight size={15} strokeWidth={2} className="text-white/60" />
         </button>
-        <button onClick={onClose} className="text-[13px] font-medium text-[#A09A94] active:opacity-70 transition-opacity py-2.5">
+        <button onClick={onClose} className="text-[13px] font-medium text-[#9B9B9F] active:opacity-70 transition-opacity py-2.5">
           Back to home
         </button>
       </div>
@@ -7560,7 +7540,7 @@ const ChatScreen = ({ onBack, status }) => {
       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-4 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/95 to-transparent">
         <div className="flex justify-between items-center w-full pointer-events-auto">
           <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+            <ChevronLeft size={20} color="#111" strokeWidth={1.8} />
           </button>
           <div className="flex items-center gap-2.5">
             <div className="relative">
@@ -7569,11 +7549,11 @@ const ChatScreen = ({ onBack, status }) => {
             </div>
             <div className="flex flex-col leading-none">
               <span className="text-[14px] font-semibold text-[#111] leading-tight tracking-tight">Lukas F.</span>
-              <span className="text-[10px] text-[#A09A94] leading-tight mt-0.5">Online</span>
+              <span className="text-[10px] text-[#9B9B9F] leading-tight mt-0.5">Online</span>
             </div>
           </div>
           <button onClick={() => setIsMenuOpen(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <MoreHorizontal size={18} color="#111" strokeWidth={1.75} />
+            <MoreHorizontal size={18} color="#111" strokeWidth={1.8} />
           </button>
         </div>
       </header>
@@ -7581,11 +7561,11 @@ const ChatScreen = ({ onBack, status }) => {
       {/* Messages */}
       <div ref={scrollRef} onScroll={handleScroll} className="absolute inset-0 overflow-y-auto pt-[96px] pb-[130px] px-4 flex flex-col" style={{ scrollbarWidth: 'none' }}>
         {messages.map((msg, idx) => {
-          if (msg.type === 'date') return <div key={msg.id} className="text-center text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.2em] my-5">{msg.text}</div>;
+          if (msg.type === 'date') return <div key={msg.id} className="text-center text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.2em] my-5">{msg.text}</div>;
           if (msg.type === 'system') return (
             <div key={msg.id} className="flex items-center justify-center gap-2 my-3">
               <span className="h-[1px] flex-1 max-w-[60px] bg-[#EDE8E2]" />
-              <span className="text-[11px] font-medium text-[#A09A94]">{msg.text}</span>
+              <span className="text-[11px] font-medium text-[#9B9B9F]">{msg.text}</span>
               <span className="h-[1px] flex-1 max-w-[60px] bg-[#EDE8E2]" />
             </div>
           );
@@ -7616,8 +7596,8 @@ const ChatScreen = ({ onBack, status }) => {
               </div>
               {showTime && (
                 <div className={`flex items-center gap-1 mt-1 px-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
-                  <span className="text-[10px] text-[#A09A94] font-medium" style={{ fontVariantNumeric: 'tabular-nums' }}>{msg.time}</span>
-                  {isUser && <CheckCheck size={12} className={msg.readStatus === 'read' ? 'text-[#E85D2A]' : 'text-[#A09A94]'} strokeWidth={2.5} />}
+                  <span className="text-[10px] text-[#9B9B9F] font-medium" style={{ fontVariantNumeric: 'tabular-nums' }}>{msg.time}</span>
+                  {isUser && <CheckCheck size={12} className={msg.readStatus === 'read' ? 'text-[#E85D2A]' : 'text-[#9B9B9F]'} strokeWidth={2.4} />}
                 </div>
               )}
             </div>
@@ -7644,7 +7624,7 @@ const ChatScreen = ({ onBack, status }) => {
       <div className="absolute bottom-0 left-0 right-0 pt-[60px] pb-[28px] bg-gradient-to-t from-[#F7F5F2] via-[#F7F5F2]/95 to-transparent z-50 pointer-events-none flex flex-col justify-end">
         {status === 'pending' ? (
           <div className="px-4 py-2 pointer-events-auto">
-            <div className="w-full bg-[#F3EFEB] border border-[#EDE8E2] rounded-full py-3 px-4 flex items-center justify-center text-[13px] text-[#A09A94] font-medium gap-2">
+            <div className="w-full bg-[#F3EFEB] border border-[#EDE8E2] rounded-full py-3 px-4 flex items-center justify-center text-[13px] text-[#9B9B9F] font-medium gap-2">
               <Lock size={13} /> Messaging opens after acceptance
             </div>
           </div>
@@ -7661,8 +7641,8 @@ const ChatScreen = ({ onBack, status }) => {
               <button onClick={() => setIsAttachMenuOpen(true)} className="w-[40px] h-[40px] shrink-0 bg-[#F3EFEB] rounded-full flex items-center justify-center text-[#111] active:scale-[0.95] transition-transform">
                 <Plus size={18} strokeWidth={2} />
               </button>
-              <div className="flex-1 bg-white border border-[#EDE8E2] rounded-[22px] min-h-[40px] max-h-[120px] flex items-center px-4 py-2 overflow-hidden transition-all duration-300">
-                <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(inputText); } }} placeholder="Message Lukas…" className="w-full bg-transparent outline-none text-[14px] text-[#111] placeholder-[#A09A94] resize-none" rows={1} style={{ minHeight: '22px', scrollbarWidth: 'none' }} />
+              <div className="flex-1 bg-white border border-[#EDE8E2] rounded-[20px] min-h-[40px] max-h-[120px] flex items-center px-4 py-2 overflow-hidden transition-all duration-300">
+                <textarea value={inputText} onChange={(e) => setInputText(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(inputText); } }} placeholder="Message Lukas…" className="w-full bg-transparent outline-none text-[14px] text-[#111] placeholder-[#9B9B9F] resize-none" rows={1} style={{ minHeight: '22px', scrollbarWidth: 'none' }} />
               </div>
               {inputText.trim() ? (
                 <button onClick={() => handleSend(inputText)} className="w-[40px] h-[40px] shrink-0 bg-[#111] text-white rounded-full flex items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.15)] active:scale-[0.95] transition-all animate-in zoom-in duration-200">
@@ -7684,20 +7664,20 @@ const ChatScreen = ({ onBack, status }) => {
           <div className="absolute inset-0 z-[60]" onClick={() => setIsMenuOpen(false)} />
           <div className="absolute top-[100px] right-5 z-[70] w-[220px] bg-[#F7F5F2] border border-[#EDE8E2] rounded-[16px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
             <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
-              <User size={16} className="text-[#A09A94]" /> View profile
+              <User size={16} className="text-[#9B9B9F]" /> View profile
             </button>
             <button onClick={() => { setIsMenuOpen(false); onBack(); }} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
-              <Info size={16} className="text-[#A09A94]" /> View booking
+              <Info size={16} className="text-[#9B9B9F]" /> View booking
             </button>
             <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
-              <MapPin size={16} className="text-[#A09A94]" /> Share location
+              <MapPin size={16} className="text-[#9B9B9F]" /> Share location
             </button>
             <div className="h-[1px] bg-[#EDE8E2] mx-3" />
             <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
-              <Bell size={16} className="text-[#A09A94]" /> Mute notifications
+              <Bell size={16} className="text-[#9B9B9F]" /> Mute notifications
             </button>
-            <button className="w-full text-left px-4 py-3 text-[14px] font-semibold text-[#FF3B30] active:bg-[#FFF0F0] flex items-center gap-3 transition-colors">
-              <AlertTriangle size={16} className="text-[#FF3B30]" /> Report user
+            <button className="w-full text-left px-4 py-3 text-[14px] font-semibold text-[#E5484D] active:bg-[#FFF0F0] flex items-center gap-3 transition-colors">
+              <AlertTriangle size={16} className="text-[#E5484D]" /> Report user
             </button>
           </div>
         </>
@@ -7709,13 +7689,13 @@ const ChatScreen = ({ onBack, status }) => {
           <div className="absolute inset-0 z-[60]" onClick={() => setIsAttachMenuOpen(false)} />
           <div className="absolute bottom-[110px] left-4 z-[70] w-[220px] bg-[#F7F5F2] border border-[#EDE8E2] rounded-[16px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-150">
             <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
-              <Camera size={16} className="text-[#A09A94]" /> Take photo
+              <Camera size={16} className="text-[#9B9B9F]" /> Take photo
             </button>
             <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
-              <ImageIcon size={16} className="text-[#A09A94]" /> Choose from library
+              <ImageIcon size={16} className="text-[#9B9B9F]" /> Choose from library
             </button>
             <button onClick={() => setIsAttachMenuOpen(false)} className="w-full text-left px-4 py-3 text-[14px] font-medium text-[#111] active:bg-[#F3EFEB] flex items-center gap-3 transition-colors">
-              <MapPin size={16} className="text-[#A09A94]" /> Share location
+              <MapPin size={16} className="text-[#9B9B9F]" /> Share location
             </button>
           </div>
         </>
@@ -7723,7 +7703,7 @@ const ChatScreen = ({ onBack, status }) => {
 
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes typing { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(-3px); opacity: 1; } }
-        .typing-dot { animation: typing 1s infinite; width: 5px; height: 5px; background-color: #A09A94; border-radius: 50%; display: inline-block; margin: 0 2px; }
+        .typing-dot { animation: typing 1s infinite; width: 5px; height: 5px; background-color: #9B9B9F; border-radius: 50%; display: inline-block; margin: 0 2px; }
         .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes messageEnter { 0% { opacity: 0; transform: translateY(4px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
@@ -7761,7 +7741,7 @@ const BookingConfirmedScreen = ({ onClose, onMessage }) => {
           <div className="w-[44px] h-[44px]" />
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Confirmed</h2>
           <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <X size={18} color="#111" strokeWidth={1.75} />
+            <X size={18} color="#111" strokeWidth={1.8} />
           </button>
         </div>
       </header>
@@ -7782,22 +7762,22 @@ const BookingConfirmedScreen = ({ onClose, onMessage }) => {
         </div>
 
         <h1 className="text-[22px] font-semibold text-[#111] tracking-tight text-center mb-2 text-slide-1">Booking confirmed</h1>
-        <p className="text-[15px] text-[#A09A94] text-center max-w-[260px] leading-relaxed text-slide-2">Lukas accepted your request for Monday, Feb 24</p>
+        <p className="text-[15px] text-[#9B9B9F] text-center max-w-[260px] leading-relaxed text-slide-2">Lukas accepted your request for Monday, Feb 24</p>
 
         <div className="w-full my-7 details-fade"><div className="border-t border-dashed border-[#CFCFD4]" /></div>
 
         <div className="w-full space-y-5 details-fade">
-          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Service</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Dog Walking</span><span className="text-[12px] text-[#A09A94] ml-2">90 min</span></div></div>
-          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">When</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Mon, Feb 24</span><span className="text-[12px] text-[#A09A94] ml-2">14:00 - 15:30</span></div></div>
-          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Pet</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Luna</span><span className="text-[12px] text-[#A09A94] ml-2">Golden Retriever</span></div></div>
-          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Walker</span><div className="flex-1 flex items-center gap-2.5"><Avatar src="https://i.pravatar.cc/150?img=12" size={28} /><div><span className="text-[14px] text-[#111] font-medium">Lukas F.</span><span className="flex items-center gap-0.5 mt-0.5"><Star size={10} className="fill-[#111] text-[#111]" /><span className="text-[12px] font-medium text-[#111]">4.9</span></span></div></div></div>
-          <div className="flex items-start"><span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Total</span><span className="text-[14px] text-[#111] font-medium">CHF 95.00</span></div>
+          <div className="flex items-start"><span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Service</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Dog Walking</span><span className="text-[12px] text-[#9B9B9F] ml-2">90 min</span></div></div>
+          <div className="flex items-start"><span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">When</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Mon, Feb 24</span><span className="text-[12px] text-[#9B9B9F] ml-2">14:00 - 15:30</span></div></div>
+          <div className="flex items-start"><span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Pet</span><div className="flex-1"><span className="text-[14px] text-[#111] font-medium">Luna</span><span className="text-[12px] text-[#9B9B9F] ml-2">Golden Retriever</span></div></div>
+          <div className="flex items-start"><span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Walker</span><div className="flex-1 flex items-center gap-2.5"><Avatar src="https://i.pravatar.cc/150?img=12" size={28} /><div><span className="text-[14px] text-[#111] font-medium">Lukas F.</span><span className="flex items-center gap-0.5 mt-0.5"><Star size={10} className="fill-[#111] text-[#111]" /><span className="text-[12px] font-medium text-[#111]">4.9</span></span></div></div></div>
+          <div className="flex items-start"><span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Total</span><span className="text-[14px] text-[#111] font-medium">CHF 95.00</span></div>
         </div>
 
         <div className="w-full my-7 details-fade"><div className="border-t border-dashed border-[#CFCFD4]" /></div>
 
         <div className="w-full details-fade">
-          <p className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-4">What happens next</p>
+          <p className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em] mb-4">What happens next</p>
           <div className="space-y-3.5">
             <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] shrink-0" /><span className="text-[13px] text-[#111]">Payment of CHF 95.00 is being processed</span></div>
             <div className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-[#E85D2A] shrink-0" /><span className="text-[13px] text-[#111]">You can message Lukas directly</span></div>
@@ -7807,8 +7787,8 @@ const BookingConfirmedScreen = ({ onClose, onMessage }) => {
       </div>
 
       <div className="absolute bottom-6 left-5 right-5 z-30 flex flex-col items-center gap-1">
-        <button onClick={onMessage} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">Message Lukas</button>
-        <button onClick={onClose} className="text-[13px] font-medium text-[#A09A94] active:opacity-70 transition-opacity py-2.5">Back to home</button>
+        <button onClick={onMessage} className="w-full py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">Message Lukas</button>
+        <button onClick={onClose} className="text-[13px] font-medium text-[#9B9B9F] active:opacity-70 transition-opacity py-2.5">Back to home</button>
       </div>
     </div>
   );
@@ -7822,7 +7802,7 @@ const BookingDeclinedScreen = ({ onClose, onBrowse, onMessage }) => {
           <div className="w-[44px] h-[44px]" />
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Declined</h2>
           <button onClick={onClose} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <X size={18} color="#111" strokeWidth={1.75} />
+            <X size={18} color="#111" strokeWidth={1.8} />
           </button>
         </div>
       </header>
@@ -7830,34 +7810,34 @@ const BookingDeclinedScreen = ({ onClose, onBrowse, onMessage }) => {
       <div className="flex-1 overflow-y-auto pt-[120px] pb-[160px] px-5" style={{ scrollbarWidth: 'none' }}>
         <div className="flex flex-col items-center mb-7">
           <div className="w-[64px] h-[64px] rounded-full flex items-center justify-center mb-5" style={{ background: '#FFEBEA' }}>
-            <XCircle size={30} color="#FF3B30" strokeWidth={1.5} />
+            <XCircle size={30} color="#E5484D" strokeWidth={1.8} />
           </div>
           <h3 className="text-[20px] font-semibold text-[#111] tracking-tight text-center mb-1.5">Request declined</h3>
-          <p className="text-[15px] text-[#A09A94] text-center leading-relaxed max-w-[260px]">Lukas was unavailable for this time</p>
+          <p className="text-[15px] text-[#9B9B9F] text-center leading-relaxed max-w-[260px]">Lukas was unavailable for this time</p>
         </div>
 
         <div className="border-t border-dashed border-[#CFCFD4] my-5" />
 
         <div className="flex flex-col gap-3.5 mb-5">
-          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Service</span><span className="text-[14px] text-[#111] font-medium">90 min Walk</span></div>
-          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">When</span><span className="text-[14px] text-[#111] font-medium">Mon, Feb 24 at 14:00</span></div>
-          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Pet</span><span className="text-[14px] text-[#111] font-medium">Luna</span></div>
-          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Walker</span><span className="text-[14px] text-[#111] font-medium">Lukas F.</span></div>
-          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#A09A94]">Amount</span><span className="text-[14px] text-[#111] font-medium">CHF 95.00</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#9B9B9F]">Service</span><span className="text-[14px] text-[#111] font-medium">90 min Walk</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#9B9B9F]">When</span><span className="text-[14px] text-[#111] font-medium">Mon, Feb 24 at 14:00</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#9B9B9F]">Pet</span><span className="text-[14px] text-[#111] font-medium">Luna</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#9B9B9F]">Walker</span><span className="text-[14px] text-[#111] font-medium">Lukas F.</span></div>
+          <div className="flex items-baseline"><span className="w-[88px] shrink-0 text-[12px] text-[#9B9B9F]">Amount</span><span className="text-[14px] text-[#111] font-medium">CHF 95.00</span></div>
         </div>
 
         <div className="border-t border-dashed border-[#CFCFD4] my-5" />
 
         <div className="rounded-[12px] border-l-[3px] border-l-[#CFCFD4] bg-[#F3EFEB] border border-[#EDE8E2] px-4 py-3.5 mb-5">
           <p className="text-[14px] text-[#111] font-medium leading-snug mb-0.5">Your hold has been released</p>
-          <p className="text-[13px] text-[#A09A94] leading-relaxed">CHF 95.00 returned to Visa •••• 4242. No charge was made.</p>
+          <p className="text-[13px] text-[#9B9B9F] leading-relaxed">CHF 95.00 returned to Visa •••• 4242. No charge was made.</p>
         </div>
 
-        <p className="text-[14px] text-[#A09A94] text-center leading-relaxed px-4">We can help you find another walker available at the same time.</p>
+        <p className="text-[14px] text-[#9B9B9F] text-center leading-relaxed px-4">We can help you find another walker available at the same time.</p>
       </div>
 
       <div className="absolute bottom-6 left-5 right-5 z-30 flex flex-col items-center gap-1">
-        <button onClick={onBrowse} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">Browse other walkers</button>
+        <button onClick={onBrowse} className="w-full py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#111] text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]">Browse other walkers</button>
         <button onClick={onMessage} className="text-[13px] font-medium text-[#E85D2A] active:opacity-70 transition-opacity py-2.5">Message Lukas</button>
       </div>
     </div>
@@ -7911,7 +7891,7 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
   const isActive = status === 'pending' || status === 'confirmed' || status === 'in-progress';
   const isTerminal = status === 'cancelled' || status === 'declined';
   const holdLabel = isActive ? 'Hold active' : status === 'completed' ? 'Charged' : 'Released';
-  const holdColor = isActive ? '#E85D2A' : status === 'completed' ? '#111' : '#A09A94';
+  const holdColor = isActive ? '#E85D2A' : status === 'completed' ? '#111' : '#9B9B9F';
 
   return (
     <div className="absolute inset-0 bg-[#F7F5F2] z-[90] overflow-hidden animate-in slide-in-from-right duration-300">
@@ -7919,11 +7899,11 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
       <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[#F7F5F2] via-[#F7F5F2]/90 to-transparent">
         <div className="flex justify-between items-center w-full pointer-events-auto">
           <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+            <ChevronLeft size={20} color="#111" strokeWidth={1.8} />
           </button>
           <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">Booking</h2>
           <button onClick={() => setIsMenuOpen(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-            <MoreHorizontal size={18} color="#111" strokeWidth={1.75} />
+            <MoreHorizontal size={18} color="#111" strokeWidth={1.8} />
           </button>
         </div>
       </header>
@@ -7933,7 +7913,7 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
         <div className="flex items-start gap-3.5 mb-1">
           <Avatar src="https://i.pravatar.cc/150?img=12" size={48} />
           <div className="flex-1 min-w-0 pt-0.5">
-            <span className="text-[11px] text-[#A09A94] block leading-none tracking-wide">with</span>
+            <span className="text-[11px] text-[#9B9B9F] block leading-none tracking-wide">with</span>
             <div className="flex items-center gap-2 mt-1">
               <span className="text-[20px] font-bold text-[#111] leading-tight tracking-[-0.02em]">Lukas F.</span>
               <button onClick={() => onNavigateToProvider && onNavigateToProvider()} className="text-[12px] font-medium text-[#E85D2A] active:opacity-70">Profile ›</button>
@@ -7941,7 +7921,7 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
             <div className="flex items-center gap-1.5 mt-1">
               <Star size={11} className="text-[#111] fill-[#111]" />
               <span className="text-[12px] font-medium text-[#111]">4.9</span>
-              <span className="text-[11px] text-[#A09A94]">· 128 reviews</span>
+              <span className="text-[11px] text-[#9B9B9F]">· 128 reviews</span>
             </div>
           </div>
         </div>
@@ -7956,11 +7936,11 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
                   <span className="relative inline-flex rounded-full h-[7px] w-[7px]" style={{ background: currentConfig.color }} />
                 </span>
               ) : (
-                <currentConfig.icon size={12} color={currentConfig.color} strokeWidth={2.5} />
+                <currentConfig.icon size={12} color={currentConfig.color} strokeWidth={2.4} />
               )}
               <span className="text-[12px] font-semibold uppercase tracking-wide" style={{ color: currentConfig.color }}>{currentConfig.label}</span>
             </div>
-            <p className="text-[11px] text-[#A09A94] leading-[1.5]">{currentConfig.subtext}</p>
+            <p className="text-[11px] text-[#9B9B9F] leading-[1.5]">{currentConfig.subtext}</p>
           </div>
         </div>
 
@@ -7970,23 +7950,23 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
         {/* ═══ DETAILS — aligned label column, consistent rhythm ═══ */}
         <div className="space-y-3">
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Service</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Service</span>
             <span className="text-[#111] font-medium">90 min Dog Walk</span>
           </div>
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">When</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">When</span>
             <span className="text-[#111] font-medium">Mon, Feb 24 · 14:00–15:30</span>
           </div>
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Where</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Where</span>
             <span className="text-[#111] font-medium">Bahnhofstrasse 12, Zurich</span>
           </div>
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Pet</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Pet</span>
             <span className="text-[#111] font-medium">Luna · Golden Retriever</span>
           </div>
           <div className="flex items-start text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px] pt-[1px]">Add-ons</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px] pt-[1px]">Add-ons</span>
             <div className="flex flex-col gap-1.5 flex-1">
               {addOns.map((a, i) => (
                 <span key={i} className="text-[#111] font-medium leading-tight">{a}</span>
@@ -7994,9 +7974,9 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
             </div>
           </div>
           <button onClick={() => setIsInstructionsOpen(true)} className="w-full flex items-baseline text-[14px] active:opacity-70 text-left">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Notes</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Notes</span>
             <span className="text-[#111] font-medium flex-1 line-clamp-1">Keys under the doormat…</span>
-            <ChevronRight size={13} className="text-[#A09A94] shrink-0" />
+            <ChevronRight size={13} className="text-[#9B9B9F] shrink-0" />
           </button>
         </div>
 
@@ -8006,15 +7986,15 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
         {/* ═══ PAYMENT BREAKDOWN ═══ */}
         <div className="space-y-3" style={{ fontVariantNumeric: 'tabular-nums' }}>
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Subtotal</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Subtotal</span>
             <span className="text-[#111] font-medium flex-1">CHF 85.00</span>
           </div>
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Add-ons</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Add-ons</span>
             <span className="text-[#111] font-medium flex-1">CHF 10.00</span>
           </div>
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Card</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Card</span>
             <span className="text-[#111] font-medium flex-1 flex items-center gap-2">
               <span className="inline-flex items-center justify-center w-[26px] h-[17px] rounded-[3px] bg-[#1A1F71]">
                 <span className="text-[7px] font-bold text-white tracking-[0.02em]">VISA</span>
@@ -8023,7 +8003,7 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
             </span>
           </div>
           <div className="flex items-baseline text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Status</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Status</span>
             <span className="text-[11px] font-semibold uppercase tracking-[0.1em] flex-1" style={{ color: holdColor }}>{holdLabel}</span>
           </div>
         </div>
@@ -8032,7 +8012,7 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
         <div className="flex items-baseline justify-between mt-5 mb-2">
           <span className="text-[15px] font-semibold text-[#111] tracking-tight">Total</span>
           <div className="flex items-baseline gap-1.5">
-            <span className="text-[11px] font-semibold text-[#A09A94] tracking-wide">CHF</span>
+            <span className="text-[11px] font-semibold text-[#9B9B9F] tracking-wide">CHF</span>
             <span className="text-[24px] font-bold text-[#111] leading-none tracking-[-0.02em]" style={{ fontVariantNumeric: 'tabular-nums' }}>95.00</span>
           </div>
         </div>
@@ -8043,14 +8023,14 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
         {/* ═══ NOTIFICATIONS — aligned to details rhythm ═══ */}
         <div className="space-y-3">
           <div className="flex items-center text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">Push</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">Push</span>
             <div className="flex-1 flex justify-between items-center">
               <span className="text-[#111]">Get push alerts</span>
               <Toggle checked={notifications.push} onChange={() => handleTogglePref('push')} />
             </div>
           </div>
           <div className="flex items-center text-[14px]">
-            <span className="text-[#A09A94] w-[88px] shrink-0 text-[12px]">SMS</span>
+            <span className="text-[#9B9B9F] w-[88px] shrink-0 text-[12px]">SMS</span>
             <div className="flex-1 flex justify-between items-center">
               <span className="text-[#111]">Text message updates</span>
               <Toggle checked={notifications.sms} onChange={() => handleTogglePref('sms')} />
@@ -8068,7 +8048,7 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
             Message Lukas
           </button>
           {(status === 'pending' || status === 'confirmed') && (
-            <button onClick={() => setStatus('cancelled')} className="text-[13px] font-medium text-[#FF3B30] active:opacity-70 transition-opacity">
+            <button onClick={() => setStatus('cancelled')} className="text-[13px] font-medium text-[#E5484D] active:opacity-70 transition-opacity">
               Cancel booking
             </button>
           )}
@@ -8078,20 +8058,20 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
       {/* ═══ BOTTOM CTA — status-specific, matches motif ═══ */}
       {status === 'in-progress' && (
         <div className="absolute bottom-6 left-5 right-5 z-30 flex gap-3">
-          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#F3EFEB] text-[#111] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
+          <button className="flex-1 py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#F3EFEB] text-[#111] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
             <Navigation2 size={15} strokeWidth={2} /> Track
           </button>
-          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
+          <button className="flex-1 py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#111] text-white flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
             <Camera size={15} strokeWidth={2} /> Photos
           </button>
         </div>
       )}
       {status === 'completed' && (
         <div className="absolute bottom-6 left-5 right-5 z-30 flex gap-3">
-          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#F3EFEB] text-[#111] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
+          <button className="flex-1 py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#F3EFEB] text-[#111] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
             <Star size={15} strokeWidth={2} /> Review
           </button>
-          <button className="flex-1 py-3.5 rounded-[14px] text-[14px] font-semibold bg-[#111] text-white flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
+          <button className="flex-1 py-3.5 rounded-[16px] text-[14px] font-semibold bg-[#111] text-white flex items-center justify-center gap-2 active:scale-[0.97] transition-transform shadow-[0_4px_20px_rgba(0,0,0,0.12)]">
             Book again
           </button>
         </div>
@@ -8101,17 +8081,17 @@ const BookingDetailsScreen = ({ status, setStatus, onBack, onNavigateToProvider,
       <CardModal isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} title="Options">
         <div className="flex flex-col gap-1">
           <div className="bg-[#F3EFEB] p-3 rounded-[12px] mb-3">
-            <span className="text-[11px] font-bold text-[#A09A94] uppercase tracking-wider mb-2 block">Debug Status</span>
+            <span className="text-[11px] font-bold text-[#9B9B9F] uppercase tracking-wider mb-2 block">Debug Status</span>
             <div className="flex flex-wrap gap-2">
               {Object.keys(STATUS_CONFIG).map(s => (
                 <button key={s} onClick={() => { const prev = status; setStatus(s); setIsMenuOpen(false); if (s === 'confirmed' && prev !== 'confirmed' && onShowAccepted) onShowAccepted(); if (s === 'declined' && prev !== 'declined' && onShowDeclined) onShowDeclined(); }} className={`text-[12px] px-3 py-1.5 rounded-full font-bold ${status === s ? 'bg-[#E85D2A] text-white' : 'bg-[#EDE8E2] text-[#111]'}`}>{s}</button>
               ))}
             </div>
           </div>
-          <button className="w-full text-left px-4 py-3 text-[15px] font-medium text-[#111] active:bg-[#F3EFEB] rounded-[12px] flex items-center gap-3"><FileText size={18} className="text-[#A09A94]" /> Download receipt</button>
-          <button className="w-full text-left px-4 py-3 text-[15px] font-medium text-[#111] active:bg-[#F3EFEB] rounded-[12px] flex items-center gap-3"><HelpCircle size={18} className="text-[#A09A94]" /> Contact support</button>
+          <button className="w-full text-left px-4 py-3 text-[15px] font-medium text-[#111] active:bg-[#F3EFEB] rounded-[12px] flex items-center gap-3"><FileText size={18} className="text-[#9B9B9F]" /> Download receipt</button>
+          <button className="w-full text-left px-4 py-3 text-[15px] font-medium text-[#111] active:bg-[#F3EFEB] rounded-[12px] flex items-center gap-3"><HelpCircle size={18} className="text-[#9B9B9F]" /> Contact support</button>
           <div className="h-[1px] bg-[#EDE8E2] my-1" />
-          <button className="w-full text-left px-4 py-3 text-[15px] font-bold text-[#FF3B30] active:bg-[#FFF0F0] rounded-[12px] flex items-center gap-3"><AlertTriangle size={18} className="text-[#FF3B30]" /> Report issue</button>
+          <button className="w-full text-left px-4 py-3 text-[15px] font-bold text-[#E5484D] active:bg-[#FFF0F0] rounded-[12px] flex items-center gap-3"><AlertTriangle size={18} className="text-[#E5484D]" /> Report issue</button>
         </div>
       </CardModal>
 
@@ -8142,8 +8122,8 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
   const [galleryViewer, setGalleryViewer] = useState(null);
 
   const OptionRow = ({ icon: Icon, label, danger, onClick }) => (
-    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#FF3B30] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F3EFEB]'}`}>
-       <Icon size={20} className={danger ? "text-[#FF3B30]" : "text-[#111111]"} />
+    <button onClick={onClick} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-[16px] active:scale-[0.98] transition-all ${danger ? 'text-[#E5484D] hover:bg-[#FFE5E5]' : 'text-[#111111] hover:bg-[#F3EFEB]'}`}>
+       <Icon size={20} className={danger ? "text-[#E5484D]" : "text-[#111111]"} />
        <span className="text-[16px] font-semibold">{label}</span>
     </button>
   );
@@ -8154,11 +8134,11 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
        <header className="absolute top-0 left-0 w-full z-40 pt-14 pb-6 px-5 pointer-events-none bg-gradient-to-b from-[var(--color-background)] to-transparent">
           <div className="flex justify-between items-center w-full pointer-events-auto">
             <button onClick={onBack} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-              <ChevronLeft size={20} color="#111" strokeWidth={1.5} />
+              <ChevronLeft size={20} color="#111" strokeWidth={1.8} />
             </button>
             <h2 className="text-[17px] font-semibold text-[#111] tracking-tight">{provider.name}</h2>
             <button onClick={() => setMenuSheet(true)} className="w-[44px] h-[44px] flex items-center justify-center rounded-full active:scale-[0.97] transition-all" style={{ background: '#F3EFEB' }}>
-              <MoreHorizontal size={20} color="#111" strokeWidth={1.5} />
+              <MoreHorizontal size={20} color="#111" strokeWidth={1.8} />
             </button>
           </div>
        </header>
@@ -8173,9 +8153,9 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                 <div className="flex items-center gap-1.5 mt-1">
                   <Star size={12} className="fill-[#E85D2A] text-[#E85D2A]" />
                   <span className="text-[14px] font-bold text-[#111]">{provider.rating}</span>
-                  <span className="text-[11px] text-[#A09A94]">· {provider.reviewCount} reviews</span>
+                  <span className="text-[11px] text-[#9B9B9F]">· {provider.reviewCount} reviews</span>
                 </div>
-                <p className="text-[11px] text-[#A09A94] mt-1">{provider.location} · {provider.languages.join(', ')}</p>
+                <p className="text-[11px] text-[#9B9B9F] mt-1">{provider.location} · {provider.languages.join(', ')}</p>
               </div>
             </div>
 
@@ -8183,15 +8163,15 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
             <div className="grid grid-cols-3 gap-2 mb-5">
               <div className="text-center py-2.5 rounded-[12px]" style={{ background: '#F3EFEB' }}>
                 <span className="text-[16px] font-bold text-[#111] block">{provider.yearsExperience}y</span>
-                <span className="text-[9px] text-[#A09A94]">Experience</span>
+                <span className="text-[10px] text-[#9B9B9F]">Experience</span>
               </div>
               <div className="text-center py-2.5 rounded-[12px]" style={{ background: '#F3EFEB' }}>
                 <span className="text-[16px] font-bold text-[#111] block">{provider.totalWalks}</span>
-                <span className="text-[9px] text-[#A09A94]">Walks</span>
+                <span className="text-[10px] text-[#9B9B9F]">Walks</span>
               </div>
               <div className="text-center py-2.5 rounded-[12px]" style={{ background: '#F3EFEB' }}>
                 <span className="text-[16px] font-bold text-[#111] block">{provider.distance}km</span>
-                <span className="text-[9px] text-[#A09A94]">Away</span>
+                <span className="text-[10px] text-[#9B9B9F]">Away</span>
               </div>
             </div>
 
@@ -8203,7 +8183,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
             </div>
 
             {/* ═══ ABOUT ═══ */}
-            <p className="text-[13px] text-[#A09A94] leading-[1.65] mb-5">{provider.bio}</p>
+            <p className="text-[13px] text-[#9B9B9F] leading-[1.65] mb-5">{provider.bio}</p>
 
             {/* ═══ SERVICES ═══ */}
             <h3 className="text-[15px] font-semibold text-[#111] mb-2">Services</h3>
@@ -8214,7 +8194,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                     <span className="text-[14px] font-semibold text-[#111]">{svc.label}</span>
                     {svc.popular && <span className="text-[8px] font-bold text-[#E85D2A] uppercase">Popular</span>}
                   </div>
-                  <span className="text-[11px] text-[#A09A94]">{svc.description}</span>
+                  <span className="text-[11px] text-[#9B9B9F]">{svc.description}</span>
                 </div>
                 <span className="text-[15px] font-bold text-[#111] shrink-0 ml-3">CHF {svc.price}</span>
               </div>
@@ -8231,7 +8211,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                   const d = new Date(date);
                   return (
                     <div key={date} className="flex-1 text-center">
-                      <span className="text-[9px] text-[#A09A94] block mb-1">{d.toLocaleDateString('en', { weekday: 'narrow' })}</span>
+                      <span className="text-[10px] text-[#9B9B9F] block mb-1">{d.toLocaleDateString('en', { weekday: 'narrow' })}</span>
                       <span className={`text-[13px] font-bold block ${info.available ? 'text-[#111]' : 'text-[#DDD8D2]'}`}>{d.getDate()}</span>
                       {info.available && <div className="w-1 h-1 rounded-full bg-[#E85D2A] mx-auto mt-1" />}
                     </div>
@@ -8254,9 +8234,9 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
                       <span className="text-[12px] font-semibold text-[#111]">{rev.author}</span>
                       <div className="flex gap-0.5">{Array.from({length: rev.rating}).map((_, j) => <Star key={j} size={7} className="fill-[#E85D2A] text-[#E85D2A]" />)}</div>
                     </div>
-                    <span className="text-[9px] text-[#C4BBB3]">{rev.date}</span>
+                    <span className="text-[10px] text-[#C4BBB3]">{rev.date}</span>
                   </div>
-                  <p className="text-[12px] text-[#A09A94] leading-relaxed line-clamp-2">{rev.text}</p>
+                  <p className="text-[12px] text-[#9B9B9F] leading-relaxed line-clamp-2">{rev.text}</p>
                 </div>
               ))}
             </div>
@@ -8276,7 +8256,7 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
 
        {/* Floating CTA */}
        <div className="absolute bottom-6 left-5 right-5 z-30">
-         <button onClick={() => onNavigate && onNavigate('booking')} className="w-full py-3.5 rounded-[14px] text-[14px] font-semibold text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]" style={{ background: '#111' }}>
+         <button onClick={() => onNavigate && onNavigate('booking')} className="w-full py-3.5 rounded-[16px] text-[14px] font-semibold text-white active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.12)]" style={{ background: '#111' }}>
            Book {provider.name} <span className="text-white/40">·</span> <span className="text-white/60 font-normal">from CHF {provider.services[0]?.price}</span>
          </button>
        </div>
@@ -8285,10 +8265,10 @@ const ProviderProfileScreen = ({ provider, onBack, onNavigate }) => {
        <CardModal isOpen={menuSheet} onClose={() => setMenuSheet(false)} title="Options">
          <div className="pt-1 space-y-0">
            <button onClick={() => setMenuSheet(false)} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left border-b border-[#EDE8E2]">
-             <Share2 size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Share</span>
+             <Share2 size={15} className="text-[#9B9B9F]" /><span className="text-[14px] font-semibold text-[#111]">Share</span>
            </button>
            <button onClick={() => setMenuSheet(false)} className="w-full flex items-center gap-3 py-3 active:opacity-60 text-left">
-             <AlertTriangle size={15} className="text-[#A09A94]" /><span className="text-[14px] font-semibold text-[#111]">Report</span>
+             <AlertTriangle size={15} className="text-[#9B9B9F]" /><span className="text-[14px] font-semibold text-[#111]">Report</span>
            </button>
          </div>
        </CardModal>
@@ -8456,14 +8436,14 @@ const WalkingScreen = ({ onBack, petsData }) => {
         rightActions={
           <>
             <button className="w-7 h-7 flex items-center justify-center rounded-full active:bg-black/[0.04] transition-colors">
-              <Search size={15} color="#111111" strokeWidth={1.5} />
+              <Search size={15} color="#111111" strokeWidth={1.8} />
             </button>
             <div className="w-[1px] h-3 bg-black/[0.08] mx-1.5" />
             <button 
               onClick={() => setIsFilterSheetOpen(true)}
               className="relative w-7 h-7 flex items-center justify-center rounded-full active:bg-black/[0.04] transition-colors"
             >
-              <SlidersHorizontal size={15} color="#111111" strokeWidth={1.5} />
+              <SlidersHorizontal size={15} color="#111111" strokeWidth={1.8} />
               {activeFilterCount > 0 && (
                 <span className="absolute top-[0px] right-[0px] min-w-[12px] h-[12px] flex items-center justify-center bg-[#FF6B35] text-white text-[8px] font-bold rounded-full border border-white">
                   {activeFilterCount}
@@ -8555,7 +8535,7 @@ const WalkingScreen = ({ onBack, petsData }) => {
                   </div>
 
                   <div className={`flex items-center gap-1 mb-3 w-fit h-[22px] px-2 rounded-md ${avail.bg}`}>
-                    <AvailIcon size={10} className={avail.text} strokeWidth={2.5} />
+                    <AvailIcon size={10} className={avail.text} strokeWidth={2.4} />
                     <span className={`text-[11px] font-medium leading-none ${avail.text}`}>{avail.label}</span>
                   </div>
 
@@ -8737,9 +8717,9 @@ const BookingFilterTabs = ({ filters, activeFilter, onChange }) => (
           <button
             key={f.id}
             onClick={() => onChange(f.id)}
-            className={`h-[34px] px-3.5 rounded-full inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-[12px] font-semibold active:scale-[0.96] transition-all duration-[180ms] ${isActive ? 'bg-[#111] text-white' : 'bg-[#F3EFEB] text-[#A09A94]'}`}
+            className={`h-[34px] px-3.5 rounded-full inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-[12px] font-semibold active:scale-[0.96] transition-all duration-[180ms] ${isActive ? 'bg-[#111] text-white' : 'bg-[#F3EFEB] text-[#9B9B9F]'}`}
           >
-            {Icon ? <Icon size={13} className={isActive ? 'text-white' : 'text-[#A09A94]'} /> : null}
+            {Icon ? <Icon size={13} className={isActive ? 'text-white' : 'text-[#9B9B9F]'} /> : null}
             <span>{f.label}</span>
           </button>
         );
@@ -8753,7 +8733,7 @@ const BookingStatusBadge = ({ status }) => {
     'pending': { bg: '#FBF1E3', fg: '#B07A3A', label: 'Pending' },
     'confirmed': { bg: '#EEF7F1', fg: '#3F8D63', label: 'Confirmed' },
     'in-progress': { bg: '#FFEDE3', fg: '#E85D2A', label: 'Live', live: true },
-    'completed': { bg: '#F3EFEB', fg: '#A09A94', label: 'Completed' },
+    'completed': { bg: '#F3EFEB', fg: '#9B9B9F', label: 'Completed' },
     'cancelled': { bg: '#FBEDEC', fg: '#C0473C', label: 'Cancelled' },
     'declined': { bg: '#FBEDEC', fg: '#C0473C', label: 'Declined' },
   };
@@ -8881,7 +8861,7 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-2">
               <h4 className="font-bold text-[14.5px] text-[#111] truncate">{booking.provider.name}</h4>
-              <ChevronDown size={16} className="text-[#A09A94] shrink-0 transition-transform duration-200" style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+              <ChevronDown size={16} className="text-[#9B9B9F] shrink-0 transition-transform duration-200" style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
             </div>
             <p className="text-[12.5px] font-medium text-[#6E6058] mt-0.5 flex items-center gap-1.5 min-w-0">
               <span className="truncate">{getBaseServiceLabel(booking.service.label)}</span>
@@ -8889,8 +8869,8 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
               <span className="shrink-0 inline-flex items-center gap-0.5"><Star size={11} className="fill-[#E85D2A] text-[#E85D2A]" /> {booking.provider.rating}</span>
             </p>
             <div className="flex items-center gap-2 mt-1.5">
-              <span className="text-[11px] text-[#A09A94] inline-flex items-center gap-1 min-w-0">
-                <Calendar size={11} className="text-[#A09A94] shrink-0" />
+              <span className="text-[11px] text-[#9B9B9F] inline-flex items-center gap-1 min-w-0">
+                <Calendar size={11} className="text-[#9B9B9F] shrink-0" />
                 <span className="truncate">{formatBookingDateLine(booking.dateTime)}</span>
               </span>
               <BookingStatusBadge status={booking.status} />
@@ -8901,32 +8881,32 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
         {/* Expanded — the booking's actual details, then actions. */}
         {isExpanded && (
           <div className="pl-[52px] flex flex-col gap-3 mt-3">
-            <div className="rounded-[14px] px-3.5 py-3 flex flex-col gap-2.5" style={{ background: '#F7F5F2' }}>
+            <div className="rounded-[16px] px-3.5 py-3 flex flex-col gap-2.5" style={{ background: '#F7F5F2' }}>
               <div className="flex items-center gap-2.5">
-                <Calendar size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                <Calendar size={14} className="text-[#9B9B9F] shrink-0" strokeWidth={2} />
                 <span className="text-[12.5px] text-[#3A3530]">{formatBookingDateLine(booking.dateTime)}</span>
               </div>
               {booking.service?.duration && (
                 <div className="flex items-center gap-2.5">
-                  <Clock size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                  <Clock size={14} className="text-[#9B9B9F] shrink-0" strokeWidth={2} />
                   <span className="text-[12.5px] text-[#3A3530]">{booking.service.duration} min</span>
                 </div>
               )}
               {booking.location && (
                 <div className="flex items-center gap-2.5">
-                  <MapPin size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                  <MapPin size={14} className="text-[#9B9B9F] shrink-0" strokeWidth={2} />
                   <span className="text-[12.5px] text-[#3A3530]">{booking.location}</span>
                 </div>
               )}
               {booking.pet?.name && (
                 <div className="flex items-center gap-2.5">
-                  <PawPrint size={14} className="text-[#A09A94] shrink-0" strokeWidth={2} />
+                  <PawPrint size={14} className="text-[#9B9B9F] shrink-0" strokeWidth={2} />
                   <span className="text-[12.5px] text-[#3A3530]">For {booking.pet.name}</span>
                 </div>
               )}
               {booking.notes && (
                 <div className="flex items-start gap-2.5">
-                  <FileText size={14} className="text-[#A09A94] shrink-0 mt-[1px]" strokeWidth={2} />
+                  <FileText size={14} className="text-[#9B9B9F] shrink-0 mt-[1px]" strokeWidth={2} />
                   <span className="text-[12.5px] text-[#3A3530] leading-snug">{booking.notes}</span>
                 </div>
               )}
@@ -8953,7 +8933,7 @@ const BookingCard = ({ booking, onCancel, onOpenDetails, isExpanded = true, onTo
 
 const BookingSectionHeader = ({ title, count }) => (
   <div className="mt-5 mb-2.5 px-1 flex items-end justify-between">
-    <h3 className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em]">{title}</h3>
+    <h3 className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em]">{title}</h3>
     <span className="text-[11px] font-bold text-[#E85D2A] tabular-nums">{count}</span>
   </div>
 );
@@ -9141,7 +9121,7 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
                     className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12.5px] font-semibold transition-all active:scale-[0.97]"
                     style={{ background: on ? '#E85D2A' : '#F3EFEB', color: on ? '#FFFFFF' : '#6E6058' }}>
                     {f.label}
-                    {f.count > 0 && <span className="text-[11px] font-bold" style={{ color: on ? 'rgba(255,255,255,0.8)' : '#A09A94' }}>{f.count}</span>}
+                    {f.count > 0 && <span className="text-[11px] font-bold" style={{ color: on ? 'rgba(255,255,255,0.8)' : '#9B9B9F' }}>{f.count}</span>}
                   </button>
                 );
               })}
@@ -9178,7 +9158,7 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
             </div>
             <div className="grid grid-cols-7 gap-y-2 text-center">
               {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, idx) => (
-                <div key={`${d}-${idx}`} className="text-[11px] font-semibold text-[#A09A94]">{d}</div>
+                <div key={`${d}-${idx}`} className="text-[11px] font-semibold text-[#9B9B9F]">{d}</div>
               ))}
               {calendarCells.map((cell, idx) => {
                 if (!cell) return <div key={`empty-${idx}`} />;
@@ -9200,7 +9180,7 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
               })}
             </div>
             <div className="pt-2 mt-2 border-t border-dashed border-[#CFCFD4] flex-1 min-h-0 flex flex-col">
-              <div className="text-[12px] font-bold text-[#A09A94] uppercase tracking-[0.05em] mb-2">Bookings</div>
+              <div className="text-[12px] font-bold text-[#9B9B9F] uppercase tracking-[0.05em] mb-2">Bookings</div>
               {selectedDayBookings.length > 0 ? (
                 <div className="space-y-1.5 overflow-y-auto custom-scrollbar pr-1 flex-1 min-h-0">
                   {selectedDayBookings.map((booking) => (
@@ -9214,13 +9194,13 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-[13px] font-semibold text-[#111] truncate">{getCompactBookingTitle(booking)}</span>
-                        <span className="text-[12px] font-medium text-[#A09A94] shrink-0">{formatCalendarListTime(booking)}</span>
+                        <span className="text-[12px] font-medium text-[#9B9B9F] shrink-0">{formatCalendarListTime(booking)}</span>
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <p className="text-[13px] text-[#A09A94] text-center py-3 flex-1 flex items-center justify-center">No bookings for this day.</p>
+                <p className="text-[13px] text-[#9B9B9F] text-center py-3 flex-1 flex items-center justify-center">No bookings for this day.</p>
               )}
             </div>
           </div>
@@ -9230,15 +9210,15 @@ const BookingsScreen = ({ onOpenDetails, onBack, focusedBookingId = null, onClea
   );
 };
 const VaultSectionHeader = ({ title }) => (
-  <div className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] mb-3">{title}</div>
+  <div className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em] mb-3">{title}</div>
 );
 
 const PetSelectorPill = ({ pet }) => (
   <button className="flex items-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] pl-2 pr-3.5 py-1.5 rounded-full active:scale-[0.97] transition-all mb-4">
     <div className="w-6 h-6 rounded-full bg-[#EDE8E2] flex items-center justify-center"><PawPrint size={12} className="text-[#6E6058]" /></div>
     <span className="text-[13px] font-semibold text-[#111]">{pet.name}</span>
-    <span className="text-[13px] text-[#A09A94]">{pet.breed}</span>
-    <ChevronDown size={12} className="text-[#A09A94] ml-0.5" />
+    <span className="text-[13px] text-[#9B9B9F]">{pet.breed}</span>
+    <ChevronDown size={12} className="text-[#9B9B9F] ml-0.5" />
   </button>
 );
 
@@ -9250,9 +9230,9 @@ const EmergencyBundleCard = ({ petName, onShare, onDownload, isDownloading }) =>
       </div>
       <div className="flex-1 min-w-0">
         <h2 className="text-[20px] font-bold text-[#111] leading-tight">{petName}</h2>
-        <p className="text-[13px] text-[#A09A94] mt-0.5 leading-snug">Golden Retriever · 3 years</p>
+        <p className="text-[13px] text-[#9B9B9F] mt-0.5 leading-snug">Golden Retriever · 3 years</p>
         <div className="mt-1.5 inline-flex items-center gap-1.5 bg-[#F3EFEB] border border-[#EDE8E2] rounded-md px-2 py-0.5">
-          <Fingerprint size={11} className="text-[#A09A94]" />
+          <Fingerprint size={11} className="text-[#9B9B9F]" />
           <span className="text-[11px] font-mono text-[#6E6058] tracking-wide">981 020 000 394 857</span>
         </div>
         <div className="flex items-center gap-4 mt-3.5">
@@ -9297,7 +9277,7 @@ const CriticalInfoCard = ({ data, onCopyMicrochip }) => (
       {/* Medications */}
       <div className="py-3">
         <div className="flex gap-0">
-          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94] pt-0.5">Medications</div>
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#9B9B9F] pt-0.5">Medications</div>
           <div className="flex-1 space-y-1">
             {data.medications.map(med => (
               <div key={med.id} className="text-[14px] text-[#111] leading-snug">
@@ -9312,7 +9292,7 @@ const CriticalInfoCard = ({ data, onCopyMicrochip }) => (
       {/* Allergies */}
       <div className="py-3">
         <div className="flex gap-0">
-          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94] pt-0.5">Allergies</div>
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#9B9B9F] pt-0.5">Allergies</div>
           <div className="flex-1 space-y-1">
             {data.allergies.map(alg => (
               <div key={alg.id} className="text-[14px] text-[#111] leading-snug flex items-center gap-2">
@@ -9330,7 +9310,7 @@ const CriticalInfoCard = ({ data, onCopyMicrochip }) => (
       {/* Vaccinations */}
       <div className="py-3">
         <div className="flex gap-0">
-          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94] pt-0.5">Vaccinations</div>
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#9B9B9F] pt-0.5">Vaccinations</div>
           <div className="flex-1 space-y-1">
             {data.vaccinations.length > 0 ? data.vaccinations.map(vac => (
               <div key={vac.id} className="text-[14px] text-[#111] leading-snug">
@@ -9341,7 +9321,7 @@ const CriticalInfoCard = ({ data, onCopyMicrochip }) => (
                 </span>
                 {vac.isWarning && <AlertTriangle size={12} className="inline ml-1 text-[#D92D20] -mt-0.5" />}
               </div>
-            )) : <div className="text-[14px] text-[#A09A94] italic">All up to date.</div>}
+            )) : <div className="text-[14px] text-[#9B9B9F] italic">All up to date.</div>}
           </div>
         </div>
       </div>
@@ -9350,7 +9330,7 @@ const CriticalInfoCard = ({ data, onCopyMicrochip }) => (
       {/* Microchip */}
       <div className="py-3">
         <div className="flex gap-0 items-center">
-          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#A09A94]">Microchip</div>
+          <div className="w-[88px] shrink-0 text-[12px] font-medium text-[#9B9B9F]">Microchip</div>
           <div className="flex-1 flex items-center justify-between">
             <span className="text-[14px] font-mono font-medium text-[#111] tracking-wide">
               {data.microchipId?.replace(/(\d{3})(?=\d)/g, '$1 ')}
@@ -9374,7 +9354,7 @@ const VaultContactsPreview = ({ contacts, onCall, onOpenContacts }) => (
           <div className="py-3 flex items-center justify-between">
             <div className="flex-1 min-w-0">
               <div className="text-[14px] font-semibold text-[#111] leading-snug">{contact.name}</div>
-              <div className="text-[12px] text-[#A09A94] mt-0.5">{contact.type === 'PRIMARY' ? 'Owner' : contact.type.includes('EMERGENCY') ? 'Emergency Vet' : 'Primary Vet'}</div>
+              <div className="text-[12px] text-[#9B9B9F] mt-0.5">{contact.type === 'PRIMARY' ? 'Owner' : contact.type.includes('EMERGENCY') ? 'Emergency Vet' : 'Primary Vet'}</div>
             </div>
             <button onClick={(e) => { e.stopPropagation(); onCall(contact.phone); }} className="w-9 h-9 rounded-full bg-[#F3EFEB] border border-[#EDE8E2] text-[#111] flex items-center justify-center shrink-0 active:scale-90 transition-transform">
               <Phone size={14} />
@@ -9400,9 +9380,9 @@ const RecentDocumentsCard = ({ documents }) => (
           <div className="py-3 flex items-center justify-between active:bg-[#F3EFEB]/50 -mx-1 px-1 rounded-lg cursor-pointer transition-colors">
             <div className="flex-1 min-w-0">
               <div className="text-[14px] font-medium text-[#111] leading-snug">{doc.title}</div>
-              <div className="text-[12px] text-[#A09A94] mt-0.5">{doc.type} · {formatBytes(doc.size)} · {doc.date}</div>
+              <div className="text-[12px] text-[#9B9B9F] mt-0.5">{doc.type} · {formatBytes(doc.size)} · {doc.date}</div>
             </div>
-            <ChevronRight size={16} className="text-[#A09A94] shrink-0 ml-2" />
+            <ChevronRight size={16} className="text-[#9B9B9F] shrink-0 ml-2" />
           </div>
           {index < documents.length - 1 && <div className="border-t border-dashed border-[#CFCFD4]" />}
         </React.Fragment>
@@ -9426,7 +9406,7 @@ const DataManagementCard = () => (
       <React.Fragment key={index}>
         <button className="w-full flex items-center justify-between py-3.5 active:opacity-70 transition-opacity text-left">
           <span className="text-[14px] font-medium text-[#6E6058]">{item.label}</span>
-          <ChevronRight size={16} className="text-[#A09A94]" />
+          <ChevronRight size={16} className="text-[#9B9B9F]" />
         </button>
         {index < 2 && <div className="border-t border-dashed border-[#CFCFD4]" />}
       </React.Fragment>
@@ -9468,14 +9448,14 @@ const VaultOptionsSheet = ({ isOpen, onClose }) => (
     <div className="space-y-2 pt-2 pb-4">
       {[{ label: 'Export all data', icon: DownloadCloud }, { label: 'Print emergency bundle', icon: FileText }, { label: 'Share vault access', icon: Share2 }].map((item, i) => (
         <button key={i} className="w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm">
-          <item.icon size={20} className="text-[#111111]" strokeWidth={1.5} />
+          <item.icon size={20} className="text-[#111111]" strokeWidth={1.8} />
           <span className="text-[15px] font-medium text-[#111111]">{item.label}</span>
         </button>
       ))}
       <Divider spacing="medium" />
       {[{ label: 'Privacy settings', icon: Lock }, { label: 'Backup settings', icon: Cloud }].map((item, i) => (
         <button key={i} className="w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm">
-          <item.icon size={20} className="text-[#6E6E73]" strokeWidth={1.5} />
+          <item.icon size={20} className="text-[#6E6E73]" strokeWidth={1.8} />
           <span className="text-[15px] font-medium text-[#111111]">{item.label}</span>
         </button>
       ))}
@@ -9588,7 +9568,7 @@ const EmergencyContactsScreen = ({ onBack }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar px-5 py-6">
-        <div className="bg-[#FFF4F4] border border-[#FF3B30]/40 rounded-[12px] p-5 mb-8 shadow-[0_2px_8px_rgba(255,59,48,0.04)]">
+        <div className="bg-[#FFF4F4] border border-[#E5484D]/40 rounded-[12px] p-5 mb-8 shadow-[0_2px_8px_rgba(229,72,77,0.04)]">
           <div className="flex items-center gap-2 mb-4">
             <ShieldAlert size={24} className="text-[#D92D20]" />
             <h3 className="text-[14px] font-semibold text-[#D92D20] tracking-[0.05em] uppercase">In Case of Emergency</h3>
@@ -9810,7 +9790,7 @@ const VaultPlacesScreen = ({ onBack }) => {
             {[{ icon: Plus, label: 'Add new place' }, { icon: MapIcon, label: 'View all on map' }, { icon: Compass, label: 'Discover nearby' }, { icon: Share2, label: 'Share favorites' }].map((item, index) => (
               <React.Fragment key={index}>
                 <button className="w-full h-[52px] flex items-center gap-3.5 px-4 text-left" onClick={() => showToast(item.label)}>
-                  <div className="text-[#6E6E73]"><item.icon size={20} strokeWidth={1.5} /></div>
+                  <div className="text-[#6E6E73]"><item.icon size={20} strokeWidth={1.8} /></div>
                   <span className="text-[15px] font-medium text-[#111111] flex-1">{item.label}</span>
                   <ChevronRight size={18} className="text-[#EAEAEA]" />
                 </button>
@@ -9965,7 +9945,7 @@ const VaultDocumentsScreen = () => {
         <div className="space-y-2 pt-2 pb-4">
           {(sheetConfig.options || []).map((opt, i) => (
             <button key={i} onClick={() => { opt.onClick?.(); closeSheet(); }} className={`w-full flex items-center gap-4 p-4 bg-white border border-black/[0.03] hover:bg-black/[0.02] rounded-[16px] transition-colors active:scale-[0.98] shadow-sm ${opt.style === 'cancel' ? 'justify-center' : ''}`}>
-              {opt.LucideIcon && <opt.LucideIcon size={20} className={opt.style === 'cancel' ? 'text-red-500' : 'text-[#111111]'} strokeWidth={1.5} />}
+              {opt.LucideIcon && <opt.LucideIcon size={20} className={opt.style === 'cancel' ? 'text-red-500' : 'text-[#111111]'} strokeWidth={1.8} />}
               <span className={`text-[15px] font-medium ${opt.style === 'cancel' ? 'text-red-500' : 'text-[#111111]'}`}>{opt.label}</span>
             </button>
           ))}
@@ -10115,7 +10095,7 @@ const VaultHealthRecordsScreen = ({ onBack }) => {
         <div className="space-y-2 pt-2 pb-4">
           {[{ label: 'Export health records', icon: DownloadCloud }, { label: 'Print summary', icon: Printer }, { label: 'Email to vet', icon: Mail }, { label: 'View history', icon: History }, { label: 'Weight analytics', icon: LineChart }, { label: 'Edit health data', icon: Edit3 }, { label: 'Add new record', icon: Plus }].map((item, i) => (
             <button key={i} onClick={() => { setMenuOpen(false); showToast(item.label); }} className="w-full flex items-center gap-3 p-4 bg-white border border-[#ECECEC] hover:bg-black/[0.02] rounded-[12px] transition-colors active:scale-[0.98] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-              <item.icon size={18} className="text-[#111111]" strokeWidth={1.5} />
+              <item.icon size={18} className="text-[#111111]" strokeWidth={1.8} />
               <span className="text-[15px] font-medium text-[#111111]">{item.label}</span>
             </button>
           ))}
@@ -10169,9 +10149,9 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
           </div>
           <div className="flex-1 min-w-0">
             <span className="text-[20px] font-bold text-[#111] block leading-tight tracking-[-0.02em]">{previewData.pet.name}</span>
-            <span className="text-[13px] text-[#A09A94]">{previewData.pet.breed} · {previewData.pet.age}</span>
+            <span className="text-[13px] text-[#9B9B9F]">{previewData.pet.breed} · {previewData.pet.age}</span>
           </div>
-          <ChevronDown size={16} className="text-[#A09A94]" />
+          <ChevronDown size={16} className="text-[#9B9B9F]" />
         </div>
 
         <div className="space-y-4">
@@ -10187,7 +10167,7 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
               ].map((item, i) => (
                 <button key={i} onClick={item.onClick} className="flex flex-col items-center gap-2 active:scale-[0.95] transition-transform">
                   <div className="w-[44px] h-[44px] rounded-full bg-white/70 flex items-center justify-center">
-                    <item.icon size={20} className="text-[#111]" strokeWidth={1.75} />
+                    <item.icon size={20} className="text-[#111]" strokeWidth={1.8} />
                   </div>
                   <span className="text-[11px] font-medium text-[#6E6058]">{item.label}</span>
                 </button>
@@ -10197,7 +10177,7 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
 
           {/* 3. Health Overview card */}
           <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] p-5">
-            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-4">Health Overview</span>
+            <span className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em] block mb-4">Health Overview</span>
 
             {/* Medications */}
             <div className="space-y-1.5 mb-5">
@@ -10213,9 +10193,9 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
             <div className="space-y-1.5 mb-5">
               {previewData.criticalInfo.allergies.map(alg => (
                 <div key={alg.id} className="flex items-center gap-2 text-[14px]">
-                  <AlertTriangle size={13} className={alg.severity === 'SEVERE' ? 'text-[#FF3B30]' : 'text-[#E85D2A]'} />
+                  <AlertTriangle size={13} className={alg.severity === 'SEVERE' ? 'text-[#E5484D]' : 'text-[#E85D2A]'} />
                   <span className="font-medium text-[#111]">{alg.allergen}</span>
-                  <span className={`text-[11px] font-semibold ${alg.severity === 'SEVERE' ? 'text-[#FF3B30]' : 'text-[#E85D2A]'}`}>({alg.severity})</span>
+                  <span className={`text-[11px] font-semibold ${alg.severity === 'SEVERE' ? 'text-[#E5484D]' : 'text-[#E85D2A]'}`}>({alg.severity})</span>
                 </div>
               ))}
             </div>
@@ -10225,36 +10205,36 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
               {previewData.criticalInfo.vaccinations.length > 0 ? previewData.criticalInfo.vaccinations.map(vac => (
                 <div key={vac.id} className="text-[14px] text-[#111] flex items-center gap-1.5">
                   <span className="font-medium">{vac.name}</span>
-                  <span className={`text-[12px] ${vac.isWarning ? 'text-[#FF3B30] font-semibold' : 'text-[#A09A94]'}`}>
+                  <span className={`text-[12px] ${vac.isWarning ? 'text-[#E5484D] font-semibold' : 'text-[#9B9B9F]'}`}>
                     — {vac.statusText}
                   </span>
-                  {vac.isWarning && <AlertTriangle size={11} className="text-[#FF3B30]" />}
+                  {vac.isWarning && <AlertTriangle size={11} className="text-[#E5484D]" />}
                 </div>
-              )) : <div className="text-[14px] text-[#A09A94]">All vaccinations up to date</div>}
+              )) : <div className="text-[14px] text-[#9B9B9F]">All vaccinations up to date</div>}
             </div>
 
             {/* Microchip */}
             <div className="flex items-center gap-3">
-              <span className="text-[12px] text-[#A09A94]">Microchip</span>
+              <span className="text-[12px] text-[#9B9B9F]">Microchip</span>
               <span className="text-[14px] font-mono font-medium text-[#111] flex-1 tracking-wide">{previewData.pet.microchipId}</span>
               <button onClick={handleCopyMicrochip} className="w-[30px] h-[30px] rounded-full bg-white/70 flex items-center justify-center active:scale-[0.95] transition-transform">
-                <Copy size={13} className="text-[#A09A94]" />
+                <Copy size={13} className="text-[#9B9B9F]" />
               </button>
             </div>
           </div>
 
           {/* 4. Emergency Contacts card */}
           <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] p-5">
-            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-4">Emergency Contacts</span>
+            <span className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em] block mb-4">Emergency Contacts</span>
             <div className="space-y-3">
               {previewData.emergencyContacts.map((contact, i) => (
                 <div key={contact.id || i} className="flex items-center justify-between">
                   <div>
                     <span className="text-[14px] font-medium text-[#111] block leading-tight">{contact.name}</span>
-                    <span className="text-[12px] text-[#A09A94]">{contact.type || contact.role || contact.relation}</span>
+                    <span className="text-[12px] text-[#9B9B9F]">{contact.type || contact.role || contact.relation}</span>
                   </div>
                   <button onClick={() => handleCall(contact.phone)} className="w-[34px] h-[34px] rounded-full bg-white/70 flex items-center justify-center active:scale-[0.95] transition-transform">
-                    <Phone size={15} className="text-[#111]" strokeWidth={1.75} />
+                    <Phone size={15} className="text-[#111]" strokeWidth={1.8} />
                   </button>
                 </div>
               ))}
@@ -10266,15 +10246,15 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
 
           {/* 5. Recent Documents card */}
           <div className="rounded-[20px] bg-[#F3EFEB] border border-[#EDE8E2] p-5">
-            <span className="text-[10px] font-semibold text-[#A09A94] uppercase tracking-[0.18em] block mb-4">Recent Documents</span>
+            <span className="text-[10px] font-semibold text-[#9B9B9F] uppercase tracking-[0.18em] block mb-4">Recent Documents</span>
             <div className="space-y-3">
               {previewData.recentDocuments.map((doc, i) => (
                 <button key={doc.id || i} className="w-full flex items-center justify-between active:opacity-70">
                   <div className="text-left">
                     <span className="text-[14px] font-medium text-[#111] block leading-tight">{doc.title}</span>
-                    <span className="text-[12px] text-[#A09A94]">{doc.type} · {typeof doc.size === 'number' ? formatBytes(doc.size) : doc.size} · {doc.date}</span>
+                    <span className="text-[12px] text-[#9B9B9F]">{doc.type} · {typeof doc.size === 'number' ? formatBytes(doc.size) : doc.size} · {doc.date}</span>
                   </div>
-                  <ChevronRight size={16} className="text-[#A09A94] shrink-0" />
+                  <ChevronRight size={16} className="text-[#9B9B9F] shrink-0" />
                 </button>
               ))}
             </div>
@@ -10285,13 +10265,13 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
 
           {/* 6. Actions row */}
           <div className="flex gap-3">
-            <button onClick={() => setShareSheetOpen(true)} className="flex-1 flex items-center justify-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[14px] py-3.5 active:scale-[0.97] transition-transform">
+            <button onClick={() => setShareSheetOpen(true)} className="flex-1 flex items-center justify-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] py-3.5 active:scale-[0.97] transition-transform">
               <Share2 size={16} className="text-[#E85D2A]" />
               <span className="text-[13px] font-semibold text-[#111]">Share info</span>
             </button>
-            <button onClick={handleDownloadPDF} className="flex-1 flex items-center justify-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[14px] py-3.5 active:scale-[0.97] transition-transform">
+            <button onClick={handleDownloadPDF} className="flex-1 flex items-center justify-center gap-2 bg-[#F3EFEB] border border-[#EDE8E2] rounded-[16px] py-3.5 active:scale-[0.97] transition-transform">
               {isDownloading
-                ? <Loader2 size={16} className="text-[#A09A94] animate-spin" />
+                ? <Loader2 size={16} className="text-[#9B9B9F] animate-spin" />
                 : <FileDown size={16} className="text-[#6E6058]" />}
               <span className="text-[13px] font-semibold text-[#111]">{isDownloading ? 'Downloading...' : 'Download PDF'}</span>
             </button>
@@ -10303,7 +10283,7 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
       <EmergencyShareSheet isOpen={shareSheetOpen} onClose={() => setShareSheetOpen(false)} data={previewData} onCopy={() => { showVaultToast('Link copied'); setShareSheetOpen(false); }} />
       <VaultOptionsSheet isOpen={menuSheetOpen} onClose={() => setMenuSheetOpen(false)} />
       {vaultToast && (
-        <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 bg-[#111]/90 backdrop-blur-md text-white px-5 py-3 rounded-[14px] flex items-center gap-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-[120] animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="absolute bottom-[110px] left-1/2 -translate-x-1/2 bg-[#111]/90 backdrop-blur-md text-white px-5 py-3 rounded-[16px] flex items-center gap-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)] z-[120] animate-in fade-in slide-in-from-bottom-4 duration-300">
           <CheckCircle2 size={16} className="text-[#34C759]" />
           <span className="text-[13px] font-medium whitespace-nowrap">{vaultToast}</span>
         </div>
@@ -10466,7 +10446,7 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations, 
         className="w-full flex items-center gap-3 px-3.5 py-[11px] active:bg-black/[0.02] transition-colors text-left"
       >
         <div
-          className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center"
+          className="w-9 h-9 rounded-[12px] shrink-0 flex items-center justify-center"
           style={{ backgroundColor: danger ? '#FEE8E7' : ICON_TINT }}
         >
           <Icon size={16} color={danger ? '#EF4444' : ICON_COLOR} strokeWidth={2} />
@@ -10574,7 +10554,7 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations, 
 
         <button
           onClick={onClose}
-          className="w-full mt-6 py-2.5 text-center text-[#FF3B30] text-[13.5px] font-semibold active:opacity-60"
+          className="w-full mt-6 py-2.5 text-center text-[#E5484D] text-[13.5px] font-semibold active:opacity-60"
         >
           Log out
         </button>
@@ -10595,7 +10575,7 @@ const InboxAvatar = ({ src, initials, icon: Icon, size = 36 }) => {
         <img src={src} className="w-full h-full rounded-full object-cover border border-black/[0.04]" alt="Avatar" />
       ) : Icon ? (
         <div className="w-full h-full rounded-full bg-[#F7F7F8] border border-black/[0.04] flex items-center justify-center text-[#FF6B35]">
-          <Icon size={size * 0.5} strokeWidth={2.5} />
+          <Icon size={size * 0.5} strokeWidth={2.4} />
         </div>
       ) : (
         <div className="w-full h-full rounded-full bg-[#F7F7F8] border border-black/[0.04] flex items-center justify-center text-[#111111] font-medium" style={{ fontSize }}>
@@ -10657,7 +10637,7 @@ const InboxNotificationCard = ({ notification, onAction, onMarkRead, onArchive, 
       {!isSelectionMode && (
         <div className="absolute inset-y-0 right-0 flex w-[140px] bg-[#F9F9FB]">
           <button onClick={() => { setSwipeOffset(0); onArchive(id); }} className="flex-1 flex flex-col items-center justify-center bg-[#FF9500] text-white active:brightness-95 transition-all"><Archive size={20} className="mb-1" /><span className="text-[10px] font-semibold">Archive</span></button>
-          <button onClick={() => { setSwipeOffset(0); onDelete(id); }} className="flex-1 flex flex-col items-center justify-center bg-[#FF3B30] text-white active:brightness-95 transition-all"><Trash2 size={20} className="mb-1" /><span className="text-[10px] font-semibold">Delete</span></button>
+          <button onClick={() => { setSwipeOffset(0); onDelete(id); }} className="flex-1 flex flex-col items-center justify-center bg-[#E5484D] text-white active:brightness-95 transition-all"><Trash2 size={20} className="mb-1" /><span className="text-[10px] font-semibold">Delete</span></button>
         </div>
       )}
       <div
@@ -10679,7 +10659,7 @@ const InboxNotificationCard = ({ notification, onAction, onMarkRead, onArchive, 
         <div className={`absolute ${isSelectionMode ? 'left-[42px]' : 'left-[10px]'} top-[25px] -translate-y-1/2 w-[5px] h-[5px] rounded-full bg-[#FF7A4D] transition-all duration-[200ms] ${read ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}`} />
         <div className="flex items-start">
           <div className={`flex items-center justify-center pt-2 transition-all duration-[250ms] overflow-hidden ${isSelectionMode ? 'w-8 opacity-100 mr-2' : 'w-0 opacity-0 mr-0'}`}>
-            <div className={`shrink-0 w-[20px] h-[20px] rounded-full border flex items-center justify-center transition-colors ${isSelected ? 'bg-[#FF3B30] border-[#FF3B30]' : 'border-[#CFCFD4] bg-transparent'}`}>
+            <div className={`shrink-0 w-[20px] h-[20px] rounded-full border flex items-center justify-center transition-colors ${isSelected ? 'bg-[#E5484D] border-[#E5484D]' : 'border-[#CFCFD4] bg-transparent'}`}>
               {isSelected && <Check size={12} color="white" strokeWidth={3} />}
             </div>
           </div>
@@ -10769,7 +10749,7 @@ const NotificationsOverlay = ({ isOpen, onClose, notifications, onMarkAllRead, o
                 return (
                   <div key={n.id} className="relative">
                     <button onClick={() => onToggleRead(n.id)} className="w-full flex items-start gap-3 px-3.5 py-3 text-left active:bg-black/[0.02] transition-colors">
-                      <span className="relative w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0 mt-0.5" style={{ background: bg }}>
+                      <span className="relative w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0 mt-0.5" style={{ background: bg }}>
                         <Icon size={16} color={c} strokeWidth={2} />
                         {!n.read && <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full" style={{ background: '#E85D2A', border: '2px solid #fff' }} />}
                       </span>
@@ -10780,7 +10760,7 @@ const NotificationsOverlay = ({ isOpen, onClose, notifications, onMarkAllRead, o
                         </span>
                         <span className="block text-[12px] mt-[3px] leading-[1.45]" style={{ color: '#9B9B9F', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{n.body}</span>
                         {primary && !n.read && (
-                          <span className="inline-block mt-1.5 text-[12px] font-bold" style={{ color: '#E85D2A' }}>{primary.label}</span>
+                          <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-[12px] font-bold" style={{ background: '#FFF3EC', color: '#D14E1F' }}>{primary.label}<ChevronRight size={11} strokeWidth={2.6} /></span>
                         )}
                       </span>
                     </button>
@@ -10882,7 +10862,7 @@ const ComingSoonOverlay = ({ isOpen, onClose, joinedWaitlists, onToggleWaitlist 
           return (
             <Card key={feature.id} className="!p-5">
               <div className="flex items-start gap-3">
-                <div className="w-12 h-12 rounded-[14px] flex items-center justify-center" style={{ backgroundColor: `${feature.color}1A` }}>
+                <div className="w-12 h-12 rounded-[16px] flex items-center justify-center" style={{ backgroundColor: `${feature.color}1A` }}>
                   <Icon size={22} color={feature.color} />
                 </div>
                 <div className="flex-1">
@@ -10919,8 +10899,8 @@ const AnimationsOverlay = ({ isOpen, onClose }) => {
         <Card>
           <div className="flex items-center justify-between">
             <span className="text-[15px] font-semibold text-[#111111]">Like interaction</span>
-            <button onClick={() => setLiked((v) => !v)} className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all ${liked ? 'bg-[#FFE5E5] border-[#FF3B30]/30 scale-110' : 'bg-white border-black/[0.08]'}`}>
-              <Heart size={20} className={liked ? 'text-[#FF3B30] fill-[#FF3B30]' : 'text-[#111111]'} />
+            <button onClick={() => setLiked((v) => !v)} className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all ${liked ? 'bg-[#FFE5E5] border-[#E5484D]/30 scale-110' : 'bg-white border-black/[0.08]'}`}>
+              <Heart size={20} className={liked ? 'text-[#E5484D] fill-[#E5484D]' : 'text-[#111111]'} />
             </button>
           </div>
         </Card>
@@ -11809,17 +11789,17 @@ export default function App() {
             {petMenuOpen && (
               <>
                 <div className="absolute inset-0 z-[90]" onClick={() => setPetMenuOpen(false)} />
-                <div className="absolute top-[105px] right-6 z-[95] w-[180px] rounded-[14px] py-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)]" style={{ background: '#FBF9F7', border: '1px solid #EDE8E2', animation: 'homeReveal 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
+                <div className="absolute top-[105px] right-6 z-[95] w-[180px] rounded-[16px] py-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)]" style={{ background: '#FBF9F7', border: '1px solid #EDE8E2', animation: 'homeReveal 0.2s cubic-bezier(0.22,1,0.36,1) both' }}>
                   <button onClick={() => { setPetMenuOpen(false); window.location.href = '/edit-pet'; }} className="w-full flex items-center gap-2.5 px-4 py-2.5 active:opacity-60 text-left">
-                    <Pencil size={14} className="text-[#A09A94]" />
+                    <Pencil size={14} className="text-[#9B9B9F]" />
                     <span className="text-[13px] font-semibold text-[#111]">Edit Profile</span>
                   </button>
                   <button onClick={() => { setPetMenuOpen(false); setToastMessage('Coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-2.5 px-4 py-2.5 active:opacity-60 text-left">
-                    <Camera size={14} className="text-[#A09A94]" />
+                    <Camera size={14} className="text-[#9B9B9F]" />
                     <span className="text-[13px] font-semibold text-[#111]">Change Photo</span>
                   </button>
                   <button onClick={() => { setPetMenuOpen(false); setToastMessage('Coming soon'); setTimeout(() => setToastMessage(null), 2000); }} className="w-full flex items-center gap-2.5 px-4 py-2.5 active:opacity-60 text-left">
-                    <Share2 size={14} className="text-[#A09A94]" />
+                    <Share2 size={14} className="text-[#9B9B9F]" />
                     <span className="text-[13px] font-semibold text-[#111]">Share</span>
                   </button>
                   <div className="mx-3 h-[1px] bg-[#EDE8E2] my-1" />

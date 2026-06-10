@@ -13,7 +13,7 @@ const CREAM = '#F7F5F2';
 const PEACH = '#F3EFEB';
 const INK = '#111111';
 const MUTED = '#6E6058';
-const TERT = '#A09A94';
+const TERT = '#9B9B9F';
 const GREEN = '#3F8D63';
 const FIELD = '#E0D8CF';
 const CARD_SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.05)';
@@ -77,7 +77,7 @@ const BigInput = ({ value, onChange, placeholder, inputMode, autoFocus }) => (
 
 const RowInput = ({ value, onChange, placeholder, inputMode }) => (
   <input value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} inputMode={inputMode}
-    className="w-full bg-white rounded-[13px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: CARD_SHADOW }} />
+    className="w-full bg-white rounded-[12px] px-4 h-[50px] outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: CARD_SHADOW }} />
 );
 
 const Segmented = ({ options, value, onChange, small }) => (
@@ -85,7 +85,7 @@ const Segmented = ({ options, value, onChange, small }) => (
     {options.map((o) => {
       const on = value === o.id;
       return (
-        <button key={String(o.id)} onClick={() => onChange(o.id)} className={`flex-1 ${small ? 'h-[44px] text-[14px]' : 'h-[50px] text-[15px]'} rounded-[14px] font-bold transition-all active:scale-[0.97]`}
+        <button key={String(o.id)} onClick={() => onChange(o.id)} className={`flex-1 ${small ? 'h-[44px] text-[14px]' : 'h-[50px] text-[15px]'} rounded-[16px] font-bold transition-all active:scale-[0.97]`}
           style={{ background: on ? '#FFF3EC' : '#FFFFFF', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : CARD_SHADOW }}>{o.label}</button>
       );
     })}
@@ -102,7 +102,7 @@ const Stepper = ({ value, onChange, min = 0, max = 99, unit }) => (
 
 // Clean select row that opens a picker sheet (replaces pill clouds)
 const SelectRow = ({ value, placeholder, onClick }) => (
-  <button onClick={onClick} className="w-full flex items-center gap-3 bg-white rounded-[13px] px-4 h-[52px] active:scale-[0.99] transition-transform text-left" style={{ boxShadow: CARD_SHADOW }}>
+  <button onClick={onClick} className="w-full flex items-center gap-3 bg-white rounded-[12px] px-4 h-[52px] active:scale-[0.99] transition-transform text-left" style={{ boxShadow: CARD_SHADOW }}>
     <span className="flex-1 text-[15px] font-semibold truncate" style={{ color: value ? INK : '#C4B8AC' }}>{value || placeholder}</span>
     <ChevronRight size={17} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
   </button>
@@ -133,18 +133,18 @@ const BreedPicker = ({ species, onPick, onClose }) => {
   return (
     <Sheet title="Choose a breed" onClose={onClose}>
       <div className="px-5 pb-3 shrink-0">
-        <div className="flex items-center gap-2.5 bg-white rounded-[14px] px-3.5 h-[46px]" style={{ boxShadow: CARD_SHADOW }}>
+        <div className="flex items-center gap-2.5 bg-white rounded-[16px] px-3.5 h-[46px]" style={{ boxShadow: CARD_SHADOW }}>
           <Search size={17} color={TERT} strokeWidth={2} />
           <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search breeds" className="flex-1 bg-transparent outline-none text-[15px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" />
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-5 pb-8" style={{ scrollbarWidth: 'none' }}>
         {ql && !exact && (
-          <button onClick={() => onPick(q.trim())} className="w-full flex items-center gap-2 px-4 py-3.5 mb-2 rounded-[13px] bg-white text-left active:scale-[0.99]" style={{ boxShadow: CARD_SHADOW }}>
-            <Plus size={16} color={CORAL} strokeWidth={2.6} /><span className="text-[15px] font-semibold" style={{ color: CORAL }}>Add "{q.trim()}"</span>
+          <button onClick={() => onPick(q.trim())} className="w-full flex items-center gap-2 px-4 py-3.5 mb-2 rounded-[12px] bg-white text-left active:scale-[0.99]" style={{ boxShadow: CARD_SHADOW }}>
+            <Plus size={16} color={CORAL} strokeWidth={2.4} /><span className="text-[15px] font-semibold" style={{ color: CORAL }}>Add "{q.trim()}"</span>
           </button>
         )}
-        <div className="rounded-[14px] bg-white overflow-hidden" style={{ boxShadow: CARD_SHADOW }}>
+        <div className="rounded-[16px] bg-white overflow-hidden" style={{ boxShadow: CARD_SHADOW }}>
           {list.map((b, i) => (
             <button key={b} onClick={() => onPick(b)} className="relative w-full flex items-center px-4 py-3.5 text-left active:bg-black/[0.02]">
               <span className="text-[15px] font-semibold" style={{ color: INK }}>{b}</span>
@@ -168,14 +168,14 @@ const OptionSheet = ({ title, options, values = [], single, custom, onToggle, on
           {custom && (
             <div className="flex items-center gap-2 mb-3">
               <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Add your own" className="flex-1 bg-white rounded-[12px] px-3.5 h-[46px] outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" style={{ boxShadow: CARD_SHADOW }} />
-              <button onClick={() => { const v = draft.trim(); if (v) { onAddCustom(v); setDraft(''); } }} className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 active:scale-90" style={{ background: draft.trim() ? CORAL : '#EAE3DB' }}><Plus size={18} color={draft.trim() ? '#FFF' : TERT} strokeWidth={2.6} /></button>
+              <button onClick={() => { const v = draft.trim(); if (v) { onAddCustom(v); setDraft(''); } }} className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 active:scale-90" style={{ background: draft.trim() ? CORAL : '#EAE3DB' }}><Plus size={18} color={draft.trim() ? '#FFF' : TERT} strokeWidth={2.4} /></button>
             </div>
           )}
           <button onClick={onClose} className="w-full py-3.5 rounded-[16px] active:scale-[0.98]" style={{ background: CORAL, boxShadow: '0 6px 18px rgba(232,93,42,0.26)' }}><span className="text-[15px] font-bold text-white">Done</span></button>
         </div>
       )}>
       <div className="overflow-y-auto px-5 pb-4" style={{ scrollbarWidth: 'none' }}>
-        <div className="rounded-[14px] bg-white overflow-hidden" style={{ boxShadow: CARD_SHADOW }}>
+        <div className="rounded-[16px] bg-white overflow-hidden" style={{ boxShadow: CARD_SHADOW }}>
           {all.map((o, i) => {
             const on = values.includes(o);
             return (
@@ -278,7 +278,7 @@ const AddPet = () => {
             <div className="mt-7 flex flex-col items-center">
               <button onClick={() => set('photo', data.photo ? null : 'mock')} className="relative active:scale-[0.97] transition-transform">
                 <span className="w-[100px] h-[100px] rounded-full flex items-center justify-center overflow-hidden" style={{ background: '#FFFFFF', boxShadow: CARD_SHADOW }}>
-                  {data.photo ? <img src={DOG_PHOTO} alt="" className="w-full h-full object-cover" /> : <Camera size={28} color={TERT} strokeWidth={1.7} />}
+                  {data.photo ? <img src={DOG_PHOTO} alt="" className="w-full h-full object-cover" /> : <Camera size={28} color={TERT} strokeWidth={1.8} />}
                 </span>
                 <span className="absolute bottom-0 right-0 w-8 h-8 rounded-full flex items-center justify-center border-[3px] border-[#F7F5F2]" style={{ background: CORAL }}><Plus size={15} color="#FFFFFF" strokeWidth={2.8} /></span>
               </button>
@@ -288,7 +288,7 @@ const AddPet = () => {
                 {SPECIES.map((s) => {
                   const on = data.species === s.id;
                   return (
-                    <button key={s.id} onClick={() => { set('species', s.id); set('breed', ''); set('breedMix1', ''); set('breedMix2', ''); }} className="h-[46px] rounded-[13px] text-[14px] font-bold transition-all active:scale-[0.97]"
+                    <button key={s.id} onClick={() => { set('species', s.id); set('breed', ''); set('breedMix1', ''); set('breedMix2', ''); }} className="h-[46px] rounded-[12px] text-[14px] font-bold transition-all active:scale-[0.97]"
                       style={{ background: on ? '#FFF3EC' : '#FFFFFF', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : CARD_SHADOW }}>{s.label}</button>
                   );
                 })}
@@ -338,7 +338,7 @@ const AddPet = () => {
               </div>
               <div>
                 <Label>Weight</Label>
-                <div className="flex items-center gap-1 bg-white rounded-[13px] px-4 h-[52px]" style={{ boxShadow: CARD_SHADOW }}>
+                <div className="flex items-center gap-1 bg-white rounded-[12px] px-4 h-[52px]" style={{ boxShadow: CARD_SHADOW }}>
                   <span className="text-[18px] font-bold shrink-0 w-3 text-center" style={{ color: TERT, opacity: data.weightApprox ? 1 : 0 }}>~</span>
                   <input value={data.weight || ''} onChange={(e) => set('weight', e.target.value.replace(/[^\d.]/g, ''))} placeholder="0" inputMode="decimal" className="flex-1 min-w-0 bg-transparent outline-none text-[18px] font-bold text-[#111] placeholder:text-[#CBC0B4] placeholder:font-medium" />
                   <span className="text-[14px] font-bold shrink-0" style={{ color: MUTED }}>{data.weightUnit}</span>
@@ -395,7 +395,7 @@ const AddPet = () => {
             <div className="mt-7 flex flex-col gap-5">
               <div><Label>Primary vet</Label><div className="flex flex-col gap-2"><RowInput value={data.vetClinic} onChange={(v) => set('vetClinic', v)} placeholder="Clinic / vet name" /><RowInput value={data.vetPhone} onChange={(v) => set('vetPhone', v)} placeholder="Phone" inputMode="tel" /></div></div>
               <div><Label>Emergency contact</Label><div className="flex flex-col gap-2"><RowInput value={data.ecName} onChange={(v) => set('ecName', v)} placeholder="Name" /><RowInput value={data.ecPhone} onChange={(v) => set('ecPhone', v)} placeholder="Phone" inputMode="tel" /></div></div>
-              <div><Label>Notes for a sitter</Label><textarea value={data.notes || ''} onChange={(e) => set('notes', e.target.value)} placeholder="Anything a walker or sitter should know…" rows={4} className="w-full bg-white rounded-[13px] px-4 py-3 outline-none text-[15px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: CARD_SHADOW }} /></div>
+              <div><Label>Notes for a sitter</Label><textarea value={data.notes || ''} onChange={(e) => set('notes', e.target.value)} placeholder="Anything a walker or sitter should know…" rows={4} className="w-full bg-white rounded-[12px] px-4 py-3 outline-none text-[15px] font-medium text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal resize-none" style={{ boxShadow: CARD_SHADOW }} /></div>
             </div>
           )}
         </div>

@@ -36,7 +36,7 @@ const MiniToggle = ({ value, onChange }) => (
 const SetRow = ({ icon: Icon, title, subtitle, trailing, last }) => (
   <div className="relative">
     <div className="w-full flex items-center gap-3 px-3.5 py-[11px] text-left">
-      <div className="w-9 h-9 rounded-[11px] shrink-0 flex items-center justify-center" style={{ backgroundColor: ICON_TINT }}>
+      <div className="w-9 h-9 rounded-[12px] shrink-0 flex items-center justify-center" style={{ backgroundColor: ICON_TINT }}>
         <Icon size={16} color={ICON_COLOR} strokeWidth={2} />
       </div>
       <div className="flex-1 min-w-0">

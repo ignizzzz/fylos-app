@@ -12,7 +12,7 @@ const THEME = {
     accent: '#E85D2A', accentHover: '#D04A1C',
     primaryText: '#111111', secondaryText: '#6E6E73', tertiaryText: '#8E8E93',
     background: '#F9F9FB', surface: '#FFFFFF', surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
+    danger: '#E5484D', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
   },
   radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
   shadows: { soft: '0 4px 20px rgba(0,0,0,0.03)', floating: '0 8px 24px rgba(0,0,0,0.08)' },
@@ -90,7 +90,7 @@ const SuccessOverlay = () => (
       display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24,
       animation: `rv-successScale 0.5s ${THEME.motion.spring} 0.1s both`
     }}>
-      <Check size={40} color={THEME.colors.success} strokeWidth={2.5} />
+      <Check size={40} color={THEME.colors.success} strokeWidth={2.4} />
     </div>
     <div style={{ fontSize: 22, fontWeight: 600, color: THEME.colors.primaryText, marginBottom: 8 }}>Thank you!</div>
     <div style={{ fontSize: 15, color: THEME.colors.secondaryText, textAlign: 'center', maxWidth: 240, lineHeight: 1.5 }}>
@@ -211,7 +211,7 @@ const ReviewRatingScreen = () => {
                         transition: `all ${THEME.motion.tap} ease`,
                         display: 'flex', alignItems: 'center', gap: 6
                       }}>
-                        {selected && <Check size={14} strokeWidth={2.5} />}{tag}
+                        {selected && <Check size={14} strokeWidth={2.4} />}{tag}
                       </button>
                     );
                   })}

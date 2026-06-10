@@ -23,7 +23,7 @@ const THEME = {
     accent: '#E85D2A', accentHover: '#D04A1C',
     primaryText: '#111111', secondaryText: '#6E6E73', tertiaryText: '#8E8E93',
     background: '#F9F9FB', surface: '#FFFFFF', surfaceAlt: '#F2F2F7',
-    danger: '#FF3B30', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
+    danger: '#E5484D', success: '#00C060', warning: '#FF9500', info: '#007AFF', divider: '#E5E5E5'
   },
   radius: { full: '9999px', large: '24px', medium: '16px', small: '8px' },
   shadows: { soft: '0 4px 20px rgba(0,0,0,0.03)', floating: '0 8px 24px rgba(0,0,0,0.08)' },
@@ -87,8 +87,8 @@ const FullscreenViewer = ({ photo, photos, onClose, onToggleFavorite, onNavigate
         </button>
         <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.6)' }}>{currentIndex + 1} / {photos.length}</span>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="pg-btn" onClick={() => onToggleFavorite(photo.id)} style={{ width: 40, height: 40, borderRadius: THEME.radius.full, background: photo.isFavorite ? 'rgba(255,59,48,0.2)' : 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Heart size={18} color={photo.isFavorite ? '#FF3B30' : 'rgba(255,255,255,0.7)'} fill={photo.isFavorite ? '#FF3B30' : 'none'} />
+          <button className="pg-btn" onClick={() => onToggleFavorite(photo.id)} style={{ width: 40, height: 40, borderRadius: THEME.radius.full, background: photo.isFavorite ? 'rgba(229,72,77,0.2)' : 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Heart size={18} color={photo.isFavorite ? '#E5484D' : 'rgba(255,255,255,0.7)'} fill={photo.isFavorite ? '#E5484D' : 'none'} />
           </button>
           <button className="pg-btn" style={{ width: 40, height: 40, borderRadius: THEME.radius.full, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Share2 size={18} color="rgba(255,255,255,0.7)" />
@@ -123,7 +123,7 @@ const PhotoTile = ({ photo, height, onTap }) => (
     {photo.isFavorite && (
       <div className="pg-heart-badge">
         <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Heart size={12} color="#FF3B30" fill="#FF3B30" />
+          <Heart size={12} color="#E5484D" fill="#E5484D" />
         </div>
       </div>
     )}
@@ -230,7 +230,7 @@ export default function PhotoGalleryScreen() {
         {/* FAB */}
         <div style={{ position: 'absolute', bottom: 40, right: 20, zIndex: 40 }}>
           <button className="pg-fab" style={{ width: 54, height: 54, borderRadius: THEME.radius.full, background: 'linear-gradient(135deg, #FF7240 0%, #E85D2A 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 20px rgba(232,93,42,0.4)' }}>
-            <Plus size={24} color="#fff" strokeWidth={2.5} />
+            <Plus size={24} color="#fff" strokeWidth={2.4} />
           </button>
         </div>
 

@@ -40,7 +40,7 @@ const INIT = {
   emergency: [{ name: 'Alex Mueller', rel: 'Owner', phone: '+41 79 123 45 67', primary: true }, { name: 'Maria Schmidt', rel: 'Partner', phone: '+41 79 987 65 43' }],
   documents: [{ cat: 'Medical records', n: 6 }, { cat: 'Insurance', n: 3 }, { cat: 'Adoption & pedigree', n: 3 }, { cat: 'Legal & passport', n: 2 }, { cat: 'Other', n: 4 }],
 };
-const TABS = ['About', 'Health', 'Documents', 'Emergency', 'Share'];
+const TABS = ['About', 'Health', 'Documents', 'Emergency'];
 const TEMP_OPTS = ['Friendly', 'Playful', 'Calm', 'Energetic', 'Shy', 'Affectionate', 'Independent', 'Protective', 'Gentle', 'Curious'];
 const TRIG_OPTS = ['Thunder', 'Fireworks', 'Strangers', 'Other dogs', 'Loud noises', 'Being alone', 'Car rides', 'Vet visits'];
 const GOOD_OPTS = ['Dogs', 'Cats', 'Kids', 'Strangers'];
@@ -119,7 +119,7 @@ const InfoRow = ({ label, value, onClick, last }) => (
 
 const IconRow = ({ icon: Icon, title, sub, right, rightTone, trailing, onClick, last, danger }) => (
   <button onClick={onClick} className="relative w-full flex items-center gap-3 px-3.5 py-3 text-left active:bg-black/[0.02] transition-colors">
-    <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: danger ? '#FEE8E7' : TINT }}><Icon size={16} color={danger ? DANGER : CORAL} strokeWidth={2} /></span>
+    <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: danger ? '#FEE8E7' : TINT }}><Icon size={16} color={danger ? DANGER : CORAL} strokeWidth={2} /></span>
     <div className="flex-1 min-w-0">
       <div className="text-[14px] font-semibold truncate" style={{ color: INK }}>{title}</div>
       {sub && <div className="text-[11.5px] mt-0.5 truncate" style={{ color: TERT }}>{sub}</div>}
@@ -140,7 +140,7 @@ const EditChips = ({ items, tone, onRemove, onAdd }) => (
         {t}<button onClick={() => onRemove(t)} className="w-4 h-4 rounded-full flex items-center justify-center active:scale-90" style={{ background: 'rgba(0,0,0,0.08)' }}><X size={10} color={tone === 'warn' ? AMBER : MUTED} strokeWidth={3} /></button>
       </span>
     ))}
-    <button onClick={onAdd} className="inline-flex items-center gap-1 text-[12.5px] font-bold px-3 py-1.5 rounded-full active:scale-95" style={{ background: '#FFF', boxShadow: SHADOW, color: CORAL }}><Plus size={13} strokeWidth={2.6} /> Add</button>
+    <button onClick={onAdd} className="inline-flex items-center gap-1 text-[12.5px] font-bold px-3 py-1.5 rounded-full active:scale-95" style={{ background: '#FFF', boxShadow: SHADOW, color: CORAL }}><Plus size={13} strokeWidth={2.4} /> Add</button>
   </div>
 );
 
@@ -160,7 +160,7 @@ const Sheet = ({ title, onClose, children }) => (
 );
 
 const Input = ({ value, onChange, placeholder, suffix, autoFocus }) => (
-  <div className="flex items-center bg-white rounded-[13px] px-4 h-[50px]" style={{ boxShadow: SHADOW }}>
+  <div className="flex items-center bg-white rounded-[12px] px-4 h-[50px]" style={{ boxShadow: SHADOW }}>
     <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} autoFocus={autoFocus} className="flex-1 bg-transparent outline-none text-[15px] font-semibold text-[#111] placeholder:text-[#C4B8AC] placeholder:font-normal" />
     {suffix && <span className="text-[13px] font-bold" style={{ color: TERT }}>{suffix}</span>}
   </div>
@@ -189,7 +189,7 @@ const MultiSheet = ({ title, options, values, onApply, onClose }) => {
       </Card>
       <div className="flex items-center gap-2 mt-3">
         <input value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="Add your own" className="flex-1 bg-white rounded-[12px] px-3.5 h-[46px] outline-none text-[14px] font-medium text-[#111] placeholder:text-[#C4B8AC]" style={{ boxShadow: SHADOW }} />
-        <button onClick={() => { const v = draft.trim(); if (v && !sel.includes(v)) { setSel([...sel, v]); setDraft(''); } }} className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 active:scale-90" style={{ background: draft.trim() ? CORAL : '#EAE3DB' }}><Plus size={18} color={draft.trim() ? '#FFF' : TERT} strokeWidth={2.6} /></button>
+        <button onClick={() => { const v = draft.trim(); if (v && !sel.includes(v)) { setSel([...sel, v]); setDraft(''); } }} className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 active:scale-90" style={{ background: draft.trim() ? CORAL : '#EAE3DB' }}><Plus size={18} color={draft.trim() ? '#FFF' : TERT} strokeWidth={2.4} /></button>
       </div>
       <PrimaryBtn onClick={() => { onApply(sel); onClose(); }}>Done</PrimaryBtn>
     </Sheet>
@@ -207,7 +207,7 @@ const ItemSheet = ({ form, item, onSave, onRemove, onClose, act }) => {
   const valid = form.fields.filter((f) => !f.opt && !f.options).every((f) => (v[f.key] || '').toString().trim());
   return (
     <Sheet title={item ? form.edit : form.add} onClose={onClose}>
-      <div className="flex items-start gap-2 rounded-[13px] px-3.5 py-3 mb-1" style={{ background: PEACH }}>
+      <div className="flex items-start gap-2 rounded-[12px] px-3.5 py-3 mb-1" style={{ background: PEACH }}>
         <Info size={14} color={MUTED} strokeWidth={2} className="mt-0.5 shrink-0" />
         <p className="text-[11.5px] leading-[1.45]" style={{ color: MUTED }}>{form.note}</p>
       </div>
@@ -235,7 +235,7 @@ const ShareSheet = ({ onClose, act }) => (
     <div className="rounded-[18px] overflow-hidden p-5 text-center" style={{ background: 'linear-gradient(150deg,#EF6A3C,#E85D2A 52%,#D44D1B)' }}>
       <span className="inline-flex w-12 h-12 rounded-full items-center justify-center mb-3" style={{ background: 'rgba(255,255,255,0.18)' }}><QrCode size={24} color="#fff" strokeWidth={2} /></span>
       <p className="text-[13px] leading-[1.45]" style={{ color: 'rgba(255,255,255,0.92)' }}>Let a sitter or vet see exactly how to care for Leo.</p>
-      <button onClick={() => act('Link copied')} className="w-full mt-4 py-3 rounded-[14px] bg-white active:scale-[0.98] inline-flex items-center justify-center gap-2"><Copy size={15} color={CORAL} strokeWidth={2.2} /><span className="text-[14px] font-bold" style={{ color: CORAL }}>Copy share link</span></button>
+      <button onClick={() => act('Link copied')} className="w-full mt-4 py-3 rounded-[16px] bg-white active:scale-[0.98] inline-flex items-center justify-center gap-2"><Copy size={15} color={CORAL} strokeWidth={2.2} /><span className="text-[14px] font-bold" style={{ color: CORAL }}>Copy share link</span></button>
     </div>
   </Sheet>
 );
@@ -246,7 +246,7 @@ const MoreSheet = ({ onClose, act, onShare, onLost }) => {
     <Sheet title="Leo" onClose={onClose}>
       <Card>{items.map((it, i) => (
         <button key={it.t} onClick={() => { onClose(); setTimeout(it.f, 60); }} className="relative w-full flex items-center gap-3 px-4 py-3.5 text-left active:bg-black/[0.02]">
-          <span className="w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0" style={{ background: it.danger ? '#FEE8E7' : TINT }}><it.icon size={16} color={it.danger ? DANGER : CORAL} strokeWidth={2} /></span>
+          <span className="w-9 h-9 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: it.danger ? '#FEE8E7' : TINT }}><it.icon size={16} color={it.danger ? DANGER : CORAL} strokeWidth={2} /></span>
           <span className="flex-1 text-[14.5px] font-semibold" style={{ color: it.danger ? DANGER : INK }}>{it.t}</span>
           {i < items.length - 1 && <div className="absolute bottom-0 left-[58px] right-0 h-px" style={{ background: LINE }} />}
         </button>
@@ -426,7 +426,7 @@ const PetProfile = ({ embedded = false, onBack, pet }) => {
                 <>
                   <SectionLabel action="+ Add" onAction={() => openItem('documents')}>Documents</SectionLabel>
                   <Card>{data.documents.map((d, i) => <IconRow key={i} icon={FileText} title={d.cat} sub={`${d.n} file${d.n > 1 ? 's' : ''}`} onClick={() => act(d.cat)} last={i === data.documents.length - 1} />)}</Card>
-                  <button onClick={() => openItem('documents')} className="w-full mt-3 py-3.5 rounded-[14px] flex items-center justify-center gap-2 active:scale-[0.99]" style={{ border: '1.5px dashed #D6CDC2' }}><Plus size={15} color={MUTED} strokeWidth={2.4} /><span className="text-[13.5px] font-semibold" style={{ color: MUTED }}>Add a document</span></button>
+                  <button onClick={() => openItem('documents')} className="w-full mt-3 py-3.5 rounded-[16px] flex items-center justify-center gap-2 active:scale-[0.99]" style={{ border: '1.5px dashed #D6CDC2' }}><Plus size={15} color={MUTED} strokeWidth={2.4} /><span className="text-[13.5px] font-semibold" style={{ color: MUTED }}>Add a document</span></button>
                 </>
               )}
 
@@ -450,7 +450,7 @@ const PetProfile = ({ embedded = false, onBack, pet }) => {
                     <span className="inline-flex w-12 h-12 rounded-full items-center justify-center mb-3" style={{ background: 'rgba(255,255,255,0.18)' }}><QrCode size={24} color="#fff" strokeWidth={2} /></span>
                     <div className="text-[16px] font-extrabold text-white">Share Leo's profile</div>
                     <p className="text-[12.5px] mt-1.5 leading-[1.45]" style={{ color: 'rgba(255,255,255,0.85)' }}>Let a sitter or vet see exactly how to care for Leo.</p>
-                    <button onClick={() => setSheet({ k: 'share' })} className="w-full mt-4 py-3 rounded-[14px] bg-white active:scale-[0.98]"><span className="text-[14px] font-bold" style={{ color: CORAL }}>Create share link</span></button>
+                    <button onClick={() => setSheet({ k: 'share' })} className="w-full mt-4 py-3 rounded-[16px] bg-white active:scale-[0.98]"><span className="text-[14px] font-bold" style={{ color: CORAL }}>Create share link</span></button>
                   </div>
                   <SectionLabel>Who has access</SectionLabel>
                   <Card>

@@ -260,7 +260,7 @@ const ProviderDetailScreen = () => {
                       key={i}
                       className="shrink-0 flex items-center justify-center"
                       style={{
-                        width: 96, height: 96, borderRadius: 14,
+                        width: 96, height: 96, borderRadius: 16,
                         background: `linear-gradient(135deg, ${c}, ${c}CC)`,
                       }}
                     >
