@@ -10710,158 +10710,88 @@ const InboxNotificationCard = ({ notification, onAction, onMarkRead, onArchive, 
 };
 
 const NotificationsOverlay = ({ isOpen, onClose, notifications, onMarkAllRead, onToggleRead, onArchiveNotification, onDeleteNotification }) => {
-  const [activeView, setActiveView] = useState(0);
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [isArchiveView, setIsArchiveView] = useState(false);
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState(new Set());
-  const { progress: inboxScrollY, handleScroll: handleInboxScroll, reset: resetInboxCollapse } = useDirectionalCollapseProgress(104, { showFactor: 2.35 });
-
-  useEffect(() => {
-    setIsSelectionMode(false);
-    setSelectedIds(new Set());
-  }, [isArchiveView, activeCategory]);
-  useEffect(() => {
-    resetInboxCollapse();
-  }, [isArchiveView, activeView, activeCategory, isOpen, resetInboxCollapse]);
-
+  // Inbox v2. One calm list: day groups, icon chips per kind, unread dot,
+  // a single All | Unread toggle. No categories, no archive, no modes.
+  const [view, setView] = React.useState('all');
   if (!isOpen) return null;
-
-  let filtered = notifications;
-  if (isArchiveView) {
-    filtered = filtered.filter((n) => n.archived);
-    if (activeCategory !== 'all') filtered = filtered.filter((n) => n.category === activeCategory);
-  } else {
-    filtered = filtered.filter((n) => !n.archived);
-    if (activeView === 1) filtered = filtered.filter((n) => !n.read);
-    if (activeView === 2) filtered = filtered.filter((n) => n.actions && n.actions.length > 0 && !n.read);
-    if (activeCategory !== 'all') filtered = filtered.filter((n) => n.category === activeCategory);
-  }
-  const grouped = filtered.reduce((acc, notif) => {
-    const group = notif.timeGroup || 'Today';
-    if (!acc[group]) acc[group] = [];
-    acc[group].push(notif);
-    return acc;
-  }, {});
-
-  const handleAction = (id) => onToggleRead(id);
-  const handleMarkRead = (id) => onToggleRead(id);
-  const handleArchive = (id) => onArchiveNotification?.(id);
-  const handleDelete = (id) => onDeleteNotification?.(id);
-  const handleToggleSelect = (id) => {
-    const next = new Set(selectedIds);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelectedIds(next);
+  const items = notifications.filter((n) => !n.archived).filter((n) => view === 'unread' ? !n.read : true);
+  const unreadCount = notifications.filter((n) => !n.archived && !n.read).length;
+  const ORDER = ['Today', 'Yesterday', 'Earlier'];
+  const groups = ORDER.map((g) => [g, items.filter((n) => (ORDER.includes(n.timeGroup) ? n.timeGroup : 'Earlier') === g)]).filter(([, arr]) => arr.length);
+  const chipFor = (n) => {
+    if (n.category === 'safety') return { bg: '#FEE8E7', c: '#E5484D', Icon: AlertTriangle };
+    if (n.category === 'bookings' || n.category === 'services') return { bg: '#FBE7DD', c: '#E85D2A', Icon: Calendar };
+    if (n.category === 'health') return { bg: '#EAF7EF', c: '#3F8D63', Icon: HeartPulse };
+    return { bg: '#F3EFEB', c: '#6E6058', Icon: Bell };
   };
-  const handleDeleteSelected = () => {
-    selectedIds.forEach((id) => onDeleteNotification?.(id));
-    setIsSelectionMode(false);
-    setSelectedIds(new Set());
-  };
-  const clamp01 = (v) => Math.max(0, Math.min(1, v));
-  const chipsProgress = clamp01(inboxScrollY / 52);
-  const segmentedProgress = clamp01((inboxScrollY - 52) / 52);
-  const inboxTopPadding = 220 - (44 * chipsProgress) - (40 * segmentedProgress);
-  const archiveTopPadding = 170 - (40 * chipsProgress);
-
   return (
-    <div className="absolute inset-0 z-[70] bg-[var(--color-background)] animate-in slide-in-from-right-full duration-300">
-      <div className="absolute top-0 left-0 w-full h-[160px] pointer-events-none z-10 bg-gradient-to-b from-[var(--color-background)] to-transparent" />
-      <div className="absolute top-0 left-0 w-full z-20 pt-14 px-5 flex flex-col pointer-events-none">
-        <div className="relative flex justify-between items-center w-full mb-4 pointer-events-auto">
-          {isArchiveView && isSelectionMode ? (
-            <>
-              <button onClick={() => setIsSelectionMode(false)} className="px-2 h-9 flex items-center justify-center text-[#111111] active:opacity-70"><span className="text-[15px] font-medium">Cancel</span></button>
-              <h2 className="absolute left-1/2 -translate-x-1/2 text-[16px] font-bold text-[#111111]">{selectedIds.size > 0 ? `${selectedIds.size} Selected` : 'Select items'}</h2>
-              <button onClick={handleDeleteSelected} disabled={selectedIds.size === 0} className={`w-9 h-9 flex items-center justify-center rounded-full transition-all duration-200 ${selectedIds.size > 0 ? 'bg-[#FFF0F0] text-[#FF3B30] active:scale-[0.96]' : 'bg-transparent text-[#CFCFD4]'}`}><Trash2 size={18} strokeWidth={2.5} /></button>
-            </>
-          ) : (
-            <>
-              <button onClick={isArchiveView ? () => setIsArchiveView(false) : onClose} className="w-9 h-9 flex items-center justify-center bg-white/80 backdrop-blur-md border border-black/[0.04] text-[#111111] rounded-full active:scale-[0.96] transition-all"><ChevronLeft size={18} strokeWidth={2.5} /></button>
-              <h2 className="absolute left-1/2 -translate-x-1/2 text-[16px] font-bold text-[#111111]">{isArchiveView ? 'Archive' : 'Inbox'}</h2>
-              {!isArchiveView ? (
-                <button onClick={() => setIsArchiveView(true)} className="w-9 h-9 flex items-center justify-center bg-white/80 backdrop-blur-md border border-black/[0.04] text-[#111111] rounded-full active:scale-[0.96] transition-all"><Archive size={16} strokeWidth={2.5} /></button>
-              ) : (
-                <button onClick={() => setIsSelectionMode(true)} className="w-9 h-9 flex items-center justify-center bg-white/80 backdrop-blur-md border border-black/[0.04] text-[#FF3B30] rounded-full active:scale-[0.96] transition-all"><Trash2 size={16} strokeWidth={2.5} /></button>
-              )}
-            </>
-          )}
-        </div>
-        {!isArchiveView && (
-          <div
-            style={{
-              opacity: 1 - segmentedProgress,
-              transform: `translateY(${-10 * segmentedProgress}px)`,
-              pointerEvents: segmentedProgress > 0.96 ? 'none' : 'auto'
-            }}
-            className="transition-[opacity,transform] duration-200"
-          >
-            <InboxSegmentedControl segments={['All', 'Unread', 'Actionable']} activeIndex={activeView} onChange={setActiveView} />
-          </div>
-        )}
-        <div
-          style={{
-            opacity: isSelectionMode ? 0.5 : (1 - chipsProgress),
-            transform: `translateY(${-10 * chipsProgress}px)`,
-            pointerEvents: isSelectionMode || chipsProgress > 0.96 ? 'none' : 'auto'
-          }}
-          className={`relative ${isArchiveView ? 'mt-0' : 'mt-3'} -mx-5 transition-[opacity,transform] duration-200`}
-        >
-          <div className="flex gap-2 overflow-x-auto hide-scrollbar px-5 pb-2 pt-1">
-            {INBOX_CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = activeCategory === cat.id;
-              return (
-                <button key={cat.id} onClick={() => setActiveCategory(cat.id)} className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full whitespace-nowrap text-[12px] font-semibold active:scale-[0.96] transition-all duration-[180ms] shrink-0 border ${isActive ? 'bg-[#111111] text-white border-transparent' : 'bg-white/90 backdrop-blur-md text-[#6E6E73] border-black/[0.05] hover:bg-white hover:text-[#111111]'}`}>
-                  {Icon && <Icon size={14} strokeWidth={isActive ? 2.5 : 2} />}
-                  {cat.label}
-                </button>
-              );
-            })}
-          </div>
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[var(--color-background)] to-transparent pointer-events-none" />
-        </div>
-      </div>
-      <div
-        onScroll={handleInboxScroll}
-        className="absolute inset-0 overflow-y-auto hide-scrollbar pb-12 px-5 bg-transparent scroll-smooth z-0 transition-all duration-300"
-        style={{ paddingTop: `${isArchiveView ? archiveTopPadding : inboxTopPadding}px` }}
-      >
-        {filtered.length === 0 ? (
-          <EmptyState icon={isArchiveView ? Archive : Check} title={isArchiveView ? 'Archive is empty' : (activeView === 2 ? 'Nothing to do!' : 'All caught up!')} description={isArchiveView ? 'Archived items will appear here.' : (activeView === 2 ? 'You have no pending action items.' : 'You have no new notifications right now.')} />
-        ) : (
-          <div className="pb-6">
-            {Object.entries(grouped).map(([group, items]) => (
-              <div key={group} className="mb-7">
-                <div className={`text-[12px] font-medium text-[#8E8E93] mb-2 ml-1 transition-opacity ${isSelectionMode ? 'opacity-40' : 'opacity-100'}`}>{group}</div>
-                <div className="bg-[#F9F9FB] rounded-[22px] overflow-hidden border border-black/[0.03]">
-                  {items.map((notif, index) => (
-                    <InboxNotificationCard
-                      key={notif.id}
-                      notification={notif}
-                      onAction={handleAction}
-                      onMarkRead={handleMarkRead}
-                      onArchive={handleArchive}
-                      onDelete={handleDelete}
-                      index={index}
-                      isLast={index === items.length - 1}
-                      isSelectionMode={isSelectionMode}
-                      isSelected={selectedIds.has(notif.id)}
-                      onToggleSelect={handleToggleSelect}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      {!isArchiveView && (
-        <button onClick={onMarkAllRead} className="absolute top-[66px] right-[74px] z-30 text-[12px] font-semibold text-[#E85D2A] active:opacity-70">
-          Mark all
+    <div className="absolute inset-0 z-[70] bg-[#F7F5F2] animate-in slide-in-from-right-full duration-300 overflow-y-auto custom-scrollbar">
+      {/* canonical sticky gradient header */}
+      <div className="pt-14 pb-4 px-5 flex items-center justify-center relative sticky top-0 z-30 pointer-events-none" style={{ background: 'linear-gradient(to bottom, #F7F5F2 0%, #F7F5F2 56%, rgba(247,245,242,0) 100%)' }}>
+        <button onClick={onClose} className="absolute left-5 top-[52px] w-9 h-9 rounded-full bg-white flex items-center justify-center active:scale-95 transition-all pointer-events-auto" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08)' }}>
+          <X size={16} strokeWidth={2.2} color="#111" />
         </button>
-      )}
+        <h1 className="text-[17px] font-bold text-[#111111]">Inbox</h1>
+        {unreadCount > 0 && (
+          <button onClick={onMarkAllRead} className="absolute right-5 top-[58px] text-[12px] font-bold pointer-events-auto active:opacity-60" style={{ color: '#E85D2A' }}>Mark all read</button>
+        )}
+      </div>
+
+      <div className="px-4 pb-16">
+        {/* minimal All | Unread toggle */}
+        <div className="flex items-center gap-5 ml-1.5 mb-1">
+          {[['all', 'All'], ['unread', 'Unread']].map(([id, l]) => {
+            const on = view === id;
+            return (
+              <button key={id} onClick={() => setView(id)} className="relative pb-1.5 text-[13.5px] font-bold transition-colors" style={{ color: on ? '#111' : '#9B9B9F' }}>
+                {l}{id === 'unread' && unreadCount > 0 && <span className="ml-1 text-[10.5px] font-extrabold" style={{ color: '#E85D2A' }}>{unreadCount}</span>}
+                {on && <span className="absolute left-0 right-0 bottom-0 rounded-full" style={{ height: 2, background: '#E85D2A' }} />}
+              </button>
+            );
+          })}
+        </div>
+
+        {groups.length === 0 && (
+          <div className="flex flex-col items-center text-center mt-20 px-8">
+            <span className="w-14 h-14 rounded-full flex items-center justify-center mb-3" style={{ background: '#F3EFEB' }}><Bell size={22} color="#9B9B9F" strokeWidth={2} /></span>
+            <div className="text-[15px] font-bold text-[#111]">All quiet</div>
+            <p className="text-[13px] mt-1" style={{ color: '#9B9B9F' }}>We'll let you know when something needs you.</p>
+          </div>
+        )}
+
+        {groups.map(([g, arr]) => (
+          <div key={g}>
+            <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] mb-2 ml-1.5 mt-5" style={{ color: '#A8A29C' }}>{g}</div>
+            <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
+              {arr.map((n, i) => {
+                const { bg, c, Icon } = chipFor(n);
+                const primary = n.actions && n.actions.find((a) => a.type === 'primary');
+                return (
+                  <div key={n.id} className="relative">
+                    <button onClick={() => onToggleRead(n.id)} className="w-full flex items-start gap-3 px-3.5 py-3 text-left active:bg-black/[0.02] transition-colors">
+                      <span className="relative w-9 h-9 rounded-[11px] flex items-center justify-center shrink-0 mt-0.5" style={{ background: bg }}>
+                        <Icon size={16} color={c} strokeWidth={2} />
+                        {!n.read && <span className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full" style={{ background: '#E85D2A', border: '2px solid #fff' }} />}
+                      </span>
+                      <span className="flex-1 min-w-0">
+                        <span className="flex items-baseline gap-2">
+                          <span className={'flex-1 text-[14px] leading-tight truncate ' + (n.read ? 'font-medium text-[#6E6058]' : 'font-bold text-[#111]')}>{n.title}</span>
+                          <span className="text-[10.5px] shrink-0" style={{ color: '#B6AEA5' }}>{n.timeAgo}</span>
+                        </span>
+                        <span className="block text-[12px] mt-[3px] leading-[1.45]" style={{ color: '#9B9B9F', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{n.body}</span>
+                        {primary && !n.read && (
+                          <span className="inline-block mt-1.5 text-[12px] font-bold" style={{ color: '#E85D2A' }}>{primary.label}</span>
+                        )}
+                      </span>
+                    </button>
+                    {i < arr.length - 1 && <div className="absolute bottom-0 left-[58px] right-0 h-px" style={{ background: '#F1EDE8' }} />}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
