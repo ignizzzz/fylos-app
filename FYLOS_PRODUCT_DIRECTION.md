@@ -4,7 +4,7 @@
 >
 > **Είναι αδελφό αρχείο** του `FYLOS_TECH_BRIEF.md` (πώς το χτίζουμε) και `FYLOS_DESIGN_SYSTEM.md` (πώς φαίνεται).
 >
-> **Status**: v1 · founder-defined · ζει μαζί με το product
+> **Status**: v1.1 · founder-defined · ζει μαζί με το product — **δες §12 (2026-07-09): το "de-quieting" amendment υπερισχύει των αντικρουόμενων γραμμών στα §2/§3/§7/§8**
 
 ---
 
@@ -343,4 +343,50 @@ WARMTH-LAYER   (Airbnb DNA)   — ο Fylos είναι by name, όχι "pet 1"
 
 ---
 
-**End v1 draft.**
+## 12. Amendment — 2026-07-09: De-quieting (founder decision)
+
+> **v1 → v1.1.** Founder-decided 2026-07-09. Αυτό το amendment **υπερισχύει** των αντικρουόμενων γραμμών στα §2, §3, §7 και §8.
+
+### 12.1 Η απόφαση
+
+Το «quiet premium» υπηρέτησε την πλευρά health/record του Fylos. **Έπνιγε όμως την πλευρά του marketplace.** Το Fylos είναι επιχείρηση: τα bookings πληρώνουν τους λογαριασμούς, και ένα product που δεν ζητάει ποτέ να αγαπηθεί δεν αγαπιέται σε κλίμακα. Από σήμερα το Fylos κρατάει τη **ζεστασιά** του και αφήνει τη **ντροπαλότητα** του.
+
+**Sanctioned από σήμερα (πρώην anti-patterns):**
+
+- **Countdowns & timers** — ink-fade, credit-melt, Double Paw Weekend ρολόγια. Η πίεση χρόνου είναι feature, όχι smell.
+- **Πραγματική σπανιότητα & FOMO** — «8 σαββατοκύριακα τον χρόνο», «cap 2/έτος», seasonal art που όντως χάνεται. Το FOMO επιτρέπεται ρητά.
+- **Streak-like μηχανισμοί** — το 60ήμερο ξεθώριασμα της Paw Card ΕΙΝΑΙ streak mechanic. Το αναλαμβάνουμε.
+- **Collections** — το Ράφι, seasonal κάρτες, γκρίζες ghost cards. Το collecting είναι core loop.
+- **Levels** — owner Paw Levels και (ξεχωριστά) Pro Track levels. Ατελείωτες σκάλες, milestone τίτλοι, cosmetic prestige.
+- **Το app πουλάει μόνο του** — share cards, public levels, referral στιγμές είναι first-class οθόνες. Το copy επιτρέπεται να πουλάει: να ζητάει το booking, το share, το referral.
+- **Addiction-grade engagement είναι δηλωμένος στόχος** — μετράμε και βελτιστοποιούμε return frequency, card completion, streak survival.
+
+**Αμετάβλητα — η ζεστασιά είναι αδιαπραγμάτευτη:**
+
+- Coral/peach παλέτα, φωτεινές επιφάνειες, Inter. Η ενέργεια ανεβαίνει· η θερμοκρασία μένει ζεστή.
+- **ΠΟΤΕ emoji στο UI** — το playful βγαίνει από εικονογράφηση, coral/peach iconography και φωνή.
+- **ΠΟΤΕ dark hero cards** στο φωτεινό UI.
+- **ΠΟΤΕ ψεύτικα δεδομένα** — αριθμοί, timers και progress πάντα αληθινά και επαληθεύσιμα.
+- **Μόνο πραγματική σπανιότητα** — κάθε countdown τελειώνει κάτι αληθινό· κάθε «limited» είναι limited. Ψεύτικο ρολόι = λόγος απόλυσης, όχι growth hack.
+- Τα levels δεν πέφτουν ποτέ (owners)· κανένα pay-to-win· η οικονομική αξία μένει σε capped, τίμια reward pools.
+
+### 12.2 Ξαναγραμμένες γραμμές (αντικαθιστούν επί τόπου)
+
+**§2 anti-persona, παλιό:** *«gamer που θέλει tamagotchi-like badges/streaks»* → **νέο:** *«gamer που θέλει εικονικό κατοικίδιο ΑΝΤΙ να φροντίζει το αληθινό — το Fylos κάνει gamify την αληθινή φροντίδα, ποτέ την προσομοιωμένη.»*
+
+**§3, παλιό:** *«Τι ΔΕΝ πρέπει να νιώσουν: anxiety, obligation, "become a better pet parent", FOMO, gamification-pressure.»* → **νέο:** *«Τι ΔΕΝ πρέπει να νιώσουν: ντροπή, κριτική, ότι τους λένε ψέματα, ή τιμωρία για την απουσία. FOMO για αληθινά, ληγόμενα καλά πράγματα είναι θεμιτό· η ξεθωριασμένη κάρτα είναι soft loss (το level επιζεί), ποτέ κατσάδα.»*
+
+**§7 tonal NEVER, παλιό:** *«gamified ("+50 XP · streak 7")»* → **νέο:** *«abstract-gamified ("+50 XP", γυμνά point balances). Το concrete-gamified είναι το ύφος του σπιτιού: "2 paws to go", "Ink fades Friday", "Level 8 is yours for keeps" — πάντα πατούσες, κάρτες, levels· ποτέ XP.»*
+
+**§7 Avoid list, τροπολογία:** το *«Unlock»* επιτρέπεται **όταν αυτό που ξεκλειδώνει είναι πραγματικό και άμεσο** («Seal this card to unlock gold ink»). Τα *«Premium», «Smart», «AI-powered», «Boost»* παραμένουν αποφευκτέα — πουλάνε το app· εμείς πουλάμε το reward.
+
+**§8, παλιό:** *«ΟΧΙ gamification — badges, streaks, levels, XP, leaderboards. Σπάει το emotional promise.»* → **νέο:** *«Το gamification είναι core — αλλά paw-native μόνο. ΝΑΙ: stamps, κάρτες, ink fades, Ράφι/collections, Levels, milestone τίτλοι, seasonal art, countdowns σε αληθινές προθεσμίες. ΑΚΟΜΑ ΠΟΤΕ: γυμνά XP νούμερα, δημόσια συγκριτικά leaderboards για owners (το status είναι self-vs-self· στους pros το rank-vs-peers επιτρέπεται — είναι επαγγελματικό context), ψεύτικο urgency, και κάθε μηχανισμός που χρεώνει για να προσπεράσεις.»*
+
+### 12.3 Νέο decision filter (προστίθεται στο §9)
+
+**8. Δίνει αυτή η οθόνη στον χρήστη λόγο να γυρίσει αύριο — ή να τη δείξει σε κάποιον σήμερα;**
+→ Αν κανένα από τα δύο, είναι αρχείο, όχι product surface. Πρόσθεσε timer, επόμενο milestone, ή share moment — τίμια.
+
+---
+
+**End v1.1.**
