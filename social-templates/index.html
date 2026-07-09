@@ -13,12 +13,10 @@
   /* ============ FYLOS · SOCIAL SYSTEM ============ */
   *,*::before,*::after{box-sizing:border-box}
   :root{
-    /* brand tokens (from FYLOS_DESIGN_SYSTEM.md) */
     --accent:#E85D2A; --accent2:#FF7240; --accent-light:#FF6A3D;
     --ink:#111111; --sec:#6E6E73; --ter:#8E8E93;
     --paper:#F9F9FB; --surface:#FFFFFF; --peachbg:#FFF4EF;
     --green:#3F8D63; --greenbg:#EEF7F1;
-    /* page chrome (warm-light, by design: Fylos has no dark mode) */
     --page:#EDEBE8; --panel:#FFFFFF; --stage:#E4E1DD;
     --text:#111111; --dim:#6E6E73; --hair:rgba(17,17,17,.08);
     --shadow:0 22px 48px -22px rgba(60,30,10,.28),0 2px 5px rgba(60,30,10,.05);
@@ -32,19 +30,25 @@
     -webkit-font-smoothing:antialiased;line-height:1.5}
   .wrap{max-width:1120px;margin:0 auto;padding:clamp(28px,5vw,72px) clamp(18px,4vw,40px) 96px}
 
-  /* header */
+  .expbtn{position:fixed;top:14px;right:14px;z-index:60;font:600 12px/1 var(--sans);
+    color:#fff;background:var(--accent);border:none;border-radius:99px;padding:11px 16px;cursor:pointer;
+    box-shadow:0 8px 20px rgba(232,93,42,.32)}
+  .expbtn:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  body.export .canvas.post{width:1080px}
+  body.export .canvas.story{width:1080px}
+  body.export .stage{overflow:auto;justify-content:flex-start}
+
   .top{display:flex;flex-direction:column;gap:20px;margin-bottom:52px}
   .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;
     color:var(--accent);font-weight:600;display:flex;align-items:center;gap:12px}
   .eyebrow::before{content:"";width:30px;height:8px;border-radius:99px;
     background:linear-gradient(90deg,var(--accent2),var(--accent))}
-  h1{font-family:var(--round);font-size:clamp(34px,6vw,64px);line-height:1.02;letter-spacing:-.035em;
-    font-weight:800;margin:0;max-width:15ch;text-wrap:balance}
+  h1{font-family:var(--round);font-size:clamp(34px,6vw,62px);line-height:1.02;letter-spacing:-.035em;
+    font-weight:800;margin:0;max-width:16ch;text-wrap:balance}
   h1 .dot{color:var(--accent)}
-  .deck{font-size:clamp(15px,1.7vw,18px);color:var(--dim);max-width:62ch;margin:0}
+  .deck{font-size:clamp(15px,1.7vw,18px);color:var(--dim);max-width:64ch;margin:0}
   .deck b{color:var(--text);font-weight:600}
 
-  /* identity system */
   .system{background:var(--panel);border:1px solid var(--hair);border-radius:24px;
     padding:clamp(20px,3vw,32px);margin-bottom:60px;box-shadow:var(--shadow)}
   .sys-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px 40px}
@@ -73,7 +77,6 @@
   .fmt--post i{width:50px;height:62px}
   .fmt--story i{width:37px;height:66px}
 
-  /* gallery */
   .gallery{display:flex;flex-direction:column;gap:68px}
   .tpl-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:9px 16px;margin-bottom:20px}
   .tpl-id{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:600}
@@ -92,36 +95,28 @@
   .art{margin:0;display:flex;flex-direction:column;gap:12px;align-items:center}
   .art figcaption{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
 
-  /* ============ CANVAS SYSTEM (copy-paste ready) ============ */
+  /* ============ CANVAS SYSTEM ============ */
   .canvas{position:relative;overflow:hidden;border-radius:18px;container-type:inline-size;
     background:var(--bg);color:var(--fg);box-shadow:var(--shadow);isolation:isolate}
   .canvas.post{width:min(340px,86vw);aspect-ratio:4/5}
   .canvas.story{width:min(276px,72vw);aspect-ratio:9/16}
-
   .t-companion{--bg:var(--paper);--fg:var(--ink)}
   .t-reminder{--bg:var(--peachbg);--fg:var(--ink)}
   .t-week{--bg:#F4F3F5;--fg:var(--ink)}
   .t-day{--bg:var(--paper);--fg:var(--ink)}
-  .t-invite{--bg:linear-gradient(155deg,#FF8256 0%,#E85D2A 78%);--fg:#FFFFFF}
 
   .cv{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;
     padding:8cqw;gap:5cqw}
   .cv-mid{flex:1;display:flex;flex-direction:column;justify-content:center;gap:4.5cqw;min-height:0}
 
-  /* wordmark + companion dot */
   .wm{display:flex;align-items:flex-end;gap:.3cqw}
   .wm b{font-family:var(--round);font-weight:800;font-size:5cqw;letter-spacing:-.03em;line-height:.9;color:var(--fg)}
   .wm i{width:1.9cqw;height:1.9cqw;border-radius:50%;background:var(--accent);margin-bottom:.4cqw}
-  .t-invite .wm i{background:#fff}
   .row{display:flex;align-items:center;justify-content:space-between;gap:3cqw}
   .meta{font-family:var(--mono);font-size:2.7cqw;letter-spacing:.16em;text-transform:uppercase;
     color:color-mix(in srgb,var(--fg) 48%,transparent)}
-
-  /* pills / chips */
   .pill{align-self:flex-start;font-size:2.9cqw;font-weight:600;padding:1.6cqw 3.2cqw;border-radius:99px;
     background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
-  .chip{display:inline-flex;align-items:center;gap:1.2cqw;font-size:2.6cqw;font-weight:600;
-    padding:1cqw 2.6cqw;border-radius:99px}
   .chip-ok{color:var(--green);background:var(--greenbg)}
   .live{display:inline-flex;align-items:center;gap:1.8cqw;font-size:2.8cqw;font-weight:600;color:var(--accent)}
   .live::before{content:"";width:2.4cqw;height:2.4cqw;border-radius:50%;background:var(--accent);
@@ -129,14 +124,12 @@
   @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)}
     70%{box-shadow:0 0 0 3cqw transparent}100%{box-shadow:0 0 0 0 transparent}}
 
-  /* content types */
   .warm{font-family:var(--serif);font-style:italic;font-size:9.6cqw;line-height:1.08;letter-spacing:-.01em;
     margin:0;text-wrap:balance}
   .sub{font-size:3.7cqw;line-height:1.34;color:color-mix(in srgb,var(--fg) 60%,transparent);margin:0}
   .headline{font-family:var(--round);font-size:9cqw;line-height:1.02;letter-spacing:-.03em;font-weight:800;
     margin:0;text-wrap:balance}
 
-  /* reminder card */
   .rcard{background:var(--surface);border-radius:6cqw;padding:6cqw;box-shadow:var(--card-sh);
     display:flex;flex-direction:column;gap:3.4cqw}
   .rcard .ic{width:12cqw;height:12cqw;border-radius:50%;display:grid;place-items:center;
@@ -145,11 +138,11 @@
   .rcard p{font-size:3.5cqw;color:var(--sec);margin:0}
   .rcard .when{font-family:var(--mono);font-size:2.8cqw;color:var(--accent);letter-spacing:.04em}
 
-  /* scorecards + bars + list (week) */
   .scores{display:flex;gap:2.6cqw}
   .score{flex:1;background:var(--surface);border-radius:4.4cqw;padding:3.6cqw;box-shadow:var(--card-sh);
     display:flex;flex-direction:column;gap:1cqw}
   .score .n{font-size:6.4cqw;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .score .n.ok{font-size:4.2cqw;color:var(--green)}
   .score .l{font-size:2.6cqw;color:var(--sec)}
   .bars{display:flex;align-items:flex-end;gap:1.7cqw;height:15cqw;padding:0 .5cqw}
   .bars i{flex:1;border-radius:1.4cqw;background:color-mix(in srgb,var(--accent) 26%,transparent);display:block}
@@ -161,7 +154,6 @@
   .list .k{font-weight:600}
   .list .v{color:var(--sec);font-family:var(--mono);font-size:2.7cqw;letter-spacing:.02em}
 
-  /* timeline (day) */
   .tl{display:flex;flex-direction:column}
   .tl .r{display:flex;align-items:center;gap:2.8cqw;padding:2.9cqw 0;
     border-bottom:.28cqw solid color-mix(in srgb,var(--fg) 8%,transparent)}
@@ -171,25 +163,14 @@
   .tl .ic.done{background:var(--greenbg)}
   .tl .lab{font-size:3.4cqw;font-weight:600}
   .tl .r.done .lab{color:var(--sec)}
+  .ic svg{width:60%;height:60%}
 
-  /* invite */
-  .avatar{width:24cqw;height:24cqw;border-radius:50%;background:rgba(255,255,255,.22);
-    border:.5cqw solid rgba(255,255,255,.55);display:grid;place-items:center;
-    font-family:var(--round);font-weight:800;font-size:12cqw;color:#fff}
-  .ichips{display:flex;flex-wrap:wrap;gap:2cqw}
-  .ichips span{font-size:2.9cqw;font-weight:600;padding:1.4cqw 3cqw;border-radius:99px;
-    background:rgba(255,255,255,.2);color:#fff}
-
-  /* canvas footer */
   .foot{display:flex;align-items:center;justify-content:space-between;padding-top:3.2cqw;
     border-top:.3cqw solid color-mix(in srgb,var(--fg) 10%,transparent)}
   .foot span{font-family:var(--mono);font-size:2.7cqw;letter-spacing:.05em;
     color:color-mix(in srgb,var(--fg) 55%,transparent)}
   .foot .hl{color:var(--fg);font-weight:600}
-  .t-invite .foot{border-top-color:rgba(255,255,255,.3)}
-  .ic svg{width:60%;height:60%}
 
-  /* closing */
   .end{margin-top:70px;border-top:1px solid var(--hair);padding-top:32px;
     display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px 40px}
   .end h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
@@ -201,14 +182,16 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 
+<button class="expbtn" id="exp" type="button">Export size · 1080px</button>
+
 <div class="wrap">
   <header class="top">
     <div class="eyebrow">Fylos · Social system</div>
-    <h1>Five drafts<span class="dot">.</span> One companion<span class="dot">.</span></h1>
-    <p class="deck">One system, not five unrelated posts. Every draft shares the same <b>Fylos wordmark</b>
-      with its orange companion dot, the same <b>peach palette</b> and the same soft, light surfaces, so the
-      feed reads as one voice. Each works as a <b>4:5 post</b> and a <b>9:16 story</b>, and the five mirror the
-      app's own zones: warmth, data and live. Warm light throughout, by design. Pick the one that feels like Fylos.</p>
+    <h1>Four posts<span class="dot">.</span> One companion<span class="dot">.</span></h1>
+    <p class="deck">The working set for the Fylos feed. Four templates that share the same
+      <b>wordmark and companion dot</b>, the same <b>peach palette</b> and the same soft, light
+      surfaces, so every post reads as one voice. Each works as a <b>4:5 post</b> and a <b>9:16 story</b>.
+      All the copy lives in one <b>CONTENT</b> block in the code, so a new post is just a text swap.</p>
   </header>
 
   <section class="system" aria-label="Visual identity">
@@ -250,101 +233,121 @@
   <main class="gallery" id="gallery"></main>
 
   <footer class="end">
-    <div><h4>How it scales</h4><p>Every canvas is built in <b>container-query units</b>, so the same markup
-      is pixel-clean from this preview up to full export. Set the width to <code>1080px</code> and screenshot
-      at native resolution.</p></div>
-    <div><h4>On brand</h4><p>Warm light only, soft cards, one peach accent, green for good news, and the
-      companion dot everywhere. No dark hero, no photo as hero, no alarm colors. Straight out of the
-      <b>Fylos design system</b>.</p></div>
-    <div><h4>Next step</h4><p>Tell me which one (or two) feels closest, and whether you want the copy in
-      <b>English, German or Greek</b>. Then I finalize it with tidy, fill-in text fields ready for every post.</p></div>
+    <div><h4>Edit a post</h4><p>Every string lives in the <code>CONTENT</code> object at the top of the
+      script. Change the words for that template, save, refresh. No layout to touch.</p></div>
+    <div><h4>Export</h4><p>Tap <b>Export size · 1080px</b> top right, then screenshot the canvas you want.
+      Post is 1080×1350, story 1080×1920. Built in <code>container-query</code> units, so it stays crisp.</p></div>
+    <div><h4>On brand</h4><p>Warm light only, one peach accent, green for good news, the companion dot
+      everywhere. Straight out of the <b>Fylos design system</b>. Copy in English, swappable per locale.</p></div>
   </footer>
 </div>
 
 <script>
 (function(){
+  /* ============================================================
+     CONTENT · edit these fields to make a new post.
+     The pet name, dates and numbers are the only things you change.
+     ============================================================ */
+  var CONTENT={
+    handle:{site:'fylos.app', at:'@fylos'},
+
+    companion:{
+      meta:'Fylos',
+      quote:'The friend who remembers, so you never have to.',
+      sub:'Care, health and the people you trust. All in one calm place.'
+    },
+    reminder:{
+      pill:'Coming up',
+      title:'Bobby’s rabies booster is in 14 days.',
+      body:'We’ll remind you again closer to the date. Let’s plan it.',
+      when:'Due Fri, Mar 20'
+    },
+    week:{
+      meta:'This week',
+      scores:[{n:'6',l:'walks'},{n:'24',l:'km together'},{n:'Stable',l:'weight',ok:true}],
+      bars:[44,62,38,80,52,70,96],           /* 7 days · last bar is today */
+      list:[{k:'Rabies booster',v:'in 14 days'},{k:'Vet visit',v:'Fri, Mar 20'},{k:'Grooming',v:'in 3 weeks'}],
+      footL:'Bobby · this week'
+    },
+    today:{
+      live:'On a walk now · 12 min',
+      title:'Bobby’s day',
+      rows:[{t:'08:00',lab:'Morning walk',done:true},{t:'13:00',lab:'Lunch',done:true},
+            {t:'17:30',lab:'Evening walk'},{t:'21:00',lab:'Evening meds'}]
+    }
+  };
+
+  /* ---- shared bits ---- */
   var WM='<div class="wm"><b>Fylos</b><i></i></div>';
-  function foot(a,b){return '<div class="foot"><span class="hl">'+(a||'fylos.app')+'</span><span>'+(b||'@fylos')+'</span></div>';}
+  function foot(l,r){return '<div class="foot"><span class="hl">'+(l||CONTENT.handle.site)+'</span><span>'+(r||CONTENT.handle.at)+'</span></div>';}
   var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="#3F8D63" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
   var PAW='<svg viewBox="0 0 24 24" fill="#E85D2A"><circle cx="7" cy="9" r="2.1"/><circle cx="12" cy="7" r="2.1"/><circle cx="17" cy="9" r="2.1"/><path d="M12 12c3 0 5 2.2 5 4.4 0 1.9-1.7 2.6-3.4 2.6-.8 0-1 .3-1.6.3s-.8-.3-1.6-.3C7.7 19 6 18.3 6 16.4 6 14.2 9 12 12 12z"/></svg>';
   var BELL='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
 
-  var templates=[
-    {cls:'t-companion',name:'Companion',zone:'Zone S · warmth',
-     intent:'The calm-friend voice. A soft serif line on paper, the companion dot as full stop. For a thought, a promise, a quote.',
-     tags:[['Quote',1],['Statement',1],['Calm',0]],
-     html:'<div class="cv"><div class="row">'+WM+'<span class="meta">Fylos</span></div>'
-      +'<div class="cv-mid"><p class="warm">The friend who remembers, so you never have to.</p>'
-      +'<p class="sub">Care, health and the people you trust. All in one calm place.</p></div>'
-      +foot()+'</div>'},
-
-    {cls:'t-reminder',name:'Reminder',zone:'Zone R · coach-quiet',
-     intent:'A real Fylos card, lifted onto peach tint. Instantly reads as the app. For a tip, a nudge, a gentle heads-up.',
-     tags:[['Card',1],['Tip',1],['Product',0]],
-     html:'<div class="cv"><div class="row">'+WM+'<span class="pill">Coming up</span></div>'
+  /* ---- template builders ---- */
+  function companion(c){
+    return '<div class="cv"><div class="row">'+WM+'<span class="meta">'+c.meta+'</span></div>'
+      +'<div class="cv-mid"><p class="warm">'+c.quote+'</p><p class="sub">'+c.sub+'</p></div>'+foot()+'</div>';
+  }
+  function reminder(c){
+    return '<div class="cv"><div class="row">'+WM+'<span class="pill">'+c.pill+'</span></div>'
       +'<div class="cv-mid"><div class="rcard"><div class="ic">'+BELL+'</div>'
-      +'<h3>Bobby’s rabies booster is in 14 days.</h3>'
-      +'<p>We’ll remind you again closer to the date. Let’s plan it.</p>'
-      +'<span class="when">Due Fri, Mar 20</span></div></div>'
-      +foot()+'</div>'},
-
-    {cls:'t-week',name:'This week',zone:'Zone R · data',
-     intent:'Revolut-grade scan. Scorecards, a soft walk chart and a small list of what is coming. For numbers, tables and charts.',
-     tags:[['Table',1],['Chart',1],['Summary',1]],
-     html:'<div class="cv"><div class="row">'+WM+'<span class="meta">This week</span></div>'
+      +'<h3>'+c.title+'</h3><p>'+c.body+'</p><span class="when">'+c.when+'</span></div></div>'+foot()+'</div>';
+  }
+  function week(c){
+    var sc=c.scores.map(function(s){return '<div class="score"><span class="n'+(s.ok?' ok':'')+'">'+s.n+'</span><span class="l">'+s.l+'</span></div>';}).join('');
+    var mx=Math.max.apply(null,c.bars);
+    var bars=c.bars.map(function(h,i){return '<i class="'+(i===c.bars.length-1?'hi':'')+'" style="height:'+Math.round(h/mx*100)+'%"></i>';}).join('');
+    var li=c.list.map(function(x){return '<div class="it"><span class="k">'+x.k+'</span><span class="v">'+x.v+'</span></div>';}).join('');
+    return '<div class="cv"><div class="row">'+WM+'<span class="meta">'+c.meta+'</span></div>'
       +'<div class="cv-mid" style="justify-content:flex-start;gap:3.6cqw;padding-top:3cqw">'
-      +'<div class="scores">'
-      +'<div class="score"><span class="n">6</span><span class="l">walks</span></div>'
-      +'<div class="score"><span class="n">24</span><span class="l">km together</span></div>'
-      +'<div class="score"><span class="n" style="font-size:4.2cqw;color:var(--green)">Stable</span><span class="l">weight</span></div>'
-      +'</div>'
-      +'<div class="bars"><i style="height:44%"></i><i style="height:62%"></i><i style="height:38%"></i>'
-      +'<i style="height:80%"></i><i style="height:52%"></i><i style="height:70%"></i><i class="hi" style="height:96%"></i></div>'
-      +'<div class="list">'
-      +'<div class="it"><span class="k">Rabies booster</span><span class="v">in 14 days</span></div>'
-      +'<div class="it"><span class="k">Vet visit</span><span class="v">Fri, Mar 20</span></div>'
-      +'<div class="it"><span class="k">Grooming</span><span class="v">in 3 weeks</span></div>'
-      +'</div></div>'
-      +'<div class="foot"><span class="hl">Bobby · this week</span><span>@fylos</span></div></div>'},
-
-    {cls:'t-day',name:'Today',zone:'Zone L · live',
-     intent:'Uber-style immediacy. A soft timeline of the day with a live moment on top. For a schedule, a routine, a walk in progress.',
-     tags:[['Timeline',1],['Live',1],['Diagram',0]],
-     html:'<div class="cv"><div class="row">'+WM+'<span class="live">On a walk now · 12 min</span></div>'
+      +'<div class="scores">'+sc+'</div><div class="bars">'+bars+'</div><div class="list">'+li+'</div></div>'
+      +foot(c.footL,CONTENT.handle.at)+'</div>';
+  }
+  function today(c){
+    var rows=c.rows.map(function(r){
+      return '<div class="r'+(r.done?' done':'')+'"><span class="t">'+r.t+'</span>'
+        +'<span class="ic'+(r.done?' done':'')+'">'+(r.done?CHECK:PAW)+'</span><span class="lab">'+r.lab+'</span></div>';
+    }).join('');
+    return '<div class="cv"><div class="row">'+WM+'<span class="live">'+c.live+'</span></div>'
       +'<div class="cv-mid" style="justify-content:flex-start;gap:2.5cqw;padding-top:3cqw">'
-      +'<p class="headline" style="font-size:6.4cqw">Bobby’s day</p>'
-      +'<div class="tl">'
-      +'<div class="r done"><span class="t">08:00</span><span class="ic done">'+CHECK+'</span><span class="lab">Morning walk</span></div>'
-      +'<div class="r done"><span class="t">13:00</span><span class="ic done">'+CHECK+'</span><span class="lab">Lunch</span></div>'
-      +'<div class="r"><span class="t">17:30</span><span class="ic">'+PAW+'</span><span class="lab">Evening walk</span></div>'
-      +'<div class="r"><span class="t">21:00</span><span class="ic">'+PAW+'</span><span class="lab">Evening meds</span></div>'
-      +'</div></div>'
-      +foot()+'</div>'},
+      +'<p class="headline" style="font-size:6.4cqw">'+c.title+'</p><div class="tl">'+rows+'</div></div>'+foot()+'</div>';
+  }
 
-    {cls:'t-invite',name:'Meet',zone:'Zone S · shareable',
-     intent:'The one warm gradient, mirroring the app icon. A shareable pet card for a welcome, an intro, a launch moment.',
-     tags:[['Intro',1],['Announce',1],['Share',0]],
-     html:'<div class="cv"><div class="row">'+WM+'<span class="meta" style="color:rgba(255,255,255,.75)">Meet the pack</span></div>'
-      +'<div class="cv-mid" style="gap:4cqw"><div class="avatar">B</div>'
-      +'<p class="headline">Meet Bobby.</p>'
-      +'<div class="ichips"><span>3 years</span><span>Golden Retriever</span><span>Zürich</span></div>'
-      +'<p class="sub" style="color:rgba(255,255,255,.85)">Bobby just joined Fylos.</p></div>'
-      +'<div class="foot"><span class="hl" style="color:#fff">fylos.app</span><span style="color:rgba(255,255,255,.75)">@fylos</span></div></div>'}
+  var templates=[
+    {cls:'t-companion',name:'Companion',zone:'Zone S · warmth',build:companion,data:CONTENT.companion,
+     intent:'The calm-friend voice. A soft serif line on paper, the companion dot as full stop. For a thought, a promise, a quote.',
+     tags:[['Quote',1],['Statement',1],['Calm',0]]},
+    {cls:'t-reminder',name:'Reminder',zone:'Zone R · coach-quiet',build:reminder,data:CONTENT.reminder,
+     intent:'A real Fylos card, lifted onto peach tint. Instantly reads as the app. For a tip, a nudge, a gentle heads-up.',
+     tags:[['Card',1],['Tip',1],['Product',0]]},
+    {cls:'t-week',name:'This week',zone:'Zone R · data',build:week,data:CONTENT.week,
+     intent:'Revolut-grade scan. Scorecards, a soft walk chart and a small list of what is coming. For numbers, tables and charts.',
+     tags:[['Table',1],['Chart',1],['Summary',1]]},
+    {cls:'t-day',name:'Today',zone:'Zone L · live',build:today,data:CONTENT.today,
+     intent:'Uber-style immediacy. A soft timeline of the day with a live moment on top. For a schedule, a routine, a walk in progress.',
+     tags:[['Timeline',1],['Live',1],['Diagram',0]]}
   ];
 
   var gal=document.getElementById('gallery');
   templates.forEach(function(t,idx){
-    var sec=document.createElement('section');sec.className='tpl';
+    var html=t.build(t.data);
     var tags=t.tags.map(function(g){return '<span class="tag'+(g[1]?' tag--on':'')+'">'+g[0]+'</span>';}).join('');
     var num=('0'+(idx+1)).slice(-2);
-    sec.innerHTML='<div class="tpl-head"><span class="tpl-id">'+num+' / 05</span>'
+    var sec=document.createElement('section');sec.className='tpl';
+    sec.innerHTML='<div class="tpl-head"><span class="tpl-id">'+num+' / 04</span>'
       +'<h2 class="tpl-name">'+t.name+'</h2><span class="zone">'+t.zone+'</span>'
       +'<p class="tpl-intent">'+t.intent+'</p><div class="tags">'+tags+'</div></div>'
       +'<div class="stage">'
-      +'<figure class="art"><div class="canvas '+t.cls+' post">'+t.html+'</div><figcaption>Post · 4:5 · 1080×1350</figcaption></figure>'
-      +'<figure class="art"><div class="canvas '+t.cls+' story">'+t.html+'</div><figcaption>Story · 9:16 · 1080×1920</figcaption></figure>'
+      +'<figure class="art"><div class="canvas '+t.cls+' post">'+html+'</div><figcaption>Post · 4:5 · 1080×1350</figcaption></figure>'
+      +'<figure class="art"><div class="canvas '+t.cls+' story">'+html+'</div><figcaption>Story · 9:16 · 1080×1920</figcaption></figure>'
       +'</div>';
     gal.appendChild(sec);
+  });
+
+  document.getElementById('exp').addEventListener('click',function(){
+    document.body.classList.toggle('export');
+    this.textContent=document.body.classList.contains('export')?'Preview size':'Export size · 1080px';
   });
 })();
 </script>
