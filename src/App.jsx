@@ -86,6 +86,7 @@ import TermsScreen from './screens/87_TERMS_v1'
 import PrivacyPolicyScreen from './screens/88_PRIVACY_POLICY_v1'
 import LicensesScreen from './screens/89_LICENSES_v1'
 import InvitePublicScreen from './screens/90_INVITE_PUBLIC_v1'
+import PawCardMockup from './screens/98_PAW_CARD_v1'
 import MarketingShowcase from './screens/MARKETING_SHOWCASE_v1'
 import IconographyLab from './screens/ICONOGRAPHY_LAB_v1'
 import FeltIconSystem from './screens/FELT_ICON_SYSTEM_v1'
@@ -106,12 +107,25 @@ import WalkerPaymentScreen from './screens/Explore-Walker-Payment-v1'
 import BookingDetailsScreen from './screens/Explore-Walker-booking-details'
 import WalkerChatScreen from './screens/Explore-walker-chat.v1'
 
+// The gate must be a component, not an IIFE: an IIFE runs once when the
+// route table is built and bakes in a stale <Navigate>, so flows that set
+// fylos.auth and then nav('/') in the same session (Welcome's "Later",
+// password sign-in, OTP verify) would bounce back to onboarding/sign-in.
+const RootGate = () => {
+  try {
+    if (window.localStorage.getItem('fylos.auth') === '1') return <UnifiedApp />;
+    return <Navigate to={window.localStorage.getItem('fylos.intro') === '1' ? '/sign-in' : '/onboarding-v4'} replace />;
+  } catch (e) {
+    return <UnifiedApp />;
+  }
+};
+
 function App() {
   return (
     <Routes>
       {/* Default: the app, gated by auth. First run lands on sign-in so the
           journey is sign-in → welcome → first pet → dashboard, one thread. */}
-      <Route path="/" element={(() => { try { if (window.localStorage.getItem('fylos.auth') === '1') return <UnifiedApp />; return <Navigate to={window.localStorage.getItem('fylos.intro') === '1' ? '/sign-in' : '/onboarding-v4'} replace />; } catch (e) { return <UnifiedApp />; } })()} />
+      <Route path="/" element={<RootGate />} />
 
       {/* Standalone screens (for reference) */}
       <Route path="/app-shell" element={<AppShell />} />
@@ -195,6 +209,9 @@ function App() {
       {/* Public invite (Partiful-style, no iPhone frame, no auth) */}
       <Route path="/invite/:inviteId" element={<InvitePublicScreen />} />
       <Route path="/invite" element={<InvitePublicScreen />} />
+
+      {/* Paw Card rewards mockup (v3 spec) — 4 views: widget/card/shelf/pro */}
+      <Route path="/paw-card" element={<PawCardMockup />} />
 
       {/* Marketing showcase (no iPhone frame, full-width landing-style preview) */}
       <Route path="/marketing-preview" element={<MarketingShowcase />} />
