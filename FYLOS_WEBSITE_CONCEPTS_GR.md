@@ -288,3 +288,17 @@ D. Το Χάρτινο Θέατρο — paper cutout σκηνή: στρώσει�
 E. Το Σύγχρονο 3D — soft CG render (Pixar-like φως, καθαρές φόρμες): το «3D» που άρεσε στον founder, σε film ένδυμα. Web: pre-rendered πλάνα, αργότερα real-time hero. Αίσθηση: μεγάλη παραγωγή, διεθνής, λαμπερή.
 
 Πλήρη prompts στο chat (ίδιο καρέ σαλονιού, ίδια στοιχεία: σκύλος στο κέντρο, coral μπαλάκι #E85D2A, letterbox «FYLOS presents»). Μετά την επιλογή: αναπαραγωγή των 5 σκηνών (Προσθήκη 07) στη νικήτρια αισθητική.
+
+---
+
+# Προσθήκη 09 — Απόφαση: Αισθητική E (Σύγχρονο 3D) · Παραδοτέα build
+
+Ημερομηνία: 2026-07-12 · Ο founder κλείδωσε την αισθητική E για το concept «FYLOS presents».
+
+Παραδοτέα σε αυτό το branch:
+1. `FYLOS_WEBSITE_ASSET_PROMPTS.md` — πλήρες production plan Higgsfield (character sheet, 5 σκηνές image+video, transitions, OG, poster, pro frame) με ονοματολογία αρχείων.
+2. `FYLOS_WEBSITE_PAGE_DESIGN_GR.md` — σχέδιο σελίδας scroll-προς-scroll (σκηνές ↔ πράξεις).
+3. `src/screens/WEBSITE_FILM_v1.jsx` + route `/website` — το site υλοποιημένο: sticky cinema scenes με letterbox και scroll-dolly, personalization ονόματος pet (και μέσω `?pet=`), acts με features/pros/earnings slider/health, FIN με rolling credits + waitlist + poster share, FAQ, footer. CSS placeholders μέχρι να μπουν τα renders στο `public/film/`.
+4. `public/film/README.md` — οδηγίες ονομάτων αρχείων για τα assets.
+
+Εκκρεμότητα εκτός repo: εξουσιοδότηση Higgsfield connector στο claude.ai για να τρέξει η παραγωγή των assets· σύνδεση waitlist form με backend/Resend πριν το launch.
