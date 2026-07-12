@@ -302,3 +302,11 @@ E. Το Σύγχρονο 3D — soft CG render (Pixar-like φως, καθαρέ�
 4. `public/film/README.md` — οδηγίες ονομάτων αρχείων για τα assets.
 
 Εκκρεμότητα εκτός repo: εξουσιοδότηση Higgsfield connector στο claude.ai για να τρέξει η παραγωγή των assets· σύνδεση waitlist form με backend/Resend πριν το launch.
+
+---
+
+# Προσθήκη 10 — Επιστροφή στην αρχική αισθητική της Ταινίας
+
+Ημερομηνία: 2026-07-12 · Απόφαση founder: η αισθητική E (Σύγχρονο 3D) αποσύρεται. Κλειδώνει η ΑΡΧΙΚΗ ιδέα του Concept 11: κινηματογραφικό live-action καρέ σε ύφος Wes Anderson — αληθινός σκύλος (μικρό scruffy cream terrier με coral κολάρο), αληθινά σκηνικά, τέλεια συμμετρία, παστέλ production design, χρυσό φως, φιλμικός κόκκος. Η ιστορία των 5 σκηνών και όλη η δομή του site παραμένουν αμετάβλητες.
+
+Ενημερώθηκαν: FYLOS_WEBSITE_ASSET_PROMPTS.md (v2, όλα τα prompts σε live-action ύφος) και FYLOS_HIGGSFIELD_HANDOFF.md (v2). Ο κώδικας του site δεν χρειάζεται καμία αλλαγή — τα asset slots είναι αγνωστικά ως προς την αισθητική.
