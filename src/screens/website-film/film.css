@@ -1,0 +1,101 @@
+/* The Story of a Very Good Boy · film chrome */
+/* fonts load via <link> tags injected in useFilmMeta: an @import here would be
+   render blocking and discovered late by the preload scanner */
+
+.film-root {
+  --cream: #FBF7F2;
+  --coral: #E85D2A;
+  --coral-deep: #C94A1D;
+  --ink: #111111;
+  --peach: #FFE9DC;
+  --sage: #9DB18F;
+  --sage-deep: #6F8465;
+  --butter: #F3E2B3;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.film-serif { font-family: 'Fraunces', 'Georgia', serif; font-optical-sizing: auto; }
+.film-mono {
+  font-family: 'Space Mono', ui-monospace, monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* interactive focus, visible on cream and on art */
+.film-root a:focus-visible,
+.film-root button:focus-visible,
+.film-root input:focus-visible,
+.film-root select:focus-visible,
+.film-root textarea:focus-visible,
+.film-root [tabindex]:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* film grain over the scene layer */
+.film-grain::after {
+  content: '';
+  position: absolute;
+  inset: -3%;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  animation: film-grain-shift 0.9s steps(4) infinite;
+}
+@keyframes film-grain-shift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-1.2%, 0.9%); }
+  50% { transform: translate(1%, -0.8%); }
+  75% { transform: translate(-0.7%, -1.2%); }
+  100% { transform: translate(0, 0); }
+}
+
+.film-flicker { animation: film-flicker 1.6s infinite; }
+
+/* the projector flicker on intertitles */
+@keyframes film-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  94% { opacity: 0.86; }
+  96% { opacity: 1; }
+  98% { opacity: 0.93; }
+}
+
+/* rolling credits */
+@keyframes film-credits-roll {
+  from { transform: translateY(60vh); }
+  to { transform: translateY(-115%); }
+}
+
+/* care stamp thump */
+@keyframes film-stamp {
+  0% { transform: scale(2.1) rotate(-14deg); opacity: 0; }
+  55% { transform: scale(0.94) rotate(-8deg); opacity: 1; }
+  75% { transform: scale(1.06) rotate(-9.5deg); }
+  100% { transform: scale(1) rotate(-9deg); opacity: 1; }
+}
+
+/* soft float for the coral ball */
+@keyframes film-ball-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+/* fin period pulse */
+@keyframes film-period {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.film-hide-scrollbar::-webkit-scrollbar { display: none; }
+.film-hide-scrollbar { scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .film-grain::after { animation: none; }
+  .film-flicker { animation: none; }
+}

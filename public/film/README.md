@@ -1,16 +1,28 @@
-# /film — assets της «ταινίας» (website /website)
+# The Story of a Very Good Boy · film assets
 
-Ρίξε εδώ τα renders από το Higgsfield με ΑΚΡΙΒΩΣ αυτά τα ονόματα και η σελίδα τα παίζει αυτόματα (χωρίς αλλαγή κώδικα):
+Locked aesthetic (founder, Jul 12 2026): handcrafted stop-motion miniature diorama,
+needle-felted adult golden retriever, Wes Anderson symmetry, Fylos palette
+(cream #FBF7F2, peach #FFE9DC, sage, butter; coral #E85D2A only on collar, ball,
+tiny accents; no pink). Same puppet everywhere via a casting turnaround sheet.
+One coral ball hides in the lower half of every scene.
 
-- scene-01.jpg + scene-01.mp4 — Το Σαλόνι (hero)
-- scene-02.jpg + scene-02.mp4 — Ο Διάδρομος του Χάους
-- scene-03.jpg + scene-03.mp4 — Το Πάρκο
-- scene-04.jpg + scene-04.mp4 — Ο Κτηνίατρος
-- scene-05.jpg + scene-05.mp4 — Η Νύχτα
-- ball.webm — transition μπαλάκι (προαιρετικό, φάση 2)
-- og.jpg — share image 1200×630
-- poster-blank.jpg — φόντο poster generator (φάση 2)
+Generated on Higgsfield: Nano Banana Pro 4K stills (casting sheet as identity
+reference in every frame), Kling 3.0 Turbo image-to-video 1080p 7 s ambient loops
+(start_image = keyframe, camera locked off, audio stripped, faststart).
 
-Specs: 16:9, min 1920×1080, mp4 (H.264), 6–8s seamless loop, ΧΩΡΙΣ κίνηση κάμερας.
-Τα prompts παραγωγής: βλ. FYLOS_WEBSITE_ASSET_PROMPTS.md στο root.
-Μέχρι να μπουν τα αρχεία, η σελίδα δείχνει τα CSS placeholders.
+| file | what |
+| --- | --- |
+| scene-01.jpg/.mp4 | The living room (hero) |
+| scene-02.jpg/.mp4 | The scattered years (paper hallway) |
+| scene-03.jpg/.mp4 | The turn (clean study, leash in mouth) |
+| scene-04.jpg/.mp4 | The walk (park, walker in mustard coat, 3 dogs) |
+| scene-05.jpg/.mp4 | The care (vet room, bone eye chart) |
+| scene-06.jpg/.mp4 | The quiet hours (night, fire, everyone asleep) |
+| scene-01-m.jpg, scene-04-m.jpg, scene-06-m.jpg | 9:16 mobile variants |
+| og.jpg | 1200x630 share card (rendered from the site letterbox) |
+| poster-blank.jpg | 2:3 poster with empty title and credit zones (poster generator) |
+| pro.jpg | the walker as hero (For professionals) |
+| community-blank.jpg | warm empty backdrop plate (community wall) |
+
+Stills are 2752 px wide JPGs from 5504x3072 originals; verticals 1376 px from
+3072x5504. Keep the exact filenames: `src/screens/website-film/` refers to them.

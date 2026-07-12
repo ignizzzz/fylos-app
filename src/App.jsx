@@ -87,7 +87,8 @@ import PrivacyPolicyScreen from './screens/88_PRIVACY_POLICY_v1'
 import LicensesScreen from './screens/89_LICENSES_v1'
 import InvitePublicScreen from './screens/90_INVITE_PUBLIC_v1'
 import MarketingShowcase from './screens/MARKETING_SHOWCASE_v1'
-import WebsiteFilm from './screens/WEBSITE_FILM_v1'
+import WebsiteFilm from './screens/website-film'
+import WebsiteFilmV1 from './screens/WEBSITE_FILM_v1'
 import WebsiteFilmV2 from './screens/WEBSITE_FILM_v2'
 import IconographyLab from './screens/ICONOGRAPHY_LAB_v1'
 import FeltIconSystem from './screens/FELT_ICON_SYSTEM_v1'
@@ -201,9 +202,11 @@ function App() {
       {/* Marketing showcase (no iPhone frame, full-width landing-style preview) */}
       <Route path="/marketing-preview" element={<MarketingShowcase />} />
 
-      {/* Website — «FYLOS presents»: v2 is one continuous film (no gaps); v1 kept for comparison */}
-      <Route path="/website" element={<WebsiteFilmV2 />} />
-      <Route path="/website-v1" element={<WebsiteFilm />} />
+      {/* Website — «FYLOS presents»: /website = the miniature stop-motion production (corrected brief Jul 12);
+          v2 (parallel cloud build on the 3D assets) and v1 kept for side-by-side comparison */}
+      <Route path="/website" element={<WebsiteFilm />} />
+      <Route path="/website-v2" element={<WebsiteFilmV2 />} />
+      <Route path="/website-v1" element={<WebsiteFilmV1 />} />
 
       {/* Iconography lab — 4 material variants side-by-side, no iPhone frame */}
       <Route path="/iconography-lab" element={<IconographyLab />} />
