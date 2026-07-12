@@ -154,3 +154,35 @@
 Must-have (award impact × κόστος): dual-lens με την τελεία-διακόπτη (1) · waitlist-1.000-τελείες (2) · pet URLs με dynamic OG (3) · earnings simulator (4) · κιρκάδιος χαιρετισμός (5).
 Phase 2: καιρός/πόλη, ηχητική υπογραφή, marginalia, scroll-λουρί.
 Πάντα: πατουσιές και μνήμη επιστροφής είναι φθηνά — μπαίνουν όποτε θέλουμε.
+
+---
+
+# Προσθήκη 03 — AI visualization prompts
+
+Ημερομηνία: 2026-07-12 · Prompts για οπτικοποίηση του concept σε image AI πριν το build. Προτεινόμενα εργαλεία για UI με ευανάγνωστο κείμενο: Ideogram 3, Adobe Firefly, GPT-4o images. Το Midjourney βγάζει ωραία αισθητική αλλά χαλάει τα γράμματα (v7 --ar 16:9).
+
+## Style block (κολλάει στο τέλος κάθε prompt)
+
+> Style: Awwwards Site of the Day, premium minimal web design, Swiss editorial grid, generous whitespace, flat UI mockup, crisp typography, soft warm shadows, no photos, no illustrations, no gradients, no dark mode, no purple, no clutter.
+
+## Prompt 1 — Hero, owner mode (η τελεία-διακόπτης)
+
+> Website hero mockup for "Fylos", a premium pet-care app. Warm cream background #FBF7F2, ink text #111111, one coral accent #E85D2A. Top left: wordmark "FYLOS." in heavy rounded sans with a coral dot. Top center: a slim pill toggle where a coral dot sits on the left of two labels: "I have a Fylos" / "I am someone's Fylos". Center: huge editorial serif italic headline "Never forget a vaccine again." where the final period is a physical coral ball casting a soft warm shadow, as if a dog just dropped it. Below: small mono uppercase label "DESIGNED IN ATHENS · BUILT FOR ZURICH" and one quiet button "Get early access". 16:9.
+
+## Prompt 2 — Hero, pro mode (ίδιο layout, άλλη ανάγνωση)
+
+> Same website hero, same layout and cream background #FBF7F2, but the coral dot of the top toggle now sits on the right label "I am someone's Fylos". Headline rewritten in the same editorial serif italic: "Never miss a booking again." Next to it a small clean stat card: "Pros in Zürich earn CHF 400–900/month" with a tiny coral sparkline. Button: "Join the first 100 pros". Everything else identical, so the two images read as one site re-reading itself. 16:9.
+
+## Prompt 3 — Το waitlist ως 1.000 τελείες
+
+> Minimal website section on cream #FBF7F2: a large field of 1,000 tiny dots arranged in an organic grid, most dots hollow (outline peach #FFD4BD), 341 of them filled coral #E85D2A. One filled dot is highlighted with a small tooltip card: "Leo · No 341". Serif italic heading above: "1,000 places. 341 taken." Small mono caption: "ZURICH FIRST · ONE UPDATE PER MONTH, NO SPAM". 16:9.
+
+## Prompt 4 — Full-page scroll (το ταξίδι της τελείας)
+
+> Full-length website screenshot, long vertical scroll, for premium pet-care app "Fylos". Cream #FBF7F2 and soft peach #FFE9DC alternating sections, ink text, single coral accent #E85D2A. The same coral dot travels down the page transforming: a ball in the hero, a pin on a minimal walk map, a pulse point on a weight chart, a notification dot on a vaccine reminder card, and finally the period of the closing tagline "Stress less. Fylos more." Editorial serif italic headlines, clean sans body, small mono labels, one phone mockup near the end. 9:16 tall.
+
+## Tips
+
+- Δώσε τα hex codes ΠΑΝΤΑ (αλλιώς το coral γίνεται κόκκινο ή πορτοκαλί neon).
+- Ζήτα δύο γενιές του Prompt 1+2 μαζί για να δεις το «rewrite» σαν δίπτυχο.
+- Ό,τι βγει είναι μόνο mood — το κινητικό κομμάτι (spring physics, morph, rewrite) θα το δείξει μόνο το code prototype.
