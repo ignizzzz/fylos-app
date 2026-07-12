@@ -75,6 +75,9 @@ function GlobalStyles() {
         .fylos-credits-roll { animation: none !important; }
       }
       @supports (height: 100svh) { .fylos-scene-frame { height: 100svh !important; } }
+      @keyframes fylosGrain { 0%,100%{transform:translate(0,0)} 20%{transform:translate(-2%,1%)} 40%{transform:translate(1%,-2%)} 60%{transform:translate(-1%,2%)} 80%{transform:translate(2%,-1%)} }
+      .fylos-grain { animation: fylosGrain 0.9s steps(5) infinite; }
+      @media (prefers-reduced-motion: reduce) { .fylos-grain { animation: none !important; } }
       .fylos-film input::placeholder { color: #9B9B9F; }
       .fylos-film input:focus-visible, .fylos-film button:focus-visible, .fylos-film a:focus-visible {
         outline: 2px solid #E85D2A; outline-offset: 2px; border-radius: 6px;
@@ -114,10 +117,13 @@ function Film({ petName, setPetName, star, named }) {
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] })
 
   const [activeIdx, setActiveIdx] = useState(0)
+  const [tc, setTc] = useState('00:00')
   useMotionValueEvent(p, 'change', v => {
     let idx = SEG.findIndex(s => v >= s.start && v < s.end)
     if (idx === -1) idx = SEG.length - 1
     if (idx !== activeIdx) setActiveIdx(idx)
+    const sec = Math.max(0, Math.round(v * 130))
+    setTc(`${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`)
   })
 
   // Hero titles: visible at the very top, gone by the first transition.
@@ -149,6 +155,14 @@ function Film({ petName, setPetName, star, named }) {
         {/* gentle scrim for overlay legibility */}
         <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 15, background: 'radial-gradient(ellipse at center, transparent 52%, rgba(19,19,22,0.26) 100%)' }} />
 
+        {/* cinematic film grain */}
+        <div className="fylos-grain absolute pointer-events-none" style={{ zIndex: 16, inset: '-12%', opacity: 0.055, mixBlendMode: 'overlay', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E")` }} />
+
+        {/* kinetic editorial intertitles between chapters */}
+        {[['The scattered years', 0.2], ['The walk', 0.38], ['The check-up', 0.58], ['The quiet hours', 0.76]].map(([text, at]) => (
+          <KineticTitle key={text} p={p} at={at} text={text} />
+        ))}
+
         {/* the travelling ball */}
         {!reduce && (
           <motion.div className="absolute z-20 pointer-events-none" style={{ left: ballX, top: ballY, opacity: ballOpacity, x: '-50%', y: '-50%' }}>
@@ -164,6 +178,12 @@ function Film({ petName, setPetName, star, named }) {
           </motion.span>
         </div>
         <div className="absolute bottom-0 inset-x-0 z-30 h-10 md:h-14 flex items-center justify-center pointer-events-none" style={{ backgroundColor: INK }}>
+          <span className="hidden md:block absolute left-5 text-[10px] tracking-[0.14em]" style={{ fontFamily: MONO, color: 'rgba(251,247,242,0.5)', fontVariantNumeric: 'tabular-nums' }}>{tc} / 02:10</span>
+          <span className="hidden md:block absolute right-5 text-[10px] tracking-[0.18em] uppercase" style={{ fontFamily: MONO, color: 'rgba(251,247,242,0.5)' }}>A Fylos film · 2026</span>
+          <motion.div className="absolute bottom-0 left-0 h-[2px] w-full origin-left" style={{ backgroundColor: CORAL, scaleX: p }} />
+          {SEG.slice(1).map(s2 => (
+            <div key={s2.id} className="absolute bottom-0 w-[2px] h-[5px]" style={{ left: `${s2.start * 100}%`, backgroundColor: 'rgba(251,247,242,0.35)' }} />
+          ))}
           <motion.span key={`cap-${activeIdx}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}
                        className="italic text-[14px] md:text-[17px] px-6 text-center" style={{ fontFamily: SERIF, color: CREAM }}>
             {activeIdx === 0 ? (
@@ -199,38 +219,41 @@ function Film({ petName, setPetName, star, named }) {
           </p>
         </motion.div>
 
-        {/* parallax story overlays — content lives INSIDE the film */}
-        <Overlay p={p} range={[0.22, 0.36]} side="left">
-          <OverlayCard kicker="The problem" title="Vaccines in a drawer. Photos in three apps. Advice in your head.">
-            Everything you know about them lives in places that forget. Fylos is the second brain for pet parents: one calm home for their health, documents and days.
-          </OverlayCard>
+        {/* parallax story overlays — oversized editorial type + interactive product demos */}
+        <Overlay p={p} range={[0.215, 0.305]} side="left" top="20%">
+          <Statement kicker="The problem">
+            Vaccines in a drawer. Photos in three apps. Advice in your head.
+          </Statement>
         </Overlay>
-        <Overlay p={p} range={[0.27, 0.37]} side="right" speed={1.4}>
-          <MiniList items={[[Bell, 'Health records & reminders'], [Activity, 'Weight & wellbeing'], [FileText, 'Document vault']]} />
+        <Overlay p={p} range={[0.275, 0.365]} side="right" speed={1.3} top="28%">
+          <PhoneDemo p={p} range={[0.285, 0.35]} who={named ? star : 'Milo'} />
         </Overlay>
 
-        <Overlay p={p} range={[0.4, 0.5]} side="left">
-          <OverlayCard kicker="The walk" title={`Trusted hands, on the days you can't be there.`}>
-            Book vetted walkers and sitters nearby, with live GPS on every walk. Playdate matching. A community safety map that flags hazards before they find you.
-          </OverlayCard>
+        <Overlay p={p} range={[0.4, 0.475]} side="left" top="20%">
+          <Statement kicker="The walk">
+            Trusted hands, on the days you can’t be there.
+          </Statement>
         </Overlay>
-        <Overlay p={p} range={[0.46, 0.56]} side="right" speed={1.3}>
+        <Overlay p={p} range={[0.435, 0.515]} side="right" speed={1.3} top="30%">
+          <RouteDemo p={p} range={[0.443, 0.5]} />
+        </Overlay>
+        <Overlay p={p} range={[0.495, 0.575]} side="left" speed={1.2} top="32%">
           <ProCard />
         </Overlay>
 
-        <Overlay p={p} range={[0.6, 0.7]} side="right">
-          <OverlayCard kicker="The check-up" title="Never again “I’ll check and call you back.”">
-            The vet asks, you answer. Vaccine schedules with gentle reminders, an emergency card that works offline, telehealth for the 2 a.m. worries.
-          </OverlayCard>
+        <Overlay p={p} range={[0.6, 0.675]} side="right" top="20%">
+          <Statement kicker="The check-up">
+            Never again “I’ll check and call you back.”
+          </Statement>
         </Overlay>
-        <Overlay p={p} range={[0.65, 0.75]} side="left" speed={1.4}>
-          <MiniList items={[[Bell, 'Rabies booster · scheduled'], [Activity, '12.4 kg · steady'], [FileText, 'Lab results · shared with your vet']]} plain />
+        <Overlay p={p} range={[0.645, 0.735]} side="left" speed={1.3} top="32%">
+          <StampCard p={p} at={0.693} />
         </Overlay>
 
-        <Overlay p={p} range={[0.78, 0.86]} side="left">
-          <OverlayCard kicker="The quiet hours" title={`${named ? star : 'They'} won’t remember the reminders. Only the days.`}>
-            The journal keeps the small notes and the good photos, so fifteen years from now, every one of them counted.
-          </OverlayCard>
+        <Overlay p={p} range={[0.78, 0.86]} side="left" top="24%">
+          <Statement kicker="The quiet hours">
+            {named ? star : 'They'} won’t remember the reminders. Only the days.
+          </Statement>
         </Overlay>
 
         {/* FIN — inside the film, over the darkening night scene */}
@@ -279,19 +302,21 @@ const PLACEHOLDERS = {
 }
 
 function SceneMedia({ id, placeholder, active, reduce }) {
-  const [ok, setOk] = useState(true)
+  // 'video' → 'image' (keyframe jpg) → 'placeholder', degrading gracefully:
+  // a browser without the codec still watches the film as stills.
+  const [mode, setMode] = useState(reduce ? 'image' : 'video')
   const videoRef = useRef(null)
 
   // Only the active layer plays; others pause. preload=none keeps the
   // five loops from downloading together on first paint.
   useEffect(() => {
     const el = videoRef.current
-    if (!el || reduce || !ok) return
+    if (!el || mode !== 'video') return
     if (active) el.play().catch(() => {})
     else el.pause()
-  }, [active, reduce, ok])
+  }, [active, mode])
 
-  if (!ok) {
+  if (mode === 'placeholder') {
     return (
       <div className="absolute inset-0">
         {placeholder}
@@ -304,28 +329,63 @@ function SceneMedia({ id, placeholder, active, reduce }) {
       </div>
     )
   }
-  if (reduce) {
-    return <img className="absolute inset-0 w-full h-full object-cover" src={`/film/${id}.jpg`} alt="" onError={() => setOk(false)} />
+  if (mode === 'image') {
+    return <img className="absolute inset-0 w-full h-full object-cover" src={`/film/${id}.jpg`} alt="" onError={() => setMode('placeholder')} />
   }
   return (
     <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover"
            src={`/film/${id}.mp4`} poster={`/film/${id}.jpg`}
-           muted loop playsInline preload="none" onError={() => setOk(false)} />
+           muted loop playsInline preload="none" onError={() => setMode('image')} />
+  )
+}
+
+// Kinetic intertitle: a huge serif line drifting across a chapter boundary.
+function KineticTitle({ p, at, text }) {
+  const opacity = useTransform(p, [at - 0.022, at - 0.004, at + 0.02, at + 0.05], [0, 1, 1, 0])
+  const x = useSpring(useTransform(p, [at - 0.03, at + 0.055], ['16%', '-16%']), { stiffness: 90, damping: 28 })
+  return (
+    <motion.div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ zIndex: 18, opacity, x }}>
+      <span className="italic whitespace-nowrap" style={{ fontFamily: SERIF, fontSize: 'clamp(40px, 8.5vw, 110px)', color: CREAM, textShadow: '0 4px 40px rgba(19,19,22,0.55)' }}>
+        {text}
+      </span>
+    </motion.div>
+  )
+}
+
+// Cursor tilt: gives every floating card a gentle 3D response.
+function Tilt({ children }) {
+  const reduce = useReducedMotion()
+  const ref = useRef(null)
+  const [t, setT] = useState({ x: 0, y: 0 })
+  if (reduce) return children
+  return (
+    <div
+      ref={ref}
+      onMouseMove={e => {
+        const r = ref.current.getBoundingClientRect()
+        const px = (e.clientX - r.left) / r.width - 0.5
+        const py = (e.clientY - r.top) / r.height - 0.5
+        setT({ x: py * -7, y: px * 8 })
+      }}
+      onMouseLeave={() => setT({ x: 0, y: 0 })}
+      style={{ transform: `perspective(700px) rotateX(${t.x}deg) rotateY(${t.y}deg)`, transition: 'transform 0.25s ease', willChange: 'transform' }}>
+      {children}
+    </div>
   )
 }
 
 // ────────────────────────────────────────────
 //  Parallax overlays
 // ────────────────────────────────────────────
-function Overlay({ p, range: [a, b], side, speed = 1, children }) {
+function Overlay({ p, range: [a, b], side, speed = 1, top = '24%', children }) {
   const opacity = useSpring(useTransform(p, [a, a + 0.02, b - 0.02, b], [0, 1, 1, 0]), { stiffness: 170, damping: 34 })
   const y = useSpring(useTransform(p, [a, b], [60 * speed, -60 * speed]), { stiffness: 120, damping: 30 })
   const events = useTransform(opacity, v => (v < 0.2 ? 'none' : 'auto'))
   return (
     <motion.div
       className={`absolute z-20 w-[86%] sm:w-[420px] ${side === 'left' ? 'left-5 md:left-14' : 'right-5 md:right-14'}`}
-      style={{ top: '24%', opacity, y, pointerEvents: events }}>
-      {children}
+      style={{ top, opacity, y, pointerEvents: events }}>
+      <Tilt>{children}</Tilt>
     </motion.div>
   )
 }
@@ -352,6 +412,98 @@ function MiniList({ items, plain }) {
           {!plain && <Check size={14} className="ml-auto flex-none" style={{ color: CORAL }} />}
         </div>
       ))}
+    </div>
+  )
+}
+
+// Oversized editorial statement floating over the footage.
+function Statement({ kicker, children }) {
+  return (
+    <div className="max-w-[560px]">
+      <span className="block text-[11px] uppercase tracking-[0.24em] mb-3" style={{ fontFamily: MONO, color: CORAL_LIGHT, textShadow: '0 1px 12px rgba(19,19,22,0.6)' }}>{kicker}</span>
+      <p className="italic leading-[1.12]" style={{ fontFamily: SERIF, fontSize: 'clamp(30px, 4.6vw, 58px)', color: CREAM, textShadow: '0 3px 30px rgba(19,19,22,0.55)', textWrap: 'balance' }}>{children}</p>
+    </div>
+  )
+}
+
+// Interactive demo: the day's items land in the app as you scroll.
+function PhoneDemo({ p, range: [a, b], who }) {
+  const rows = [
+    [Bell, 'Rabies booster', 'reminder set'],
+    [Activity, 'Weight 12.4 kg', 'steady'],
+    [FileText, 'Lab results', 'stored in the vault'],
+  ]
+  return (
+    <div className="rounded-[26px] p-3 w-[248px] ml-auto" style={{ backgroundColor: 'rgba(251,247,242,0.96)', boxShadow: '0 30px 70px -28px rgba(19,19,22,0.6)', border: '1px solid rgba(0,0,0,0.06)' }}>
+      <div className="rounded-[18px] p-3.5" style={{ backgroundColor: '#FFFFFF' }}>
+        <p className="text-[10px] uppercase tracking-[0.16em] mb-2.5" style={{ fontFamily: MONO, color: MUTED }}>{who} · today</p>
+        <div className="space-y-2">
+          {rows.map(([Icon, title, meta], i) => (
+            <PhoneRow key={title} p={p} t={a + ((i + 1) / 4) * (b - a)} Icon={Icon} title={title} meta={meta} />
+          ))}
+        </div>
+        <p className="mt-3 text-[10.5px] text-center" style={{ color: MUTED }}>Everything lands in one place.</p>
+      </div>
+    </div>
+  )
+}
+
+function PhoneRow({ p, t, Icon, title, meta }) {
+  const done = useSpring(useTransform(p, [t - 0.004, t + 0.004], [0, 1]), { stiffness: 300, damping: 22 })
+  const bg = useTransform(done, v => `rgba(255,233,220,${(0.3 + v * 0.7).toFixed(3)})`)
+  return (
+    <motion.div className="flex items-center gap-2.5 rounded-xl px-3 py-2.5" style={{ backgroundColor: bg }}>
+      <Icon size={14} style={{ color: CORAL }} className="flex-none" />
+      <div className="flex-1 min-w-0">
+        <p className="text-[12px] font-semibold leading-tight truncate" style={{ color: INK }}>{title}</p>
+        <p className="text-[10px] truncate" style={{ color: MUTED }}>{meta}</p>
+      </div>
+      <motion.span style={{ scale: done, opacity: done }} className="w-5 h-5 rounded-full flex items-center justify-center flex-none" >
+        <span className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: CORAL }}><Check size={11} color="#fff" /></span>
+      </motion.span>
+    </motion.div>
+  )
+}
+
+// Interactive demo: a live GPS walk draws itself with the scroll.
+function RouteDemo({ p, range: [a, b] }) {
+  const draw = useSpring(useTransform(p, [a, b], [0, 1]), { stiffness: 90, damping: 26 })
+  const [dist, setDist] = useState('0.0')
+  useMotionValueEvent(draw, 'change', v => setDist((Math.max(0, Math.min(1, v)) * 4.2).toFixed(1)))
+  const pin = useSpring(useTransform(p, [b - 0.008, b], [0, 1]), { stiffness: 260, damping: 20 })
+  return (
+    <div className="rounded-[20px] p-5 w-[280px] ml-auto" style={{ backgroundColor: 'rgba(251,247,242,0.96)', boxShadow: '0 30px 70px -28px rgba(19,19,22,0.6)' }}>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] uppercase tracking-[0.18em] flex items-center gap-1.5" style={{ fontFamily: MONO, color: CORAL }}>
+          <span className="w-1.5 h-1.5 rounded-full animate-pulse inline-block" style={{ backgroundColor: CORAL }} /> Live GPS walk
+        </span>
+        <span className="text-[12px] font-bold" style={{ color: INK, fontVariantNumeric: 'tabular-nums' }}>{dist} km</span>
+      </div>
+      <svg viewBox="0 0 240 120" className="w-full">
+        <path d="M16 96 C 60 30, 110 130, 150 56 S 210 20, 224 40" fill="none" stroke="#EBE2D8" strokeWidth="5" strokeLinecap="round" />
+        <motion.path d="M16 96 C 60 30, 110 130, 150 56 S 210 20, 224 40" fill="none" stroke={CORAL} strokeWidth="5" strokeLinecap="round" style={{ pathLength: draw }} />
+        <circle cx="16" cy="96" r="5" fill={CORAL} />
+        <motion.g style={{ scale: pin, opacity: pin }}>
+          <circle cx="224" cy="40" r="7" fill={CORAL} />
+          <circle cx="224" cy="40" r="3" fill="#fff" />
+        </motion.g>
+      </svg>
+      <p className="text-[11px] mt-1.5" style={{ color: MUTED }}>You see every step, live, from wherever you are.</p>
+    </div>
+  )
+}
+
+// Interactive demo: the vaccine record gets its stamp as you scroll.
+function StampCard({ p, at }) {
+  const stamp = useSpring(useTransform(p, [at - 0.006, at + 0.006], [0, 1]), { stiffness: 300, damping: 18 })
+  return (
+    <div className="relative rounded-[20px] p-5 w-[280px]" style={{ backgroundColor: 'rgba(251,247,242,0.96)', boxShadow: '0 30px 70px -28px rgba(19,19,22,0.6)' }}>
+      <p className="text-[10px] uppercase tracking-[0.18em] mb-2" style={{ fontFamily: MONO, color: MUTED }}>Vaccination record</p>
+      <p className="text-[15px] font-semibold" style={{ color: INK }}>Rabies booster</p>
+      <p className="text-[12px] mb-4" style={{ color: MUTED }}>Dr. Keller · reminder sent · documents attached</p>
+      <motion.div className="inline-block rounded-lg px-3 py-1.5 border-2" style={{ borderColor: CORAL, color: CORAL, scale: stamp, opacity: stamp, rotate: -7 }}>
+        <span className="text-[12px] font-extrabold tracking-[0.14em] uppercase">Done · 3 days early</span>
+      </motion.div>
     </div>
   )
 }

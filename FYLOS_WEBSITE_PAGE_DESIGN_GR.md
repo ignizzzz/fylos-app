@@ -68,3 +68,13 @@
 - Το coral μπαλάκι είναι το νήμα συνέχειας: HTML στοιχείο που ταξιδεύει σε όλη τη διαδρομή, από σκηνή σε σκηνή.
 - FIN μέσα στην ταινία: σκοτείνιασμα, tagline, rolling credits, CTA. Μετά τους τίτλους: «After the credits» waitlist (ίδιο σκούρο φόντο — αδιάκοπη ροή), FAQ, footer.
 - Υλοποίηση: route `/website` → WEBSITE_FILM_v2.jsx (useScroll global progress + useSpring crossfades — τα springs δίνουν και το βελούδινο, κινηματογραφικό feel). Το v1 κρατήθηκε στο `/website-v1` για σύγκριση.
+
+## v2.1 — Award polish layer (brief founder: premium immersive, warm, όχι crypto)
+
+- Oversized editorial serif statements πάνω στο footage (αντί για μικρές κάρτες) ανά κεφάλαιο.
+- Interactive product demos δεμένα στο scroll: PhoneDemo (τα events της ημέρας «τσεκάρονται» καθώς κατεβαίνεις), RouteDemo (η GPS διαδρομή ζωγραφίζεται, χιλιόμετρα μετρούν live), StampCard (η σφραγίδα «Done · 3 days early» πέφτει στο vaccination record).
+- Kinetic intertitles: τεράστιοι serif τίτλοι («The walk», «The check-up»…) διασχίζουν το καρέ στα όρια των κεφαλαίων.
+- Cinematic film grain (SVG turbulence, respects reduced-motion) + timecode 00:00/02:10 + coral progress reel με chapter ticks στο κάτω letterbox.
+- 3D cursor tilt σε όλες τις floating κάρτες.
+- Media fallback αλυσίδα: video → keyframe jpg → CSS placeholder (browser χωρίς H.264 βλέπει την ταινία σε στατικά καρέ).
+- Assets: παραδόθηκαν από το production session (Higgsfield: Nano Banana Pro stills + Kling 3.0 Turbo i2v), εγκεκριμένα και στα δύο gates, ζωντανά στο /website.
