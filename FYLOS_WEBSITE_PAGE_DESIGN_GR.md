@@ -56,3 +56,15 @@
 - Letterbox: ink μπάρες μέσα στο sticky frame κάθε σκηνής.
 - Performance: lazy videos (`preload="none"` εκτός scene-01), ένα μόνο βίντεο ενεργό κάθε φορά (IntersectionObserver-based play/pause), στόχος LCP < 2.5s.
 - Awwwards checklist: signature mechanic (film-scroll) ✓ · personalization ✓ · craft τυπογραφίας ✓ · sound (φάση 2: προαιρετικό ambient ανά σκηνή, muted default) · a11y/reduced-motion ✓ · shareable (poster generator) ✓.
+
+---
+
+# v2 — Συνεχής ταινία (απόφαση founder 2026-07-12)
+
+Το site ΔΕΝ εναλλάσσει πλέον σκηνές με ξεχωριστές λευκές ενότητες («κενά»). Όλη η ταινία είναι ΕΝΑ καρφιτσωμένο καρέ (~1300vh scroll):
+
+- Οι 5 σκηνές κάνουν cross-dissolve η μία μέσα στην άλλη — καμία διακοπή, το letterbox δεν σπάει ποτέ.
+- Το περιεχόμενο (features, pro earnings slider, health cards) αιωρείται ΠΑΝΩ στο πλάνο ως parallax overlays (cream glass κάρτες, διαφορετικές ταχύτητες), δεμένο με το κεφάλαιο που παίζει.
+- Το coral μπαλάκι είναι το νήμα συνέχειας: HTML στοιχείο που ταξιδεύει σε όλη τη διαδρομή, από σκηνή σε σκηνή.
+- FIN μέσα στην ταινία: σκοτείνιασμα, tagline, rolling credits, CTA. Μετά τους τίτλους: «After the credits» waitlist (ίδιο σκούρο φόντο — αδιάκοπη ροή), FAQ, footer.
+- Υλοποίηση: route `/website` → WEBSITE_FILM_v2.jsx (useScroll global progress + useSpring crossfades — τα springs δίνουν και το βελούδινο, κινηματογραφικό feel). Το v1 κρατήθηκε στο `/website-v1` για σύγκριση.

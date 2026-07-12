@@ -88,6 +88,7 @@ import LicensesScreen from './screens/89_LICENSES_v1'
 import InvitePublicScreen from './screens/90_INVITE_PUBLIC_v1'
 import MarketingShowcase from './screens/MARKETING_SHOWCASE_v1'
 import WebsiteFilm from './screens/WEBSITE_FILM_v1'
+import WebsiteFilmV2 from './screens/WEBSITE_FILM_v2'
 import IconographyLab from './screens/ICONOGRAPHY_LAB_v1'
 import FeltIconSystem from './screens/FELT_ICON_SYSTEM_v1'
 import IconsCompare from './screens/ICONS_COMPARE_v1'
@@ -200,8 +201,9 @@ function App() {
       {/* Marketing showcase (no iPhone frame, full-width landing-style preview) */}
       <Route path="/marketing-preview" element={<MarketingShowcase />} />
 
-      {/* Website v1 — «FYLOS presents»: the marketing site as a scrollable film */}
-      <Route path="/website" element={<WebsiteFilm />} />
+      {/* Website — «FYLOS presents»: v2 is one continuous film (no gaps); v1 kept for comparison */}
+      <Route path="/website" element={<WebsiteFilmV2 />} />
+      <Route path="/website-v1" element={<WebsiteFilm />} />
 
       {/* Iconography lab — 4 material variants side-by-side, no iPhone frame */}
       <Route path="/iconography-lab" element={<IconographyLab />} />

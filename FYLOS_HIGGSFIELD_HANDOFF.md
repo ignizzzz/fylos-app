@@ -61,3 +61,12 @@ Verify the Higgsfield MCP tools are available (generate_image, generate_video). 
 - Single coral accent discipline: nothing else saturated orange/red in frame.
 - Pause for my approval at exactly two gates: after A0, and after the five keyframes. Then proceed without further pauses.
 - When done, summarize what was generated, where it lives, and total credits/cost if visible.
+
+## Continuity requirements (v2 site — one continuous film)
+
+The site cross-dissolves scenes with NO breaks, so frames must be cut-friendly:
+- Same floor/horizon line across all five scenes (floor ≈ bottom 25–30% of frame).
+- Warm golden light at every scene's start/end so dissolves blend (night scene keeps warm lamplight at center).
+- Keep the top third and the left/right 30% zones relatively quiet — the site floats parallax content cards there; dog and action stay central.
+- Coral ball in the lower half of each keyframe.
+- Videos strictly static camera (any pan/zoom breaks the dissolve).
