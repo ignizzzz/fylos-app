@@ -26,7 +26,7 @@ const SERIF = "'Instrument Serif', Georgia, serif"
 const MONO = "'JetBrains Mono', ui-monospace, monospace"
 const LOGO = "'Nunito', Inter, sans-serif"
 
-const DEFAULT_STAR = 'a Very Good Boy'
+const DEFAULT_STAR = 'a Very Good Friend'
 
 export default function WebsiteFilm() {
   const [petName, setPetName] = useState('')
@@ -48,7 +48,7 @@ export default function WebsiteFilm() {
   const named = Boolean(petName.trim())
 
   return (
-    <div style={{ backgroundColor: CREAM, color: INK, fontFamily: 'Inter, -apple-system, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
+    <div className="fylos-film" style={{ backgroundColor: CREAM, color: INK, fontFamily: 'Inter, -apple-system, sans-serif', WebkitFontSmoothing: 'antialiased' }}>
       <GlobalStyles />
       <Nav />
       <SceneHero petName={petName} setPetName={setPetName} star={star} />
@@ -78,7 +78,11 @@ function GlobalStyles() {
       @media (prefers-reduced-motion: reduce) {
         .fylos-credits-roll, .fylos-float { animation: none !important; }
       }
+      @supports (height: 100svh) { .fylos-scene-frame { height: 100svh !important; } }
       .fylos-film input::placeholder { color: #9B9B9F; }
+      .fylos-film input:focus-visible, .fylos-film button:focus-visible, .fylos-film a:focus-visible {
+        outline: 2px solid #E85D2A; outline-offset: 2px; border-radius: 6px;
+      }
     `}</style>
   )
 }
@@ -91,7 +95,7 @@ function Nav() {
     ['The film', '#film'], ['Features', '#features'], ['For pros', '#pros'], ['FAQ', '#faq'],
   ]
   return (
-    <div className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl" style={{ backgroundColor: 'rgba(251,247,242,0.72)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+    <div className="fixed top-0 inset-x-0 z-50 backdrop-blur-xl" style={{ backgroundColor: 'rgba(251,247,242,0.9)', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
       <div className="max-w-[1200px] mx-auto flex items-center justify-between px-5 md:px-10 py-3.5">
         <a href="#film" className="text-[18px] font-extrabold tracking-wide" style={{ fontFamily: LOGO, color: INK }}>
           FYLOS<span style={{ color: CORAL }}>.</span>
@@ -115,6 +119,22 @@ function Nav() {
 // ────────────────────────────────────────────
 function SceneMedia({ id, placeholder, eager }) {
   const [ok, setOk] = useState(true)
+  const reduce = useReducedMotion()
+  const videoRef = useRef(null)
+
+  // Play only while the scene is near the viewport, so five loops never
+  // download or decode together on first paint.
+  useEffect(() => {
+    const el = videoRef.current
+    if (!el || reduce || !ok) return undefined
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) el.play().catch(() => {})
+      else el.pause()
+    }, { rootMargin: '20%' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [reduce, ok])
+
   if (!ok) {
     return (
       <div className="absolute inset-0">
@@ -128,13 +148,17 @@ function SceneMedia({ id, placeholder, eager }) {
       </div>
     )
   }
+  if (reduce) {
+    return <img className="absolute inset-0 w-full h-full object-cover" src={`/film/${id}.jpg`} alt="" onError={() => setOk(false)} />
+  }
   return (
     <video
+      ref={videoRef}
       className="absolute inset-0 w-full h-full object-cover"
       src={`/film/${id}.mp4`}
       poster={`/film/${id}.jpg`}
-      autoPlay muted loop playsInline
-      preload={eager ? 'auto' : 'none'}
+      muted loop playsInline
+      preload={eager ? 'metadata' : 'none'}
       onError={() => setOk(false)}
     />
   )
@@ -152,13 +176,13 @@ function SceneBlock({ id, chapter, caption, placeholder, children, tall }) {
 
   return (
     <section ref={ref} className="relative" style={{ height: tall ? '220vh' : '170vh' }}>
-      <div className="sticky top-0 h-screen overflow-hidden" style={{ backgroundColor: INK }}>
+      <div className="fylos-scene-frame sticky top-0 h-screen overflow-hidden" style={{ backgroundColor: INK }}>
         <motion.div style={{ scale }} className="absolute inset-0">
           <SceneMedia id={id} placeholder={placeholder} />
         </motion.div>
 
-        {/* letterbox */}
-        <div className="absolute top-0 inset-x-0 h-10 md:h-14 flex items-center justify-center" style={{ backgroundColor: INK }}>
+        {/* letterbox — top bar is taller than the fixed nav so the chapter label stays visible below it */}
+        <div className="absolute top-0 inset-x-0 h-[76px] md:h-[88px] flex items-end justify-center pb-2.5" style={{ backgroundColor: INK }}>
           {chapter && (
             <span className="text-[10px] md:text-[11px] uppercase tracking-[0.28em]" style={{ fontFamily: MONO, color: 'rgba(251,247,242,0.65)' }}>
               {chapter}
@@ -188,19 +212,20 @@ function SceneHero({ petName, setPetName, star }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1, 1.12])
   const titleOpacity = useTransform(scrollYProgress, [0, 0.55], [1, 0])
+  const titleEvents = useTransform(titleOpacity, v => (v < 0.05 ? 'none' : 'auto'))
 
   return (
     <section id="film" ref={ref} className="relative" style={{ height: '190vh' }}>
-      <div className="sticky top-0 h-screen overflow-hidden" style={{ backgroundColor: INK }}>
+      <div className="fylos-scene-frame sticky top-0 h-screen overflow-hidden" style={{ backgroundColor: INK }}>
         <motion.div style={{ scale }} className="absolute inset-0">
           <SceneMedia id="scene-01" placeholder={<PlaceholderLivingRoom />} eager />
         </motion.div>
 
-        {/* soft vignette for legibility */}
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 45%, rgba(19,19,22,0.28) 100%)' }} />
+        {/* scrim behind the titles + soft edge vignette, for real contrast over pale scenes */}
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 58% 46% at 50% 42%, rgba(19,19,22,0.52), rgba(19,19,22,0.14) 62%, transparent 78%), radial-gradient(ellipse at center, transparent 45%, rgba(19,19,22,0.3) 100%)' }} />
 
         {/* letterbox */}
-        <div className="absolute top-0 inset-x-0 h-10 md:h-14" style={{ backgroundColor: INK }} />
+        <div className="absolute top-0 inset-x-0 h-[76px] md:h-[88px]" style={{ backgroundColor: INK }} />
         <div className="absolute bottom-0 inset-x-0 h-10 md:h-14 flex items-center justify-center" style={{ backgroundColor: INK }}>
           <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em]" style={{ fontFamily: MONO, color: 'rgba(251,247,242,0.6)' }}>
             <ArrowDown size={11} /> Scroll to roll the film
@@ -208,7 +233,7 @@ function SceneHero({ petName, setPetName, star }) {
         </div>
 
         {/* opening titles */}
-        <motion.div style={{ opacity: titleOpacity }} className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+        <motion.div style={{ opacity: titleOpacity, pointerEvents: titleEvents }} className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
           <span className="text-[11px] md:text-[12px] uppercase tracking-[0.34em] mb-4" style={{ fontFamily: MONO, color: 'rgba(255,255,255,0.9)', textShadow: '0 1px 12px rgba(19,19,22,0.45)' }}>
             Fylos presents
           </span>
@@ -216,7 +241,7 @@ function SceneHero({ petName, setPetName, star }) {
             The Story of<br />{star}
           </h1>
           <label className="flex items-center gap-2 rounded-full pl-4 pr-2 py-2" style={{ backgroundColor: 'rgba(251,247,242,0.92)', boxShadow: '0 10px 40px -12px rgba(19,19,22,0.4)' }}>
-            <span className="text-[13px]" style={{ color: MUTED }}>Or better — the story of</span>
+            <span className="text-[13px]" style={{ color: MUTED }}>Or better, the story of</span>
             <input
               value={petName}
               onChange={e => setPetName(e.target.value.slice(0, 24))}
@@ -274,14 +299,16 @@ function ActProblem() {
         </div>
         <div className="relative h-[300px]">
           {cards.map((c, i) => (
-            <div key={c.label} className="absolute left-1/2 rounded-2xl px-5 py-4 shadow-lg fylos-float"
-                 style={{
-                   top: `${8 + i * 22}%`, transform: `translateX(-50%) rotate(${c.rot})`,
-                   backgroundColor: '#FFFFFF', border: '1px solid rgba(0,0,0,0.05)',
-                   width: 250, animationDelay: `${i * 0.6}s`, animationDuration: '5s',
-                 }}>
-              <p className="text-[13.5px] font-semibold" style={{ color: INK }}>{c.label}</p>
-              <p className="text-[11px] uppercase tracking-[0.12em] mt-1" style={{ fontFamily: MONO, color: '#9B9B9F' }}>{c.sub}</p>
+            <div key={c.label} className="absolute left-1/2"
+                 style={{ top: `${8 + i * 22}%`, transform: `translateX(-50%) rotate(${c.rot})`, width: 250 }}>
+              <div className="fylos-float rounded-2xl px-5 py-4 shadow-lg"
+                   style={{
+                     backgroundColor: '#FFFFFF', border: '1px solid rgba(0,0,0,0.05)',
+                     animation: `fylosFloat 5s ease-in-out ${i * 0.6}s infinite`,
+                   }}>
+                <p className="text-[13.5px] font-semibold" style={{ color: INK }}>{c.label}</p>
+                <p className="text-[11px] uppercase tracking-[0.12em] mt-1" style={{ fontFamily: MONO, color: '#9B9B9F' }}>{c.sub}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -312,7 +339,7 @@ function ActApp({ star, named }) {
           <ActTitle>One place for everything that matters about {who}.</ActTitle>
           <p className="text-[16px] leading-relaxed mb-12" style={{ color: MUTED }}>
             Built in the EU, GDPR native, and designed like the best thing on your home screen.
-            Your data stays yours — and it finally travels with you.
+            Your data stays yours, and it finally travels with you.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -337,7 +364,7 @@ function ActServices({ star }) {
           <ul className="space-y-4 mt-8">
             {[
               [MapPin, 'Book vetted walkers and sitters nearby, with live GPS on every walk.'],
-              [Heart, `Playdate matching — ${star === DEFAULT_STAR ? 'your pet' : star} makes friends, you make coffee plans.`],
+              [Heart, `Playdate matching. ${star === DEFAULT_STAR ? 'Your pet' : star} makes friends, you make coffee plans.`],
               [Shield, 'Community safety map: neighbours flag hazards before they find you.'],
             ].map(([Icon, text]) => (
               <li key={text} className="flex items-start gap-3">
@@ -366,8 +393,8 @@ function ActServices({ star }) {
             aria-label="Walks per week"
             className="w-full" style={{ accentColor: CORAL }}
           />
-          <p className="text-[11.5px] mt-3" style={{ color: '#9B9B9F' }}>
-            Based on a CHF 19 walk, after the Fylos fee. Most pros earn CHF 400–900 a month.
+          <p className="text-[11.5px] mt-3" style={{ color: MUTED }}>
+            Based on a CHF 19 walk, about CHF 15 to you after the Fylos fee. Most pros earn CHF 400–900 a month.
           </p>
           <a href="#waitlist" className="mt-6 inline-flex items-center gap-2 text-[14px] font-semibold text-white rounded-full px-5 py-2.5" style={{ backgroundColor: CORAL }}>
             Join the first 100 pros <ArrowRight size={15} />
@@ -392,12 +419,12 @@ function ActHealth({ star, named }) {
           <Kicker>Chapter three · The check-up</Kicker>
           <ActTitle>Never again “I’ll check and call you back.”</ActTitle>
           <p className="text-[16px] leading-relaxed max-w-[52ch]" style={{ color: MUTED }}>
-            The vet asks, you answer — everything is one tap away. Vaccine schedules with smart reminders,
+            The vet asks, you answer. Everything is one tap away: vaccine schedules with gentle reminders,
             an emergency card that works offline, and telehealth for the 2 a.m. worries.
           </p>
         </div>
         <div className="rounded-[22px] p-5" style={{ backgroundColor: CREAM, border: '1px solid rgba(0,0,0,0.05)' }}>
-          <p className="text-[12px] uppercase tracking-[0.16em] px-2 pt-1 pb-3" style={{ fontFamily: MONO, color: '#9B9B9F' }}>{who} · today</p>
+          <p className="text-[12px] uppercase tracking-[0.16em] px-2 pt-1 pb-3" style={{ fontFamily: MONO, color: MUTED }}>{who} · today</p>
           <div className="space-y-2.5">
             {rows.map(r => (
               <div key={r.title} className="flex items-center gap-3.5 rounded-2xl px-4 py-3.5" style={{ backgroundColor: '#FFFFFF' }}>
@@ -449,12 +476,16 @@ function Finale({ star, named }) {
   }
 
   function sharePoster() {
-    try {
-      const url = `${window.location.origin}${window.location.pathname}?pet=${encodeURIComponent(star)}`
-      navigator.clipboard.writeText(url)
+    const url = `${window.location.origin}${window.location.pathname}?pet=${encodeURIComponent(star)}`
+    if (navigator.share) {
+      navigator.share({ url }).catch(() => {})
+      return
+    }
+    if (!navigator.clipboard) return
+    navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
-    } catch (e) { /* clipboard unavailable */ }
+    }).catch(() => {})
   }
 
   return (
@@ -470,12 +501,15 @@ function Finale({ star, named }) {
             {/* rolling credits */}
             <div className="relative h-[220px] overflow-hidden mb-10" aria-hidden="true">
               <div className="fylos-credits-roll" style={{ animation: 'fylosCredits 26s linear infinite' }}>
-                {cast.map((name, i) => (
-                  <p key={`${name}-${i}`} className="text-center py-1.5 text-[15px]" style={{ color: i % cast.length === 0 && named ? CORAL_LIGHT : 'rgba(251,247,242,0.72)' }}>
-                    <span className="font-semibold">{name}</span>
-                    <span style={{ color: 'rgba(251,247,242,0.4)' }}> · {i % (cast.length / 2) === 0 && named ? 'The Star' : 'A Very Good Boy/Girl'}</span>
-                  </p>
-                ))}
+                {cast.map((name, i) => {
+                  const isStar = named && i % (cast.length / 2) === 0
+                  return (
+                    <p key={`${name}-${i}`} className="text-center py-1.5 text-[15px]" style={{ color: isStar ? CORAL_LIGHT : 'rgba(251,247,242,0.72)' }}>
+                      <span className="font-semibold">{name}</span>
+                      <span style={{ color: 'rgba(251,247,242,0.4)' }}> · {isStar ? 'The Star' : 'A Very Good Friend'}</span>
+                    </p>
+                  )
+                })}
               </div>
               <div className="absolute inset-x-0 top-0 h-12" style={{ background: `linear-gradient(${INK}, transparent)` }} />
               <div className="absolute inset-x-0 bottom-0 h-12" style={{ background: `linear-gradient(transparent, ${INK})` }} />
@@ -504,7 +538,7 @@ function Finale({ star, named }) {
                 </button>
               </form>
             )}
-            <p className="mt-4 text-[12px]" style={{ color: 'rgba(251,247,242,0.5)' }}>
+            <p className="mt-4 text-[12px]" style={{ color: 'rgba(251,247,242,0.7)' }}>
               Be among the first 1,000. Launching first in Zurich, then across Europe.
             </p>
           </div>
@@ -513,20 +547,20 @@ function Finale({ star, named }) {
           <div>
             <div className="rounded-[18px] overflow-hidden relative" style={{ aspectRatio: '2 / 3', background: `linear-gradient(180deg, ${PEACH} 0%, ${PEACH_DEEP} 60%, ${CORAL_LIGHT} 130%)` }}>
               <div className="absolute inset-0 flex flex-col items-center justify-between py-7 px-5 text-center">
-                <span className="text-[9px] uppercase tracking-[0.3em]" style={{ fontFamily: MONO, color: '#8A5A3C' }}>Fylos presents</span>
+                <span className="text-[9px] uppercase tracking-[0.3em]" style={{ fontFamily: MONO, color: '#6B3F26' }}>Fylos presents</span>
                 <div>
                   <p className="italic leading-tight" style={{ fontFamily: SERIF, fontSize: 30, color: '#3A2417', textWrap: 'balance' }}>{star}</p>
-                  <p className="text-[10px] uppercase tracking-[0.2em] mt-2" style={{ fontFamily: MONO, color: '#8A5A3C' }}>in “The Very Good Life”</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] mt-2" style={{ fontFamily: MONO, color: '#6B3F26' }}>in “The Very Good Life”</p>
                 </div>
                 <div className="w-16 h-16 rounded-full" style={{ backgroundColor: CORAL, boxShadow: '0 10px 30px -8px rgba(180,73,31,0.6)' }} />
-                <p className="text-[8.5px] leading-relaxed" style={{ fontFamily: MONO, color: '#8A5A3C' }}>
+                <p className="text-[8.5px] leading-relaxed" style={{ fontFamily: MONO, color: '#6B3F26' }}>
                   DIRECTED BY YOU · PRODUCED BY FYLOS<br />COMING SOON TO A POCKET NEAR YOU
                 </p>
               </div>
             </div>
             <button onClick={sharePoster} className="mt-4 w-full flex items-center justify-center gap-2 rounded-full py-3 text-[13.5px] font-semibold"
                     style={{ backgroundColor: 'rgba(251,247,242,0.1)', color: CREAM, border: '1px solid rgba(251,247,242,0.18)' }}>
-              {copied ? <Check size={15} /> : <Copy size={15} />} {copied ? 'Link copied' : 'Make your pet the star — share'}
+              {copied ? <Check size={15} /> : <Copy size={15} />} {copied ? 'Link copied' : 'Make your pet the star'}
             </button>
           </div>
         </div>
@@ -539,12 +573,12 @@ function Finale({ star, named }) {
 //  FAQ + footer
 // ────────────────────────────────────────────
 const FAQS = [
-  ['When does Fylos launch?', 'Early access opens in Zurich first, with Geneva and Basel next. Waitlist members get in city by city — first 1,000 in Switzerland.'],
+  ['When does Fylos launch?', 'Early access opens in Zurich first, with Geneva and Basel next. Waitlist members get in city by city. First 1,000 in Switzerland.'],
   ['Which platforms?', 'iPhone and Android at launch. The app is built as one product for both.'],
-  ['What does it cost?', 'The core companion — records, reminders, vault — is free. Services like walks and sitting are pay-per-booking with clear prices before you confirm.'],
+  ['What does it cost?', 'The core companion is free: records, reminders and the vault. Services like walks and sitting are pay-per-booking with clear prices before you confirm.'],
   ['Where does my data live?', 'In the EU (Frankfurt), GDPR native. Your pet’s records belong to you and export with one tap.'],
   ['How do I join as a pro?', 'Apply from the app. Every pro passes ID verification and a review before their first booking. Most pros in Zurich earn CHF 400–900 a month.'],
-  ['Why “Fylos”?', 'Φύλος is Greek for friend and guardian. Designed in Athens, built for the world.'],
+  ['Why “Fylos”?', 'Fylos comes from the Greek φίλος, friend, with a nod to φύλακας, guardian. Designed in Athens, built for the world.'],
 ]
 
 function Faq() {
