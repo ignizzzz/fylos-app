@@ -99,3 +99,59 @@
   .film-grain::after { animation: none; }
   .film-flicker { animation: none; }
 }
+
+/* the hero title assembles letter by letter */
+.film-letter {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  animation: film-letter-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i) * 34ms + 1.15s);
+}
+@keyframes film-letter-in {
+  from { opacity: 0; transform: translateY(0.55em) rotate(2.5deg); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0) rotate(0); filter: blur(0); }
+}
+
+/* warm vignette: theatrical depth on every frame */
+.film-vignette {
+  background:
+    radial-gradient(120% 92% at 50% 42%, rgba(0,0,0,0) 58%, rgba(64,36,16,0.20) 100%),
+    linear-gradient(180deg, rgba(255,240,224,0.10) 0%, rgba(255,240,224,0) 14%);
+}
+
+/* css fallback if the felt ball sprite ever fails to load */
+.film-ball-css {
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 32% 30%, #F2825B 0%, #E85D2A 42%, #C24717 78%, #A83A10 100%);
+  box-shadow: 0 14px 18px rgba(60,30,10,0.35), inset -6px -8px 14px rgba(120,40,10,0.35);
+}
+
+/* companion cursor */
+.film-cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 6px; height: 6px;
+  border-radius: 9999px;
+  background: #E85D2A;
+  z-index: 95;
+  pointer-events: none;
+  opacity: 0;
+}
+.film-cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 26px; height: 26px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(232,93,42,0.45);
+  z-index: 95;
+  pointer-events: none;
+  opacity: 0;
+  transition: width 0.25s ease, height 0.25s ease, border-color 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film-letter { animation: none; opacity: 1; }
+  .film-cursor-dot, .film-cursor-ring { display: none; }
+}

@@ -18,6 +18,9 @@ export const DEFAULT_STAR = 'a Very Good Boy'
 
 export const STRIP = 'HEALTH · WALKS · MEMORIES · IN THEIR BEST YEARS'
 
+// focus = where the camera pushes INTO when the scene hands over to the next
+// (transform-origin, % of frame). align = where the statement sits, so it never
+// fights the demo cards. Words wrapped in *stars* render in coral italic.
 export const CHAPTERS = [
   {
     id: 'living-room',
@@ -26,7 +29,9 @@ export const CHAPTERS = [
     image: '/film/scene-01.jpg',
     imageMobile: '/film/scene-01-m.jpg',
     video: '/film/scene-01.mp4',
-    statement: null, // hero carries the film title instead
+    statement: 'Every pet deserves a *second* brain.',
+    align: 'center',
+    focus: { x: 50, y: 30 }, // into his portrait above the mantel
     placeholder: 'linear-gradient(180deg, #F6E8DC 0%, #EAD9C4 60%, #D9C2A8 100%)',
   },
   {
@@ -36,7 +41,9 @@ export const CHAPTERS = [
     image: '/film/scene-02.jpg',
     imageMobile: null,
     video: '/film/scene-02.mp4',
-    statement: 'His whole life, scattered across drawers, inboxes and fridge doors.',
+    statement: 'His whole life, *scattered* across drawers, inboxes and fridge doors.',
+    align: 'center',
+    focus: { x: 50, y: 42 }, // into the warm coral doorway
     placeholder: 'linear-gradient(180deg, #F8F0E4 0%, #F0E2CE 60%, #E2CBAF 100%)',
     chips: [
       { side: 'left', title: 'Rabies certificate', meta: '2023 · somewhere' },
@@ -52,7 +59,9 @@ export const CHAPTERS = [
     image: '/film/scene-03.jpg',
     imageMobile: null,
     video: '/film/scene-03.mp4',
-    statement: 'One quiet place for all of it.',
+    statement: 'One *quiet* place for all of it.',
+    align: 'right',
+    focus: { x: 56, y: 45 }, // into the softly glowing phone
     placeholder: 'linear-gradient(180deg, #FBF4E9 0%, #F4E8D6 60%, #E9D6BC 100%)',
     demo: 'phone',
   },
@@ -63,7 +72,9 @@ export const CHAPTERS = [
     image: '/film/scene-04.jpg',
     imageMobile: '/film/scene-04-m.jpg',
     video: '/film/scene-04.mp4',
-    statement: 'Walks with people who love dogs for a living.',
+    statement: 'Walks with people who *love* dogs for a living.',
+    align: 'left',
+    focus: { x: 49, y: 40 }, // into the fountain
     placeholder: 'linear-gradient(180deg, #F7E9C9 0%, #EFDDB6 60%, #DDC69B 100%)',
     demo: 'walk',
   },
@@ -74,7 +85,9 @@ export const CHAPTERS = [
     image: '/film/scene-05.jpg',
     imageMobile: null,
     video: '/film/scene-05.mp4',
-    statement: 'Never lose a vaccine date again.',
+    statement: 'Never lose a *vaccine* date again.',
+    align: 'center',
+    focus: { x: 57, y: 32 }, // into the bone eye chart
     placeholder: 'linear-gradient(180deg, #FBF3E4 0%, #F3E6CF 60%, #E5D2B4 100%)',
     demo: 'care',
   },
@@ -85,7 +98,9 @@ export const CHAPTERS = [
     image: '/film/scene-06.jpg',
     imageMobile: '/film/scene-06-m.jpg',
     video: '/film/scene-06.mp4',
-    statement: 'The phone is face down. Everything is handled.',
+    statement: 'The phone is face down. Everything is *handled.*',
+    align: 'center',
+    focus: null, // the night dissolves into FIN, no push
     placeholder: 'linear-gradient(180deg, #3B2E26 0%, #57402F 55%, #6E4E36 100%)',
     dark: true,
   },

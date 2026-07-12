@@ -154,7 +154,7 @@ function Waitlist({ petName, setPetName }) {
 
   return (
     <motion.section {...fadeUp} className="max-w-3xl mx-auto px-6 py-24 md:py-32 text-center" aria-label="Join the waitlist">
-      <SectionKicker>Now boarding</SectionKicker>
+      <SectionKicker>Reel 01 · Now boarding</SectionKicker>
       <SectionTitle>Be one of the first 1,000</SectionTitle>
       <p className="mt-4 text-[15px] md:text-[16px] text-[#111]/60 font-medium max-w-md mx-auto leading-relaxed">
         No spam. One email when the doors open, from a human in Athens.
@@ -218,7 +218,7 @@ function Community() {
   return (
     <motion.section {...fadeUp} className="max-w-6xl mx-auto px-6 py-20 md:py-28" aria-label="Community wall">
       <div className="text-center">
-        <SectionKicker>#fylosfriends</SectionKicker>
+        <SectionKicker>Reel 02 · #fylosfriends</SectionKicker>
         <SectionTitle>The wall of very good dogs</SectionTitle>
         <p className="mt-4 text-[15px] text-[#111]/60 font-medium max-w-md mx-auto leading-relaxed">
           Set photography for now, honestly. Tag <span className="font-extrabold text-[#111]">@fylos.app</span> with your dog and the real wall begins.
@@ -287,7 +287,7 @@ function Professionals() {
     <motion.section {...fadeUp} className="bg-[#111] text-[#FBF7F2] py-24 md:py-32" aria-label="For professionals">
       <div className="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-12 md:gap-16 items-start">
         <div>
-          <SectionKicker>For professionals</SectionKicker>
+          <SectionKicker>Reel 03 · For professionals</SectionKicker>
           <h2 className="film-serif font-semibold tracking-tight leading-[1.02] text-[clamp(30px,4.6vw,58px)] text-[#FBF7F2]">
             The walker in the mustard coat could be you
           </h2>
@@ -380,7 +380,7 @@ function Subscriptions() {
   return (
     <motion.section {...fadeUp} className="max-w-5xl mx-auto px-6 py-24 md:py-32" aria-label="Pricing">
       <div className="text-center">
-        <SectionKicker>The price of peace</SectionKicker>
+        <SectionKicker>Reel 04 · The price of peace</SectionKicker>
         <SectionTitle>The companion is free</SectionTitle>
       </div>
       <div className="mt-12 grid md:grid-cols-2 gap-5 md:gap-6 max-w-3xl mx-auto">
@@ -430,7 +430,7 @@ function Faq() {
   return (
     <motion.section {...fadeUp} className="max-w-2xl mx-auto px-6 pb-24 md:pb-32" aria-label="Frequently asked questions">
       <div className="text-center mb-10">
-        <SectionKicker>Small print, big heart</SectionKicker>
+        <SectionKicker>Reel 05 · Small print, big heart</SectionKicker>
         <SectionTitle>Questions, answered</SectionTitle>
       </div>
       <div className="space-y-3">
@@ -454,7 +454,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-14 pb-28 md:pb-32 flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="text-center md:text-left">
           <div className="film-serif text-[24px] font-semibold text-[#111] tracking-tight">Fylos<span className="text-[#E85D2A]">.</span></div>
-          <div className="text-[13px] text-[#111]/45 font-semibold mt-1">Designed in Athens. Built for the world.</div>
+          <div className="text-[13px] text-[#111]/45 font-semibold mt-1">Designed in Athens. Built for the world.</div>\n          <div className="film-mono text-[8px] text-[#111]/30 mt-2">Shot on a very small set · No dogs were kept waiting</div>
         </div>
         <div className="flex items-center gap-3">
           <a href="https://instagram.com/fylos.app" target="_blank" rel="noreferrer" aria-label="Fylos on Instagram" className="w-10 h-10 rounded-full bg-white border border-[#F0E4D8] flex items-center justify-center text-[#111] hover:text-[#E85D2A] transition-colors">
