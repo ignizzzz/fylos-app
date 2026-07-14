@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FYLOS · Τεστ ποιότητας</title>
+<style>
+  :root{ --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --soft:#6E625B; --coral:#E85D2A; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{ background:var(--cream); color:var(--ink); font-family:'Inter',-apple-system,sans-serif; padding:48px 5vw 80px; }
+  h1{ font-size:26px; font-weight:800; letter-spacing:-.02em }
+  .sub{ color:var(--soft); margin-top:8px; font-size:14.5px; max-width:680px; line-height:1.6 }
+  h2{ font-size:15px; font-weight:800; margin:34px 0 10px }
+  .duo{ display:grid; grid-template-columns:1fr 1fr; gap:20px }
+  .cell{ background:#fff; border-radius:22px; overflow:hidden; box-shadow:0 12px 34px rgba(90,60,40,.10) }
+  .cell video{ width:100%; display:block }
+  .cell .lab{ padding:10px 16px; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--coral) }
+  img.crops{ width:100%; max-width:760px; border-radius:22px; box-shadow:0 12px 34px rgba(90,60,40,.10); display:block }
+  a.back{ color:var(--coral); font-weight:700; font-size:13px; text-decoration:none }
+  .note{ background:var(--peach); border-radius:16px; padding:14px 18px; font-size:13.5px; color:var(--ink); margin-top:26px; max-width:680px; line-height:1.55 }
+</style>
+</head>
+<body>
+<a class="back" href="/">&larr; Πίσω στο site</a>
+<h1 style="margin-top:14px">Τεστ ποιότητας: αυθεντικό εναντίον Topaz 4K</h1>
+<p class="sub">Το site παίζει τώρα με τα αυθεντικά βίντεο. Το Topaz είναι κλασικό εργαλείο καθαρισμού: δεν ξαναζωγραφίζει τίποτα, μόνο σφίγγει την εικόνα. Δες τα δύο βίντεο και τα κοντινά και πες αν προχωράμε.</p>
+<h2>Το ίδιο πλάνο, δίπλα-δίπλα</h2>
+<div class="duo">
+  <div class="cell"><video src="assets/quality-original.mp4" controls muted loop playsinline></video><div class="lab">Αυθεντικό (παίζει τώρα στο site)</div></div>
+  <div class="cell"><video src="assets/quality-topaz.mp4" controls muted loop playsinline></video><div class="lab">Topaz 4K (δείγμα)</div></div>
+</div>
+<h2>Κοντινό στο ίδιο καρέ, και οι τρεις εκδοχές</h2>
+<img class="crops" src="assets/quality-crops.jpg" alt="">
+<div class="note">Το μεσαίο (Topaz) κρατάει πρόσωπο, τρίχωμα και πινακίδες ολόιδια με το αυθεντικό. Το κάτω (ByteDance, αυτό που απορρίψαμε) τα είχε ξαναζωγραφίσει. Κόστος για όλο το φιλμ με Topaz: 8 credits ανά κομμάτι, 8 κομμάτια = 64 credits.</div>
+</body>
+</html>
