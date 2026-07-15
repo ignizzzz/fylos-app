@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos · Το σκεπτικό πίσω από τη γειτονιά</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-deep:#CF4A1C; --sage:#7C9271; --line:#ECE0D2;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1200px 560px at 82% -6%, #FFE4D2 0%, rgba(255,228,210,0) 60%);}
+  .top{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:15px clamp(18px,5vw,54px); backdrop-filter:blur(12px);
+    background:color-mix(in srgb,var(--cream) 80%,transparent); border-bottom:1px solid rgba(236,224,210,.7)}
+  .brand{font-weight:800; letter-spacing:.22em; color:var(--coral); font-size:15px}
+  .topr{font-weight:700; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft)}
+  .wrap{max-width:920px; margin:0 auto; padding:0 clamp(18px,5vw,54px)}
+
+  .hero{padding:64px 0 22px}
+  .kchip{display:inline-flex; align-items:center; gap:9px; font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral); background:var(--peach); padding:8px 15px; border-radius:99px}
+  .hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(38px,6.4vw,68px); line-height:1.02; letter-spacing:-.02em; margin:20px 0 0}
+  .hero h1 em{font-style:italic; color:var(--coral)}
+  .hero .lede{margin-top:20px; font-size:clamp(16px,2vw,19px); line-height:1.6; color:var(--ink-soft); max-width:660px}
+  .heroimg{margin-top:30px; border-radius:26px; overflow:hidden; box-shadow:0 30px 70px rgba(90,60,40,.22); aspect-ratio:2/1}
+  .heroimg img{width:100%;height:100%;object-fit:cover;display:block}
+
+  section.blk{padding:44px 0; border-top:1px solid var(--line)}
+  .eyebrow{display:flex; align-items:center; gap:11px; font:800 12px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral); margin-bottom:16px}
+  .eyebrow .n{width:28px;height:28px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-size:13px;flex:none}
+  h2{font-family:var(--serif); font-weight:600; font-size:clamp(26px,3.4vw,36px); line-height:1.08; letter-spacing:-.02em}
+  h2 em{font-style:italic; color:var(--coral)}
+  .body{margin-top:14px; font-size:16px; line-height:1.68; color:#4a423c; max-width:680px}
+  .body strong{color:var(--ink); font-weight:700}
+
+  .three{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px}
+  .tc{background:#fff; border:1px solid var(--line); border-radius:18px; padding:20px; box-shadow:0 12px 32px rgba(90,60,40,.06)}
+  .tc h3{font-family:var(--serif); font-weight:600; font-size:19px; color:var(--coral)}
+  .tc p{margin-top:8px; font-size:13.5px; line-height:1.55; color:var(--ink-soft)}
+
+  .places{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px}
+  .place{border-radius:18px; overflow:hidden; background:#fff; border:1px solid var(--line); box-shadow:0 12px 32px rgba(90,60,40,.08)}
+  .place .im{aspect-ratio:16/10; overflow:hidden}
+  .place .im img{width:100%;height:100%;object-fit:cover;display:block}
+  .place .cap{padding:13px 15px 15px}
+  .place .cap b{font-family:var(--serif); font-weight:600; font-size:16px; display:block}
+  .place .cap span{font-size:12.5px; color:var(--ink-soft); line-height:1.5; display:block; margin-top:4px}
+
+  .split{display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:center; margin-top:8px}
+  .split .im{border-radius:22px; overflow:hidden; box-shadow:0 22px 54px rgba(90,60,40,.18); aspect-ratio:4/3}
+  .split .im img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .why{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:24px}
+  .wc{display:flex; gap:13px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 18px; box-shadow:0 8px 22px rgba(90,60,40,.06)}
+  .wc .d{width:30px;height:30px;border-radius:9px;background:var(--peach);color:var(--coral);font-weight:800;display:grid;place-items:center;flex:none;font-size:14px}
+  .wc b{font-size:14px;color:var(--ink)}
+  .wc p{font-size:13px;color:var(--ink-soft);line-height:1.5;margin-top:3px}
+
+  .qa{margin-top:22px; display:flex; flex-direction:column; gap:12px}
+  .qcard{background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px; box-shadow:0 8px 22px rgba(90,60,40,.05)}
+  .qcard .q{font-weight:800; font-size:15px; color:var(--ink); display:flex; gap:9px}
+  .qcard .q::before{content:'Ε'; color:var(--coral); font-family:var(--serif)}
+  .qcard .a{margin-top:8px; font-size:14px; line-height:1.6; color:var(--ink-soft); padding-left:20px; position:relative}
+  .qcard .a::before{content:'Α'; position:absolute; left:0; color:var(--sage); font-family:var(--serif); font-weight:600}
+
+  .closer{margin:20px 0 10px; padding:38px clamp(24px,4vw,48px); border-radius:28px; background:linear-gradient(160deg,#2B2320,#43342b); color:var(--cream); text-align:center}
+  .closer p{font-family:var(--serif); font-weight:500; font-style:italic; font-size:clamp(22px,3.2vw,32px); line-height:1.3}
+  .closer p em{color:#FF8B5E; font-style:italic}
+
+  .hub{padding:40px 0 20px; border-top:1px solid var(--line)}
+  .hublist{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
+  .hublist a{display:inline-flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:11px 16px; font-weight:700; font-size:13.5px; color:var(--ink); text-decoration:none; box-shadow:0 6px 16px rgba(90,60,40,.05)}
+  .hublist a:hover{border-color:var(--coral); color:var(--coral)}
+  .hublist a.pri{background:var(--coral); color:#fff; border-color:var(--coral)}
+
+  footer{padding:34px 0 70px; text-align:center; color:var(--ink-soft); font-size:12px; line-height:1.6}
+
+  @media(max-width:760px){
+    .three,.places,.why{grid-template-columns:1fr}
+    .split{grid-template-columns:1fr}
+    .heroimg{aspect-ratio:16/10}
+  }
+</style>
+</head>
+<body>
+
+<div class="top"><span class="brand">FYLOS</span><span class="topr">Concept &amp; rationale · internal</span></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <span class="kchip">Το σκεπτικό πίσω από το concept</span>
+    <h1>Δεν φτιάχνουμε άλλη μια εφαρμογή. <em>Χτίζουμε μια γειτονιά.</em></h1>
+    <div class="lede">Το Fylos είναι η γειτονιά του κατοικιδίου σου: ό,τι χρειάζεσαι, από κτηνίατρο και groomer μέχρι walker, sitter, ταυτότητα, ασφάλεια και ημερολόγιο, σε μία βόλτα απόσταση. Να γιατί το χτίσαμε έτσι, γιατί ταιριάζει, και γιατί θα πάει καλά.</div>
+    <div class="heroimg"><img src="assets/square-hi.jpg" alt="Η μινιατούρα πλατεία του Fylos"></div>
+  </div>
+
+  <section class="blk">
+    <div class="eyebrow"><span class="n">1</span>Η βασική διαπίστωση</div>
+    <h2>Η φροντίδα του κατοικιδίου είναι <em>τοπική, καθημερινή, και θέμα εμπιστοσύνης.</em></h2>
+    <div class="body">Δεν είναι μια αγορά που κάνεις μία φορά. Είναι ρουτίνα ζωής, στη δική σου γειτονιά, με ανθρώπους που πρέπει να εμπιστευτείς με ένα μέλος της οικογένειάς σου. Αυτό ακριβώς λέει η μεταφορά της «γειτονιάς», και γι&rsquo; αυτό ταιριάζει με την πραγματική συμπεριφορά, όχι με ένα ψυχρό, συναλλακτικό marketplace.</div>
+    <div class="three">
+      <div class="tc"><h3>Τοπική</h3><p>Βγάζεις βόλτα τον σκύλο στη γειτονιά σου. Θέλεις κτηνίατρο, groomer, sitter κοντά, όχι στην άλλη άκρη της πόλης.</p></div>
+      <div class="tc"><h3>Καθημερινή</h3><p>Βόλτες, ταΐσματα, ραντεβού, εμβόλια. Επαναλαμβανόμενη χρήση, όχι one-off. Εκεί χτίζεται συνήθεια.</p></div>
+      <div class="tc"><h3>Εμπιστοσύνης</h3><p>Δεν αφήνεις τον σκύλο σου σε άγνωστο. Θέλεις τον γείτονα που ξέρεις, τον ελεγμένο ντόπιο, τον κτηνίατρο της γωνίας.</p></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="eyebrow"><span class="n">2</span>Γιατί ταιριάζει στην εφαρμογή</div>
+    <h2>Κάθε λειτουργία είναι <em>ένα μέρος στη γειτονιά.</em></h2>
+    <div class="body">Αντί για ένα φουσκωμένο εργαλείο με δέκα κουμπιά, το Fylos είναι ένας κόσμος όπου κάθε feature έχει τη θέση του. Έτσι ένα ολόκληρο οικοσύστημα δείχνει συνεκτικό και ζεστό, και εύκολα κατανοητό.</div>
+    <div class="places">
+      <div class="place"><div class="im"><img src="assets/kvet-hi.jpg" alt="Ο κτηνίατρος"></div><div class="cap"><b>Ο κτηνίατρος</b><span>Το health book: όλο το ιστορικό, αυτόματα, με τη συναίνεσή σου.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/kgroom-hi.jpg" alt="Ο groomer"></div><div class="cap"><b>Ο groomer</b><span>Booking σε δύο taps, και οι walkers/sitters δίπλα σου.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/kpark-hi.jpg" alt="Το πάρκο"></div><div class="cap"><b>Το πάρκο</b><span>Ασφάλεια: το λες μία φορά, το ξέρει όλη η γειτονιά.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/ktagqr-hi.jpg" alt="Το tag"></div><div class="cap"><b>Το tag</b><span>Ταυτότητα και χαμένο κατοικίδιο: ένα σκαν, και γυρίζει σπίτι.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/k-walker.jpg" alt="Οι γείτονες"></div><div class="cap"><b>Οι γείτονες</b><span>Walkers &amp; sitters που ήδη εμπιστεύεσαι, με reviews.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/square-hi.jpg" alt="Η πλατεία"></div><div class="cap"><b>Η πλατεία</b><span>Η κοινότητα: ο δρόμος σου, ζωντανός.</span></div></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="eyebrow"><span class="n">3</span>Το brand moat</div>
+    <div class="split">
+      <div>
+        <h2>Το συναίσθημα <em>δεν αντιγράφεται.</em></h2>
+        <div class="body">Η κατηγορία είναι γεμάτη κλινικές, γενικές εφαρμογές. Η αισθητική της μινιατούρας, η ζεστή παλέτα, το «όλη σου η γειτονιά, μια βόλτα μακριά» χτίζουν ένα <strong>premium, συναισθηματικό, αξέχαστο brand</strong>. Το συναίσθημα φέρνει word-of-mouth και retention, και ένας utilitarian competitor δεν το αντιγράφει εύκολα.</div>
+      </div>
+      <div class="im"><img src="assets/k-walker.jpg" alt="Ο κόσμος του Fylos"></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="eyebrow"><span class="n">4</span>Δίκτυο &amp; τοπική πυκνότητα</div>
+    <h2>Όσο περισσότεροι ντόπιοι, τόσο <em>πλουσιότερος ο δικός σου δρόμος.</em></h2>
+    <div class="body">Δύο πλευρές: owners και pros (κτηνίατροι, groomers, walkers, sitters). Η «γειτονιά» κάνει το network effect κατανοητό και το go-to-market απλό: ξεκινάμε <strong>πόλη-πόλη (Ζυρίχη πρώτα)</strong>, χτίζουμε πυκνότητα εκεί που μετράει, και οι πρώτοι pros παίρνουν τη γειτονιά τους (FOMO). Οι owners έλκονται από την ασφάλεια/ID που δουλεύει από την πρώτη μέρα, χωρίς να χρειάζεται κρίσιμη μάζα.</div>
+  </section>
+
+  <section class="blk">
+    <div class="eyebrow"><span class="n">5</span>Γιατί θα πάει καλά · γιατί τώρα</div>
+    <div class="why">
+      <div class="wc"><span class="d">1</span><div><b>Μεγάλη, συναισθηματική αγορά</b><p>Οι ιδιοκτήτες βλέπουν το κατοικίδιο ως οικογένεια: υψηλή δέσμευση, διάθεση για δαπάνη, καθημερινή χρήση.</p></div></div>
+      <div class="wc"><span class="d">2</span><div><b>Οι λύσεις σήμερα είναι κατακερματισμένες</b><p>Χωριστές εφαρμογές για ιστορικό, booking, tag, χαμένα, όλες ψυχρές και συναλλακτικές. Το Fylos τις ενοποιεί σε ένα ζεστό, τοπικό μέρος.</p></div></div>
+      <div class="wc"><span class="d">3</span><div><b>Local-first = αμυντικό</b><p>Η πυκνότητα ανά πόλη και το word-of-mouth χτίζουν πλεονέκτημα. Το brand της γειτονιάς είναι εγγενώς shareable.</p></div></div>
+      <div class="wc"><span class="d">4</span><div><b>Καθημερινή χρήση, όχι one-off</b><p>Trust + κοινότητα + ασφάλεια (tags, hazard reports) = stickiness πέρα από τη μία συναλλαγή.</p></div></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="eyebrow"><span class="n">6</span>Ενστάσεις &amp; απαντήσεις</div>
+    <div class="qa">
+      <div class="qcard"><div class="q">Δεν είναι απλά ένα marketplace;</div><div class="a">Το marketplace είναι ένα κομμάτι. Το κλειδί είναι το health book + ταυτότητα + ασφάλεια + κοινότητα, όλα σε ένα μέρος, τοπικά, με εμπιστοσύνη. Αυτό δεν το δίνει ένα booking app.</div></div>
+      <div class="qcard"><div class="q">Πώς ξεκινάς ένα two-sided δίκτυο;</div><div class="a">Πόλη-πόλη. Οι πρώτοι pros παίρνουν τη γειτονιά τους (κίνητρο/FOMO). Οι owners μπαίνουν για την ασφάλεια και το ψηφιακό ID που δουλεύει από μέρα 1, χωρίς κρίσιμη μάζα.</div></div>
+      <div class="qcard"><div class="q">Γιατί να μη σε αντιγράψουν;</div><div class="a">Brand + συναίσθημα, τοπική πυκνότητα, και το δεδομένο ιστορικό (health book με consent). Είναι moat που χτίζεται με τον χρόνο, όχι ένα feature.</div></div>
+      <div class="qcard"><div class="q">Είναι έτοιμο;</div><div class="a">Το consumer κομμάτι (ID, booking, journal) είναι πραγματικό. Το B2B (software για κτηνιάτρους) έρχεται με waitlist/early access, ελεγχόμενα, με τους πρώτους να είναι πρώτοι.</div></div>
+    </div>
+  </section>
+
+  <div class="closer">
+    <p>«Δεν φτιάχνουμε άλλη μια εφαρμογή. Χτίζουμε τη γειτονιά που κάθε κατοικίδιο και κάθε ιδιοκτήτης θα ήθελε, <em>μια βόλτα μακριά.</em>»</p>
+  </div>
+
+  <section class="hub">
+    <div class="eyebrow"><span class="n">→</span>Δείξε στην ομάδα</div>
+    <div class="body">Όλα ζωντανά, έτοιμα να τα σκρολάρεις:</div>
+    <div class="hublist">
+      <a class="pri" href="/">Το φιλμ (η ιστοσελίδα)</a>
+      <a href="/tag">Tag</a>
+      <a href="/vet">Κτηνίατρος</a>
+      <a href="/groomer">Groomer</a>
+      <a href="/park">Πάρκο</a>
+      <a href="/join">Join (pros)</a>
+      <a href="/apply">Apply (κλινικές)</a>
+    </div>
+  </section>
+
+</div>
+
+<footer>Fylos AG · Zürich · Internal concept rationale</footer>
+</body>
+</html>

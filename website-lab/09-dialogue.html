@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Fylos — a friend who remembers. Health records, daily rhythms and trusted people for life with your pet, in one calm place. iOS, launching first in Switzerland, 2026.">
+<meta name="theme-color" content="#F7F5F2">
+<title>FYLOS — Dialogue</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='24' fill='%23E85D2A'/%3E%3C/svg%3E">
+<script>
+(function(){
+  try{
+    var c = ' js';
+    if(!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)){ c += ' typefx'; }
+    document.documentElement.className += c;
+  }catch(e){}
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400..900&family=Nunito:wght@800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   FYLOS · Lab 09 — "Dialogue" (the friend speaks)
+   A typographic conversation. Inter asks, Instrument Serif answers.
+   ============================================================ */
+
+:root{
+  /* colors */
+  --coral:#E85D2A; --coral-hover:#D04A1C; --coral-deep:#BE4513;
+  --bg:#F7F5F2; --surface:#FFFFFF; --chip:#F3EFEB; --sheet:#FBF9F7;
+  --peach:#FBE7DD; --peach-selected:#FFEDE3;
+  --hair:#EDE8E2; --line:#F1EDE8;
+  --ink:#111111; --ink-2:#6E6058; --ink-3:#9B9B9F;
+  --label:#A8A29C; --placeholder:#C4BBB3; --chevron:#CFCFD4;
+  --ok:#3F8D63; --ok-bg:#EEF7F1; --ok-bg-2:#F0F7ED; --ok-border:#D7EBDD; --ok-dot:#34C759;
+  --danger:#E5484D; --danger-bg:#FFF0F0; --warn:#FF9500;
+  --warn-warm:#B07A3A; --warn-warm-bg:#FFF8F0; --warn-warm-border:#F0E4D0;
+  /* type */
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-wordmark:'Nunito',sans-serif;
+  --font-voice:'Instrument Serif',Georgia,serif;
+  --track-title:-0.02em; --track-label:0.12em;
+  /* geometry */
+  --r-input:12px; --r-card:16px; --r-group:18px; --r-hero:20px; --r-sheet:26px; --r-full:9999px;
+  --h-cta:52px; --h-touch:44px; --gutter:20px;
+  /* shadows */
+  --shadow-warm:0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05);
+  --shadow-chrome:0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08);
+  --shadow-float:0 8px 24px rgba(0,0,0,0.06);
+  --glow-cta:0 8px 22px rgba(232,93,42,0.28);
+  --glow-cta-sm:0 4px 14px rgba(232,93,42,0.25);
+  /* motion */
+  --t-tap:120ms; --t-normal:200ms; --t-slow:300ms;
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out:cubic-bezier(0.22,1,0.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ overflow-x:clip; }
+@media (prefers-reduced-motion: no-preference){ html{ scroll-behavior:smooth; } }
+body{
+  overflow-x:clip;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{ background:var(--peach-selected); color:var(--ink); }
+img,svg{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; border:0; background:none; cursor:pointer; color:inherit; }
+input{ font:inherit; }
+ul,ol{ list-style:none; }
+:focus-visible{ outline:2px solid var(--coral); outline-offset:3px; border-radius:6px; }
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+.wrap{ max-width:1120px; margin:0 auto; padding-inline:clamp(20px, 5vw, 48px); }
+section,footer{ scroll-margin-top:96px; }
+
+/* ---------- wordmark ---------- */
+.wordmark{
+  display:inline-flex; align-items:baseline;
+  font-family:var(--font-wordmark); font-weight:800;
+  letter-spacing:-0.02em; color:var(--ink); line-height:1;
+}
+.wordmark::after{
+  content:""; width:.22em; height:.22em; border-radius:50%;
+  background:var(--coral); margin-left:.12em; align-self:flex-end;
+  transform:translateY(-.06em);
+}
+
+/* ---------- nav ---------- */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  transition:background var(--t-normal) ease, box-shadow var(--t-normal) ease,
+             border-color var(--t-normal) ease, backdrop-filter var(--t-normal) ease;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{
+  background:rgba(247,245,242,.82);
+  -webkit-backdrop-filter:blur(14px) saturate(1.4);
+  backdrop-filter:blur(14px) saturate(1.4);
+  border-bottom-color:var(--hair);
+}
+.nav-inner{
+  height:66px; display:flex; align-items:center; justify-content:space-between; gap:24px;
+}
+.nav .wordmark{ font-size:21px; }
+.nav-links{ display:flex; align-items:center; gap:clamp(18px, 3vw, 34px); }
+.nav-links a{
+  font-size:13.5px; font-weight:600; color:var(--ink-2);
+  transition:color var(--t-normal) ease;
+}
+.nav-links a:hover{ color:var(--ink); }
+.nav-cta{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 18px; border-radius:var(--r-card);
+  background:var(--coral); color:#fff; font-size:13.5px; font-weight:700;
+  box-shadow:var(--glow-cta-sm);
+  transition:background var(--t-normal) ease, transform var(--t-tap) ease;
+}
+.nav-cta:hover{ background:var(--coral-hover); }
+.nav-cta:active{ transform:scale(.98); }
+
+/* ---------- shared dialogue grammar ---------- */
+.slug{
+  display:inline-flex; align-items:center; gap:12px;
+  font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.18em; color:var(--label);
+}
+.slug::before{
+  content:""; width:20px; height:2px; border-radius:2px;
+  background:var(--coral); flex:none;
+}
+.slug.centered{ justify-content:center; }
+.slug.centered::after{
+  content:""; width:20px; height:2px; border-radius:2px;
+  background:var(--coral); flex:none;
+}
+
+.turn{ max-width:38ch; }
+.turn + .turn{ margin-top:clamp(30px, 5vh, 46px); }
+.speaker{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.18em; margin-bottom:12px;
+}
+.turn.you .speaker{ color:var(--label); }
+.turn.fylos .speaker{ color:var(--ink); }
+.turn.fylos .speaker::after{
+  content:""; width:4px; height:4px; border-radius:50%;
+  background:var(--coral); transform:translateY(-1px);
+}
+.line{
+  --hang:1.18em;
+  padding-left:var(--hang); text-indent:calc(-1 * var(--hang));
+}
+.turn.you .line{
+  font-weight:600; font-size:clamp(19px, 1.05rem + 1vw, 26px);
+  line-height:1.3; letter-spacing:-0.01em; color:var(--ink);
+}
+.turn.fylos{ margin-left:clamp(26px, 6vw, 68px); }
+.turn.fylos .line{
+  font-family:var(--font-voice); font-weight:400;
+  font-size:clamp(24px, 1.2rem + 1.7vw, 33px);
+  line-height:1.3; color:var(--ink);
+}
+.gr{ font-family:var(--font-voice); font-style:italic; color:var(--coral); }
+
+/* type-on machinery */
+.typewrap{ position:relative; display:block; }
+.tw-ghost{ transition:none; }
+.tw-live{ display:none; }
+.typefx .tw-ghost{ opacity:0; }
+.typefx .tw-live{
+  display:block; position:absolute; inset:0;
+  padding-left:var(--hang); text-indent:calc(-1 * var(--hang));
+}
+.caret{
+  display:inline-block; width:2px; height:.92em;
+  background:var(--coral); margin-left:3px;
+  vertical-align:-0.1em; border-radius:1px;
+}
+.caret.done{ animation:caretBlink .55s steps(1,end) 2; }
+.caret.gone{ opacity:0; transition:opacity .6s ease; }
+@keyframes caretBlink{ 0%,100%{ opacity:1; } 50%{ opacity:0; } }
+
+/* scene breaks */
+.scene-break{
+  display:flex; justify-content:center; gap:10px; padding:8px 0;
+}
+.scene-break i{
+  width:3px; height:3px; border-radius:50%; background:#D5CEC7;
+}
+
+/* ---------- reveal states ---------- */
+.js .slug, .js .turn, .js .evidence, .js .after-reply, .js .reveal{
+  opacity:0; transform:translateY(22px);
+  transition:opacity .65s var(--ease-out), transform .65s var(--ease-out);
+  transition-delay:var(--d, 0s);
+}
+.js .slug{ transform:translateY(12px); }
+.js .in{ opacity:1; transform:none; }
+
+/* ---------- exchange layout ---------- */
+.ex-section{ padding-block:clamp(76px, 12vh, 132px); }
+.ex-grid{
+  display:grid; grid-template-columns:minmax(0, 7fr) minmax(0, 5fr);
+  gap:clamp(36px, 6vw, 84px); align-items:center;
+}
+.ex-grid .slug{ margin-bottom:clamp(28px, 4.5vh, 42px); }
+.exhibit-label{
+  font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.16em; color:var(--label); margin-bottom:12px;
+}
+
+/* ---------- evidence cards (real app fragments) ---------- */
+.card{
+  background:var(--surface); border-radius:var(--r-card);
+  box-shadow:var(--shadow-warm); padding:16px;
+}
+.frag-row{ display:flex; align-items:center; gap:12px; }
+.icon-chip{
+  flex:none; width:36px; height:36px; border-radius:var(--r-input);
+  background:var(--peach); display:flex; align-items:center; justify-content:center;
+  color:var(--coral);
+}
+.icon-chip.neutral{ background:var(--chip); }
+.frag-title{ font-size:14px; font-weight:600; color:var(--ink); line-height:1.3; }
+.frag-sub{ font-size:12.5px; color:var(--ink-2); margin-top:2px; line-height:1.4; }
+.frag-meta{ font-size:12px; color:var(--ink-3); }
+.badge{
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:700; padding:2px 8px;
+  border-radius:var(--r-full); white-space:nowrap;
+}
+.badge.warn{ color:var(--warn-warm); background:var(--warn-warm-bg); border:1px solid var(--warn-warm-border); }
+.badge.ok{ color:var(--ok); background:var(--ok-bg-2); border:1px solid var(--ok-border); }
+.card-divide{ height:1px; background:var(--line); margin:12px 0; }
+
+/* exhibit A — vaccine countdown */
+.ev-vaccine .foot{ display:flex; align-items:center; gap:6px; margin-top:0; }
+.ev-vaccine .foot svg{ color:var(--ok); flex:none; }
+
+/* exhibit B — Marco booking + live chip */
+.ev-marco{ position:relative; }
+.avatar{
+  flex:none; width:44px; height:44px; border-radius:50%;
+  background:#B5825F; color:#fff; font-weight:700; font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(0,0,0,.04);
+}
+.name-row{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.name-row .rating{ display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:500; color:var(--ink-3); }
+.name-row .rating svg{ color:var(--coral); }
+.ev-marco .when{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.walk-count{ font-size:11px; font-weight:600; color:var(--label); }
+.live-chip{
+  position:absolute; right:-12px; bottom:-20px;
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(255,255,255,.92);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border:1px solid var(--hair); border-radius:var(--r-full);
+  padding:8px 14px; font-size:12px; font-weight:600; color:var(--ink);
+  box-shadow:var(--shadow-float);
+}
+.live-dot{ width:7px; height:7px; border-radius:50%; background:var(--ok-dot); position:relative; flex:none; }
+.live-dot::after{
+  content:""; position:absolute; inset:-4px; border-radius:50%;
+  border:1.5px solid var(--ok-dot); opacity:0;
+  animation:pulse 1.6s var(--ease-out) infinite;
+}
+@keyframes pulse{ 0%{ transform:scale(.5); opacity:.7; } 70%{ transform:scale(1.15); opacity:0; } 100%{ opacity:0; } }
+
+/* exhibit C — memory + sparkline */
+.ev-memory .art{
+  height:150px; border-radius:var(--r-card);
+  background:
+    radial-gradient(120px 120px at 78% 20%, rgba(255,255,255,.45), transparent 70%),
+    radial-gradient(170px 170px at 16% 86%, rgba(255,255,255,.3), transparent 70%),
+    linear-gradient(140deg, #FFE9DC 0%, #FBD9C2 48%, #F2C4A6 100%);
+  position:relative;
+}
+.ev-memory .art .tag{
+  position:absolute; left:12px; bottom:12px;
+  background:rgba(255,255,255,.92);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border-radius:var(--r-full); padding:5px 12px;
+  font-size:11px; font-weight:600; color:var(--ink);
+}
+.ev-memory .stats{
+  margin-top:12px; display:flex; align-items:center; justify-content:space-between; gap:14px;
+}
+.ev-memory .num{ font-size:20px; font-weight:800; letter-spacing:-0.02em; line-height:1; }
+.ev-memory .num small{ display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-3); margin-top:5px; }
+.ev-memory .spark{ flex:none; }
+.ev-memory .spark polyline{ stroke:var(--coral); stroke-width:2; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+
+/* exhibit D — today, all done */
+.ev-today .row{
+  display:flex; align-items:center; gap:12px; padding:11px 0;
+}
+.ev-today .row + .row{ border-top:1px solid var(--line); }
+.ev-today .t{ flex:1; min-width:0; }
+.ev-today .foot{
+  margin-top:4px; padding-top:12px; border-top:1px solid var(--line);
+  font-size:12px; color:var(--ink-3); text-align:center;
+}
+
+/* exhibit E — ecosystem chips */
+.eco-chips{ display:flex; flex-wrap:wrap; gap:10px; max-width:420px; }
+.eco-chips li{
+  display:inline-flex; align-items:baseline; gap:8px;
+  background:var(--chip); border-radius:var(--r-full);
+  padding:9px 16px; font-size:13px; font-weight:600; color:var(--ink);
+}
+.eco-chips li em{
+  font-style:normal; font-size:9px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.14em; color:var(--label);
+}
+.eco-note{ margin-top:16px; font-size:12.5px; color:var(--ink-3); max-width:38ch; }
+
+/* ---------- hero ---------- */
+.hero{ padding-top:clamp(128px, 18vh, 190px); padding-bottom:clamp(60px, 9vh, 96px); }
+.hero .ex-grid .slug{ margin-bottom:clamp(30px, 5vh, 48px); }
+.hero .turn.you .line{ font-size:clamp(21px, 1.1rem + 1.3vw, 29px); }
+.hero .turn.fylos .line{ font-size:clamp(26px, 1.25rem + 2.2vw, 38px); }
+.hero-rest{ margin-top:clamp(64px, 10vh, 104px); max-width:760px; }
+.hero-rest h1{
+  font-weight:900; letter-spacing:-0.03em; line-height:1.04;
+  font-size:clamp(42px, 2.2rem + 4.4vw, 78px);
+}
+.hero-rest h1 em{ font-style:normal; color:var(--coral); }
+.hero-sub{
+  margin-top:22px; font-size:clamp(16px, 1rem + .3vw, 18px);
+  color:var(--ink-2); max-width:46ch; line-height:1.6;
+}
+.hero-ctas{ margin-top:34px; display:flex; align-items:center; gap:26px; flex-wrap:wrap; }
+.btn-primary{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:var(--h-cta); padding:0 28px; border-radius:var(--r-card);
+  background:var(--coral); color:#fff; font-size:15px; font-weight:700;
+  box-shadow:var(--glow-cta);
+  transition:background var(--t-normal) ease, transform var(--t-tap) ease, box-shadow var(--t-normal) ease;
+}
+.btn-primary:hover{ background:var(--coral-hover); transform:translateY(-1px); box-shadow:0 10px 26px rgba(232,93,42,.32); }
+.btn-primary:active{ transform:scale(.98); transition-duration:var(--t-tap); }
+.link-ghost{
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:15px; font-weight:700; color:var(--coral);
+  transition:color var(--t-normal) ease;
+}
+.link-ghost:hover{ color:var(--coral-hover); }
+.link-ghost svg{ transition:transform var(--t-normal) var(--ease-out); }
+.link-ghost:hover svg{ transform:translateY(2px); }
+.hero-micro{
+  margin-top:30px; font-size:11px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.14em; color:var(--label);
+}
+
+/* ---------- stage sections (the calm Inter interludes) ---------- */
+.stage{ padding-block:clamp(64px, 10vh, 110px); text-align:center; }
+.stage .slug{ margin-bottom:clamp(36px, 6vh, 56px); }
+.pillars{
+  display:grid; grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:clamp(24px, 3.5vw, 44px); text-align:left;
+}
+.pillar .icon-chip{ width:32px; height:32px; border-radius:10px; margin-bottom:14px; }
+.pillar h3{ font-size:14px; font-weight:700; letter-spacing:-0.01em; }
+.pillar p{ margin-top:6px; font-size:13px; line-height:1.55; color:var(--ink-2); }
+
+.steps{ max-width:520px; margin:0 auto; text-align:left; }
+.step{ display:flex; align-items:baseline; gap:18px; padding:20px 4px; }
+.step + .step{ border-top:1px solid var(--hair); }
+.step .n{
+  flex:none; font-size:10.5px; font-weight:800; letter-spacing:.14em;
+  color:var(--coral); transform:translateY(-2px);
+}
+.step .s-main{ font-size:clamp(17px, 1rem + .5vw, 20px); font-weight:700; letter-spacing:-0.01em; }
+.step .s-sub{ margin-top:4px; font-size:13.5px; color:var(--ink-2); }
+
+/* ---------- phone interlude ---------- */
+.phone-stage{ padding-block:clamp(70px, 11vh, 120px); text-align:center; }
+.phone-stage .slug{ margin-bottom:clamp(40px, 6vh, 60px); }
+.phone-holder{ display:flex; justify-content:center; }
+.phone-outer{ --ps:.78; width:calc(390px * var(--ps)); height:calc(844px * var(--ps)); }
+.phone{
+  width:390px; height:844px; transform:scale(var(--ps)); transform-origin:top left;
+  background:#1A1714; border-radius:54px; position:relative;
+  box-shadow:0 30px 70px rgba(60,30,15,.18), 0 6px 18px rgba(60,30,15,.08);
+}
+.screen{
+  position:absolute; inset:11px; border-radius:44px;
+  background:var(--bg); overflow:hidden;
+}
+.island{
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  width:120px; height:34px; border-radius:var(--r-full); background:#000; z-index:5;
+}
+.p-status{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:17px 30px 0 34px; color:var(--ink);
+}
+.p-status .time{ font-size:15px; font-weight:600; letter-spacing:-0.01em; }
+.p-status .glyphs{ display:flex; align-items:center; gap:7px; }
+.p-body{ padding:16px 20px 0; text-align:left; }
+.p-greet{ font-size:24px; font-weight:700; letter-spacing:-0.02em; line-height:1.15; }
+.p-greet b{ font-weight:800; }
+.p-greet-sub{ font-size:14px; color:var(--ink-2); margin-top:4px; }
+.p-pets{ display:flex; gap:22px; margin-top:22px; }
+.p-pet{ display:flex; flex-direction:column; align-items:center; gap:7px; }
+.p-pet .c{
+  width:54px; height:54px; border-radius:50%; color:#fff;
+  font-size:19px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+}
+.p-pet.active .c{ background:#B5825F; box-shadow:0 0 0 2.5px var(--bg), 0 0 0 4.5px var(--coral); }
+.p-pet.idle .c{ background:#C9C0B4; }
+.p-pet .n{ font-size:13px; font-weight:600; }
+.p-pet.idle .n{ color:var(--ink-3); font-weight:500; }
+.p-overview{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-top:24px; }
+.p-stat{
+  background:var(--surface); border-radius:var(--r-card);
+  box-shadow:var(--shadow-warm); padding:13px 10px; text-align:center;
+}
+.p-stat .v{ font-size:17px; font-weight:700; line-height:1; }
+.p-stat .l{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); margin-top:5px; }
+.p-label{
+  font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.12em; color:var(--label); margin:24px 0 10px;
+}
+.p-upcoming{
+  background:var(--surface); border-radius:var(--r-card);
+  box-shadow:var(--shadow-warm); padding:14px;
+}
+.p-upcoming .top{ display:flex; align-items:center; gap:10px; }
+.p-upcoming .avatar{ width:40px; height:40px; font-size:15px; }
+.p-upcoming .mid{ flex:1; min-width:0; }
+.p-upcoming .nm{ font-size:14px; font-weight:700; display:flex; align-items:center; gap:5px; }
+.p-upcoming .nm .rating{ display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:500; color:var(--ink-3); }
+.p-upcoming .nm .rating svg{ color:var(--coral); }
+.p-upcoming .sb{ font-size:12.5px; color:var(--ink-2); margin-top:2px; }
+.p-upcoming .bt{
+  margin-top:11px; padding-top:11px; border-top:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--ink-3);
+}
+.p-upcoming .bt a{ color:var(--coral); font-weight:700; }
+.p-today{
+  background:var(--surface); border-radius:var(--r-card);
+  box-shadow:var(--shadow-warm); padding:4px 14px;
+}
+.p-today .row{ display:flex; align-items:center; gap:12px; padding:11px 0; }
+.p-today .row + .row{ border-top:1px solid var(--line); }
+.p-today .t{ flex:1; min-width:0; }
+.p-today .t .a{ font-size:14px; font-weight:600; }
+.p-today .t .b{ font-size:12px; color:var(--ink-3); margin-top:1px; }
+.p-done-pill{
+  flex:none; height:28px; padding:0 13px; border-radius:var(--r-full);
+  background:var(--chip); color:var(--ink-2); font-size:12px; font-weight:600;
+  display:inline-flex; align-items:center;
+}
+.p-dock{
+  position:absolute; left:20px; right:20px; bottom:22px; height:56px;
+  background:rgba(255,255,255,.8);
+  -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
+  border-radius:var(--r-sheet);
+  box-shadow:0 2px 20px rgba(0,0,0,.06), 0 0 0 .5px rgba(0,0,0,.04);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 20px;
+}
+.p-dock .di{ display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--ink-3); }
+.p-dock .di.active{ color:var(--coral); }
+.p-dock .di .dl{ font-size:9px; font-weight:700; }
+.p-fab{
+  width:40px; height:40px; border-radius:50%; background:var(--coral); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 14px rgba(232,93,42,.3), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.phone-caption{
+  margin-top:clamp(30px, 5vh, 44px);
+  font-family:var(--font-voice); font-size:clamp(21px, 1.2rem + .8vw, 27px);
+  color:var(--ink);
+}
+.phone-caption-sub{ margin-top:8px; font-size:13.5px; color:var(--ink-3); }
+
+/* ---------- the beat (why Fylos) ---------- */
+.beat{ padding-block:clamp(90px, 14vh, 150px); }
+.beat-inner{ max-width:720px; margin:0 auto; }
+.beat .turn{ max-width:none; }
+.beat .turn.fylos .line{ font-size:clamp(26px, 1.3rem + 2.1vw, 38px); line-height:1.34; }
+
+/* ---------- waitlist ---------- */
+.waitlist{ padding-block:clamp(80px, 12vh, 130px); }
+.waitlist-inner{ max-width:720px; margin:0 auto; }
+.waitlist .turn{ max-width:none; }
+.cta-zone{ margin-top:clamp(38px, 6vh, 54px); margin-left:clamp(26px, 6vw, 68px); }
+.cta-form{ position:relative; max-width:520px; }
+.form-row{
+  display:flex; gap:12px;
+  transition:opacity .45s var(--ease-out), transform .45s var(--ease-out), visibility 0s linear .45s;
+}
+.form-row input{
+  flex:1; min-width:0; height:var(--h-cta); padding:0 18px;
+  background:var(--surface); border:1px solid transparent;
+  border-radius:var(--r-input); box-shadow:var(--shadow-warm);
+  font-size:15px; font-weight:500; color:var(--ink);
+}
+.form-row input::placeholder{ color:var(--placeholder); }
+.form-row input:focus{ outline:none; border-color:var(--coral); box-shadow:0 0 0 3px rgba(232,93,42,.14), var(--shadow-warm); }
+.form-row .btn-primary{ flex:none; padding:0 24px; }
+.cta-form.sent .form-row{ opacity:0; transform:scale(.985); pointer-events:none; visibility:hidden; }
+.form-ok{
+  position:absolute; inset:0; display:flex; align-items:center; gap:12px;
+  opacity:0; transform:translateY(10px); pointer-events:none; visibility:hidden;
+  transition:opacity .5s var(--ease-out) .15s, transform .5s var(--ease-out) .15s, visibility 0s linear;
+}
+.cta-form.sent .form-ok{ opacity:1; transform:none; pointer-events:auto; visibility:visible; }
+.form-ok .ok-ring{
+  flex:none; width:36px; height:36px; border-radius:50%;
+  background:var(--ok-bg-2); border:1px solid var(--ok-border);
+  display:flex; align-items:center; justify-content:center; color:var(--ok);
+}
+.form-ok p{ font-family:var(--font-voice); font-size:20px; color:var(--ink); }
+.form-note{ margin-top:14px; font-size:12.5px; color:var(--ink-3); }
+
+/* ---------- footer ---------- */
+.footer{ border-top:1px solid var(--hair); padding:clamp(48px, 8vh, 72px) 0 110px; }
+.footer-inner{ display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
+.footer .wordmark{ font-size:22px; }
+.footer-tag{ font-family:var(--font-voice); font-style:italic; font-size:17px; color:var(--ink-2); }
+.footer-meta{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--label); margin-top:6px; }
+.footer-links{ display:flex; align-items:center; gap:18px; margin-top:14px; font-size:12.5px; color:var(--ink-3); }
+.footer-links a:hover{ color:var(--ink); }
+.footer-copy{ font-size:12px; color:var(--ink-3); margin-top:4px; }
+
+/* ---------- lab switcher ---------- */
+.lab{
+  position:fixed; left:16px; bottom:16px; z-index:60;
+  display:flex; align-items:center; gap:2px;
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(12px) saturate(1.3); backdrop-filter:blur(12px) saturate(1.3);
+  border:1px solid var(--hair); border-radius:var(--r-full);
+  padding:4px 6px; box-shadow:var(--shadow-float);
+  font-size:11px; font-weight:600; color:var(--ink-2);
+}
+.lab a{ display:inline-flex; align-items:center; justify-content:center; border-radius:var(--r-full); transition:color var(--t-normal) ease, background var(--t-normal) ease; }
+.lab a:hover{ color:var(--ink); background:rgba(243,239,235,.9); }
+.lab .lab-btn{ width:24px; height:24px; color:var(--ink-3); }
+.lab .lab-mid{ padding:3px 8px; letter-spacing:.02em; }
+
+/* ---------- responsive ---------- */
+@media (max-width:1024px){
+  .ex-grid{ grid-template-columns:1fr; gap:44px; align-items:start; }
+  .ex-grid .evidence{ margin-left:clamp(26px, 6vw, 68px); max-width:440px; }
+  .live-chip{ right:8px; }
+  .hero{ padding-top:clamp(112px, 15vh, 150px); }
+}
+@media (max-width:768px){
+  .nav-links a:not(.nav-cta){ display:none; }
+  .pillars{ grid-template-columns:repeat(2, minmax(0,1fr)); }
+  .phone-outer{ --ps:.72; }
+  .turn.fylos{ margin-left:clamp(18px, 5vw, 40px); }
+  .ex-grid .evidence, .cta-zone{ margin-left:clamp(18px, 5vw, 40px); }
+}
+@media (max-width:480px){
+  .pillars{ grid-template-columns:1fr; gap:28px; }
+  .phone-outer{ --ps:.68; }
+  .form-row{ flex-direction:column; }
+  .form-row .btn-primary{ width:100%; }
+  .ex-grid .evidence{ margin-left:0; }
+  .cta-zone{ margin-left:0; }
+  .lab{ left:12px; bottom:12px; }
+}
+
+/* ---------- reduced motion: everything rendered, no theatre ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; transition-delay:0s !important; }
+  .js .slug, .js .turn, .js .evidence, .js .after-reply, .js .reveal{
+    opacity:1 !important; transform:none !important; transition:none !important;
+  }
+  .live-dot::after{ display:none; }
+}
+</style>
+</head>
+<body>
+
+<a class="sr-only" href="#main">Skip to content</a>
+
+<nav class="nav" id="nav" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a href="#top" class="wordmark" aria-label="Fylos — home">FYLOS</a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#phone">Preview</a>
+      <a href="#next">What comes next</a>
+      <a href="#waitlist" class="nav-cta">Join the waitlist</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO — in medias res ============ -->
+<header class="hero ex-section" id="top" data-ex>
+  <div class="wrap">
+    <div class="ex-grid">
+      <div class="dialogue">
+        <p class="slug">In medias res — Tuesday, 07:12</p>
+        <div class="turn you">
+          <span class="speaker">You</span>
+          <p class="line">— When was Bobby&rsquo;s rabies shot?</p>
+        </div>
+        <div class="turn fylos">
+          <span class="speaker">Fylos</span>
+          <p class="line typewrap"><span class="tw-ghost">— March 12. The next booster is in 14 days. Already planned.</span><span class="tw-live" aria-hidden="true"></span></p>
+        </div>
+      </div>
+      <aside class="evidence" aria-label="Vaccine reminder from the app">
+        <p class="exhibit-label">Exhibit A — Vaccines</p>
+        <div class="card ev-vaccine">
+          <div class="frag-row">
+            <span class="icon-chip" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg>
+            </span>
+            <div style="flex:1;min-width:0">
+              <p class="frag-title">Rabies booster</p>
+              <p class="frag-sub">Bobby &middot; from the vet&rsquo;s letter</p>
+            </div>
+            <span class="badge warn">in 14 days</span>
+          </div>
+          <div class="card-divide"></div>
+          <div class="frag-row foot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ok)" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <p class="frag-meta">Reminder scheduled &middot; quietly</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="hero-rest after-reply">
+      <h1>A friend who<br>remembers<em>.</em></h1>
+      <p class="hero-sub">Fylos keeps health records, daily rhythms, and trusted people in one calm place &mdash; so you can be there for the good parts.</p>
+      <div class="hero-ctas">
+        <a href="#waitlist" class="btn-primary">Join the waitlist</a>
+        <a href="#c2" class="link-ghost">Read the conversation
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </a>
+      </div>
+      <p class="hero-micro">iOS first &middot; Launching in Switzerland, 2026</p>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ STAGE — pillars in one quiet row ============ -->
+  <section class="stage" aria-labelledby="pillars-h">
+    <div class="wrap">
+      <h2 class="slug centered" id="pillars-h">Stage directions &mdash; what Fylos does</h2>
+      <div class="pillars">
+        <div class="pillar reveal" style="--d:0s">
+          <span class="icon-chip" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.4 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2C10.5 3.5 9.3 3 7.5 3A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.1 3 5.5l7 7Z"/></svg>
+          </span>
+          <h3>Health, remembered</h3>
+          <p>Vaccines, meds and records &mdash; with you, not in a drawer.</p>
+        </div>
+        <div class="pillar reveal" style="--d:.08s">
+          <span class="icon-chip" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+          </span>
+          <h3>A gentle rhythm</h3>
+          <p>Walks, meals, reminders &mdash; today, at a glance.</p>
+        </div>
+        <div class="pillar reveal" style="--d:.16s">
+          <span class="icon-chip" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <h3>People you trust</h3>
+          <p>Walkers, sitters and vets &mdash; nearby, verified.</p>
+        </div>
+        <div class="pillar reveal" style="--d:.24s">
+          <span class="icon-chip" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </span>
+          <h3>The story of you two</h3>
+          <p>Memories, kept.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ EXCHANGE 2 — people you trust ============ -->
+  <section class="ex-section" id="c2" data-ex aria-label="Exchange two — trusted people">
+    <div class="wrap ex-grid">
+      <div class="dialogue">
+        <p class="slug">Tuesday, 17:42 &mdash; still at the office</p>
+        <div class="turn you">
+          <span class="speaker">You</span>
+          <p class="line">— I&rsquo;m stuck at work until seven.</p>
+        </div>
+        <div class="turn fylos">
+          <span class="speaker">Fylos</span>
+          <p class="line typewrap"><span class="tw-ghost">— Marco can take the six o&rsquo;clock walk. He has done it fourteen times.</span><span class="tw-live" aria-hidden="true"></span></p>
+        </div>
+      </div>
+      <aside class="evidence" aria-label="Booking card from the app">
+        <p class="exhibit-label">Exhibit B — People you trust</p>
+        <div class="card ev-marco">
+          <div class="frag-row">
+            <span class="avatar" aria-hidden="true">M</span>
+            <div style="flex:1;min-width:0">
+              <p class="frag-title name-row"><span>Marco K.</span>
+                <span class="rating">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.1 6.6.8-4.9 4.5 1.3 6.5L12 16.7 6.1 20l1.3-6.5L2.5 8.9l6.6-.8z"/></svg>
+                  4.9</span>
+              </p>
+              <p class="frag-sub">Dog walk &middot; Bobby</p>
+            </div>
+            <span class="badge ok">Confirmed</span>
+          </div>
+          <div class="card-divide"></div>
+          <div class="when">
+            <p class="frag-meta">Sat, Jul 11 &middot; 09:00</p>
+            <p class="walk-count">14 walks together</p>
+          </div>
+          <p class="live-chip"><span class="live-dot" aria-hidden="true"></span>Live &middot; 32 min &middot; 2.1 km</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ STAGE — how it works ============ -->
+  <section class="stage" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <h2 class="slug centered" id="how-h">How it works &mdash; three short lines</h2>
+      <div class="steps">
+        <div class="step reveal" style="--d:0s">
+          <span class="n" aria-hidden="true">01</span>
+          <div>
+            <p class="s-main">You add your Fylos.</p>
+            <p class="s-sub">Name, breed, quirks &mdash; two minutes.</p>
+          </div>
+        </div>
+        <div class="step reveal" style="--d:.08s">
+          <span class="n" aria-hidden="true">02</span>
+          <div>
+            <p class="s-main">We keep track.</p>
+            <p class="s-sub">Records, reminders, routines &mdash; quietly.</p>
+          </div>
+        </div>
+        <div class="step reveal" style="--d:.16s">
+          <span class="n" aria-hidden="true">03</span>
+          <div>
+            <p class="s-main">You live the good part.</p>
+            <p class="s-sub">Book help, share, remember.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ EXCHANGE 3 — memories ============ -->
+  <section class="ex-section" data-ex aria-label="Exchange three — memories">
+    <div class="wrap ex-grid">
+      <div class="dialogue">
+        <p class="slug">Sunday evening &mdash; the photos from the lake</p>
+        <div class="turn you">
+          <span class="speaker">You</span>
+          <p class="line">— What did we do this summer?</p>
+        </div>
+        <div class="turn fylos">
+          <span class="speaker">Fylos</span>
+          <p class="line typewrap"><span class="tw-ghost">— Two hundred and fourteen walks. The lake, mostly.</span><span class="tw-live" aria-hidden="true"></span></p>
+        </div>
+      </div>
+      <aside class="evidence" aria-label="Memory and walks summary from the app">
+        <p class="exhibit-label">Exhibit C — Memories</p>
+        <div class="card ev-memory">
+          <div class="art">
+            <span class="tag">August &middot; the lake</span>
+          </div>
+          <div class="stats">
+            <p class="num">214 walks<small>Jun &mdash; Aug</small></p>
+            <svg class="spark" width="132" height="26" viewBox="0 0 132 26" aria-hidden="true">
+              <polyline points="2,20 18,16 34,18 50,10 66,13 82,6 98,10 114,4 130,8"/>
+            </svg>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ EXCHANGE 4 — nothing forgotten ============ -->
+  <section class="ex-section" data-ex aria-label="Exchange four — nothing forgotten">
+    <div class="wrap ex-grid">
+      <div class="dialogue">
+        <p class="slug">Night &mdash; lights half off</p>
+        <div class="turn you">
+          <span class="speaker">You</span>
+          <p class="line">— What am I forgetting?</p>
+        </div>
+        <div class="turn fylos">
+          <span class="speaker">Fylos</span>
+          <p class="line typewrap"><span class="tw-ghost">— Nothing. That is the point.</span><span class="tw-live" aria-hidden="true"></span></p>
+        </div>
+      </div>
+      <aside class="evidence" aria-label="Today list from the app, all done">
+        <p class="exhibit-label">Exhibit D — Today, all done</p>
+        <div class="card ev-today">
+          <div class="row">
+            <span class="icon-chip neutral" style="color:var(--coral)" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+            </span>
+            <div class="t">
+              <p class="frag-title">Heartworm chew</p>
+              <p class="frag-meta">08:00</p>
+            </div>
+            <span class="badge ok">Done</span>
+          </div>
+          <div class="row">
+            <span class="icon-chip neutral" style="color:var(--coral)" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <div class="t">
+              <p class="frag-title">Evening walk</p>
+              <p class="frag-meta">18:00</p>
+            </div>
+            <span class="badge ok">Done</span>
+          </div>
+          <div class="row">
+            <span class="icon-chip neutral" style="color:var(--coral)" aria-hidden="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z"/><path d="M21 15v7"/></svg>
+            </span>
+            <div class="t">
+              <p class="frag-title">Dinner, measured</p>
+              <p class="frag-meta">19:30</p>
+            </div>
+            <span class="badge ok">Done</span>
+          </div>
+          <p class="foot">Nothing left for today</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ INTERLUDE — the phone ============ -->
+  <section class="phone-stage" id="phone" aria-labelledby="phone-h">
+    <div class="wrap">
+      <h2 class="slug centered" id="phone-h">Interlude &mdash; the other side</h2>
+      <div class="phone-holder reveal">
+        <div class="phone-outer">
+          <figure class="phone" role="img" aria-label="The Fylos app home screen: a good-morning greeting, two pets, today's reminders and an upcoming walk with Marco.">
+            <div class="screen" aria-hidden="true">
+              <div class="island"></div>
+              <div class="p-status">
+                <span class="time">9:41</span>
+                <span class="glyphs">
+                  <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+                  <svg width="15" height="11" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 6.5a15 15 0 0 1 20 0"/><path d="M6 10.5a9.5 9.5 0 0 1 12 0"/><path d="M9.8 14.2a4.5 4.5 0 0 1 4.4 0"/><circle cx="12" cy="16.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+                  <svg width="23" height="11" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="13" height="7" rx="1.5" fill="currentColor"/><path d="M23 4v4a2.2 2.2 0 0 0 0-4Z" fill="currentColor" opacity=".4"/></svg>
+                </span>
+              </div>
+              <div class="p-body">
+                <p class="p-greet">Good morning, <b>Anna</b></p>
+                <p class="p-greet-sub">What&rsquo;s on the schedule today?</p>
+                <div class="p-pets">
+                  <div class="p-pet active"><span class="c">B</span><span class="n">Bobby</span></div>
+                  <div class="p-pet idle"><span class="c">L</span><span class="n">Luna</span></div>
+                </div>
+                <div class="p-overview">
+                  <div class="p-stat"><p class="v">2</p><p class="l">Pets</p></div>
+                  <div class="p-stat"><p class="v">1</p><p class="l">Bookings</p></div>
+                  <div class="p-stat"><p class="v">12</p><p class="l">Docs</p></div>
+                </div>
+                <p class="p-label">Upcoming</p>
+                <div class="p-upcoming">
+                  <div class="top">
+                    <span class="avatar">M</span>
+                    <div class="mid">
+                      <p class="nm"><span>Marco K.</span>
+                        <span class="rating"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.1 6.6.8-4.9 4.5 1.3 6.5L12 16.7 6.1 20l1.3-6.5L2.5 8.9l6.6-.8z"/></svg>4.9</span>
+                      </p>
+                      <p class="sb">Dog walk &middot; Bobby</p>
+                    </div>
+                    <span class="badge ok">Confirmed</span>
+                  </div>
+                  <div class="bt">
+                    <span>Sat, Jul 11 &middot; 09:00</span>
+                    <a>Details</a>
+                  </div>
+                </div>
+                <p class="p-label">Today</p>
+                <div class="p-today">
+                  <div class="row">
+                    <span class="icon-chip neutral" style="color:var(--coral)">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                    </span>
+                    <div class="t"><p class="a">Heartworm chew</p><p class="b">08:00</p></div>
+                    <span class="p-done-pill">Done</span>
+                  </div>
+                  <div class="row">
+                    <span class="icon-chip neutral" style="color:var(--coral)">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </span>
+                    <div class="t"><p class="a">Evening walk</p><p class="b">18:00</p></div>
+                    <span class="p-done-pill">Done</span>
+                  </div>
+                </div>
+              </div>
+              <div class="p-dock">
+                <span class="di active">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20Z"/><path d="M9 21.5v-8h6v8"/></svg>
+                  <span class="dl">Home</span>
+                </span>
+                <span class="di">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M16 2.5v4M8 2.5v4M3 10.5h18"/></svg>
+                </span>
+                <span class="di">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2Z"/></svg>
+                </span>
+                <span class="di">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </span>
+                <span class="p-fab">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                </span>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </div>
+      <p class="phone-caption reveal" style="--d:.1s">Where the conversation lives.</p>
+      <p class="phone-caption-sub reveal" style="--d:.18s">The same quiet answers, in your pocket.</p>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ EXCHANGE 5 — what comes next ============ -->
+  <section class="ex-section" id="next" data-ex aria-label="Exchange five — what comes next">
+    <div class="wrap ex-grid">
+      <div class="dialogue">
+        <p class="slug">Somewhere ahead &mdash; 2027</p>
+        <div class="turn you">
+          <span class="speaker">You</span>
+          <p class="line">— And what comes next?</p>
+        </div>
+        <div class="turn fylos">
+          <span class="speaker">Fylos</span>
+          <p class="line typewrap"><span class="tw-ghost">— More of us. Quietly.</span><span class="tw-live" aria-hidden="true"></span></p>
+        </div>
+      </div>
+      <aside class="evidence" aria-label="What is coming to the Fylos ecosystem">
+        <p class="exhibit-label">Exhibit E — The road ahead</p>
+        <ul class="eco-chips">
+          <li><span>Vet telehealth</span><em>soon</em></li>
+          <li><span>Health sync</span><em>soon</em></li>
+          <li><span>Insurance companion</span><em>soon</em></li>
+          <li><span>Fylos for Pros</span><em>soon</em></li>
+          <li><span>Neighborhood network</span><em>soon</em></li>
+          <li><span>Wallet &amp; rewards</span><em>soon</em></li>
+        </ul>
+        <p class="eco-note">Sketches, not screenshots. We build one calm thing at a time.</p>
+      </aside>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ THE BEAT — why Fylos ============ -->
+  <section class="beat ex-section" data-ex aria-label="Why the name Fylos">
+    <div class="wrap beat-inner">
+      <p class="slug">And finally &mdash; the name</p>
+      <div class="turn you" style="margin-top:clamp(28px,4.5vh,42px)">
+        <span class="speaker">You</span>
+        <p class="line">— Why &lsquo;Fylos&rsquo;?</p>
+      </div>
+      <div class="turn fylos">
+        <span class="speaker">Fylos</span>
+        <p class="line typewrap"><span class="tw-ghost">— Fylos — <em class="gr">φίλος</em> — is Greek for friend. That is what this is: a friend who remembers, so you can be there.</span><span class="tw-live" aria-hidden="true"></span></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="scene-break" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <!-- ============ EPILOGUE — waitlist ============ -->
+  <section class="waitlist ex-section" id="waitlist" data-ex aria-label="Join the waitlist">
+    <div class="wrap waitlist-inner">
+      <p class="slug">Epilogue &mdash; the open door</p>
+      <div class="turn you" style="margin-top:clamp(28px,4.5vh,42px)">
+        <span class="speaker">You</span>
+        <p class="line">— Can I meet you?</p>
+      </div>
+      <div class="turn fylos">
+        <span class="speaker">Fylos</span>
+        <p class="line typewrap"><span class="tw-ghost">— Launching first in Switzerland. Leave your email; we will write once.</span><span class="tw-live" aria-hidden="true"></span></p>
+      </div>
+      <div class="cta-zone after-reply">
+        <div class="cta-form" id="ctaForm">
+          <form class="form-row" id="waitlistForm">
+            <label class="sr-only" for="email">Email address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn-primary">Join the waitlist</button>
+          </form>
+          <div class="form-ok" role="status">
+            <span class="ok-ring" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <p>You&rsquo;re on the list. We&rsquo;ll write soon.</p>
+          </div>
+        </div>
+        <p class="form-note">Be first in line. One letter when the doors open &mdash; nothing else.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span class="wordmark">FYLOS</span>
+    <p class="footer-tag">Fylos means friend.</p>
+    <p class="footer-meta">iOS first &middot; Switzerland 2026</p>
+    <div class="footer-links">
+      <a href="#top">Privacy</a>
+      <a href="#top">Terms</a>
+      <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Fylos</p>
+  </div>
+</footer>
+
+<!-- ============ LAB SWITCHER ============ -->
+<nav class="lab" aria-label="Design lab switcher">
+  <a class="lab-btn" href="08-the-thread.html" aria-label="Previous variation: The Thread">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </a>
+  <a class="lab-mid" href="index.html">09/10 &middot; Dialogue</a>
+  <a class="lab-btn" href="10-bento.html" aria-label="Next variation: Bento">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+  </a>
+</nav>
+
+<script>
+(function(){
+  'use strict';
+
+  var docEl = document.documentElement;
+  var typefx = docEl.classList.contains('typefx');
+
+  /* ---------- nav scroll state (rAF-throttled) ---------- */
+  var nav = document.getElementById('nav');
+  var navTick = false;
+  function onScroll(){
+    if(navTick) return;
+    navTick = true;
+    requestAnimationFrame(function(){
+      if(nav) nav.classList.toggle('scrolled', window.scrollY > 10);
+      navTick = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  /* ---------- type-on engine ---------- */
+  function segmentsFrom(ghost){
+    var segs = [];
+    var nodes = ghost.childNodes;
+    for(var i = 0; i < nodes.length; i++){
+      var n = nodes[i];
+      if(n.nodeType === 3){
+        segs.push({ t: n.textContent, c: null });
+      }else if(n.nodeType === 1){
+        segs.push({ t: n.textContent, c: n.getAttribute('class') || null });
+      }
+    }
+    return segs;
+  }
+
+  function typeInto(wrap, done){
+    var ghost = wrap.querySelector('.tw-ghost');
+    var live = wrap.querySelector('.tw-live');
+    if(!ghost || !live || wrap.dataset.typed){
+      if(done) done();
+      return;
+    }
+    wrap.dataset.typed = '1';
+    var segs = segmentsFrom(ghost);
+    var caret = document.createElement('span');
+    caret.className = 'caret';
+    caret.setAttribute('aria-hidden', 'true');
+    live.appendChild(caret);
+
+    var si = 0, ci = 0, cur = null;
+
+    function finish(){
+      caret.classList.add('done');
+      setTimeout(function(){ caret.classList.add('gone'); }, 1250);
+      if(done) done();
+    }
+    function tick(){
+      if(si >= segs.length){ finish(); return; }
+      if(!cur){
+        cur = document.createElement('span');
+        if(segs[si].c) cur.className = segs[si].c;
+        live.insertBefore(cur, caret);
+      }
+      var t = segs[si].t;
+      ci++;
+      cur.textContent = t.slice(0, ci);
+      var ch = t.charAt(ci - 1);
+      if(ci >= t.length){ si++; ci = 0; cur = null; }
+      var delay = 18;
+      if(ch === '.' || ch === ':'){ delay = 230; }
+      else if(ch === ',' || ch === ';'){ delay = 150; }
+      setTimeout(tick, delay);
+    }
+    tick();
+  }
+
+  /* ---------- exchange orchestration: question, beat, answer, evidence ---------- */
+  function playExchange(ex){
+    if(ex.dataset.played) return;
+    ex.dataset.played = '1';
+    var slug = ex.querySelector('.slug');
+    var you = ex.querySelector('.turn.you');
+    var fy = ex.querySelector('.turn.fylos');
+    var evid = ex.querySelectorAll('.evidence');
+    var after = ex.querySelectorAll('.after-reply');
+
+    if(slug) slug.classList.add('in');
+    if(you) setTimeout(function(){ you.classList.add('in'); }, 140);
+
+    setTimeout(function(){
+      if(fy) fy.classList.add('in');
+      var revealRest = function(){
+        var i;
+        for(i = 0; i < evid.length; i++){
+          (function(el, k){ setTimeout(function(){ el.classList.add('in'); }, 130 * k); })(evid[i], i);
+        }
+        for(i = 0; i < after.length; i++){
+          (function(el, k){ setTimeout(function(){ el.classList.add('in'); }, 200 + 130 * k); })(after[i], i);
+        }
+      };
+      var tw = fy ? fy.querySelector('.typewrap') : null;
+      if(typefx && tw){
+        setTimeout(function(){ typeInto(tw, revealRest); }, 260);
+      }else{
+        setTimeout(revealRest, 280);
+      }
+    }, 640);
+  }
+
+  var exchanges = Array.prototype.slice.call(document.querySelectorAll('[data-ex]'));
+  var hero = document.getElementById('top');
+
+  function showEverything(){
+    var all = document.querySelectorAll('.slug, .turn, .evidence, .after-reply, .reveal');
+    for(var i = 0; i < all.length; i++){ all[i].classList.add('in'); }
+    docEl.classList.remove('typefx');
+    typefx = false;
+  }
+
+  if(!('IntersectionObserver' in window)){
+    showEverything();
+  }else{
+    /* exchanges: play the scene when it enters */
+    var exIO = new IntersectionObserver(function(entries){
+      for(var i = 0; i < entries.length; i++){
+        if(entries[i].isIntersecting){
+          exIO.unobserve(entries[i].target);
+          playExchange(entries[i].target);
+        }
+      }
+    }, { threshold: 0.22, rootMargin: '0px 0px -8% 0px' });
+
+    exchanges.forEach(function(ex){
+      if(ex !== hero) exIO.observe(ex);
+    });
+
+    /* generic reveals (pillars, steps, phone, captions) */
+    var revIO = new IntersectionObserver(function(entries){
+      for(var i = 0; i < entries.length; i++){
+        if(entries[i].isIntersecting){
+          entries[i].target.classList.add('in');
+          revIO.unobserve(entries[i].target);
+        }
+      }
+    }, { threshold: 0.18, rootMargin: '0px 0px -6% 0px' });
+
+    var revs = document.querySelectorAll('.reveal, .stage .slug, .phone-stage .slug');
+    for(var r = 0; r < revs.length; r++){ revIO.observe(revs[r]); }
+
+    /* hero: begin in medias res once fonts have settled */
+    var started = false;
+    function startHero(){
+      if(started || !hero) return;
+      started = true;
+      playExchange(hero);
+    }
+    if(document.fonts && document.fonts.ready && document.fonts.ready.then){
+      document.fonts.ready.then(function(){ setTimeout(startHero, 180); });
+    }
+    setTimeout(startHero, 750); /* safety net */
+  }
+
+  /* ---------- waitlist morph ---------- */
+  var form = document.getElementById('waitlistForm');
+  var box = document.getElementById('ctaForm');
+  if(form && box){
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(typeof form.checkValidity === 'function' && !form.checkValidity()){
+        if(typeof form.reportValidity === 'function') form.reportValidity();
+        return;
+      }
+      box.classList.add('sent');
+      var ok = box.querySelector('.form-ok');
+      if(ok){
+        ok.setAttribute('tabindex', '-1');
+        setTimeout(function(){
+          try{ ok.focus({ preventScroll:true }); }catch(err){ ok.focus(); }
+        }, 500);
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>

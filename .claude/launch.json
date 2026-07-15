@@ -1,6 +1,11 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "fylos-dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3000, "autoPort": false }
+    { "name": "fylos-dev", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 3000, "autoPort": false },
+    { "name": "website-film", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "/Users/iakovosignatiadis/fylos-website-film", "run", "dev"], "port": 3000, "autoPort": false },
+    { "name": "website-combined", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "/Users/iakovosignatiadis/fylos-website-combined", "run", "dev", "--", "--port", "3111", "--strictPort"], "port": 3111, "autoPort": false },
+    { "name": "website-lab", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4610", "--directory", "website-lab"], "port": 4610 },
+    { "name": "cover-lab", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4620", "--directory", "/private/tmp/claude-501/-Users-iakovosignatiadis-fylos-mobile-ui-viewer/7c195318-3044-4098-9d23-04807892e007/scratchpad/cover-lab"], "port": 4620 },
+    { "name": "city-demo", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4630", "--directory", "/private/tmp/claude-501/-Users-iakovosignatiadis-fylos-mobile-ui-viewer/f9c587aa-73cb-409c-9907-72827e51a5fa/scratchpad/city-demo"], "port": 4630 }
   ]
 }

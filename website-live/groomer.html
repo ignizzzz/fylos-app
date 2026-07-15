@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos · Groomer cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --soft:#6E625B; --coral:#E85D2A; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; padding:32px 16px 70px; -webkit-font-smoothing:antialiased }
+  header{ max-width:1000px; margin:0 auto 22px; text-align:center }
+  .mark{ font-weight:800; letter-spacing:.2em; color:var(--coral); font-size:14px }
+  h1{ font-family:'Fraunces',serif; font-weight:600; font-size:29px; letter-spacing:-.02em; margin-top:10px }
+  .sub{ color:var(--soft); font-size:14px; margin-top:8px; line-height:1.6; max-width:660px; margin-left:auto; margin-right:auto }
+  .grid{ max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:12px }
+  .block{ margin-bottom:12px }
+  .step{ display:flex; align-items:center; gap:10px; margin:0 0 12px; font-weight:800; color:var(--coral); font-size:12px; letter-spacing:.14em; text-transform:uppercase }
+  .step .n{ width:26px;height:26px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-size:12px }
+  figure{ background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 16px 44px rgba(90,60,40,.12) }
+  figure img{ width:100%; display:block }
+  figcaption{ padding:15px 20px 19px }
+  figcaption h2{ font-family:'Fraunces',serif; font-weight:600; font-size:19px }
+  figcaption p{ color:var(--soft); font-size:13.5px; margin-top:6px; line-height:1.55 }
+  .arrow{ text-align:center; color:#C6B6A6; font-size:20px; margin:4px 0 }
+  .cta{ display:block; max-width:1000px; margin:18px auto 0; text-align:center }
+  .cta a{ display:inline-block; background:var(--coral); color:#fff; font-weight:800; font-size:14px; padding:14px 26px; border-radius:13px; text-decoration:none }
+  footer{ max-width:1000px; margin:22px auto 0; text-align:center; color:var(--soft); font-size:13px; line-height:1.7 }
+  footer b{ color:var(--ink) }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">FYLOS</div>
+  <h1>Ο groomer — 3 κάρτες που αλλάζουν</h1>
+  <div class="sub">Μία σκηνή, τρεις κάρτες με το scroll (όπως ο κτηνίατρος): το μαγαζί, οι γείτονες, και το Join για όλους με τη διακλάδωση. Πες μου τι κρατάμε ανά κάρτα.</div>
+</header>
+<div class="grid">
+  <div class="block"><div class="step"><span class="n">1</span> The shop</div>
+    <figure><img src="groomer/final1.png"><figcaption><h2>«Booked in two taps.»</h2><p>Το μαγαζί (groomer): βαθμολογία, πραγματικά slots, book, chat ανοίγει μόλις κλείσεις. (Το G1 που σου άρεσε. Εναλλακτικές: G2 «whole street» / G4 minimal.)</p></figcaption></figure>
+  </div>
+  <div class="arrow">↓ scroll</div>
+  <div class="block"><div class="step"><span class="n">2</span> The neighbors</div>
+    <figure><img src="groomer/final2.png"><figcaption><h2>«Walkers and sitters, two doors down.»</h2><p>Οι πιο casual γείτονες: ελεγμένοι, με reviews, κοντά. «Not a faceless agency.»</p></figcaption></figure>
+  </div>
+  <div class="arrow">↓ scroll</div>
+  <div class="block"><div class="step"><span class="n">3</span> Join, one door for all</div>
+    <figure><img src="groomer/final3.png"><figcaption><h2>«Good with pets? Join the neighborhood.»</h2><p>Η διακλάδωσή σου: <b>Walkers &amp; sitters</b> κάνουν apply μέσα στην εφαρμογή σε ~5 λεπτά (FASTEST), και <b>Groomers &amp; κάθε άλλος pro</b> μας λένε τι κάνουν (ακόμα και επάγγελμα που δεν έχουμε σκεφτεί). Κοινό κουμπί «Apply to join».</p></figcaption></figure>
+  </div>
+</div>
+<div class="cta"><a href="/join">Δες τη σελίδα /join (η διακλάδωση, ζωντανή) →</a></div>
+<footer>Το κουμπί «Apply to join» οδηγεί στη σελίδα <b>/join</b>: γρήγορο in-app path για walkers/sitters + φόρμα για groomers &amp; κάθε άλλο επάγγελμα (ρωτάει «τι κάνεις;»). Οι κτηνίατροι έχουν το δικό τους /apply.</footer>
+</body>
+</html>

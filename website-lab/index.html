@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="FYLOS website lab — five landing-page directions to choose from.">
+<title>FYLOS — Website Lab</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23E85D2A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#E85D2A; --coral-hover:#D04A1C;
+    --bg:#F7F5F2; --surface:#FFFFFF; --chip:#F3EFEB; --peach:#FBE7DD;
+    --hair:#EDE8E2; --ink:#111111; --ink-2:#6E6058; --ink-3:#9B9B9F; --label:#A8A29C;
+    --shadow-warm:0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05);
+    --shadow-hover:0 2px 4px rgba(60,30,15,0.04), 0 14px 30px rgba(60,30,15,0.10);
+    --ease-out:cubic-bezier(0.22,1,0.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{overflow-x:clip}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg); color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh; display:flex; flex-direction:column;
+  }
+  .wrap{width:min(1060px,calc(100% - 48px)); margin:0 auto}
+  header{padding:44px 0 0}
+  .wordmark{font-family:'Nunito',sans-serif; font-weight:800; font-size:22px; letter-spacing:-0.02em; color:var(--ink); display:inline-flex; align-items:baseline; gap:0.12em; text-decoration:none}
+  .wordmark .dot{width:0.22em; height:0.22em; border-radius:50%; background:var(--coral); display:inline-block}
+  main{flex:1; padding:72px 0 96px}
+  .eyebrow{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.16em; color:var(--label); margin-bottom:16px}
+  h1{font-weight:800; font-size:clamp(32px,5vw,52px); letter-spacing:-0.03em; line-height:1.08; max-width:620px}
+  h1 .cdot{display:inline-block; width:0.17em; height:0.17em; border-radius:50%; background:var(--coral); margin-left:0.06em}
+  .sub{margin-top:18px; font-size:16px; line-height:1.55; color:var(--ink-2); max-width:520px}
+  .grid{margin-top:24px; display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px}
+  .round-label{margin-top:56px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:var(--label); padding-bottom:12px; border-bottom:1px solid var(--hair)}
+  .card{
+    background:var(--surface); border-radius:20px; padding:26px 26px 24px;
+    box-shadow:var(--shadow-warm); text-decoration:none; color:inherit;
+    display:flex; flex-direction:column; gap:10px; position:relative;
+    transition:transform 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+  }
+  .card:hover{transform:translateY(-3px); box-shadow:var(--shadow-hover)}
+  .card:focus-visible{outline:2px solid var(--coral); outline-offset:3px}
+  .card:active{transform:scale(0.99)}
+  .num{font-size:11px; font-weight:700; letter-spacing:0.14em; color:var(--coral)}
+  .card h2{font-size:20px; font-weight:800; letter-spacing:-0.02em}
+  .card p{font-size:13.5px; line-height:1.5; color:var(--ink-2)}
+  .card .go{margin-top:10px; font-size:13px; font-weight:700; color:var(--coral); display:inline-flex; align-items:center; gap:5px}
+  .card .go svg{transition:transform 200ms var(--ease-out)}
+  .card:hover .go svg{transform:translateX(3px)}
+  .tag{position:absolute; top:24px; right:24px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-3); background:var(--chip); border:1px solid var(--hair); padding:4px 9px; border-radius:999px}
+  footer{border-top:1px solid var(--hair); padding:26px 0 34px}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap}
+  footer p{font-size:12.5px; color:var(--ink-3)}
+  @media (max-width:480px){
+    .wrap{width:calc(100% - 40px)}
+    main{padding:48px 0 64px}
+    .grid{margin-top:40px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="wordmark" href="./index.html" aria-label="FYLOS website lab home">FYLOS<span class="dot"></span></a>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <p class="eyebrow">Website Lab · Ten Directions</p>
+    <h1>One brand, ten ways to say it<span class="cdot" aria-hidden="true"></span></h1>
+    <p class="sub">Same message, spacing discipline, and FYLOS identity in every file — pick the direction that feels strongest, then we push it to final.</p>
+    <p class="round-label">Round 2 · New structural systems</p>
+    <div class="grid">
+      <a class="card" href="./06-the-issue.html">
+        <span class="tag">Editorial</span>
+        <span class="num">06</span>
+        <h2>The Issue</h2>
+        <p>A printed magazine special issue — serif cover line, table of contents, figures with captions, marginalia, folios.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./07-grafik.html">
+        <span class="tag">Swiss poster</span>
+        <span class="num">07</span>
+        <h2>Grafik</h2>
+        <p>Müller-Brockmann poster energy on cream — massive flush-left type, visible grid, one giant coral circle, typographic ecosystem.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./08-the-thread.html">
+        <span class="tag">One line</span>
+        <span class="num">08</span>
+        <h2>The Thread</h2>
+        <p>A single coral thread draws itself down the whole page — becoming a walk route, a sparkline, the steps, the roadmap.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./09-dialogue.html">
+        <span class="tag">Conversation</span>
+        <span class="num">09</span>
+        <h2>Dialogue</h2>
+        <p>The site is a quiet conversation with Fylos — typographic Q&amp;A, serif voice that types on, app cards as the answers.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./10-bento.html">
+        <span class="tag">Living grid</span>
+        <span class="num">10</span>
+        <h2>Bento</h2>
+        <p>The whole product in one composed bento — every cell a real app element, the future honestly frosted, density resolving into silence.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+    <p class="round-label">Round 1</p>
+    <div class="grid">
+      <a class="card" href="./01-quiet-flagship.html">
+        <span class="tag">Apple-style</span>
+        <span class="num">01</span>
+        <h2>The Quiet Flagship</h2>
+        <p>Radically minimal product page. Enormous type, one centered phone, a pinned scroll stage, the coral dot as punctuation.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./02-liquid-glass.html">
+        <span class="tag">Liquid glass</span>
+        <span class="num">02</span>
+        <h2>Liquid Glass</h2>
+        <p>Warm frosted panels, drifting light, floating app fragments with pointer parallax — the future layers literally still forming.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./03-one-day.html">
+        <span class="tag">Cinematic</span>
+        <span class="num">03</span>
+        <h2>One Day</h2>
+        <p>A scroll film about one day with Bobby. Serif intertitles, time-of-day color, the app appearing only as quiet proof.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./04-nearby.html">
+        <span class="tag">Map · Discovery</span>
+        <span class="num">04</span>
+        <h2>Nearby</h2>
+        <p>A hand-drawn warm map of the neighborhood — pins, live walks, trusted people around the corner. The most interactive one.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="card" href="./05-pet-os.html">
+        <span class="tag">Modular OS</span>
+        <span class="num">05</span>
+        <h2>Pet OS</h2>
+        <p>FYLOS as a warm blueprint: module constellation, system status strip, exploded layers, a release-train roadmap.</p>
+        <span class="go">Open <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Fylos means friend.</p>
+    <p>Internal design lab · July 2026</p>
+  </div>
+</footer>
+</body>
+</html>

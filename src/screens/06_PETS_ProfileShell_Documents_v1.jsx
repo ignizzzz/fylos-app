@@ -9,7 +9,11 @@ import PetsHome from './70_PETS_HOME_v1';
 // return mounts without the splash and lands on the tab you left from.
 const warmGo = (path, tab) => { try { window.sessionStorage.setItem('fylos.warm', '1'); if (tab) window.sessionStorage.setItem('fylos.tab', tab); } catch (e) {} window.location.href = path; };
 const markWarm = (tab) => { try { window.sessionStorage.setItem('fylos.warm', '1'); if (tab) window.sessionStorage.setItem('fylos.tab', tab); } catch (e) {} };
-import ProDashboard from './96_PRO_DASHBOARD_v1';
+// True once the walker/sitter application was submitted. Gates the
+// "Become a Pro" entries (home card, services row, settings) and swaps
+// the settings row for "Switch to Pro account".
+const isProRegistered = () => { try { return window.localStorage.getItem('fylos.pro.registered') === '1'; } catch (e) { return false; } };
+import ProDashboard, { PRO_NEW_REQUESTS } from './96_PRO_DASHBOARD_v1';
 import PetProfileV2 from './92_PET_PROFILE_v1';
 import JournalV2 from './93_JOURNAL_v1';
 import ServicesV2 from './94_SERVICES_v1';
@@ -5416,7 +5420,7 @@ const SafetyConfirmFollowupPopup = ({ onClose, onYes }) => {
   );
 };
 
-const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords, onOpenBookings, onOpenBookingFocused, onPopupStateChange, onOpenPet }) => {
+const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthRecords, onOpenBookings, onOpenBookingFocused, onPopupStateChange, onOpenPet, onBecomePro }) => {
   const homeNavigate = useNavigate();
   const [selectedPetId, setSelectedPetId] = useState(MOCK_DASHBOARD_PETS[0].id);
   const [medSheetOpen, setMedSheetOpen] = useState(false);
@@ -5455,14 +5459,13 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
   const [trackPopupType, setTrackPopupType] = useState(null);
   // Vet hotline popup (opens from the Explore "Vet hotline" pill).
   const [vetHotlineOpen, setVetHotlineOpen] = useState(false);
-  // "Earn with fylos" provider onboarding — rendered as a full-screen
-  // overlay inside the dashboard so it works without a route change.
-  const [proRegOpen, setProRegOpen] = useState(false);
-  // "Invite a friend" referral screen — same overlay pattern.
+  // "Earn with fylos" opens the shell-owned provider onboarding overlay
+  // (onBecomePro) — one instance shared with Services and Settings.
+  // "Invite a friend" referral screen — full-screen overlay pattern.
   const [inviteOpen, setInviteOpen] = useState(false);
   // Aggregate: is ANY dashboard popup currently open? When true the
   // underlying scroll, top-bar buttons, and bottom tabs are all locked.
-  const anyPopupOpen = safetyPopupOpen || safetyConfirmFollowupOpen || liveServicePopupOpen || trackPopupType !== null || vetHotlineOpen || proRegOpen || inviteOpen;
+  const anyPopupOpen = safetyPopupOpen || safetyConfirmFollowupOpen || liveServicePopupOpen || trackPopupType !== null || vetHotlineOpen || inviteOpen;
   // Inform the parent App so it can fade out the global header + tab bar
   // and prevent navigation away from the screen while a popup is open.
   useEffect(() => {
@@ -6091,25 +6094,27 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
               </button>
             </div>
 
-            {/* 7c. Become a Pro — compact black editorial card. Coral
-                  eyebrow, white headline, coral CTA link. Opens the
-                  provider onboarding as an in-app overlay. */}
-            <button
-              onClick={() => setProRegOpen(true)}
-              className="w-full text-left rounded-[18px] mb-1 active:scale-[0.99] transition-transform"
-              style={{ background: '#FBE7DD', padding: '14px 16px' }}
-            >
-              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#E85D2A] mb-1.5">
-                Earn with fylos
-              </div>
-              <div className="text-[15px] font-bold text-[#111] leading-[1.28] mb-2">
-                Love dogs? Become a walker or sitter.
-              </div>
-              <div className="flex items-center gap-1 text-[12px] font-bold text-[#E85D2A]">
-                <span>Apply in 3 minutes</span>
-                <ArrowRight size={12} strokeWidth={2.4} />
-              </div>
-            </button>
+            {/* 7c. Become a Pro — compact tint card. Coral eyebrow, ink
+                  headline, coral CTA link. Opens the shell's provider
+                  onboarding overlay. Hidden once the user is a pro. */}
+            {!isProRegistered() && (
+              <button
+                onClick={onBecomePro}
+                className="w-full text-left rounded-[18px] mb-1 active:scale-[0.99] transition-transform"
+                style={{ background: '#FBE7DD', padding: '14px 16px' }}
+              >
+                <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#E85D2A] mb-1.5">
+                  Earn with fylos
+                </div>
+                <div className="text-[15px] font-bold text-[#111] leading-[1.28] mb-2">
+                  Love dogs? Become a walker or sitter.
+                </div>
+                <div className="flex items-center gap-1 text-[12px] font-bold text-[#E85D2A]">
+                  <span>Apply in about 5 minutes</span>
+                  <ArrowRight size={12} strokeWidth={2.4} />
+                </div>
+              </button>
+            )}
 
             {/* 7d. Invite — edge-to-edge floating row, centered as a group.
                   No background, no border; reads as a quiet aside.
@@ -6340,13 +6345,6 @@ const HomeScreen = ({ onNavigate, notifications = [], onOpenInbox, onOpenHealthR
             });
           }}
         />
-      )}
-
-      {/* Earn with fylos — provider onboarding overlay. Full-screen
-          inside the dashboard frame so it opens instantly on tap with
-          no route change. onExit closes it back to the dashboard. */}
-      {proRegOpen && (
-        <ProRegistration embedded onExit={() => setProRegOpen(false)} />
       )}
 
       {/* Invite a friend — referral overlay (code, link, QR, tracking). */}
@@ -10149,6 +10147,16 @@ const VaultScreen = ({ onOpenHealthRecords, onOpenDocuments, onOpenContacts, onO
 };
 
 // --- STEPS 30-35 (SETTINGS, NOTIFICATIONS, SEARCH, COMING SOON, ANIMATIONS) ---
+// Shown only to registered pros: incoming requests must not die silently
+// while the user lives in personal mode (pros are pet owners too).
+const PRO_REQUEST_NOTIFICATION = {
+  id: 'inbox_pro_001', category: 'bookings', type: 'pro-request', priority: 'high',
+  sender: { name: 'FYLOS Pro', icon: Footprints },
+  title: 'New requests in your Pro inbox', body: `${PRO_NEW_REQUESTS} owners asked for you. They usually book whoever answers first.`,
+  actions: [{ id: 'open_pro', label: 'Open Pro dashboard', type: 'primary' }],
+  read: false, archived: false, timeGroup: 'Today', timeAgo: '1h',
+};
+
 const APP_NOTIFICATIONS = [
   {
     id: 'inbox_safety_001', category: 'safety', type: 'safety-alert', priority: 'critical',
@@ -10274,7 +10282,7 @@ const UPCOMING_FEATURES = [
   { id: 'f4', title: 'Behavior Insights', icon: BrainCircuit, launchDate: '2026-09-01', waitlistCount: 412, color: '#AF52DE', description: 'AI-powered behavior pattern tracking.' }
 ];
 
-const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations, onSwitchPro }) => {
+const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations, onSwitchPro, onBecomePro }) => {
   const navigateRouter = useNavigate();
   const [twoFactor, setTwoFactor] = useState(false);
   const [biometric, setBiometric] = useState(true);
@@ -10396,8 +10404,22 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations, 
 
         <SectionLabel>fylos</SectionLabel>
         <div className="bg-white rounded-[18px] overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05)' }}>
-          <SetRow icon={Zap}        title="Become a Pro" subtitle="Walk or sit for others" onClick={() => nav('/pro-registration')} />
-          <SetRow icon={RefreshCw}  title="Switch to Pro account" subtitle="Your walker dashboard" rightValue="PRO" onClick={onSwitchPro} />
+          {isProRegistered() ? (
+            <SetRow
+              icon={RefreshCw}
+              title="Switch to Pro account"
+              subtitle="Your walker dashboard"
+              onClick={onSwitchPro}
+              trailing={(
+                <span className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10.5px] font-extrabold px-2 py-[3px] rounded-full" style={{ background: '#FBE7DD', color: '#E85D2A' }}>{PRO_NEW_REQUESTS} new</span>
+                  <ChevronRight size={14} className="text-[#D4D4D8]" strokeWidth={2.2} />
+                </span>
+              )}
+            />
+          ) : (
+            <SetRow icon={Zap} title="Become a Pro" subtitle="Walk or sit for others and earn" onClick={onBecomePro} />
+          )}
           <SetRow icon={HelpCircle} title="Help center"  subtitle="FAQ & support"          onClick={() => nav('/help')} last />
         </div>
 
@@ -10409,7 +10431,16 @@ const SettingsOverlay = ({ isOpen, onClose, onOpenComingSoon, onOpenAnimations, 
         </div>
 
         <button
-          onClick={onClose}
+          onClick={() => {
+            // Real logout: drop auth AND the intro-seen flag so the next
+            // launch replays the full first-run thread (onboarding → sign-in).
+            try {
+              window.localStorage.removeItem('fylos.auth');
+              window.localStorage.removeItem('fylos.intro');
+              window.sessionStorage.clear();
+            } catch (e) {}
+            window.location.href = '/';
+          }}
           className="w-full mt-6 py-2.5 text-center text-[#E5484D] text-[13.5px] font-semibold active:opacity-60"
         >
           Log out
@@ -10545,7 +10576,7 @@ const InboxNotificationCard = ({ notification, onAction, onMarkRead, onArchive, 
   );
 };
 
-const NotificationsOverlay = ({ isOpen, onClose, notifications, onMarkAllRead, onToggleRead, onArchiveNotification, onDeleteNotification }) => {
+const NotificationsOverlay = ({ isOpen, onClose, notifications, onMarkAllRead, onToggleRead, onArchiveNotification, onDeleteNotification, onAction }) => {
   // Inbox v2. One calm list: day groups, icon chips per kind, unread dot,
   // a single All | Unread toggle. No categories, no archive, no modes.
   const [view, setView] = React.useState('all');
@@ -10616,7 +10647,12 @@ const NotificationsOverlay = ({ isOpen, onClose, notifications, onMarkAllRead, o
                         </span>
                         <span className="block text-[12px] mt-[3px] leading-[1.45]" style={{ color: '#9B9B9F', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{n.body}</span>
                         {primary && !n.read && (
-                          <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-[12px] font-bold" style={{ background: '#FFF3EC', color: '#D14E1F' }}>{primary.label}<ChevronRight size={11} strokeWidth={2.6} /></span>
+                          <span
+                            role={onAction ? 'button' : undefined}
+                            onClick={onAction ? (e) => { e.stopPropagation(); onAction(n, primary); } : undefined}
+                            className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-[12px] font-bold active:opacity-70"
+                            style={{ background: '#FFF3EC', color: '#D14E1F' }}
+                          >{primary.label}<ChevronRight size={11} strokeWidth={2.6} /></span>
                         )}
                       </span>
                     </button>
@@ -10788,8 +10824,13 @@ export default function App() {
   const initialTab = location.state?.tab || (() => { try { const t = window.sessionStorage.getItem('fylos.tab'); if (t) { window.sessionStorage.removeItem('fylos.tab'); return t; } } catch (e) {} return null; })() || 'home';
   const [activeTab, setActiveTab] = useState(initialTab);
   const [displayTab, setDisplayTab] = useState(initialTab);
-  // PRO (business) mode — swaps the entire UI for the provider dashboard
-  const [proMode, setProMode] = useState(() => { try { return window.sessionStorage?.getItem('fylos.proMode') === '1'; } catch (e) { return false; } });
+  // PRO (business) mode — swaps the entire UI for the provider dashboard.
+  // Persisted in localStorage so the app relaunches into the mode you left
+  // it in, like a real dual-account app. (sessionStorage read keeps old
+  // sessions from before the migration working.)
+  const [proMode, setProMode] = useState(() => { try { return window.localStorage?.getItem('fylos.proMode') === '1' || window.sessionStorage?.getItem('fylos.proMode') === '1'; } catch (e) { return false; } });
+  const enterProMode = () => { try { window.localStorage.setItem('fylos.proMode', '1'); window.sessionStorage.removeItem('fylos.proMode'); } catch (e) {} setProMode(true); };
+  const exitProMode = () => { try { window.localStorage.removeItem('fylos.proMode'); window.sessionStorage.removeItem('fylos.proMode'); } catch (e) {} setProMode(false); };
   const [isFading, setIsFading] = useState(false);
   const [isLoading, setIsLoading] = useState(() => {
     if (window.__fylosPetPending) return false;
@@ -10822,11 +10863,14 @@ export default function App() {
     }
   }, []);
   const [petMenuOpen, setPetMenuOpen] = useState(false);
+  // Walker/sitter application overlay — single instance owned by the shell
+  // so Home, Services and Settings all open the same flow.
+  const [proSignupOpen, setProSignupOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [animationsOpen, setAnimationsOpen] = useState(false);
-  const [appNotifications, setAppNotifications] = useState(APP_NOTIFICATIONS);
+  const [appNotifications, setAppNotifications] = useState(() => (isProRegistered() ? [PRO_REQUEST_NOTIFICATION, ...APP_NOTIFICATIONS] : APP_NOTIFICATIONS));
   // Unified inbox: booking events from any tab land here via a tiny window bus
   useEffect(() => {
     const onNotify = (e) => {
@@ -11032,6 +11076,7 @@ export default function App() {
           focusedBookingId={focusedBookingId}
           onClearFocus={() => setFocusedBookingId(null)}
           onSubScreenChange={setServicesSub}
+          onBecomePro={() => setProSignupOpen(true)}
         />
       );
     }
@@ -11042,6 +11087,7 @@ export default function App() {
           onOpenPet={openPetFromDeck}
           onNavigate={handleTabChange}
           notifications={appNotifications}
+          onBecomePro={() => setProSignupOpen(true)}
           onOpenInbox={() => setInboxOpen(true)}
           onOpenHealthRecords={() => {
             setActiveTab('vault');
@@ -11121,7 +11167,7 @@ export default function App() {
   // overlay so the top header buttons + bottom tab bar are disabled and
   // visually faded for the duration of the popup.
   const [dashboardPopupOpen, setDashboardPopupOpen] = useState(false);
-  const overlayOpen = settingsOpen || inboxOpen || searchOpen || comingSoonOpen || animationsOpen || dashboardPopupOpen;
+  const overlayOpen = settingsOpen || inboxOpen || searchOpen || comingSoonOpen || animationsOpen || dashboardPopupOpen || proSignupOpen;
   // When the user taps a booking on the dashboard, we navigate to the
   // bookings list and remember which row to start expanded.
   const [focusedBookingId, setFocusedBookingId] = useState(null);
@@ -11133,7 +11179,7 @@ export default function App() {
     const fr = phoneFrameRef.current?.getBoundingClientRect();
     const go = () => { setSelectedPetId(petId); setPetsRoute('profile'); setActiveTab('pets'); setDisplayTab('pets'); };
     if (!fr || !clientRect) { go(); return; }
-    setPetMorph({ src, x: clientRect.left - fr.left, y: clientRect.top - fr.top, w: clientRect.width, go: false });
+    setPetMorph({ src, x: clientRect.left - fr.left, y: clientRect.top - fr.top, w: clientRect.width, fw: fr.width, go: false });
     requestAnimationFrame(() => requestAnimationFrame(() => setPetMorph((m) => m && { ...m, go: true })));
     setTimeout(go, 170);
     setTimeout(() => setPetMorph(null), 560);
@@ -11144,13 +11190,13 @@ export default function App() {
     return (
       <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center sm:p-8 font-sans antialiased">
         <GlobalStyles />
-        <div ref={phoneFrameRef} className="relative w-[390px] h-[844px] bg-[#F7F5F2] rounded-[50px] border-[8px] border-black overflow-hidden" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.28)' }}>
+        <div ref={phoneFrameRef} className="relative w-full h-[100dvh] sm:w-[390px] sm:h-[844px] bg-[#F7F5F2] sm:rounded-[50px] sm:border-[8px] border-black overflow-hidden" style={{ boxShadow: '0 24px 80px rgba(0,0,0,0.28)' }}>
           {petMorph && (
-            <img src={petMorph.src} alt="" className="absolute object-cover pointer-events-none" style={{ zIndex: 300, borderRadius: '50%', left: petMorph.go ? 139 : petMorph.x, top: petMorph.go ? 112 : petMorph.y, width: petMorph.go ? 112 : petMorph.w, height: petMorph.go ? 112 : petMorph.w, transition: 'all 0.46s cubic-bezier(0.22,1,0.36,1)', boxShadow: '0 10px 30px rgba(60,30,15,0.18)' }} />
+            <img src={petMorph.src} alt="" className="absolute object-cover pointer-events-none" style={{ zIndex: 300, borderRadius: '50%', left: petMorph.go ? ((petMorph.fw || 390) - 112) / 2 : petMorph.x, top: petMorph.go ? 112 : petMorph.y, width: petMorph.go ? 112 : petMorph.w, height: petMorph.go ? 112 : petMorph.w, transition: 'all 0.46s cubic-bezier(0.22,1,0.36,1)', boxShadow: '0 10px 30px rgba(60,30,15,0.18)' }} />
           )}
-          <div className="absolute left-1/2 -translate-x-1/2 z-[100]" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
-          <ProDashboard onExitPro={() => { try { window.sessionStorage.removeItem('fylos.proMode'); } catch (e) {} setProMode(false); }} />
+          <div className="absolute left-1/2 -translate-x-1/2 z-[100] hidden sm:block" style={{ top: 12, width: 120, height: 32, backgroundColor: '#000', borderRadius: 9999 }} />
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[100] hidden sm:block" style={{ width: 134, height: 5, backgroundColor: '#000', borderRadius: 9999 }} />
+          <ProDashboard onExitPro={exitProMode} />
         </div>
       </div>
     );
@@ -11438,13 +11484,31 @@ export default function App() {
               onClose={() => setSettingsOpen(false)}
               onOpenComingSoon={() => { setSettingsOpen(false); setComingSoonOpen(true); }}
               onOpenAnimations={() => { setSettingsOpen(false); setAnimationsOpen(true); }}
-              onSwitchPro={() => { setSettingsOpen(false); try { window.sessionStorage.setItem('fylos.proMode', '1'); } catch (e) {} setProMode(true); }}
+              onSwitchPro={() => { setSettingsOpen(false); enterProMode(); }}
+              onBecomePro={() => setProSignupOpen(true)}
             />
+
+            {/* Become a Pro — walker/sitter application as an in-app overlay.
+                Opens above Settings so closing it lands you back there. */}
+            {proSignupOpen && (
+              <ProRegistration
+                embedded
+                onExit={() => setProSignupOpen(false)}
+                onEnterPro={() => { setProSignupOpen(false); setSettingsOpen(false); enterProMode(); }}
+              />
+            )}
 
             <NotificationsOverlay
               isOpen={inboxOpen}
               onClose={() => setInboxOpen(false)}
               notifications={appNotifications}
+              onAction={(n, action) => {
+                if (action.id === 'open_pro') {
+                  setAppNotifications((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
+                  setInboxOpen(false);
+                  enterProMode();
+                }
+              }}
               onMarkAllRead={() => setAppNotifications((prev) => prev.map((n) => ({ ...n, read: true })))}
               onToggleRead={(id) => setAppNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true, actions: [] } : n)))}
               onArchiveNotification={(id) => setAppNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, archived: true } : n)))}

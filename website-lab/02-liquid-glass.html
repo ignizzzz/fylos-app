@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fylos keeps health records, daily rhythms, and trusted people in one calm place. iOS, launching first in Switzerland, 2026.">
+<meta name="theme-color" content="#F7F5F2">
+<title>FYLOS — Liquid Glass</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23E85D2A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Nunito:wght@800&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+/* ============================================================
+   FYLOS · Variation 02 — Liquid Glass
+   Warm glass ecosystem: cream light through frosted panes.
+   Layers: ambient (blobs) · sheet (sections) · float (cards)
+   ============================================================ */
+
+:root{
+  /* colors */
+  --coral:#E85D2A; --coral-hover:#D04A1C; --coral-deep:#BE4513;
+  --bg:#F7F5F2; --surface:#FFFFFF; --chip:#F3EFEB; --sheet:#FBF9F7;
+  --peach:#FBE7DD; --peach-selected:#FFEDE3;
+  --hair:#EDE8E2; --line:#F1EDE8;
+  --ink:#111111; --ink-2:#6E6058; --ink-3:#9B9B9F;
+  --label:#A8A29C; --placeholder:#C4BBB3; --chevron:#CFCFD4;
+  --ok:#3F8D63; --ok-bg:#EEF7F1; --ok-dot:#34C759;
+  --danger:#E5484D; --danger-bg:#FFF0F0; --warn:#FF9500; --warn-warm:#B07A3A;
+  /* type */
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-wordmark:'Nunito',sans-serif;
+  --track-title:-0.02em; --track-label:0.12em;
+  /* geometry */
+  --r-input:12px; --r-card:16px; --r-group:18px; --r-hero:20px; --r-sheet:26px; --r-full:9999px;
+  --h-cta:52px; --h-touch:44px; --gutter:20px;
+  /* shadows */
+  --shadow-warm:0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05);
+  --shadow-chrome:0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08);
+  --shadow-float:0 8px 24px rgba(0,0,0,0.06);
+  --glow-cta:0 8px 22px rgba(232,93,42,0.28);
+  --glow-cta-sm:0 4px 14px rgba(232,93,42,0.25);
+  /* motion */
+  --t-tap:120ms; --t-normal:200ms; --t-slow:300ms;
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out:cubic-bezier(0.22,1,0.36,1);
+  /* glass material */
+  --glass-sheet:rgba(255,255,255,0.58);
+  --glass-float:rgba(255,255,255,0.70);
+  --glass-edge:rgba(255,255,255,0.5);
+  --glass-inset:inset 0 1px 0 rgba(255,255,255,0.8);
+  --shadow-sheet:0 1px 2px rgba(60,30,15,0.03), 0 12px 34px rgba(60,30,15,0.07);
+  --shadow-tile:0 1px 2px rgba(60,30,15,0.04), 0 8px 24px rgba(60,30,15,0.07);
+}
+
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+html,body{ overflow-x:clip; }
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img,svg{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; border:0; background:none; cursor:pointer; color:inherit; }
+input{ font:inherit; }
+[hidden]{ display:none !important; }
+.sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+
+a:focus-visible, button:focus-visible, input:focus-visible{
+  outline:2px solid var(--coral);
+  outline-offset:2px;
+  border-radius:8px;
+}
+
+/* ---------- Layer 0 · Ambient: drifting light blobs ---------- */
+.ambient{
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; overflow:hidden;
+}
+.blob{
+  position:absolute; border-radius:50%;
+  filter:blur(100px);
+  will-change:transform;
+}
+.blob-1{
+  width:64vw; height:64vw; min-width:560px; min-height:560px;
+  left:-16vw; top:-18vw;
+  background:radial-gradient(circle at 40% 40%, #FBE7DD 0%, rgba(251,231,221,0.55) 45%, rgba(251,231,221,0) 72%);
+  animation:drift1 52s ease-in-out infinite alternate;
+}
+.blob-2{
+  width:56vw; height:56vw; min-width:520px; min-height:520px;
+  right:-20vw; top:16vh;
+  background:radial-gradient(circle at 55% 45%, #FFF7EF 0%, rgba(255,247,239,0.6) 48%, rgba(255,247,239,0) 74%);
+  animation:drift2 62s ease-in-out infinite alternate;
+}
+.blob-3{
+  width:46vw; height:46vw; min-width:440px; min-height:440px;
+  left:8vw; bottom:-22vw;
+  background:radial-gradient(circle at 50% 50%, rgba(232,93,42,0.08) 0%, rgba(232,93,42,0.05) 46%, rgba(232,93,42,0) 72%);
+  animation:drift3 46s ease-in-out infinite alternate;
+}
+@keyframes drift1{
+  0%  { transform:translate3d(0,0,0) scale(1); }
+  50% { transform:translate3d(16vw,12vh,0) scale(1.08); }
+  100%{ transform:translate3d(28vw,4vh,0) scale(0.96); }
+}
+@keyframes drift2{
+  0%  { transform:translate3d(0,0,0) scale(1); }
+  50% { transform:translate3d(-14vw,18vh,0) scale(1.06); }
+  100%{ transform:translate3d(-24vw,36vh,0) scale(1.12); }
+}
+@keyframes drift3{
+  0%  { transform:translate3d(0,0,0) scale(1); }
+  50% { transform:translate3d(18vw,-10vh,0) scale(1.1); }
+  100%{ transform:translate3d(32vw,-18vh,0) scale(1); }
+}
+
+/* ---------- Grain over everything ---------- */
+.grain{
+  position:fixed; inset:-50%; z-index:90;
+  pointer-events:none;
+  opacity:0.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:300px 300px;
+}
+
+/* ---------- Glass materials ---------- */
+.glass-sheet{
+  background:var(--glass-sheet);
+  -webkit-backdrop-filter:blur(22px);
+  backdrop-filter:blur(22px);
+  border:1px solid var(--glass-edge);
+  box-shadow:var(--glass-inset), var(--shadow-sheet);
+}
+.tile{
+  background:var(--glass-float);
+  -webkit-backdrop-filter:blur(26px);
+  backdrop-filter:blur(26px);
+  border:1px solid rgba(255,255,255,0.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.85), var(--shadow-tile);
+  border-radius:var(--r-hero);
+}
+
+/* Signature hover: specular sweep + 2px lift */
+.sweep{ position:relative; overflow:hidden; }
+.sweep::after{
+  content:""; position:absolute; top:-60%; bottom:-60%; left:0; width:55%;
+  background:linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
+  transform:translateX(-180%) rotate(16deg);
+  transition:transform 700ms var(--ease-out);
+  pointer-events:none;
+}
+.sweep:hover::after, .sweep:focus-visible::after{ transform:translateX(300%) rotate(16deg); }
+.lift{ transition:transform var(--t-normal) var(--ease-out); }
+.lift:hover{ transform:translateY(-2px); }
+
+/* ---------- Type ---------- */
+.eyebrow{
+  font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:var(--track-label); color:var(--label);
+  margin-bottom:16px;
+}
+h1{
+  font-size:clamp(2.35rem, 5.1vw, 4.15rem);
+  font-weight:800; letter-spacing:-0.03em; line-height:1.05;
+  color:var(--ink);
+}
+h2{
+  font-size:clamp(1.7rem, 3.1vw, 2.55rem);
+  font-weight:800; letter-spacing:var(--track-title); line-height:1.1;
+  color:var(--ink);
+}
+.lede{
+  font-size:clamp(1rem, 1.3vw, 1.075rem);
+  color:var(--ink-2); line-height:1.6; font-weight:400;
+  max-width:32em;
+}
+
+/* ---------- Wordmark ---------- */
+.wordmark{
+  font-family:var(--font-wordmark); font-weight:800;
+  letter-spacing:-0.02em; color:var(--ink);
+  display:inline-flex; align-items:baseline; line-height:1;
+}
+.wordmark .dot{
+  width:0.22em; height:0.22em; border-radius:50%;
+  background:var(--coral); display:inline-block; margin-left:0.12em;
+}
+
+/* ---------- Buttons ---------- */
+.btn-primary{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:48px; padding:0 24px;
+  background:var(--coral); color:#fff;
+  font-size:15px; font-weight:700; letter-spacing:-0.01em;
+  border-radius:var(--r-card);
+  box-shadow:var(--glow-cta);
+  transition:transform var(--t-tap) var(--ease-out), opacity var(--t-normal);
+  will-change:transform;
+}
+.btn-primary:hover{ background:var(--coral-hover); transform:translateY(-2px); }
+.btn-primary:active{ transform:scale(0.98); }
+.btn-ghost{
+  display:inline-flex; align-items:center; gap:6px;
+  height:48px; padding:0 8px;
+  color:var(--coral); font-size:15px; font-weight:700;
+  transition:transform var(--t-tap) var(--ease-out);
+}
+.btn-ghost:hover{ color:var(--coral-hover); }
+.btn-ghost:active{ transform:scale(0.98); }
+.btn-ghost svg{ transition:transform var(--t-normal) var(--ease-out); }
+.btn-ghost:hover svg{ transform:translateX(3px); }
+
+/* ---------- Badges ---------- */
+.badge{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10px; font-weight:700;
+  padding:2px 8px; border-radius:var(--r-full);
+  white-space:nowrap;
+}
+.badge-ok{ color:var(--ok); background:#F0F7ED; border:1px solid #D7EBDD; }
+.badge-warm{ color:var(--warn-warm); background:#FFF8F0; border:1px solid #F0E4D0; }
+
+/* ---------- Nav ---------- */
+.site-header{
+  position:fixed; top:0; left:0; right:0; z-index:70;
+  padding:0 clamp(16px, 4vw, 40px);
+}
+.site-header::before{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:rgba(247,245,242,0.85);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 var(--hair);
+  opacity:0;
+  transition:opacity var(--t-normal) ease;
+}
+.site-header.scrolled::before{ opacity:1; }
+.nav-row{
+  max-width:1180px; margin:0 auto;
+  height:64px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.nav-row .wordmark{ font-size:22px; }
+.nav-links{
+  display:flex; align-items:center; gap:clamp(14px, 2.4vw, 30px);
+  list-style:none;
+}
+.nav-links a{
+  font-size:13.5px; font-weight:600; color:var(--ink-2);
+  transition:opacity var(--t-normal);
+}
+.nav-links a:hover{ color:var(--ink); }
+.nav-cta{ height:44px; padding:0 18px; font-size:13.5px; border-radius:var(--r-card); }
+.nav-burger{
+  display:none;
+  width:44px; height:44px; border-radius:var(--r-full);
+  background:rgba(255,255,255,0.7);
+  -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.55);
+  box-shadow:var(--shadow-chrome);
+  align-items:center; justify-content:center;
+  transition:transform var(--t-tap) var(--ease-out);
+}
+.nav-burger:active{ transform:scale(0.95); }
+.mobile-menu{
+  position:fixed; top:70px; left:14px; right:14px; z-index:69;
+  border-radius:var(--r-hero);
+  background:rgba(255,255,255,0.75);
+  -webkit-backdrop-filter:blur(26px); backdrop-filter:blur(26px);
+  border:1px solid rgba(255,255,255,0.6);
+  box-shadow:var(--glass-inset), var(--shadow-float);
+  padding:10px;
+  opacity:0; transform:translateY(-8px) scale(0.985);
+  pointer-events:none; visibility:hidden;
+  transition:opacity var(--t-normal) var(--ease-out), transform var(--t-normal) var(--ease-out), visibility 0s var(--t-normal);
+}
+.mobile-menu.open{
+  opacity:1; transform:none; pointer-events:auto; visibility:visible;
+  transition:opacity var(--t-normal) var(--ease-out), transform var(--t-normal) var(--ease-out);
+}
+.mobile-menu a{
+  display:block; padding:13px 16px;
+  font-size:15px; font-weight:600; color:var(--ink);
+  border-radius:12px;
+}
+.mobile-menu a:hover{ background:var(--chip); }
+.mobile-menu .menu-cta{ color:var(--coral); font-weight:700; }
+
+/* ---------- Sheets: overlapping glass sections ---------- */
+main{ position:relative; z-index:1; }
+.sheet{
+  position:relative;
+  width:min(1180px, calc(100% - 28px));
+  margin:0 auto;
+  border-radius:var(--r-sheet);
+}
+main > .sheet:nth-of-type(even){ width:min(1108px, calc(100% - 28px)); }
+main > .sheet + .sheet{ margin-top:-56px; }
+main > .sheet:nth-of-type(1){ z-index:1; }
+main > .sheet:nth-of-type(2){ z-index:2; }
+main > .sheet:nth-of-type(3){ z-index:3; }
+main > .sheet:nth-of-type(4){ z-index:4; }
+main > .sheet:nth-of-type(5){ z-index:5; }
+main > .sheet:nth-of-type(6){ z-index:6; }
+main > .sheet:nth-of-type(7){ z-index:7; }
+.sheet-inner{
+  padding:clamp(48px, 6.5vw, 92px) clamp(22px, 5.4vw, 76px);
+}
+.sheet-head{ max-width:620px; margin-bottom:clamp(32px, 4.5vw, 56px); }
+.sheet-head p{ margin-top:14px; }
+
+/* ---------- Hero ---------- */
+#hero{ margin-top:104px; }
+.hero-grid{
+  display:grid; grid-template-columns:1.02fr 0.98fr;
+  gap:clamp(28px, 4vw, 56px); align-items:center;
+}
+.hero-copy .eyebrow{ margin-bottom:20px; }
+.hero-copy h1{ max-width:11em; }
+.hero-copy .lede{ margin-top:22px; }
+.hero-ctas{ display:flex; align-items:center; gap:18px; margin-top:32px; flex-wrap:wrap; }
+.hero-meta{
+  margin-top:26px; font-size:12px; font-weight:600; color:var(--ink-3);
+  display:flex; align-items:center; gap:8px;
+}
+.hero-meta .mdot{ width:3px; height:3px; border-radius:50%; background:var(--chevron); }
+
+/* Hero stage: tilted phone + floating fragments */
+.hero-stage{
+  position:relative;
+  perspective:1200px;
+  display:flex; justify-content:center;
+  padding:24px 0;
+}
+.phone{
+  width:340px; max-width:86vw;
+  aspect-ratio:390/844;
+  background:#1A1714;
+  border-radius:54px;
+  padding:11px;
+  box-shadow:0 2px 6px rgba(60,30,15,0.12), 0 34px 64px rgba(60,30,15,0.18);
+  transform:rotateY(-8deg) rotateX(2deg);
+  transform-style:preserve-3d;
+}
+.phone-screen{
+  position:relative; width:100%; height:100%;
+  background:var(--bg);
+  border-radius:44px;
+  overflow:hidden;
+  font-size:16px;
+}
+.p-island{
+  position:absolute; top:10px; left:50%; transform:translateX(-50%);
+  width:96px; height:27px; border-radius:var(--r-full);
+  background:#1A1714; z-index:5;
+}
+.p-status{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:13px 24px 0;
+}
+.p-time{ font-size:14px; font-weight:600; letter-spacing:-0.01em; }
+.p-glyphs{ color:var(--ink); }
+.p-body{ padding:16px 16px 0; }
+.p-greet{ font-size:23px; font-weight:700; letter-spacing:-0.02em; line-height:1.15; }
+.p-greet b{ font-weight:800; }
+.p-sub{ font-size:13.5px; color:var(--ink-2); margin-top:3px; }
+.p-pets{ display:flex; gap:18px; margin-top:16px; }
+.p-pet{ display:flex; flex-direction:column; align-items:center; gap:6px; }
+.p-ava{
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:19px; font-weight:800;
+}
+.p-ava-b{ background:radial-gradient(circle at 34% 30%, #A9805E, #7E5A3C); }
+.p-ava-l{ background:radial-gradient(circle at 34% 30%, #BDB4A6, #948B7D); }
+.p-pet.active .p-ava{ box-shadow:0 0 0 2.5px var(--bg), 0 0 0 4.5px var(--coral); }
+.p-pet-name{ font-size:12.5px; font-weight:600; color:var(--ink); }
+.p-pet:not(.active) .p-pet-name{ color:var(--ink-3); font-weight:500; }
+.p-stats{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:16px; }
+.p-stat{
+  background:var(--surface); border-radius:14px; padding:9px 10px;
+  box-shadow:var(--shadow-warm);
+}
+.p-stat b{ display:block; font-size:16px; font-weight:700; letter-spacing:-0.01em; }
+.p-stat span{
+  display:block; font-size:9px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.08em; color:var(--ink-3); margin-top:1px;
+}
+.p-h{ font-size:14px; font-weight:600; margin:16px 0 8px; }
+.p-card{
+  background:var(--surface); border-radius:16px; padding:12px;
+  box-shadow:var(--shadow-warm);
+}
+.p-book-row{ display:flex; align-items:center; gap:10px; }
+.p-book-ava{
+  width:38px; height:38px; border-radius:50%; flex:none;
+  background:radial-gradient(circle at 34% 30%, #C4A886, #9A7F5F);
+  color:#fff; font-size:14px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.p-book-name{ font-size:13.5px; font-weight:700; letter-spacing:-0.01em; display:flex; align-items:center; gap:4px; }
+.p-book-name .star{ color:var(--coral); }
+.p-book-sub{ font-size:12px; color:var(--ink-2); margin-top:1px; }
+.p-book-main{ flex:1; min-width:0; }
+.p-book-foot{
+  display:flex; align-items:center; gap:6px;
+  margin-top:10px; padding-top:9px; border-top:1px solid var(--line);
+  font-size:11.5px; color:var(--ink-3); font-weight:500;
+}
+.p-today .p-row{ display:flex; align-items:center; gap:10px; padding:9px 12px; }
+.p-today .p-row + .p-row{ border-top:1px solid var(--line); }
+.p-today{ padding:2px 0; }
+.p-ico{
+  width:34px; height:34px; border-radius:50%; flex:none;
+  background:var(--chip); color:var(--coral);
+  display:flex; align-items:center; justify-content:center;
+}
+.p-row-main{ flex:1; min-width:0; }
+.p-row-t{ font-size:13.5px; font-weight:600; }
+.p-row-s{ font-size:11.5px; color:var(--ink-2); }
+.p-done{
+  font-size:11.5px; font-weight:600; color:var(--ink-2);
+  background:var(--chip); padding:5px 12px; border-radius:var(--r-full);
+}
+.p-dock{
+  position:absolute; left:16px; right:16px; bottom:12px;
+  height:56px; border-radius:26px;
+  background:rgba(255,255,255,0.82);
+  -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
+  box-shadow:0 2px 20px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.04);
+  display:flex; align-items:center; justify-content:space-around;
+  padding:0 10px;
+}
+.p-tab{ display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--ink-3); }
+.p-tab.active{ color:var(--coral); }
+.p-tab span{ font-size:8.5px; font-weight:700; }
+.p-fab{
+  width:40px; height:40px; border-radius:50%; flex:none;
+  background:var(--coral); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 14px rgba(232,93,42,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* Floating glass fragments */
+.frag{
+  position:absolute; z-index:3;
+  will-change:transform;
+}
+.frag-card{
+  background:var(--glass-float);
+  -webkit-backdrop-filter:blur(26px); backdrop-filter:blur(26px);
+  border:1px solid rgba(255,255,255,0.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.85), 0 2px 6px rgba(60,30,15,0.05), 0 14px 34px rgba(60,30,15,0.1);
+  border-radius:var(--r-card);
+}
+.frag-reminder{ top:9%; left:-4%; }
+.frag-reminder .frag-card{
+  display:flex; align-items:center; gap:10px; padding:10px 14px 10px 10px;
+}
+.frag-live{ top:-2%; right:-3%; }
+.frag-live .frag-card{
+  display:flex; align-items:center; gap:8px;
+  padding:9px 16px; border-radius:var(--r-full);
+  font-size:12.5px; font-weight:700; letter-spacing:-0.01em;
+}
+.live-dot{ position:relative; width:8px; height:8px; border-radius:50%; background:var(--ok-dot); flex:none; }
+.live-dot::after{
+  content:""; position:absolute; inset:-4px; border-radius:50%;
+  border:2px solid var(--ok-dot);
+  animation:pulse 1.6s var(--ease-out) infinite;
+}
+@keyframes pulse{
+  0%{ transform:scale(0.55); opacity:0.8; }
+  70%{ transform:scale(1.15); opacity:0; }
+  100%{ transform:scale(1.15); opacity:0; }
+}
+.frag-vaccine{ bottom:24%; right:-8%; }
+.frag-vaccine .frag-card{ padding:12px 14px; }
+.frag-vaccine .badge{ font-size:11px; padding:4px 10px; }
+.frag-booking{ bottom:2%; left:-9%; }
+.frag-booking .frag-card{ padding:12px 16px 12px 12px; width:250px; }
+.frag-booking .p-book-foot{ border-top-color:rgba(60,30,15,0.07); }
+
+/* ---------- Pillars ---------- */
+.pillar-grid{
+  display:grid; grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+}
+.pillar{
+  padding:26px 22px 28px;
+  border-radius:var(--r-hero);
+}
+.pillar-chip{
+  width:44px; height:44px; border-radius:14px;
+  background:var(--peach); color:var(--coral);
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:18px;
+  transition:opacity var(--t-normal);
+}
+.pillar:hover .pillar-chip{ background:var(--peach-selected); }
+.pillar h3{
+  font-size:16.5px; font-weight:800; letter-spacing:-0.015em;
+  margin-bottom:7px;
+}
+.pillar p{ font-size:13.5px; color:var(--ink-2); line-height:1.55; }
+
+/* ---------- How it works ---------- */
+#how{ --draw:1; }
+.hiw-grid{
+  position:relative;
+  display:grid; grid-template-columns:repeat(3, 1fr);
+  gap:18px;
+}
+.hiw-line{
+  position:absolute; z-index:0;
+  top:49px; left:9%; right:9%; height:2px;
+  background:var(--hair); border-radius:var(--r-full);
+  overflow:hidden;
+}
+.hiw-line i{
+  position:absolute; inset:0;
+  background:var(--coral); border-radius:var(--r-full);
+  transform:scaleX(var(--draw)); transform-origin:left center;
+  display:block;
+}
+.step{
+  position:relative; z-index:1;
+  padding:24px 24px 28px;
+  border-radius:var(--r-hero);
+}
+.step-num{
+  width:50px; height:50px; border-radius:50%;
+  background:var(--peach-selected); color:var(--coral);
+  font-size:15px; font-weight:800; letter-spacing:0.02em;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:18px;
+  box-shadow:inset 0 0 0 1.5px rgba(232,93,42,0.25);
+}
+.step h3{ font-size:17px; font-weight:800; letter-spacing:-0.015em; margin-bottom:6px; }
+.step p{ font-size:13.5px; color:var(--ink-2); }
+
+/* ---------- Product preview ---------- */
+.preview-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr);
+  gap:16px; align-items:start;
+}
+.preview-panel{ padding:18px; border-radius:var(--r-hero); }
+.preview-cap{
+  font-size:12px; font-weight:600; color:var(--ink-3);
+  margin-top:14px; padding-left:2px;
+}
+.app-card{
+  background:var(--surface); border-radius:var(--r-card);
+  box-shadow:var(--shadow-warm);
+}
+.app-card + .app-card{ margin-top:10px; }
+.memory{
+  border-radius:var(--r-card);
+  background:linear-gradient(140deg, #FBE7DD 0%, #F6D9C5 46%, #EFCDB6 100%);
+  min-height:190px;
+  position:relative;
+  box-shadow:var(--shadow-warm);
+  overflow:hidden;
+}
+.memory::after{
+  content:""; position:absolute; right:-34px; top:-34px;
+  width:130px; height:130px; border-radius:50%;
+  background:rgba(255,255,255,0.35);
+}
+.memory-chip{
+  position:absolute; left:12px; bottom:12px;
+  background:rgba(255,255,255,0.92);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border-radius:var(--r-full); padding:5px 12px;
+  font-size:11.5px; font-weight:600; color:var(--ink);
+}
+.mini-row{ display:flex; align-items:center; gap:10px; padding:11px 12px; }
+.mini-row + .mini-row{ border-top:1px solid var(--line); }
+.mini-row .p-ico{ width:34px; height:34px; }
+.walk-chip{
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--surface); border-radius:var(--r-full);
+  box-shadow:var(--shadow-warm);
+  padding:9px 16px; font-size:12.5px; font-weight:700;
+  margin-top:10px;
+}
+.vax-card{ padding:13px 14px; display:flex; align-items:center; gap:10px; }
+.vax-card .p-ico{ background:var(--peach); }
+.vax-main{ flex:1; min-width:0; }
+.vax-t{ font-size:13.5px; font-weight:600; }
+.vax-s{ font-size:11.5px; color:var(--ink-2); }
+
+/* ---------- Ecosystem: the honest frost ---------- */
+.eco-grid{
+  display:grid; grid-template-columns:repeat(3, 1fr);
+  gap:16px;
+}
+.eco-tile{
+  position:relative; overflow:hidden;
+  border-radius:var(--r-group);
+  min-height:176px;
+  border:1px solid rgba(255,255,255,0.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.7), var(--shadow-warm);
+}
+.eco-under{ position:absolute; inset:0; }
+.eco-under i{ position:absolute; border-radius:50%; display:block; }
+.eco-under .u1{ width:140px; height:140px; background:var(--coral); opacity:0.55; top:-28px; left:-22px; }
+.eco-under .u2{ width:190px; height:190px; background:var(--peach); right:-44px; bottom:-58px; }
+.eco-under .u3{ width:76px; height:76px; background:var(--coral); opacity:0.32; bottom:14px; left:38%; }
+.eco-tile:nth-child(2) .eco-under{ transform:rotate(120deg) scale(1.25); }
+.eco-tile:nth-child(3) .eco-under{ transform:rotate(230deg) scale(1.1); }
+.eco-tile:nth-child(4) .eco-under{ transform:rotate(65deg) scale(1.35); }
+.eco-tile:nth-child(5) .eco-under{ transform:rotate(300deg) scale(1.2); }
+.eco-tile:nth-child(6) .eco-under{ transform:rotate(170deg) scale(1.15); }
+.eco-frost{
+  position:absolute; inset:0;
+  background:rgba(255,255,255,0.48);
+  -webkit-backdrop-filter:blur(26px); backdrop-filter:blur(26px);
+  padding:18px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.eco-name{
+  display:flex; align-items:center; gap:10px;
+  font-size:15px; font-weight:700; letter-spacing:-0.01em;
+}
+.eco-ic{
+  width:28px; height:28px; border-radius:9px; flex:none;
+  background:var(--peach); color:var(--coral);
+  display:flex; align-items:center; justify-content:center;
+}
+.eco-frost .badge{ align-self:flex-start; text-transform:uppercase; letter-spacing:0.06em; }
+
+/* ---------- Emotional beat: the clear pane ---------- */
+.sheet--clear{
+  background:rgba(255,255,255,0.18);
+  -webkit-backdrop-filter:none; backdrop-filter:none;
+  border:1px solid rgba(255,255,255,0.85);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(60,30,15,0.02), 0 10px 30px rgba(60,30,15,0.04);
+  width:min(920px, calc(100% - 28px)) !important;
+}
+.friend-blob{
+  position:absolute; z-index:-1;
+  width:440px; height:440px; border-radius:50%;
+  left:50%; top:50%; transform:translate(-50%,-52%);
+  background:radial-gradient(circle at 46% 42%, rgba(251,231,221,0.95) 0%, rgba(232,93,42,0.12) 52%, rgba(232,93,42,0) 74%);
+  filter:blur(44px);
+  pointer-events:none;
+}
+.friend-inner{ text-align:center; padding:clamp(56px, 7vw, 96px) clamp(24px, 6vw, 84px); }
+.friend-inner .eyebrow{ margin-bottom:22px; }
+.friend-line{
+  font-size:clamp(1.6rem, 3.4vw, 2.7rem);
+  font-weight:800; letter-spacing:-0.025em; line-height:1.12;
+}
+.friend-line em{ font-style:normal; color:var(--coral); }
+.friend-sub{
+  margin:20px auto 0; max-width:26em;
+  font-size:clamp(1rem, 1.4vw, 1.125rem); color:var(--ink-2); line-height:1.6;
+}
+.friend-note{
+  margin-top:30px; font-size:11.5px; font-weight:600; color:var(--ink-3);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.friend-note::before, .friend-note::after{
+  content:""; width:22px; height:1px; background:var(--hair);
+}
+
+/* ---------- Join ---------- */
+.join-inner{ text-align:center; }
+.join-inner h2{ max-width:15em; margin:0 auto; }
+.join-inner h2 span{ color:var(--coral); }
+.join-zone{ max-width:520px; margin:32px auto 0; min-height:120px; }
+.join-form{
+  display:flex; gap:10px;
+  transition:opacity 240ms var(--ease-out), transform 240ms var(--ease-out);
+}
+.join-form.out{ opacity:0; transform:scale(0.985) translateY(4px); }
+.join-form input{
+  flex:1; min-width:0; height:var(--h-cta);
+  padding:0 18px;
+  background:rgba(255,255,255,0.85);
+  border:1px solid transparent;
+  border-radius:var(--r-input);
+  box-shadow:var(--shadow-warm);
+  font-size:15px; font-weight:500; color:var(--ink);
+}
+.join-form input::placeholder{ color:var(--placeholder); }
+.join-form input:focus{ outline:none; border-color:rgba(232,93,42,0.55); box-shadow:0 0 0 3px rgba(232,93,42,0.12), var(--shadow-warm); }
+.join-form input[aria-invalid="true"]{ border-color:var(--coral); }
+.join-form .btn-primary{ height:var(--h-cta); flex:none; }
+.join-hint{ margin-top:12px; font-size:12.5px; color:var(--warn-warm); font-weight:500; }
+.join-done{
+  opacity:0; transform:translateY(8px);
+  transition:opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  padding:22px 0;
+}
+.join-done.in{ opacity:1; transform:none; }
+.join-done .done-dot{
+  width:40px; height:40px; border-radius:50%;
+  background:var(--ok-bg); color:var(--ok);
+  border:1px solid #D7EBDD;
+  display:flex; align-items:center; justify-content:center;
+}
+.join-done p{ font-size:16px; font-weight:600; color:var(--ink); }
+.join-done span{ font-size:13px; color:var(--ink-2); }
+.join-small{
+  margin-top:20px; font-size:12px; color:var(--ink-3); font-weight:500;
+}
+
+/* ---------- Footer ---------- */
+.site-footer{
+  position:relative; z-index:1;
+  margin-top:76px;
+  padding:0 20px 130px;
+  text-align:center;
+}
+.site-footer .wordmark{ font-size:24px; }
+.foot-tag{ margin-top:10px; font-size:14px; color:var(--ink-2); font-weight:500; }
+.foot-meta{ margin-top:6px; font-size:12px; color:var(--ink-3); font-weight:600; }
+.foot-links{
+  margin-top:22px; display:flex; justify-content:center; gap:22px;
+  font-size:12.5px; font-weight:600; color:var(--ink-2);
+}
+.foot-links a:hover{ color:var(--coral); }
+.foot-copy{ margin-top:18px; font-size:11px; color:var(--label); }
+
+/* ---------- Lab switcher ---------- */
+.lab{
+  position:fixed; left:16px; bottom:16px; z-index:95;
+  display:flex; align-items:center; gap:2px;
+  padding:4px 6px;
+  border-radius:var(--r-full);
+  background:rgba(255,255,255,0.66);
+  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.8), var(--shadow-float);
+  font-size:11px; font-weight:600; color:var(--ink-2);
+}
+.lab a{ transition:opacity var(--t-normal); }
+.lab-btn{
+  width:24px; height:24px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--ink-3);
+}
+.lab-btn:hover{ background:var(--chip); color:var(--ink); }
+.lab-mid{ padding:2px 8px; letter-spacing:0.01em; white-space:nowrap; }
+.lab-mid:hover{ color:var(--coral); }
+
+/* ---------- Reveals: frosted-in ---------- */
+.js .reveal{
+  opacity:0;
+  transform:translateY(26px);
+  filter:blur(8px);
+  transition:opacity 700ms var(--ease-out), transform 700ms var(--ease-out), filter 700ms var(--ease-out);
+  will-change:transform, filter;
+}
+.js .reveal.in{ opacity:1; transform:none; filter:blur(0); }
+.js .reveal.in.settled{
+  filter:none; will-change:auto;
+  transition:transform var(--t-normal) var(--ease-out);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1024px){
+  .hero-grid{ grid-template-columns:1fr; }
+  .hero-stage{ margin-top:16px; }
+  .phone{ transform:rotateY(-6deg) rotateX(1.5deg); }
+  .pillar-grid{ grid-template-columns:1fr 1fr; }
+  .frag-reminder{ left:2%; }
+  .frag-booking{ left:0; }
+  .frag-live{ right:0; }
+  .frag-vaccine{ right:-2%; }
+}
+@media (max-width:900px){
+  .preview-grid{ grid-template-columns:1fr; }
+  .eco-grid{ grid-template-columns:1fr 1fr; }
+  .hiw-grid{ grid-template-columns:1fr; gap:16px; }
+  .hiw-line{
+    top:44px; bottom:44px; left:44px; right:auto;
+    width:2px; height:auto;
+  }
+  .hiw-line i{ transform:scaleY(var(--draw)); transform-origin:top center; }
+  .step{ padding-left:24px; }
+  .step-num{ margin-bottom:14px; }
+}
+@media (max-width:860px){
+  .nav-links{ display:none; }
+  .nav-burger{ display:flex; }
+}
+@media (max-width:640px){
+  .frag-reminder, .frag-booking{ display:none; }
+  .frag-live{ right:2%; top:0; }
+  .frag-vaccine{ right:0; bottom:18%; }
+  main > .sheet + .sheet{ margin-top:-40px; }
+  .join-form{ flex-direction:column; }
+  .join-form .btn-primary{ width:100%; }
+  .eco-grid{ grid-template-columns:1fr; }
+  .pillar-grid{ grid-template-columns:1fr; }
+  #hero{ margin-top:88px; }
+}
+@media (max-width:480px){
+  .hero-ctas{ gap:10px; }
+  .hero-ctas .btn-primary{ width:100%; }
+  .phone{ width:min(320px, 88vw); }
+  .sheet-inner{ padding-left:20px; padding-right:20px; }
+  .lab-mid{ padding:2px 5px; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  .blob{ animation:none; }
+  .live-dot::after{ animation:none; opacity:0; }
+  .sweep::after{ transition:none; display:none; }
+  .lift, .btn-primary, .btn-ghost, .btn-ghost svg{ transition:none; }
+  .lift:hover, .btn-primary:hover{ transform:none; }
+  .js .reveal{
+    opacity:1; transform:none; filter:none; transition:none;
+  }
+  #how{ --draw:1 !important; }
+  .hiw-line i{ transform:scaleX(1); }
+  @media (max-width:900px){ .hiw-line i{ transform:scaleY(1); } }
+  .mobile-menu{ transition:none; }
+  .join-form, .join-done{ transition:none; }
+}
+</style>
+</head>
+<body id="top">
+
+<!-- Ambient layer -->
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ================= NAV ================= -->
+<header class="site-header" id="siteHeader">
+  <div class="nav-row">
+    <a class="wordmark" href="#top" aria-label="Fylos — back to top">FYLOS<span class="dot" aria-hidden="true"></span></a>
+    <nav aria-label="Main">
+      <ul class="nav-links">
+        <li><a href="#pillars">What it does</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#preview">Inside the app</a></li>
+        <li><a href="#ecosystem">What&rsquo;s next</a></li>
+      </ul>
+    </nav>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="btn-primary nav-cta sweep" href="#join">Join the waitlist</a>
+      <button class="nav-burger" aria-label="Open menu" aria-controls="mobilemenu" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<nav class="mobile-menu" id="mobilemenu" aria-label="Mobile">
+  <a href="#pillars">What it does</a>
+  <a href="#how">How it works</a>
+  <a href="#preview">Inside the app</a>
+  <a href="#ecosystem">What&rsquo;s next</a>
+  <a class="menu-cta" href="#join">Join the waitlist</a>
+</nav>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="sheet glass-sheet" id="hero" aria-labelledby="hero-h">
+    <div class="sheet-inner">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow reveal">iOS &middot; Switzerland &middot; 2026</p>
+          <h1 id="hero-h" class="reveal">Everything about them, in one calm place.</h1>
+          <p class="lede reveal">Fylos keeps health records, daily rhythms, and trusted people in one calm place &mdash; so you can be there for the good parts.</p>
+          <div class="hero-ctas reveal">
+            <a class="btn-primary sweep" href="#join">Join the waitlist</a>
+            <a class="btn-ghost" href="#how">See how it works
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </a>
+          </div>
+          <p class="hero-meta reveal">A second mind for pet parents <span class="mdot" aria-hidden="true"></span> quiet by design</p>
+        </div>
+
+        <div class="hero-stage reveal" id="heroStage">
+          <!-- The real app: home screen -->
+          <div class="phone" role="img" aria-label="The Fylos home screen: a greeting for Anna, her two pets Bobby and Luna, today's overview, an upcoming confirmed dog walk with Marco, and today's reminders.">
+            <div class="phone-screen">
+              <div class="p-island"></div>
+              <div class="p-status">
+                <span class="p-time">9:41</span>
+                <span class="p-glyphs">
+                  <svg width="52" height="12" viewBox="0 0 52 12" fill="currentColor" aria-hidden="true">
+                    <rect x="0" y="7" width="2.6" height="4" rx="1"/>
+                    <rect x="4" y="5.4" width="2.6" height="5.6" rx="1"/>
+                    <rect x="8" y="3.6" width="2.6" height="7.4" rx="1"/>
+                    <rect x="12" y="1.6" width="2.6" height="9.4" rx="1"/>
+                    <path d="M25.5 4.1a7.4 7.4 0 0 1 9.4 0l-1.3 1.5a5.4 5.4 0 0 0-6.8 0Zm2 2.4a4.4 4.4 0 0 1 5.4 0l-1.3 1.6a2.4 2.4 0 0 0-2.8 0Zm2.7 3.1 1-1.2a1 1 0 0 0-2 0Z"/>
+                    <rect x="39" y="1.8" width="10.6" height="8.4" rx="2.4" fill="none" stroke="currentColor" stroke-opacity="0.4"/>
+                    <rect x="40.5" y="3.3" width="7.6" height="5.4" rx="1.4"/>
+                    <rect x="50.4" y="4.4" width="1.4" height="3.2" rx="0.7" fill-opacity="0.4"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="p-body">
+                <div class="p-greet">Good morning, <b>Anna</b></div>
+                <div class="p-sub">What&rsquo;s on the schedule today?</div>
+
+                <div class="p-pets">
+                  <div class="p-pet active">
+                    <div class="p-ava p-ava-b">B</div>
+                    <div class="p-pet-name">Bobby</div>
+                  </div>
+                  <div class="p-pet">
+                    <div class="p-ava p-ava-l">L</div>
+                    <div class="p-pet-name">Luna</div>
+                  </div>
+                </div>
+
+                <div class="p-stats">
+                  <div class="p-stat"><b>2</b><span>Pets</span></div>
+                  <div class="p-stat"><b>1</b><span>Bookings</span></div>
+                  <div class="p-stat"><b>12</b><span>Docs</span></div>
+                </div>
+
+                <div class="p-h">Upcoming</div>
+                <div class="p-card">
+                  <div class="p-book-row">
+                    <div class="p-book-ava">M</div>
+                    <div class="p-book-main">
+                      <div class="p-book-name">Marco K. &middot; 4.9<span class="star">&#9733;</span></div>
+                      <div class="p-book-sub">Dog walk &middot; Bobby</div>
+                    </div>
+                    <span class="badge badge-ok">Confirmed</span>
+                  </div>
+                  <div class="p-book-foot">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Sat, Jul 11 &middot; 09:00
+                  </div>
+                </div>
+
+                <div class="p-h">Today</div>
+                <div class="p-card p-today">
+                  <div class="p-row">
+                    <div class="p-ico">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                    </div>
+                    <div class="p-row-main">
+                      <div class="p-row-t">Heartworm chew</div>
+                      <div class="p-row-s">08:00</div>
+                    </div>
+                    <span class="p-done">Done</span>
+                  </div>
+                  <div class="p-row">
+                    <div class="p-ico">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7.5 12 12 15 14"/></svg>
+                    </div>
+                    <div class="p-row-main">
+                      <div class="p-row-t">Evening walk</div>
+                      <div class="p-row-s">18:30</div>
+                    </div>
+                    <span class="p-done">Done</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-dock">
+                <div class="p-tab active">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1.6 1.6 0 0 1-1.6 1.6H4.6A1.6 1.6 0 0 1 3 20Z"/><path d="M9.5 21.5v-7h5v7"/></svg>
+                  <span>Home</span>
+                </div>
+                <div class="p-tab">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="p-fab">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <div class="p-tab">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/></svg>
+                </div>
+                <div class="p-tab">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c1.4-3.8 4.4-5.7 7.5-5.7s6.1 1.9 7.5 5.7"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating glass fragments (decorative echoes of the real app) -->
+          <div class="frag frag-reminder" data-depth="0.75" data-dx="-1" data-dy="-0.4" aria-hidden="true">
+            <div class="frag-card">
+              <div class="p-ico">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+              </div>
+              <div class="p-row-main">
+                <div class="p-row-t">Heartworm chew</div>
+                <div class="p-row-s">Today &middot; 08:00</div>
+              </div>
+              <span class="p-done" style="margin-left:10px;">Done</span>
+            </div>
+          </div>
+
+          <div class="frag frag-live" data-depth="1" data-dx="1" data-dy="-0.6" aria-hidden="true">
+            <div class="frag-card">
+              <span class="live-dot"></span>
+              Live &middot; 32 min &middot; 2.1 km
+            </div>
+          </div>
+
+          <div class="frag frag-vaccine" data-depth="0.55" data-dx="1.2" data-dy="0.5" aria-hidden="true">
+            <div class="frag-card">
+              <span class="badge badge-warm">Rabies booster &middot; in 14 days</span>
+            </div>
+          </div>
+
+          <div class="frag frag-booking" data-depth="0.4" data-dx="-1.2" data-dy="0.6" aria-hidden="true">
+            <div class="frag-card">
+              <div class="p-book-row">
+                <div class="p-book-ava">M</div>
+                <div class="p-book-main">
+                  <div class="p-book-name">Marco K. &middot; 4.9<span class="star">&#9733;</span></div>
+                  <div class="p-book-sub">Dog walk &middot; Bobby</div>
+                </div>
+                <span class="badge badge-ok">Confirmed</span>
+              </div>
+              <div class="p-book-foot">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="2.5"/><line x1="8" y1="2.5" x2="8" y2="6.5"/><line x1="16" y1="2.5" x2="16" y2="6.5"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Sat, Jul 11 &middot; 09:00
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PILLARS ================= -->
+  <section class="sheet glass-sheet" id="pillars" aria-labelledby="pillars-h">
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <p class="eyebrow reveal">What Fylos does</p>
+        <h2 id="pillars-h" class="reveal">Four quiet jobs, done well.</h2>
+        <p class="lede reveal">No feeds. No noise. Just the things that matter, remembered for you.</p>
+      </div>
+      <div class="pillar-grid" data-stagger>
+        <article class="pillar tile sweep lift reveal">
+          <div class="pillar-chip">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7.2 16.7 3.5 13.4 3.5 9.1 3.5 6.3 5.6 4.2 8.2 4.2c1.6 0 3 .8 3.8 2 .8-1.2 2.2-2 3.8-2 2.6 0 4.7 2.1 4.7 4.9 0 4.3-3.7 7.6-8.5 11.9Z"/></svg>
+          </div>
+          <h3>Health, remembered</h3>
+          <p>Vaccines, meds and records &mdash; with you, not in a drawer.</p>
+        </article>
+        <article class="pillar tile sweep lift reveal">
+          <div class="pillar-chip">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+          </div>
+          <h3>A gentle rhythm</h3>
+          <p>Walks, meals, reminders &mdash; today, at a glance.</p>
+        </article>
+        <article class="pillar tile sweep lift reveal">
+          <div class="pillar-chip">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1.1-3.6 3.8-5.6 6.5-5.6s5.4 2 6.5 5.6"/><circle cx="17" cy="9" r="2.7"/><path d="M15.8 14.9c2.6.3 4.6 2 5.5 4.8"/></svg>
+          </div>
+          <h3>People you trust</h3>
+          <p>Walkers, sitters and vets &mdash; nearby, verified.</p>
+        </article>
+        <article class="pillar tile sweep lift reveal">
+          <div class="pillar-chip">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14.5" rx="2.5"/><circle cx="8.6" cy="10" r="1.5"/><path d="m3 17 5-4.4 4 3.4 3.4-2.9 5.6 4"/></svg>
+          </div>
+          <h3>The story of you two</h3>
+          <p>Memories, kept.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section class="sheet glass-sheet" id="how" aria-labelledby="how-h">
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <p class="eyebrow reveal">How it works</p>
+        <h2 id="how-h" class="reveal">Two minutes to start. Quiet from then on.</h2>
+      </div>
+      <div class="hiw-grid" data-stagger>
+        <div class="hiw-line" aria-hidden="true"><i></i></div>
+        <article class="step tile sweep lift reveal">
+          <div class="step-num">01</div>
+          <h3>Add your Fylos</h3>
+          <p>Name, breed, quirks &mdash; two minutes.</p>
+        </article>
+        <article class="step tile sweep lift reveal">
+          <div class="step-num">02</div>
+          <h3>We keep track</h3>
+          <p>Records, reminders, routines &mdash; quietly.</p>
+        </article>
+        <article class="step tile sweep lift reveal">
+          <div class="step-num">03</div>
+          <h3>Live the good part</h3>
+          <p>Book help, share, remember.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRODUCT PREVIEW ================= -->
+  <section class="sheet glass-sheet" id="preview" aria-labelledby="preview-h">
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <p class="eyebrow reveal">Inside the app</p>
+        <h2 id="preview-h" class="reveal">Quiet on purpose.</h2>
+        <p class="lede reveal">The home screen is the whole idea: today, and nothing else. Everything below &mdash; records, people, memories &mdash; stays one calm tap away.</p>
+      </div>
+      <div class="preview-grid" data-stagger>
+        <div class="preview-panel tile sweep lift reveal">
+          <div class="app-card">
+            <div class="mini-row">
+              <div class="p-ico">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+              </div>
+              <div class="p-row-main">
+                <div class="p-row-t">Heartworm chew</div>
+                <div class="p-row-s">08:00</div>
+              </div>
+              <span class="p-done">Done</span>
+            </div>
+            <div class="mini-row">
+              <div class="p-ico">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7.5 12 12 15 14"/></svg>
+              </div>
+              <div class="p-row-main">
+                <div class="p-row-t">Morning walk</div>
+                <div class="p-row-s">07:30</div>
+              </div>
+              <span class="p-done">Done</span>
+            </div>
+            <div class="mini-row">
+              <div class="p-ico">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11h16l-1.5 8.5a2 2 0 0 1-2 1.5h-9a2 2 0 0 1-2-1.5Z"/><path d="M7 11c0-5 2.2-7.5 5-7.5S17 6 17 11"/></svg>
+              </div>
+              <div class="p-row-main">
+                <div class="p-row-t">Dinner</div>
+                <div class="p-row-s">19:00</div>
+              </div>
+              <span class="p-done">Done</span>
+            </div>
+          </div>
+          <p class="preview-cap">The day, at a glance.</p>
+        </div>
+
+        <div class="preview-panel tile sweep lift reveal">
+          <div class="memory">
+            <span class="memory-chip">Bobby &middot; first snow</span>
+          </div>
+          <p class="preview-cap">The story of you two, kept safe.</p>
+        </div>
+
+        <div class="preview-panel tile sweep lift reveal">
+          <div class="app-card vax-card">
+            <div class="p-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 18.5 6v5c0 4.4-2.9 7.6-6.5 9.5C8.4 18.6 5.5 15.4 5.5 11V6Z"/></svg>
+            </div>
+            <div class="vax-main">
+              <div class="vax-t">Rabies booster</div>
+              <div class="vax-s">Bobby &middot; Dr. Meier</div>
+            </div>
+            <span class="badge badge-warm">in 14 days</span>
+          </div>
+          <div class="walk-chip">
+            <span class="live-dot"></span>
+            Live &middot; 32 min &middot; 2.1 km
+          </div>
+          <p class="preview-cap">Signals, not notifications.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ECOSYSTEM: THE HONEST FROST ================= -->
+  <section class="sheet glass-sheet" id="ecosystem" aria-labelledby="eco-h">
+    <div class="sheet-inner">
+      <div class="sheet-head">
+        <p class="eyebrow reveal">What&rsquo;s next</p>
+        <h2 id="eco-h" class="reveal">The next layers are already forming.</h2>
+        <p class="lede reveal">You can see them taking shape behind the glass &mdash; shown exactly as finished as they are.</p>
+      </div>
+      <div class="eco-grid" data-stagger>
+        <div class="eco-tile reveal">
+          <div class="eco-under" aria-hidden="true"><i class="u1"></i><i class="u2"></i><i class="u3"></i></div>
+          <div class="eco-frost">
+            <div class="eco-name">
+              <span class="eco-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="12.5" height="12" rx="2"/><path d="m15.5 10.5 5.5-3v9l-5.5-3"/></svg></span>
+              Vet telehealth
+            </div>
+            <span class="badge badge-warm">Coming soon</span>
+          </div>
+        </div>
+        <div class="eco-tile reveal">
+          <div class="eco-under" aria-hidden="true"><i class="u1"></i><i class="u2"></i><i class="u3"></i></div>
+          <div class="eco-frost">
+            <div class="eco-name">
+              <span class="eco-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 12 7.5 12 10.5 5.5 14 18.5 16.8 12 21 12"/></svg></span>
+              Health sync
+            </div>
+            <span class="badge badge-warm">Coming soon</span>
+          </div>
+        </div>
+        <div class="eco-tile reveal">
+          <div class="eco-under" aria-hidden="true"><i class="u1"></i><i class="u2"></i><i class="u3"></i></div>
+          <div class="eco-frost">
+            <div class="eco-name">
+              <span class="eco-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 18.5 6v5c0 4.4-2.9 7.6-6.5 9.5C8.4 18.6 5.5 15.4 5.5 11V6Z"/></svg></span>
+              Insurance companion
+            </div>
+            <span class="badge badge-warm">Coming soon</span>
+          </div>
+        </div>
+        <div class="eco-tile reveal">
+          <div class="eco-under" aria-hidden="true"><i class="u1"></i><i class="u2"></i><i class="u3"></i></div>
+          <div class="eco-frost">
+            <div class="eco-name">
+              <span class="eco-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></span>
+              Fylos for Pros
+            </div>
+            <span class="badge badge-warm">Coming soon</span>
+          </div>
+        </div>
+        <div class="eco-tile reveal">
+          <div class="eco-under" aria-hidden="true"><i class="u1"></i><i class="u2"></i><i class="u3"></i></div>
+          <div class="eco-frost">
+            <div class="eco-name">
+              <span class="eco-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5s-6.5-5.8-6.5-10.5a6.5 6.5 0 1 1 13 0c0 4.7-6.5 10.5-6.5 10.5Z"/><circle cx="12" cy="11" r="2.2"/></svg></span>
+              Neighborhood network
+            </div>
+            <span class="badge badge-warm">Coming soon</span>
+          </div>
+        </div>
+        <div class="eco-tile reveal">
+          <div class="eco-under" aria-hidden="true"><i class="u1"></i><i class="u2"></i><i class="u3"></i></div>
+          <div class="eco-frost">
+            <div class="eco-name">
+              <span class="eco-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18"/><circle cx="16.8" cy="14.8" r="1.3"/></svg></span>
+              Wallet &amp; rewards
+            </div>
+            <span class="badge badge-warm">Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EMOTIONAL BEAT: THE CLEAR PANE ================= -->
+  <section class="sheet sheet--clear" id="friend" aria-labelledby="friend-h">
+    <div class="friend-blob" aria-hidden="true"></div>
+    <div class="friend-inner">
+      <p class="eyebrow reveal">The name</p>
+      <p class="friend-line reveal" id="friend-h">Fylos &mdash; <em>&#966;&#943;&#955;&#959;&#962;</em> &mdash; is Greek for friend.</p>
+      <p class="friend-sub reveal">That is what this is: a friend who remembers, so you can be there.</p>
+      <p class="friend-note reveal">the one pane without frost &mdash; some things should stay clear</p>
+    </div>
+  </section>
+
+  <!-- ================= JOIN ================= -->
+  <section class="sheet glass-sheet" id="join" aria-labelledby="join-h">
+    <div class="sheet-inner join-inner">
+      <p class="eyebrow reveal">Early access</p>
+      <h2 id="join-h" class="reveal">Launching first in Switzerland. <span>Be first in line.</span></h2>
+      <div class="join-zone reveal">
+        <form class="join-form" novalidate aria-describedby="join-hint">
+          <label class="sr-only" for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.ch" required>
+          <button type="submit" class="btn-primary sweep">Join the waitlist</button>
+        </form>
+        <p class="join-hint" id="join-hint" aria-live="polite" hidden>One real email address and you&rsquo;re in.</p>
+        <div class="join-done" role="status" hidden>
+          <span class="done-dot">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="4.5 12.5 10 18 19.5 6.5"/></svg>
+          </span>
+          <p>You&rsquo;re on the list. We&rsquo;ll write soon.</p>
+          <span>Quietly, like everything else here.</span>
+        </div>
+      </div>
+      <p class="join-small reveal">iOS first &middot; Switzerland 2026 &middot; no noise before launch</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="site-footer">
+  <a class="wordmark" href="#top" aria-label="Fylos — back to top">FYLOS<span class="dot" aria-hidden="true"></span></a>
+  <p class="foot-tag">Fylos means friend.</p>
+  <p class="foot-meta">iOS first &middot; Switzerland 2026</p>
+  <nav class="foot-links" aria-label="Footer">
+    <a href="#top">Privacy</a>
+    <a href="#top">Terms</a>
+    <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+  </nav>
+  <p class="foot-copy">&copy; 2026 Fylos</p>
+</footer>
+
+<!-- ================= LAB SWITCHER ================= -->
+<nav class="lab" aria-label="Lab variations">
+  <a class="lab-btn" href="01-quiet-flagship.html" aria-label="Previous variation: Quiet Flagship">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 5 8 12 14.5 19"/></svg>
+  </a>
+  <a class="lab-mid" href="index.html">02/10 &middot; Liquid Glass</a>
+  <a class="lab-btn" href="03-one-day.html" aria-label="Next variation: One Day">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9.5 5 16 12 9.5 19"/></svg>
+  </a>
+</nav>
+
+<script>
+(function(){
+'use strict';
+var d = document, w = window;
+var REDUCED = w.matchMedia && w.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Scroll reveals: frost-to-focus ---------- */
+var reveals = [].slice.call(d.querySelectorAll('.reveal'));
+
+/* Staggered children */
+[].slice.call(d.querySelectorAll('[data-stagger]')).forEach(function(group){
+  var i = 0;
+  [].slice.call(group.children).forEach(function(child){
+    if (child.classList.contains('reveal')) {
+      child.style.transitionDelay = (i * 80) + 'ms';
+      i++;
+    }
+  });
+});
+
+if (REDUCED || !('IntersectionObserver' in w)) {
+  reveals.forEach(function(el){
+    el.classList.add('in', 'settled');
+    el.style.transitionDelay = '';
+  });
+} else {
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+  reveals.forEach(function(el){ io.observe(el); });
+
+  /* Once the blur transition finishes, drop the filter entirely so
+     backdrop-filter glass inside revealed elements renders cleanly. */
+  d.addEventListener('transitionend', function(e){
+    var t = e.target;
+    if (t && t.classList && t.classList.contains('reveal') && e.propertyName === 'filter') {
+      t.classList.add('settled');
+      t.style.transitionDelay = '';
+    }
+  }, true);
+}
+
+/* ---------- Hero parallax + scroll drift (rAF-throttled) ---------- */
+var hero = d.getElementById('hero');
+var frags = [].slice.call(d.querySelectorAll('.frag'));
+var px = 0, py = 0, drift = 0;
+var fragPending = false;
+
+function renderFrags(){
+  fragPending = false;
+  for (var i = 0; i < frags.length; i++) {
+    var f = frags[i];
+    var depth = parseFloat(f.getAttribute('data-depth')) || 0.5;
+    var dx = parseFloat(f.getAttribute('data-dx')) || 0;
+    var dy = parseFloat(f.getAttribute('data-dy')) || 0;
+    var x = (-px * 14 * depth) + (drift * dx);
+    var y = (-py * 14 * depth) + (drift * dy);
+    f.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+  }
+}
+function queueFrags(){
+  if (!fragPending) {
+    fragPending = true;
+    w.requestAnimationFrame(renderFrags);
+  }
+}
+
+var finePointer = w.matchMedia && w.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1024px)');
+if (hero && frags.length && !REDUCED && finePointer && finePointer.matches) {
+  hero.addEventListener('pointermove', function(e){
+    var r = hero.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return;
+    px = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2)));
+    py = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2)));
+    queueFrags();
+  });
+  hero.addEventListener('pointerleave', function(){
+    px = 0; py = 0;
+    queueFrags();
+  });
+}
+
+/* ---------- Single rAF-throttled scroll handler ---------- */
+var header = d.getElementById('siteHeader');
+var how = d.getElementById('how');
+var ticking = false;
+
+if (how && !REDUCED) how.style.setProperty('--draw', '0');
+
+function onScrollFrame(){
+  ticking = false;
+  var y = w.scrollY || w.pageYOffset || 0;
+
+  if (header) header.classList.toggle('scrolled', y > 40);
+
+  if (hero && !REDUCED && frags.length) {
+    var hr = hero.getBoundingClientRect();
+    if (hr.height > 0) {
+      var p = Math.max(0, Math.min(1, -hr.top / (hr.height * 0.9)));
+      var next = p * 44;
+      if (Math.abs(next - drift) > 0.1) {
+        drift = next;
+        queueFrags();
+      }
+    }
+  }
+
+  if (how && !REDUCED) {
+    var rr = how.getBoundingClientRect();
+    var vh = w.innerHeight || d.documentElement.clientHeight;
+    if (rr.height > 0) {
+      var prog = (vh * 0.85 - rr.top) / (rr.height * 0.85);
+      prog = Math.max(0, Math.min(1, prog));
+      how.style.setProperty('--draw', prog.toFixed(3));
+    }
+  }
+}
+function onScroll(){
+  if (!ticking) {
+    ticking = true;
+    w.requestAnimationFrame(onScrollFrame);
+  }
+}
+w.addEventListener('scroll', onScroll, { passive: true });
+w.addEventListener('resize', onScroll, { passive: true });
+onScroll();
+
+/* ---------- Mobile menu ---------- */
+var burger = d.querySelector('.nav-burger');
+var menu = d.getElementById('mobilemenu');
+if (burger && menu) {
+  burger.addEventListener('click', function(){
+    var open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  [].slice.call(menu.querySelectorAll('a')).forEach(function(link){
+    link.addEventListener('click', function(){
+      menu.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
+      burger.setAttribute('aria-label', 'Open menu');
+    });
+  });
+}
+
+/* ---------- Waitlist morph ---------- */
+var form = d.querySelector('.join-form');
+if (form) {
+  var input = form.querySelector('input[type="email"]');
+  var done = d.querySelector('.join-done');
+  var hint = d.getElementById('join-hint');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var v = input ? input.value.trim() : '';
+    var ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+    if (!ok) {
+      if (hint) hint.hidden = false;
+      if (input) {
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+      }
+      return;
+    }
+    if (hint) hint.hidden = true;
+    if (input) input.removeAttribute('aria-invalid');
+    form.classList.add('out');
+    w.setTimeout(function(){
+      form.hidden = true;
+      if (done) {
+        done.hidden = false;
+        w.requestAnimationFrame(function(){
+          w.requestAnimationFrame(function(){ done.classList.add('in'); });
+        });
+      }
+    }, REDUCED ? 0 : 260);
+  });
+  if (input) {
+    input.addEventListener('input', function(){
+      if (hint && !hint.hidden) hint.hidden = true;
+      input.removeAttribute('aria-invalid');
+    });
+  }
+}
+})();
+</script>
+</body>
+</html>

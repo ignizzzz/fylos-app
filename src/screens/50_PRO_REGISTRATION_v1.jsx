@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   ChevronLeft, ChevronRight, Camera, Plus, Check, X, Footprints, Home, Star,
-  BadgeCheck, ShieldCheck, CreditCard, ScanFace, Banknote, Repeat, Lock,
+  BadgeCheck, ShieldCheck, CreditCard, ScanFace, Banknote, Repeat, Lock, Loader2,
 } from 'lucide-react';
 
 /**
@@ -26,11 +26,11 @@ const SHADOW = '0 1px 2px rgba(60,30,15,0.03), 0 6px 16px rgba(60,30,15,0.05)';
 const USER_AVATAR = 'https://i.pravatar.cc/150?u=alex_fylos';
 
 const ROLES = [
-  { id: 'walking', label: 'Dog walking', sub: 'Earn CHF 15–35 per walk', icon: Footprints },
-  { id: 'sitting', label: 'Pet sitting', sub: 'Earn CHF 25–60 per stay', icon: Home },
+  { id: 'walking', label: 'Dog walking', sub: 'Earn CHF 15-35 per walk', icon: Footprints },
+  { id: 'sitting', label: 'Pet sitting', sub: 'Earn CHF 25-60 per stay', icon: Home },
 ];
 const COMFORT = ['Small dogs', 'Medium dogs', 'Large dogs', 'Puppies', 'Reactive dogs', 'Cats'];
-const EXP = ['< 1 yr', '1–3 yrs', '3–5 yrs', '5+ yrs'];
+const EXP = ['< 1 yr', '1-3 yrs', '3-5 yrs', '5+ yrs'];
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const DAYPARTS = ['Morning', 'Afternoon', 'Evening'];
 const FEE = 0.15; // fylos commission — pros keep 85%
@@ -82,9 +82,11 @@ const Toggle = ({ value, onChange }) => (
   </div>
 );
 
-const ProRegistration = ({ embedded = false, onExit }) => {
+const ProRegistration = ({ embedded = false, onExit, onEnterPro }) => {
   const [phase, setPhase] = useState('welcome'); // 'welcome' | 0..N | 'done'
   const [sheet, setSheet] = useState(null);
+  // Verification tile currently running its mock check ('idDone' | 'selfieDone').
+  const [checking, setChecking] = useState(null);
   const [d, setD] = useState({
     roles: ['walking'], photo: true, name: 'Alex Mueller', area: 'Zürich · Seefeld', bio: '',
     exp: 1, ownDog: true, comfort: ['Small dogs', 'Medium dogs'],
@@ -98,11 +100,33 @@ const ProRegistration = ({ embedded = false, onExit }) => {
   const toggleIn = (k, v) => setD((s) => ({ ...s, [k]: s[k].includes(v) ? s[k].filter((x) => x !== v) : [...s[k], v] }));
   const setSvc = (role, i, field, v) => setD((s) => ({ ...s, services: { ...s.services, [role]: s.services[role].map((x, j) => j === i ? { ...x, [field]: v } : x) } }));
   const exit = () => { if (onExit) return onExit(); try { window.sessionStorage.setItem('fylos.warm', '1'); } catch (e) {} if (window.history.length > 1) window.history.back(); else window.location.href = '/'; };
+  // Submitting marks the account as a registered pro; entering the dashboard
+  // flips the persistent pro-mode flag the app shell reads on mount.
+  const enterPro = () => {
+    try { window.localStorage.setItem('fylos.proMode', '1'); } catch (e) {}
+    if (onEnterPro) return onEnterPro();
+    try { window.sessionStorage.setItem('fylos.warm', '1'); } catch (e) {}
+    window.location.href = '/';
+  };
 
   const cfg = typeof phase === 'number' ? STEPS[phase] : null;
   const TOTAL = STEPS.length;
   const back = () => { if (phase === 0) return setPhase('welcome'); setPhase((p) => p - 1); };
-  const next = () => { if (phase === TOTAL - 1) return setPhase('done'); setPhase((p) => p + 1); };
+  const next = () => {
+    if (phase === TOTAL - 1) {
+      // Persist the drafted provider profile so the pro dashboard can
+      // hydrate role, area, services and availability from real answers.
+      try {
+        window.localStorage.setItem('fylos.pro.registered', '1');
+        window.localStorage.setItem('fylos.pro.profile', JSON.stringify({
+          roles: d.roles, name: d.name, area: d.area, bio: d.bio,
+          services: d.services, sched: d.sched, gps: d.gps, photos: d.photos, policy: d.policy,
+        }));
+      } catch (e) {}
+      return setPhase('done');
+    }
+    setPhase((p) => p + 1);
+  };
   const valid = !cfg ? true :
     cfg.id === 'role' ? d.roles.length > 0 :
     cfg.id === 'about' ? !!(d.name.trim() && d.area.trim() && d.bio.trim().length >= 20) :
@@ -131,8 +155,13 @@ const ProRegistration = ({ embedded = false, onExit }) => {
     `}</style>
   );
 
+  // Phone-sized viewports (real device / Capacitor) get the full-bleed
+  // variant on the standalone route too — no drawn mockup chrome.
+  const isPhoneViewport = typeof window !== 'undefined' && window.matchMedia('(max-width: 520px)').matches;
   const frame = (child) => embedded ? (
     <div className="absolute inset-0 z-[150]" style={{ background: CREAM, fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>{child}</div>
+  ) : isPhoneViewport ? (
+    <div className="fixed inset-0" style={{ background: CREAM, fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>{child}</div>
   ) : (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#EDE8E2', padding: 20, fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}>
       <div className="relative" style={{ width: 390, height: 844, borderRadius: 50, border: '8px solid #000', overflow: 'hidden', backgroundColor: CREAM }}>
@@ -158,7 +187,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               <span className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full flex items-center justify-center border-[3px]" style={{ background: CORAL, borderColor: CREAM }}><Banknote size={16} color="#fff" strokeWidth={2.2} /></span>
             </div>
             <h1 className="text-[27px] font-extrabold tracking-[-0.025em] leading-[1.12] mt-6" style={{ color: INK }}>Earn with fylos</h1>
-            <p className="text-[14px] leading-[1.5] mt-2.5 max-w-[280px]" style={{ color: MUTED }}>Walk or sit for pets near you. Most pros in Zürich earn <span style={{ color: INK, fontWeight: 700 }}>CHF 400–900 a month</span> on their own schedule.</p>
+            <p className="text-[14px] leading-[1.5] mt-2.5 max-w-[280px]" style={{ color: MUTED }}>Walk or sit for pets near you, whenever it suits you. <span style={{ color: INK, fontWeight: 700 }}>Your prices, your hours</span>, your neighbourhood.</p>
           </div>
           <div className="mt-8 flex flex-col gap-2.5">
             {[[Banknote, 'You set the prices', 'Keep 85% of every booking'], [Repeat, 'You choose the hours', 'Work as little or as much as you like'], [ShieldCheck, 'Insured through fylos', 'Every booking is covered']].map(([Icon, t, s], i) => (
@@ -168,7 +197,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               </div>
             ))}
           </div>
-          <p className="text-[11.5px] text-center mt-5" style={{ color: TERT }}>Takes about 3 minutes. You go live after a quick review.</p>
+          <p className="text-[11.5px] text-center mt-5" style={{ color: TERT }}>Takes about 5 minutes. You go live after a quick review.</p>
         </div>
         <div className="px-6 pt-3 shrink-0" style={{ paddingBottom: embedded ? 100 : 34, background: `linear-gradient(to top, ${CREAM} 72%, rgba(247,245,242,0))` }}>
           <button onClick={() => setPhase(0)} className="w-full py-4 rounded-[18px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}><span className="text-[15.5px] font-bold text-white">Get started</span></button>
@@ -193,7 +222,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
           <span className="absolute -bottom-1 -right-1 w-10 h-10 rounded-full flex items-center justify-center border-[3px]" style={{ background: GREEN, borderColor: CREAM }}><Check size={20} color="#fff" strokeWidth={3} /></span>
         </div>
         <h1 className="pr-rise text-[26px] font-extrabold tracking-[-0.02em]" style={{ color: INK }}>Application sent</h1>
-        <p className="pr-rise text-[13.5px] mt-2 leading-[1.5] max-w-[280px]" style={{ color: MUTED }}>We review every pro by hand. You’ll hear from us within 48 hours.</p>
+        <p className="pr-rise text-[13.5px] mt-2 leading-[1.5] max-w-[280px]" style={{ color: MUTED }}>We review every pro by hand, usually within 48 hours. Meanwhile, your dashboard is ready to explore.</p>
         <div className="pr-rise flex items-start justify-between mt-7 w-full px-3">
           {[{ l: 'Application sent', done: true }, { l: 'Review & checks', now: true }, { l: 'You go live' }].map((s, i) => (
             <React.Fragment key={i}>
@@ -207,7 +236,8 @@ const ProRegistration = ({ embedded = false, onExit }) => {
             </React.Fragment>
           ))}
         </div>
-        <button onClick={exit} className="pr-rise w-full mt-8 py-4 rounded-[18px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}><span className="text-[15px] font-bold text-white">Done</span></button>
+        <button onClick={enterPro} className="pr-rise w-full mt-8 py-4 rounded-[18px] active:scale-[0.98] transition-transform" style={{ background: CORAL, boxShadow: '0 8px 22px rgba(232,93,42,0.3)' }}><span className="text-[15px] font-bold text-white">See your pro dashboard</span></button>
+        <button onClick={exit} className="pr-rise mt-3 py-2 px-6 active:opacity-60"><span className="text-[13.5px] font-bold" style={{ color: MUTED }}>Later</span></button>
       </div>
     )}</>);
   }
@@ -246,7 +276,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                   </span>
                   <span className="absolute bottom-0 right-0 w-8 h-8 rounded-full flex items-center justify-center border-[3px]" style={{ background: CORAL, borderColor: CREAM }}><Plus size={15} color="#fff" strokeWidth={2.8} /></span>
                 </button>
-                <p className="text-[11px] mt-2.5" style={{ color: TERT }}>A clear, friendly photo doubles your bookings.</p>
+                <p className="text-[11px] mt-2.5" style={{ color: TERT }}>A clear, friendly photo builds trust with owners.</p>
               </div>
               <div className="mt-6"><Label>Name</Label><RowInput value={d.name} onChange={(v) => set('name', v)} placeholder="Your full name" /></div>
               <div className="mt-5"><Label>Area</Label><RowInput value={d.area} onChange={(v) => set('area', v)} placeholder="e.g. Zürich · Seefeld" /></div>
@@ -355,7 +385,7 @@ const ProRegistration = ({ embedded = false, onExit }) => {
               <div>
                 <Label>Free cancellation for owners</Label>
                 <div className="flex gap-2">{['24 h', '12 h', 'None'].map((c) => { const on = d.policy === c; return <button key={c} onClick={() => set('policy', c)} className="flex-1 h-[44px] rounded-[12px] text-[13px] font-bold active:scale-[0.97] transition-all" style={{ background: on ? '#FFF3EC' : '#fff', color: on ? CORAL : MUTED, boxShadow: on ? `inset 0 0 0 1.6px ${CORAL}` : SHADOW }}>{c === 'None' ? 'None' : `Up to ${c}`}</button>; })}</div>
-                <p className="text-[11.5px] mt-2 ml-1" style={{ color: TERT }}>A flexible policy ranks you higher in search.</p>
+                <p className="text-[11.5px] mt-2 ml-1" style={{ color: TERT }}>Flexible policies win more bookings.</p>
               </div>
             </div>
           )}
@@ -364,10 +394,11 @@ const ProRegistration = ({ embedded = false, onExit }) => {
             <div className="mt-7 flex flex-col gap-3">
               {[['idDone', CreditCard, 'Government ID', 'Passport or Swiss ID. Checked once, stored encrypted'], ['selfieDone', ScanFace, 'Selfie check', 'Quick match against your ID']].map(([k, Icon, t, s]) => {
                 const done = d[k];
+                const busy = checking === k;
                 return (
-                  <button key={k} onClick={() => set(k, !done)} className="flex items-center gap-3.5 px-4 py-4 rounded-[18px] text-left transition-all active:scale-[0.98]" style={{ background: done ? '#EAF7EF' : '#fff', boxShadow: done ? 'inset 0 0 0 1.5px #BBDFC8' : SHADOW }}>
-                    <span className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: done ? '#fff' : TINT }}><Icon size={19} color={done ? GREEN : CORAL} strokeWidth={2} /></span>
-                    <div className="flex-1"><div className="text-[14.5px] font-bold" style={{ color: INK }}>{t}</div><div className="text-[11.5px] mt-0.5" style={{ color: TERT }}>{s}</div></div>
+                  <button key={k} disabled={done || busy} onClick={() => { setChecking(k); setTimeout(() => { set(k, true); setChecking(null); }, 1100); }} className="flex items-center gap-3.5 px-4 py-4 rounded-[18px] text-left transition-all active:scale-[0.98]" style={{ background: done ? '#EAF7EF' : '#fff', boxShadow: done ? 'inset 0 0 0 1.5px #BBDFC8' : SHADOW }}>
+                    <span className="w-11 h-11 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: done ? '#fff' : TINT }}>{busy ? <Loader2 size={19} color={CORAL} strokeWidth={2} className="animate-spin" /> : <Icon size={19} color={done ? GREEN : CORAL} strokeWidth={2} />}</span>
+                    <div className="flex-1"><div className="text-[14.5px] font-bold" style={{ color: INK }}>{t}</div><div className="text-[11.5px] mt-0.5" style={{ color: busy ? CORAL : TERT }}>{busy ? 'Checking' : done ? 'Done' : s}</div></div>
                     <span className="w-[22px] h-[22px] rounded-full flex items-center justify-center shrink-0" style={{ background: done ? GREEN : 'transparent', border: done ? 'none' : '1.6px solid #DDD4C9' }}>{done && <Check size={13} color="#fff" strokeWidth={3} />}</span>
                   </button>
                 );
@@ -379,6 +410,12 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                 <BadgeCheck size={14} color={CORAL} strokeWidth={2.2} />
                 <span className="text-[11.5px] font-medium" style={{ color: TERT }}>Completing this earns the “Verified by fylos” badge.</span>
               </div>
+              {d.roles.includes('sitting') && (
+                <div className="flex items-center gap-2 ml-1">
+                  <ShieldCheck size={14} color={TERT} strokeWidth={2.2} />
+                  <span className="text-[11.5px] font-medium" style={{ color: TERT }}>For sitting we may also ask for a criminal record extract.</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -409,8 +446,18 @@ const ProRegistration = ({ embedded = false, onExit }) => {
                     <span className="text-[11px]" style={{ color: TERT }}>No reviews yet · {d.area.split('·')[1]?.trim() || d.area}</span>
                   </div>
                   <div className="flex items-center justify-between mt-auto pt-2" style={{ borderTop: '1px solid ' + LINE }}>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold" style={{ color: GREEN }}><span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} /> Available today</span>
-                    <span className="text-[12.5px] font-extrabold" style={{ color: INK }}><span className="text-[10.5px] font-semibold" style={{ color: TERT }}>from </span>CHF {isFinite(minPrice) ? minPrice : '—'}</span>
+                    {/* Derived from the availability the user just set, not hardcoded */}
+                    {(() => {
+                      const today = (new Date().getDay() + 6) % 7;
+                      const nextIdx = [...Array(7)].map((_, i) => (today + i) % 7).find((di) => d.sched[di].some(Boolean));
+                      const label = nextIdx === today ? 'Available today' : nextIdx != null ? `Available ${WEEKDAYS[nextIdx]}` : 'Availability not set';
+                      return <span className="inline-flex items-center gap-1 text-[11px] font-bold" style={{ color: nextIdx != null ? GREEN : TERT }}>{nextIdx != null && <span className="w-1.5 h-1.5 rounded-full" style={{ background: GREEN }} />} {label}</span>;
+                    })()}
+                    {isFinite(minPrice) ? (
+                      <span className="text-[12.5px] font-extrabold" style={{ color: INK }}><span className="text-[10.5px] font-semibold" style={{ color: TERT }}>from </span>CHF {minPrice}</span>
+                    ) : (
+                      <span className="text-[10.5px] font-semibold" style={{ color: TERT }}>Set a price</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -456,6 +503,9 @@ const ProRegistration = ({ embedded = false, onExit }) => {
 
       {/* footer CTA */}
       <div className="absolute bottom-0 left-0 right-0 z-30 px-6 pointer-events-none" style={{ background: 'linear-gradient(to top, #F7F5F2 0%, #F7F5F2 55%, rgba(247,245,242,0) 100%)', paddingTop: 28, paddingBottom: embedded ? 100 : 32 }}>
+        {phase === TOTAL - 1 && (
+          <p className="text-center text-[10.5px] leading-[1.4] mb-2.5" style={{ color: TERT }}>By submitting you agree to the fylos Pro terms and payout policy.</p>
+        )}
         <button onClick={() => valid && next()} disabled={!valid} className="w-full py-4 rounded-[18px] transition-all active:scale-[0.98] pointer-events-auto" style={{ background: valid ? CORAL : '#EAE3DB', boxShadow: valid ? '0 8px 22px rgba(232,93,42,0.28)' : 'none' }}>
           <span className="text-[15.5px] font-bold" style={{ color: valid ? '#fff' : TERT }}>{phase === TOTAL - 1 ? 'Submit for review' : 'Continue'}</span>
         </button>

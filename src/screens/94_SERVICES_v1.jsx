@@ -427,7 +427,7 @@ const Wrap = ({ embedded, children }) => {
   );
 };
 
-const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBookingId = null, onClearFocus, onSubScreenChange }) => {
+const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBookingId = null, onClearFocus, onSubScreenChange, onBecomePro }) => {
   const [view, setView] = useState(focusedBookingId || initialSegment === 'bookings' ? { kind: 'bookings' } : { kind: 'home' });
   const [sort, setSort] = useState('Recommended');
   const [sortOpen, setSortOpen] = useState(false);
@@ -1338,12 +1338,16 @@ const ServicesV2 = ({ embedded = false, initialSegment = 'discover', focusedBook
           <button onClick={() => setInviteOpen(true)} className="shrink-0 text-[12.5px] font-bold active:opacity-70" style={{ color: CORAL }}>Invite</button>
         </div>
 
-        {/* Become a pro — quiet entry */}
-        <button onClick={() => { try { window.sessionStorage.setItem('fylos.warm', '1'); window.sessionStorage.setItem('fylos.tab', 'services'); } catch (e) {} window.location.href = '/pro-registration'; }} className="w-full rounded-[16px] mt-2.5 px-3.5 py-2.5 flex items-center gap-3 bg-white active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
-          <Footprints size={16} color={CORAL} strokeWidth={2} className="shrink-0" />
-          <span className="flex-1 text-[12.5px] font-semibold truncate text-left" style={{ color: INK }}>Become a walker or sitter and earn up to CHF 35/h</span>
-          <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
-        </button>
+        {/* Become a pro — quiet entry. Opens the shell's onboarding overlay
+            when embedded; standalone falls back to the route. Hidden once
+            the user is already a pro. */}
+        {(() => { try { return window.localStorage.getItem('fylos.pro.registered') === '1'; } catch (e) { return false; } })() ? null : (
+          <button onClick={() => { if (onBecomePro) return onBecomePro(); try { window.sessionStorage.setItem('fylos.warm', '1'); window.sessionStorage.setItem('fylos.tab', 'services'); } catch (e) {} window.location.href = '/pro-registration'; }} className="w-full rounded-[16px] mt-2.5 px-3.5 py-2.5 flex items-center gap-3 bg-white active:scale-[0.99] transition-transform" style={{ boxShadow: SHADOW }}>
+            <Footprints size={16} color={CORAL} strokeWidth={2} className="shrink-0" />
+            <span className="flex-1 text-[12.5px] font-semibold truncate text-left" style={{ color: INK }}>Become a walker or sitter. Your prices, your hours</span>
+            <ChevronRight size={14} color="#CFC7BD" strokeWidth={2.2} className="shrink-0" />
+          </button>
+        )}
       </div>
 
       {/* On the way — bottom sheet with circular service icons */}

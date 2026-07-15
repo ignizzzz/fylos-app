@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FYLOS — Design DNA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    /* Neutrals — warm cream system */
+    --bg: #F7F5F2;
+    --surface: #FFFFFF;
+    --chip: #F3EFEB;
+    --hair: #EDE8E2;
+    --paper: #F5EFE8;
+    /* Ink */
+    --ink: #2B2420;
+    --ink2: #6E6058;
+    --ink3: #8E7A6B;
+    /* Coral (brand accent) */
+    --coral: #E85D2A;
+    --coral-soft: #FF7240;
+    --coral-ink: #9A5A3E;
+    /* Peach chip (list rows / role pills) */
+    --peach: #FFEDE3;
+    --peach-ink: #B25030;
+    /* Semantic accents (from cards/badges) */
+    --gold: #B0792E;   --gold-bg: #FFF6E8;
+    --slate: #5F7387;  --slate-bg: #EEF2F6;
+    --green: #4D8A62;  --green-bg: #EDF9F1;
+    --new-bg: #FFF1EC;
+    --avail-green: #34C759;
+    --avail-orange: #FF9500;
+    --avail-amber: #FFB020;
+    /* Shape & elevation */
+    --r-lg: 16px;      /* cards, CTAs, avatars */
+    --r-md: 12px;      /* inputs, inner photos */
+    --r-pill: 999px;
+    --shadow-warm: 0 4px 14px rgba(0,0,0,0.04);
+    --shadow-coral: 0 4px 14px rgba(232,93,42,0.25);
+    --shadow-card: 0 1px 2px rgba(0,0,0,0.025);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.5;
+    padding: 40px 24px 80px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+
+  /* Masthead */
+  .masthead { margin-bottom: 44px; }
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--coral); font-weight: 500; margin-bottom: 14px;
+  }
+  .masthead h1 {
+    font-family: 'Inter Tight', sans-serif; font-weight: 800;
+    font-size: 46px; letter-spacing: -0.03em; line-height: 1.02;
+  }
+  .masthead h1 em {
+    font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400;
+    color: var(--coral-ink);
+  }
+  .masthead p {
+    margin-top: 14px; max-width: 620px; color: var(--ink2); font-size: 15px;
+  }
+  .note {
+    margin-top: 18px; padding: 14px 16px; background: var(--surface);
+    border: 1px solid var(--hair); border-radius: var(--r-md);
+    font-size: 13.5px; color: var(--ink2); max-width: 720px;
+  }
+  .note b { color: var(--ink); }
+
+  /* Section scaffold */
+  section { margin-top: 52px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  .sec-head h2 {
+    font-family: 'Inter Tight', sans-serif; font-weight: 700;
+    font-size: 22px; letter-spacing: -0.02em;
+  }
+  .sec-head span {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--ink3); letter-spacing: 0.04em;
+  }
+
+  /* Color grid */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap: 12px; }
+  .sw {
+    background: var(--surface); border: 1px solid var(--hair);
+    border-radius: var(--r-md); overflow: hidden;
+  }
+  .sw .chip { height: 74px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+  .sw .meta { padding: 10px 12px; }
+  .sw .meta .name { font-size: 12.5px; font-weight: 600; }
+  .sw .meta .hex { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 2px; text-transform: uppercase; }
+
+  /* Type specimens */
+  .type-row {
+    background: var(--surface); border: 1px solid var(--hair);
+    border-radius: var(--r-md); padding: 20px 22px; margin-bottom: 12px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .type-row .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); white-space: nowrap; }
+  .t-display { font-family: 'Inter Tight'; font-weight: 800; font-size: 30px; letter-spacing: -0.03em; }
+  .t-title { font-family: 'Inter'; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; }
+  .t-body { font-family: 'Inter'; font-weight: 400; font-size: 16px; color: var(--ink2); }
+  .t-editorial { font-family: 'Instrument Serif'; font-style: italic; font-size: 30px; color: var(--coral-ink); }
+  .t-hand { font-family: 'Caveat'; font-weight: 600; font-size: 30px; color: var(--ink); }
+  .t-mono { font-family: 'JetBrains Mono'; font-size: 15px; color: var(--ink2); }
+
+  /* Icon grid */
+  .icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap: 10px; }
+  .ic {
+    background: var(--surface); border: 1px solid var(--hair); border-radius: var(--r-md);
+    padding: 14px 8px 10px; text-align: center;
+  }
+  .ic .glyph {
+    width: 40px; height: 40px; margin: 0 auto 8px; border-radius: var(--r-md);
+    background: var(--peach); display: flex; align-items: center; justify-content: center;
+  }
+  .ic .glyph svg { width: 20px; height: 20px; color: var(--coral); }
+  .ic .n { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--ink3); word-break: break-word; }
+
+  /* Component gallery */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 16px; }
+  .demo {
+    background: var(--surface); border: 1px solid var(--hair); border-radius: var(--r-lg);
+    padding: 20px; box-shadow: var(--shadow-card);
+  }
+  .demo > .cap { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); letter-spacing: 0.04em; margin-bottom: 14px; text-transform: uppercase; }
+
+  /* Primary CTA */
+  .cta {
+    width: 100%; height: 52px; border: none; border-radius: var(--r-lg);
+    font-family: 'Inter'; font-weight: 600; font-size: 15px; color: #fff; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(180deg, var(--coral-soft) 0%, var(--coral) 100%);
+    box-shadow: var(--shadow-coral);
+  }
+  .cta svg { width: 17px; height: 17px; }
+  .cta.secondary { background: var(--surface); color: #111; border: 1px solid rgba(0,0,0,0.06); box-shadow: var(--shadow-warm); }
+  .cta.ghost { background: #F2F2F7; color: #111; box-shadow: none; }
+  .cta.disabled { background: var(--hair); color: #A09A94; box-shadow: none; cursor: not-allowed; }
+  .stack > * + * { margin-top: 10px; }
+
+  /* List row — peach chip + coral icon (canonical settings row) */
+  .row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; }
+  .row + .row { border-top: 1px solid var(--hair); }
+  .row .lead { width: 34px; height: 34px; border-radius: 10px; background: var(--peach); display: flex; align-items: center; justify-content: center; }
+  .row .lead svg { width: 17px; height: 17px; color: var(--coral); }
+  .row .txt { flex: 1; min-width: 0; }
+  .row .txt .h { font-size: 14.5px; font-weight: 600; }
+  .row .txt .s { font-size: 12px; color: var(--ink3); margin-top: 1px; }
+  .row .chev svg { width: 16px; height: 16px; color: var(--ink3); }
+
+  /* Provider list row */
+  .prow { display: flex; align-items: flex-start; gap: 12px; padding: 4px 0; }
+  .prow img { width: 56px; height: 56px; border-radius: var(--r-lg); object-fit: cover; background: #F2F2F7; }
+  .prow .body { flex: 1; }
+  .prow .nm { font-size: 14.5px; font-weight: 600; }
+  .prow .rt { display: flex; align-items: center; gap: 4px; font-size: 11.5px; margin-top: 4px; }
+  .prow .rt svg { width: 11px; height: 11px; color: var(--coral); fill: var(--coral); }
+  .prow .rt b { font-weight: 600; }
+  .prow .rt .muted { color: var(--ink3); }
+  .prow .price { text-align: right; }
+  .prow .price b { font-size: 14px; font-weight: 700; }
+  .prow .price s { display: block; font-size: 10px; color: #8E8E93; text-decoration: none; margin-top: 2px; }
+
+  /* Chips + badges */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 10px; border-radius: var(--r-pill); font-size: 11px; font-weight: 600; }
+  .pill svg { width: 11px; height: 11px; }
+  .pill.role { background: var(--peach); color: var(--peach-ink); }
+  .pill.gold { background: var(--gold-bg); color: var(--gold); }
+  .pill.slate { background: var(--slate-bg); color: var(--slate); }
+  .pill.green { background: var(--green-bg); color: var(--green); }
+  .pill.new { background: var(--new-bg); color: var(--coral); }
+  .dots { display: flex; flex-direction: column; gap: 8px; }
+  .dotline { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink2); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  /* Section header demo */
+  .sh { display: flex; justify-content: space-between; align-items: center; }
+  .sh h4 { font-size: 15px; font-weight: 600; }
+  .sh a { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; font-weight: 500; color: var(--coral); text-decoration: none; }
+  .sh a svg { width: 12px; height: 12px; }
+
+  /* Rules list */
+  .rules { background: var(--surface); border: 1px solid var(--hair); border-radius: var(--r-md); padding: 8px 4px; }
+  .rule { display: flex; gap: 12px; padding: 12px 16px; align-items: flex-start; }
+  .rule + .rule { border-top: 1px solid var(--hair); }
+  .rule .k { width: 22px; height: 22px; border-radius: 7px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--peach); }
+  .rule .k svg { width: 13px; height: 13px; color: var(--coral); }
+  .rule p { font-size: 13.5px; color: var(--ink2); }
+  .rule p b { color: var(--ink); }
+  .no { background: #FBEAE4 !important; }
+  .no svg { color: #C0432A !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="kicker">FYLOS · Design DNA · reference for Claude Design</div>
+    <h1>The warm, <em>editorial</em> pet‑care system.</h1>
+    <p>Everything below is extracted straight from the app's code — the exact palette, type, Lucide icon set, and signature components. Hand this file to Claude Design as the visual foundation, then ask it to design new surfaces (e.g. the website) in this language.</p>
+    <div class="note"><b>How to use:</b> open this file to see the system rendered, then in Claude Design attach or paste it and say — <i>"Design the FYLOS marketing website using this exact design DNA: this palette, these fonts, this coral accent, and this component language."</i></div>
+  </header>
+
+  <!-- COLORS -->
+  <section>
+    <div class="sec-head"><h2>Palette</h2><span>warm cream · ink · coral</span></div>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#F7F5F2"></div><div class="meta"><div class="name">Background</div><div class="hex">#F7F5F2</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FFFFFF"></div><div class="meta"><div class="name">Surface</div><div class="hex">#FFFFFF</div></div></div>
+      <div class="sw"><div class="chip" style="background:#F3EFEB"></div><div class="meta"><div class="name">Chip</div><div class="hex">#F3EFEB</div></div></div>
+      <div class="sw"><div class="chip" style="background:#EDE8E2"></div><div class="meta"><div class="name">Hairline</div><div class="hex">#EDE8E2</div></div></div>
+      <div class="sw"><div class="chip" style="background:#F5EFE8"></div><div class="meta"><div class="name">Paper</div><div class="hex">#F5EFE8</div></div></div>
+      <div class="sw"><div class="chip" style="background:#2B2420"></div><div class="meta"><div class="name">Ink</div><div class="hex">#2B2420</div></div></div>
+      <div class="sw"><div class="chip" style="background:#6E6058"></div><div class="meta"><div class="name">Ink 2</div><div class="hex">#6E6058</div></div></div>
+      <div class="sw"><div class="chip" style="background:#8E7A6B"></div><div class="meta"><div class="name">Ink 3</div><div class="hex">#8E7A6B</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E85D2A"></div><div class="meta"><div class="name">Coral ★</div><div class="hex">#E85D2A</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FF7240"></div><div class="meta"><div class="name">Coral soft</div><div class="hex">#FF7240</div></div></div>
+      <div class="sw"><div class="chip" style="background:#9A5A3E"></div><div class="meta"><div class="name">Coral ink</div><div class="hex">#9A5A3E</div></div></div>
+      <div class="sw"><div class="chip" style="background:#FFEDE3"></div><div class="meta"><div class="name">Peach chip</div><div class="hex">#FFEDE3</div></div></div>
+    </div>
+    <div class="sec-head" style="margin-top:24px"><h2 style="font-size:16px">Semantic accents</h2><span>badges · availability</span></div>
+    <div class="chips">
+      <span class="pill slate"><i data-lucide="shield-check"></i>Trusted</span>
+      <span class="pill green"><i data-lucide="heart"></i>Owner favorite</span>
+      <span class="pill gold"><i data-lucide="crown"></i>Top provider</span>
+      <span class="pill new"><i data-lucide="sparkles"></i>New</span>
+      <span class="dotline"><span class="dot" style="background:#34C759"></span>Available</span>
+      <span class="dotline"><span class="dot" style="background:#FF9500"></span>Soon</span>
+      <span class="dotline"><span class="dot" style="background:#FFB020"></span>This week</span>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section>
+    <div class="sec-head"><h2>Typography</h2><span>Inter · Inter Tight · Instrument Serif · Caveat</span></div>
+    <div class="type-row"><div class="t-display">Every pet deserves a village</div><div class="label">Inter Tight · 800 · display</div></div>
+    <div class="type-row"><div class="t-title">Find a trusted walker near you</div><div class="label">Inter · 700 · title</div></div>
+    <div class="type-row"><div class="t-body">Book grooming, sitting, walks and vet visits — all in one warm, calm place.</div><div class="label">Inter · 400 · body</div></div>
+    <div class="type-row"><div class="t-editorial">Look who's back.</div><div class="label">Instrument Serif · italic · editorial</div></div>
+    <div class="type-row"><div class="t-hand">see you at 5 🐾</div><div class="label">Caveat · 600 · hand</div></div>
+    <div class="type-row"><div class="t-mono">€ 24 / walk · 4.9 ★</div><div class="label">JetBrains Mono · numerics</div></div>
+  </section>
+
+  <!-- ICONS -->
+  <section>
+    <div class="sec-head"><h2>Icon system</h2><span>Lucide · stroke 2.2 · coral on peach</span></div>
+    <div class="icons" id="iconGrid"></div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section>
+    <div class="sec-head"><h2>Signature components</h2><span>radius 16 · warm shadow · coral glow</span></div>
+    <div class="gallery">
+
+      <div class="demo">
+        <div class="cap">Primary CTA — coral gradient</div>
+        <div class="stack">
+          <button class="cta"><i data-lucide="paw-print"></i>Book now</button>
+          <button class="cta secondary">Message provider</button>
+          <button class="cta ghost">Maybe later</button>
+          <button class="cta disabled">Select a time</button>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="cap">List row — peach chip + coral icon</div>
+        <div>
+          <div class="row"><div class="lead"><i data-lucide="shield-check"></i></div><div class="txt"><div class="h">Security</div><div class="s">Password, 2FA, sessions</div></div><div class="chev"><i data-lucide="chevron-right"></i></div></div>
+          <div class="row"><div class="lead"><i data-lucide="wallet"></i></div><div class="txt"><div class="h">Payment &amp; wallet</div><div class="s">Cards, history, payouts</div></div><div class="chev"><i data-lucide="chevron-right"></i></div></div>
+          <div class="row"><div class="lead"><i data-lucide="bell"></i></div><div class="txt"><div class="h">Notifications</div><div class="s">What reaches you, and when</div></div><div class="chev"><i data-lucide="chevron-right"></i></div></div>
+        </div>
+      </div>
+
+      <div class="demo">
+        <div class="cap">Provider row + section header</div>
+        <div class="sh" style="margin-bottom:14px"><h4>Recommended</h4><a href="#">See all <i data-lucide="chevron-right"></i></a></div>
+        <div class="prow">
+          <img src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=160&h=160&fit=crop" alt="" />
+          <div class="body">
+            <div style="margin-bottom:6px"><span class="pill role">Walker</span></div>
+            <div class="nm">Eleni K.</div>
+            <div class="rt"><i data-lucide="star"></i><b>4.9</b><span class="muted">· 128 reviews</span></div>
+          </div>
+          <div class="price"><b>€ 18</b><s>/walk</s></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section>
+    <div class="sec-head"><h2>Rules for new surfaces</h2><span>keep it on‑brand</span></div>
+    <div class="rules">
+      <div class="rule"><div class="k"><i data-lucide="check"></i></div><p><b>Warm neutral canvas.</b> Cream <code>#F7F5F2</code> background, white surfaces, hairline dividers. The whole thing feels like paper and daylight.</p></div>
+      <div class="rule"><div class="k"><i data-lucide="check"></i></div><p><b>Coral is the single accent.</b> One warm coral for CTAs, active states, links and the icon fills. Never a rainbow of colors.</p></div>
+      <div class="rule"><div class="k"><i data-lucide="check"></i></div><p><b>Peach chips + coral icons.</b> Every list row / feature icon sits in a soft peach square with a coral Lucide glyph. Compact type.</p></div>
+      <div class="rule"><div class="k"><i data-lucide="check"></i></div><p><b>Radius 16, warm shadows.</b> Cards, buttons and avatars use a 16px radius; elevation is a soft warm shadow, with a coral glow reserved for the primary CTA.</p></div>
+      <div class="rule"><div class="k"><i data-lucide="check"></i></div><p><b>Editorial serif for voice.</b> Instrument Serif italic for the occasional headline moment; Inter / Inter Tight for everything structural.</p></div>
+      <div class="rule"><div class="k no"><i data-lucide="x"></i></div><p><b>No dark hero cards, no multi‑color tiles, no glossy gradient AI look.</b> If it feels like a generic SaaS template, it's wrong.</p></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  var ICON_NAMES = ["paw-print","home","scissors","stethoscope","sun","bed-double","target","navigation","sofa","heart-pulse","sunrise","moon","graduation-cap","car-front","calendar","clock","credit-card","smartphone","wallet","shield-check","star","map-pin","more-horizontal","chevron-left","chevron-right","bookmark","bookmark-check","message-circle","search","plus","x","check","heart","camera","compass","users","phone","send","image","filter","arrow-right","alert-triangle","lock","repeat","refresh-ccw","trash-2","footprints","syringe","award","share-2","trees","bell"];
+  var grid = document.getElementById('iconGrid');
+  grid.innerHTML = ICON_NAMES.map(function(n){
+    return '<div class="ic"><div class="glyph"><i data-lucide="'+n+'"></i></div><div class="n">'+n+'</div></div>';
+  }).join('');
+  if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>

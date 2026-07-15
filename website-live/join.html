@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join Fylos · For pros and helpers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-2:#EE8A5E; --coral-deep:#CF4A1C; --sage:#7C9271; --line:#ECE0D2; --ic-cream:#FFF3EA;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1100px 520px at 82% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
+                     radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
+
+  .top{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
+    padding:16px clamp(18px,5vw,44px); backdrop-filter:blur(12px);
+    background:color-mix(in srgb,var(--cream) 78%,transparent); border-bottom:1px solid rgba(236,224,210,.7)}
+  .brand{font-weight:800; letter-spacing:.22em; color:var(--coral); font-size:15px}
+  .back{display:inline-flex; align-items:center; gap:7px; font-weight:700; font-size:13.5px; color:var(--ink); text-decoration:none; opacity:.8}
+  .back:hover{opacity:1}
+  .back svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+  .wrap{max-width:900px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 90px}
+
+  .hero{text-align:center; padding:52px 0 26px; max-width:640px; margin:0 auto}
+  .chip{display:inline-flex; align-items:center; gap:9px; font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral); background:var(--peach); padding:8px 15px; border-radius:99px}
+  .chip .d{width:7px;height:7px;border-radius:50%;background:var(--coral)}
+  .hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(34px,5vw,52px); line-height:1.03; letter-spacing:-.02em; margin:16px 0 0}
+  .hero h1 em{font-style:italic; color:var(--coral)}
+  .hero p{margin:15px auto 0; font-size:15.5px; line-height:1.62; color:var(--ink-soft); max-width:540px}
+
+  /* two path cards */
+  .paths{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px}
+  .pc{border-radius:24px; padding:26px 26px 24px; border:1px solid var(--line); background:#fff; box-shadow:0 14px 40px rgba(90,60,40,.07); display:flex; flex-direction:column}
+  .pc.a{background:linear-gradient(180deg,#FFF3EB, #fff); border-color:#F6D9C6}
+  .pc .pcimg{position:relative; border-radius:16px; overflow:hidden; aspect-ratio:16/9; margin-bottom:16px; box-shadow:0 10px 24px rgba(90,60,40,.16)}
+  .pc .pcimg img{width:100%; height:100%; object-fit:cover; display:block}
+  .pc .fast{position:absolute; top:11px; left:11px; z-index:2; display:inline-flex; align-items:center; font:800 9px var(--sans); letter-spacing:.1em; text-transform:uppercase; color:#fff; background:var(--coral); padding:6px 11px; border-radius:99px; box-shadow:0 5px 14px rgba(120,50,20,.28)}
+  .pc h2{font-family:var(--serif); font-weight:600; font-size:23px; letter-spacing:-.01em}
+  .pc p{font-size:13.5px; line-height:1.55; color:var(--ink-soft); margin-top:8px; flex:1}
+  .steps{list-style:none; margin:14px 0 0; display:flex; flex-direction:column; gap:8px}
+  .steps li{display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:600; color:var(--ink)}
+  .steps .n{width:20px;height:20px;border-radius:50%;background:var(--peach);color:var(--coral);font:800 10px var(--sans);display:grid;place-items:center;flex:none}
+  .pbtn{display:inline-flex; align-items:center; justify-content:center; gap:9px; margin-top:18px; padding:14px 20px; border-radius:13px; font:800 14px var(--sans); text-decoration:none; cursor:pointer; border:none; width:100%}
+  .pbtn.solid{background:var(--coral); color:#fff; box-shadow:0 12px 26px rgba(232,93,42,.28)}
+  .pbtn.ghost{background:#fff; color:var(--coral); border:1.5px solid #F0C9B4}
+  .pbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+  .or{text-align:center; margin:30px 0 6px; color:var(--ink-soft); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+
+  /* form */
+  form{display:flex; flex-direction:column; gap:20px}
+  .sec{background:#fff; border:1px solid var(--line); border-radius:24px; padding:clamp(20px,3.4vw,30px); box-shadow:0 14px 40px rgba(90,60,40,.07)}
+  .sec-h{display:flex; align-items:center; gap:12px; margin-bottom:4px}
+  .sec-n{font-family:var(--serif); font-weight:600; font-size:22px; letter-spacing:-.01em}
+  .sec .note{font-size:13px; color:var(--ink-soft); line-height:1.55; margin:8px 0 18px}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .field{display:flex; flex-direction:column; margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .field label{font:700 13px var(--sans); color:var(--ink); margin-bottom:7px}
+  .field label .rq{color:var(--coral); margin-left:2px}
+  .field label .opt{color:var(--ink-soft); font-weight:500; font-size:11.5px; margin-left:6px}
+  input,select,textarea{width:100%; font:500 15px var(--sans); color:var(--ink); background:#FFFDFB;
+    border:1.5px solid #EADDCE; border-radius:12px; padding:13px 15px; transition:border-color .15s, box-shadow .15s; outline:none}
+  input::placeholder,textarea::placeholder{color:#B7A899}
+  select{appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236E625B' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; cursor:pointer}
+  textarea{resize:vertical; min-height:70px; line-height:1.5}
+  input:focus,select:focus,textarea:focus{border-color:var(--coral); box-shadow:0 0 0 4px rgba(232,93,42,.13)}
+  .help{font-size:12px; color:var(--ink-soft); line-height:1.45; margin-top:6px}
+  #otherWrap{display:none}
+  .check{display:flex; gap:12px; align-items:flex-start; padding:13px 15px; border:1.5px solid #EEE2D4; border-radius:14px; margin-bottom:12px; cursor:pointer}
+  .check input{width:20px; height:20px; margin:0; flex:none; accent-color:var(--coral); margin-top:1px}
+  .check span{font-size:13px; line-height:1.5; color:var(--ink)}
+  .submit{display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:var(--coral); color:#fff; font:800 16px var(--sans); border:none; border-radius:15px; padding:18px 24px;
+    cursor:pointer; box-shadow:0 16px 34px rgba(232,93,42,.30)}
+  .submit:hover{background:var(--coral-deep)}
+  .submit svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .vetline{text-align:center; font-size:12.5px; color:var(--ink-soft); margin-top:14px}
+  .vetline a{color:var(--coral); text-decoration:none; font-weight:700}
+
+  footer{max-width:900px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 50px; color:var(--ink-soft); font-size:12px; text-align:center; line-height:1.6}
+  footer a{color:var(--ink-soft)}
+
+  .done{display:none; text-align:center; background:#fff; border:1px solid var(--line); border-radius:26px; padding:48px 34px; box-shadow:0 18px 48px rgba(90,60,40,.09)}
+  .done.on{display:block}
+  .done .badge{width:64px;height:64px;border-radius:50%;background:#E9F0E5;display:grid;place-items:center;margin:0 auto 18px}
+  .done .badge svg{width:30px;height:30px;fill:none;stroke:var(--sage);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+  .done h2{font-family:var(--serif); font-weight:600; font-size:28px}
+  .done p{margin-top:11px; color:var(--ink-soft); font-size:14.5px; line-height:1.6; max-width:440px; margin-left:auto; margin-right:auto}
+  .done a.home{display:inline-flex; margin-top:22px; background:var(--peach); color:var(--coral); font-weight:800; font-size:13.5px; padding:13px 22px; border-radius:12px; text-decoration:none}
+
+  @media(max-width:720px){ .paths{grid-template-columns:1fr} .grid2{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="brand">FYLOS</span>
+  <a class="back" href="/"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Back to Fylos</a>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="chip"><span class="d"></span>Join Fylos</span>
+    <h1>Put yourself on <em>the neighborhood.</em></h1>
+    <p>Fylos is the local pros and helpers people already trust. Pick how you help, and we will get you set up. There is a fast lane for walkers and sitters, and a spot for every other kind of pro.</p>
+  </section>
+
+  <div class="paths">
+    <div class="pc a">
+      <div class="pcimg"><span class="fast">Fastest &middot; in the app</span><img src="assets/k-walker.jpg" alt="A neighbor walking a golden retriever through the square"></div>
+      <h2>Walkers &amp; sitters</h2>
+      <p>The quickest way in. Apply right inside the Fylos app, it takes about five minutes.</p>
+      <ul class="steps">
+        <li><span class="n">1</span>Open the Fylos app</li>
+        <li><span class="n">2</span>Add your details and area</li>
+        <li><span class="n">3</span>Pass a quick check, go live</li>
+      </ul>
+      <a class="pbtn solid" href="https://app.fylos.me" target="_blank" rel="noopener">Start in the app <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
+    </div>
+
+    <div class="pc">
+      <div class="pcimg"><img src="assets/kgroom-hi.jpg" alt="A groomer&rsquo;s shop on the street"></div>
+      <h2>Groomers &amp; every other pro</h2>
+      <p>Have a shop or a craft? Tell us what you do, even if it is a profession we have not added yet. We read every one.</p>
+      <a class="pbtn ghost" href="#proform">Tell us about you <svg viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg></a>
+    </div>
+  </div>
+
+  <div class="or">The pro application</div>
+
+  <form id="joinForm" novalidate>
+    <div class="sec" id="proform">
+      <div class="sec-h"><span class="sec-n">Tell us about your work</span></div>
+      <div class="note">For groomers, trainers, boarding, daycare and any other pet professional. A few quick details, that is all for now.</div>
+
+      <div class="field">
+        <label>What do you do<span class="rq">*</span></label>
+        <select name="profession" id="prof" required>
+          <option value="" disabled selected>Choose one</option>
+          <option>Groomer</option>
+          <option>Dog trainer</option>
+          <option>Boarding or daycare</option>
+          <option>Pet sitting business</option>
+          <option>Pet photographer</option>
+          <option>Pet taxi or transport</option>
+          <option value="other">Something else</option>
+        </select>
+      </div>
+      <div class="field" id="otherWrap">
+        <label>Your profession<span class="rq">*</span></label>
+        <input name="profession_other" id="profOther" placeholder="Tell us in a few words">
+        <div class="help">Something we have not listed? Name it, this is exactly how we discover pros we had not thought of.</div>
+      </div>
+
+      <div class="grid2">
+        <div class="field"><label>Your name<span class="rq">*</span></label><input name="name" required></div>
+        <div class="field"><label>Business or brand name<span class="opt">optional</span></label><input name="business" placeholder="If you have one"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>City or area<span class="rq">*</span></label><input name="city" required></div>
+        <div class="field"><label>Website or Instagram<span class="opt">optional</span></label><input name="website" placeholder="yourshop.ch or @yourshop"></div>
+      </div>
+      <div class="field"><label>What you offer<span class="opt">optional</span></label><textarea name="offer" placeholder="One or two lines is plenty"></textarea></div>
+      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required placeholder="you@example.com"><div class="help">Where your invitation will go. We reply personally.</div></div>
+
+      <label class="check"><input type="checkbox" name="consent" required><span>I would like to join Fylos as a pro, and Fylos can contact me about it. My details are used only to read and reply to this application.<span class="rq">*</span></span></label>
+
+      <button type="submit" class="submit">Apply to join <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
+      <div class="vetline">Run a veterinary clinic? There is a dedicated form. <a href="/apply">Apply here.</a></div>
+    </div>
+  </form>
+
+  <div class="done" id="donePanel">
+    <div class="badge"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
+    <h2>Thank you, we have it.</h2>
+    <p>A real person at Fylos reads every application and usually replies within a few days. Keep an eye on your inbox.</p>
+    <a class="home" href="/">Back to Fylos</a>
+  </div>
+
+</div>
+
+<footer>
+  Fylos AG &middot; Zürich, Switzerland &middot; <a href="mailto:pros@fylos.me">pros@fylos.me</a><br>
+  Walkers and sitters apply in the app. Other pros, tell us here, and we will be in touch.
+</footer>
+
+<script>
+  var prof = document.getElementById('prof');
+  var otherWrap = document.getElementById('otherWrap');
+  var profOther = document.getElementById('profOther');
+  prof.addEventListener('change', function(){
+    var on = prof.value === 'other';
+    otherWrap.style.display = on ? 'flex' : 'none';
+    profOther.required = on;
+  });
+
+  var form = document.getElementById('joinForm');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var missing = null;
+    form.querySelectorAll('[required]').forEach(function(el){
+      if (el.offsetParent === null) return; // skip hidden
+      var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
+      if (bad && !missing) missing = el;
+    });
+    if (missing){ missing.focus(); missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+    form.style.display = 'none';
+    document.getElementById('donePanel').classList.add('on');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+</script>
+</body>
+</html>

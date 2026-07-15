@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fylos keeps health records, daily rhythms, and trusted people in one calm place — so you can be there for the good parts. iOS first, Switzerland 2026.">
+<meta name="theme-color" content="#F7F5F2">
+<title>FYLOS — Bento</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='%23E85D2A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Nunito:wght@800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   FYLOS · Variation 10 — "Bento" (the living grid)
+   ============================================================ */
+:root{
+  /* colors */
+  --coral:#E85D2A; --coral-hover:#D04A1C;
+  --bg:#F7F5F2; --surface:#FFFFFF; --chip:#F3EFEB; --sheet:#FBF9F7;
+  --peach:#FBE7DD; --peach-selected:#FFEDE3;
+  --hair:#EDE8E2; --line:#F1EDE8;
+  --ink:#111111; --ink-2:#6E6058; --ink-3:#9B9B9F;
+  --label:#A8A29C; --placeholder:#C4BBB3; --chevron:#CFCFD4;
+  --ok:#3F8D63; --ok-bg:#F0F7ED; --ok-dot:#34C759;
+  --warn-warm:#B07A3A;
+  /* type */
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-wordmark:'Nunito',sans-serif;
+  --track-title:-0.02em; --track-label:0.12em;
+  /* geometry */
+  --r-input:12px; --r-card:16px; --r-group:18px; --r-hero:20px; --r-sheet:26px; --r-full:9999px;
+  --h-cta:52px; --h-touch:44px; --gutter:20px;
+  /* shadows */
+  --shadow-warm:0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05);
+  --shadow-chrome:0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08);
+  --shadow-float:0 8px 24px rgba(0,0,0,0.06);
+  --shadow-lift:0 2px 4px rgba(60,30,15,0.04), 0 14px 30px rgba(60,30,15,0.10);
+  --glow-cta:0 8px 22px rgba(232,93,42,0.28);
+  --glow-cta-sm:0 4px 14px rgba(232,93,42,0.25);
+  /* motion */
+  --t-tap:120ms; --t-normal:200ms; --t-slow:300ms;
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out:cubic-bezier(0.22,1,0.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0 }
+html{ scroll-behavior:smooth }
+html,body{ overflow-x:clip }
+body{
+  font-family:var(--font); background:var(--bg); color:var(--ink);
+  font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+a{ color:inherit; text-decoration:none }
+button{ font-family:inherit; cursor:pointer }
+svg{ display:block }
+:focus-visible{ outline:2px solid var(--coral); outline-offset:2px; border-radius:6px }
+[id]{ scroll-margin-top:88px }
+
+.wrap{ max-width:1140px; margin:0 auto; padding:0 24px }
+.wrap-narrow{ max-width:720px; margin:0 auto; padding:0 24px }
+
+/* ---------- shared type ---------- */
+.eyebrow{
+  font-size:10.5px; font-weight:700; text-transform:uppercase;
+  letter-spacing:var(--track-label); color:var(--label); line-height:1.2;
+}
+.h-display{
+  font-weight:800; letter-spacing:-0.03em; line-height:1.04; color:var(--ink);
+}
+.body-2{ font-size:15px; color:var(--ink-2); line-height:1.6 }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:60; height:64px;
+  transition:background var(--t-normal) ease, box-shadow var(--t-normal) ease, border-color var(--t-normal) ease;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{
+  background:rgba(247,245,242,0.82);
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  border-bottom-color:var(--hair);
+}
+.nav-inner{
+  max-width:1140px; margin:0 auto; padding:0 24px; height:64px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.wordmark{
+  font-family:var(--font-wordmark); font-weight:800; font-size:20px;
+  letter-spacing:-0.02em; color:var(--ink); display:inline-flex; align-items:baseline;
+}
+.wordmark .dot{
+  width:0.22em; height:0.22em; border-radius:50%; background:var(--coral);
+  display:inline-block; margin-left:0.12em; transform:translateY(-0.02em);
+}
+.nav-links{ display:flex; align-items:center; gap:26px; list-style:none }
+.nav-links a{
+  font-size:13.5px; font-weight:600; color:var(--ink-2);
+  transition:color var(--t-normal) ease;
+}
+.nav-links a:hover{ color:var(--ink) }
+.nav-cta{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:40px; padding:0 18px; border-radius:12px;
+  background:var(--coral); color:#fff; font-size:13.5px; font-weight:700;
+  box-shadow:var(--glow-cta-sm);
+  transition:background var(--t-normal) ease, transform var(--t-tap) ease, box-shadow var(--t-normal) ease;
+}
+.nav-cta:hover{ background:var(--coral-hover); transform:translateY(-1px) }
+.nav-cta:active{ transform:scale(0.98) }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{ padding:148px 0 34px; text-align:center }
+.hero .eyebrow{ margin-bottom:18px }
+.hero h1{
+  font-size:clamp(40px, 6.4vw, 68px); font-weight:900;
+  letter-spacing:-0.03em; line-height:1.02; max-width:15ch; margin:0 auto;
+}
+.hero p{
+  font-size:clamp(15px, 2vw, 17.5px); color:var(--ink-2); line-height:1.6;
+  max-width:52ch; margin:20px auto 0;
+}
+.hero-ctas{ display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap }
+.btn-primary{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:var(--h-cta); padding:0 28px; border-radius:var(--r-card); border:none;
+  background:var(--coral); color:#fff; font-size:15px; font-weight:700;
+  box-shadow:var(--glow-cta);
+  transition:background var(--t-normal) ease, transform var(--t-tap) ease, box-shadow var(--t-normal) ease;
+}
+.btn-primary:hover{ background:var(--coral-hover); transform:translateY(-2px); box-shadow:0 12px 26px rgba(232,93,42,0.32) }
+.btn-primary:active{ transform:scale(0.98) }
+.btn-secondary{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:var(--h-cta); padding:0 26px; border-radius:var(--r-card);
+  background:var(--chip); color:var(--ink-2); font-size:15px; font-weight:600;
+  border:1px solid var(--hair);
+  transition:background var(--t-normal) ease, transform var(--t-tap) ease;
+}
+.btn-secondary:hover{ background:#EEE9E3; transform:translateY(-1px) }
+.btn-secondary:active{ transform:scale(0.98) }
+
+/* entrance for hero copy */
+.hero .rise{ opacity:0; transform:translateY(18px); animation:riseIn 0.7s var(--ease-out) forwards }
+.hero .rise.d1{ animation-delay:60ms } .hero .rise.d2{ animation-delay:140ms } .hero .rise.d3{ animation-delay:220ms }
+@keyframes riseIn{ to{ opacity:1; transform:none } }
+
+/* ============================================================
+   THE BENTO
+   ============================================================ */
+.bento-zone{ padding:34px 0 10px }
+.bento{
+  display:grid; grid-template-columns:repeat(12, minmax(0,1fr));
+  grid-auto-rows:minmax(148px, auto); gap:13px;
+}
+.b-cell{
+  position:relative; background:var(--surface); border-radius:var(--r-group);
+  box-shadow:var(--shadow-warm); padding:22px;
+  display:flex; flex-direction:column;
+  opacity:0;
+  transition:transform var(--t-slow) var(--ease-out), box-shadow var(--t-slow) ease, background var(--t-normal) ease;
+}
+.bento.on .b-cell{ animation:cellIn 0.66s var(--ease-spring) both; animation-delay:var(--d, 0ms) }
+@keyframes cellIn{
+  from{ opacity:0; transform:translateY(30px) scale(0.96) }
+  to{ opacity:1; transform:translateY(0) scale(1) }
+}
+.b-cell:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lift) }
+.b-cell .eyebrow{ margin-bottom:10px }
+
+/* spans — desktop composition */
+.c-greeting{ grid-column:span 6; grid-row:span 2; border-radius:var(--r-hero); justify-content:space-between }
+.c-pets{ grid-column:span 3 }
+.c-vaccine{ grid-column:span 3 }
+.c-live{ grid-column:span 6; flex-direction:row; align-items:center; gap:18px }
+.c-marco{ grid-column:span 4 }
+.c-today{ grid-column:span 4; grid-row:span 2 }
+.c-spark{ grid-column:span 4; justify-content:space-between }
+.c-wallet{ grid-column:span 2; justify-content:space-between }
+.c-docs{ grid-column:span 2; justify-content:space-between }
+.c-memory{ grid-column:span 4; border-radius:var(--r-hero); overflow:hidden; justify-content:flex-end; min-height:148px }
+.c-frost{ grid-column:span 4; overflow:hidden; justify-content:space-between }
+.c-cta{ grid-column:span 4; border-radius:var(--r-hero) }
+
+/* linked cells — the "look closer" affordance */
+a.b-cell{ cursor:pointer }
+.peek{
+  position:absolute; top:14px; right:14px; width:26px; height:26px;
+  border-radius:50%; background:var(--chip); display:flex; align-items:center; justify-content:center;
+  opacity:0; transform:translateY(4px);
+  transition:opacity var(--t-normal) ease, transform var(--t-normal) var(--ease-out);
+}
+.peek svg{ width:12px; height:12px; stroke:var(--ink-2) }
+a.b-cell:hover .peek, a.b-cell:focus-visible .peek{ opacity:1; transform:translateY(0) }
+
+/* --- greeting cell --- */
+.c-greeting h2{
+  font-size:clamp(24px, 2.8vw, 32px); font-weight:800; letter-spacing:var(--track-title); line-height:1.08;
+}
+.c-greeting .sub{ font-size:15px; color:var(--ink-2); margin-top:6px }
+.quick-grid{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:18px }
+.q-tile{
+  background:var(--bg); border:1px solid var(--hair); border-radius:14px; padding:13px 14px;
+}
+.q-tile .v{ font-size:20px; font-weight:800; letter-spacing:-0.02em; line-height:1.1 }
+.q-tile .l{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-3); margin-top:3px }
+
+/* --- pet switcher cell --- */
+.pets-row{ display:flex; gap:18px; align-items:flex-start; margin-top:2px }
+.pet{ display:flex; flex-direction:column; align-items:center; gap:7px }
+.pet .ava{
+  width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-weight:800; font-size:19px;
+}
+.pet.bobby .ava{ background:#BE8F68; box-shadow:0 0 0 2.5px var(--surface), 0 0 0 4.5px var(--coral) }
+.pet.luna .ava{ background:#C9C2B8 }
+.pet .name{ font-size:13px; font-weight:700 }
+.pet.luna .name{ color:var(--ink-3); font-weight:600 }
+
+/* --- vaccine cell --- */
+.icon-chip{
+  width:36px; height:36px; border-radius:12px; background:var(--peach);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.icon-chip svg{ width:17px; height:17px; stroke:var(--coral) }
+.v-title{ font-size:15px; font-weight:700; letter-spacing:-0.01em; margin-top:12px }
+.v-sub{ font-size:12.5px; color:var(--ink-2); margin-top:2px }
+.badge{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10px; font-weight:700; padding:3px 9px; border-radius:var(--r-full); width:fit-content;
+}
+.badge-warn{ color:var(--warn-warm); background:#FFF8F0; border:1px solid #F0E4D0 }
+.badge-ok{ color:var(--ok); background:#F0F7ED; border:1px solid #D7EBDD }
+.c-vaccine .badge{ margin-top:11px }
+
+/* --- live walk (the wide cell) --- */
+.live-left{ min-width:0 }
+.live-chip{
+  display:inline-flex; align-items:center; gap:8px; margin-top:2px;
+  background:var(--chip); border-radius:var(--r-full); padding:8px 15px;
+  font-size:13.5px; font-weight:700; letter-spacing:-0.01em; white-space:nowrap;
+}
+.live-dot{ width:7px; height:7px; border-radius:50%; background:var(--ok-dot); animation:pulse 1.6s ease-out infinite }
+@keyframes pulse{
+  0%{ box-shadow:0 0 0 0 rgba(52,199,89,0.45) }
+  70%{ box-shadow:0 0 0 8px rgba(52,199,89,0) }
+  100%{ box-shadow:0 0 0 0 rgba(52,199,89,0) }
+}
+.live-sub{ font-size:12.5px; color:var(--ink-2); margin-top:9px }
+.route{ flex:1; min-width:0; align-self:stretch; display:flex; align-items:center }
+.route svg{ width:100%; height:86px }
+.route .street{ fill:none; stroke:var(--chip); stroke-width:7; stroke-linecap:round }
+.route .trail{
+  fill:none; stroke:var(--coral); stroke-width:2.5; stroke-linecap:round;
+  stroke-dasharray:5 8; animation:march 1.8s linear infinite;
+}
+@keyframes march{ to{ stroke-dashoffset:-13 } }
+.route .r-halo{ fill:rgba(52,199,89,0.25); transform-box:fill-box; transform-origin:center; animation:halo 1.6s ease-out infinite }
+@keyframes halo{ 0%{ transform:scale(0.6); opacity:1 } 70%{ transform:scale(1.6); opacity:0 } 100%{ transform:scale(0.6); opacity:0 } }
+
+/* --- marco booking cell --- */
+.person{ display:flex; align-items:center; gap:11px }
+.person .ava{
+  width:42px; height:42px; border-radius:50%; background:#D9CBBA; color:#fff;
+  font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.person .who{ min-width:0; flex:1 }
+.person .nm{ font-size:14.5px; font-weight:700; display:flex; align-items:center; gap:5px }
+.person .nm .star{ width:11px; height:11px; fill:var(--coral) }
+.person .nm .rating{ font-size:12px; font-weight:600; color:var(--ink-2) }
+.person .what{ font-size:12.5px; color:var(--ink-2); margin-top:1px }
+.c-marco .foot{
+  margin-top:auto; padding-top:12px; border-top:1px solid var(--line);
+  font-size:12px; color:var(--ink-3); font-weight:500;
+}
+
+/* --- today rows cell --- */
+.t-rows{ display:flex; flex-direction:column; justify-content:space-evenly; flex:1 }
+.t-row{ display:flex; align-items:center; gap:12px; padding:10px 0 }
+.t-row + .t-row{ border-top:1px solid var(--line) }
+.t-icon{
+  width:36px; height:36px; border-radius:50%; background:var(--chip);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.t-icon svg{ width:16px; height:16px; stroke:var(--coral) }
+.t-main{ flex:1; min-width:0 }
+.t-name{ font-size:14px; font-weight:600; letter-spacing:-0.01em }
+.t-time{ font-size:11.5px; color:var(--ink-3); font-weight:500; margin-top:1px }
+.t-pill{
+  font-size:11px; font-weight:700; color:var(--ink-2);
+  background:var(--chip); border-radius:var(--r-full); padding:6px 13px; flex-shrink:0;
+}
+.t-done{
+  width:26px; height:26px; border-radius:50%; background:var(--ok-bg);
+  border:1px solid #D7EBDD; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.t-done svg{ width:12px; height:12px; stroke:var(--ok) }
+.t-row.is-done .t-name{ color:var(--ink-3); font-weight:500 }
+
+/* --- sparkline cell --- */
+.s-val{ font-size:24px; font-weight:800; letter-spacing:-0.02em; line-height:1.1 }
+.s-sub{ font-size:12.5px; color:var(--ink-2); margin-top:2px }
+.spark{ margin-top:14px }
+.spark svg{ width:100%; height:44px; overflow:visible }
+.spark polyline{ fill:none; stroke:var(--coral); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round }
+.spark .end{ fill:var(--coral) }
+
+/* --- wallet / docs stat cells --- */
+.stat-v{ font-size:19px; font-weight:800; letter-spacing:-0.02em; line-height:1.15 }
+.stat-l{ font-size:11.5px; color:var(--ink-2); font-weight:500; margin-top:3px }
+.c-docs .stat-v{ font-size:26px }
+.c-docs .stat-l{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-3) }
+.mini-ic{ width:16px; height:16px; stroke:var(--ink-3) }
+
+/* --- memory cell --- */
+.c-memory{
+  background:
+    radial-gradient(110% 95% at 18% 88%, #FBE7DD 0%, rgba(251,231,221,0) 62%),
+    radial-gradient(85% 75% at 82% 14%, #FFEDE3 0%, rgba(255,237,227,0) 65%),
+    radial-gradient(60% 55% at 62% 72%, rgba(232,93,42,0.14) 0%, rgba(232,93,42,0) 70%),
+    linear-gradient(160deg, #FFF7F0 0%, #F6EADF 100%);
+}
+.c-memory .eyebrow{ color:rgba(154,90,62,0.72) }
+.mem-chip{
+  align-self:flex-start; margin-top:auto;
+  background:rgba(255,255,255,0.85); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border-radius:var(--r-full); padding:7px 14px;
+  font-size:12px; font-weight:600; color:var(--ink);
+  box-shadow:0 1px 3px rgba(60,30,15,0.06);
+}
+
+/* --- frosted future cells --- */
+.frost-bg{ position:absolute; inset:0; pointer-events:none }
+.frost-bg span{ position:absolute; border-radius:50% }
+.frost-bg .b1{ width:120px; height:120px; left:-24px; bottom:-36px; background:#F6B79A }
+.frost-bg .b2{ width:90px; height:90px; right:18px; top:-28px; background:#FBE7DD }
+.frost-bg .b3{ width:56px; height:56px; right:88px; bottom:10px; background:rgba(232,93,42,0.55) }
+.frost-veil{
+  position:absolute; inset:0; background:rgba(255,255,255,0.58);
+  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); pointer-events:none;
+}
+.c-frost > .fr{ position:relative; z-index:1 }
+.fr-top{ display:flex; align-items:center; justify-content:space-between; gap:10px }
+.fr-name{ font-size:15px; font-weight:700; letter-spacing:-0.01em; display:flex; align-items:center; gap:10px }
+.fr-name .icon-chip{ background:var(--chip) }
+.fr-name .icon-chip svg{ stroke:var(--ink-2) }
+.soon{
+  font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;
+  color:var(--coral); background:var(--peach-selected); border-radius:var(--r-full); padding:4px 10px;
+  flex-shrink:0;
+}
+.fr-line{ font-size:12.5px; color:var(--ink-2); margin-top:10px }
+
+/* --- the one coral cell --- */
+.c-cta{
+  background:var(--coral); color:#fff; box-shadow:var(--glow-cta);
+  justify-content:space-between;
+}
+.c-cta:hover{ background:var(--coral-hover); transform:translateY(-3px); box-shadow:0 14px 30px rgba(232,93,42,0.36) }
+.c-cta:active{ transform:scale(0.985) }
+.c-cta .eyebrow{ color:rgba(255,255,255,0.7) }
+.cta-line{ display:flex; align-items:center; justify-content:space-between; gap:12px }
+.cta-line .txt{ font-size:21px; font-weight:800; letter-spacing:-0.02em; line-height:1.15 }
+.cta-arrow{
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.18);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:transform var(--t-slow) var(--ease-spring), background var(--t-normal) ease;
+}
+.cta-arrow svg{ width:16px; height:16px; stroke:#fff }
+.c-cta:hover .cta-arrow{ transform:translateX(4px); background:rgba(255,255,255,0.26) }
+.cta-sub{ font-size:12.5px; color:rgba(255,255,255,0.85); font-weight:500; margin-top:12px }
+
+/* bento caption */
+.bento-cap{
+  text-align:center; font-size:12.5px; color:var(--ink-3); font-weight:500; margin-top:22px;
+}
+
+/* ============================================================
+   REVEAL SYSTEM (scroll)
+   ============================================================ */
+.rv{ opacity:0; transform:translateY(26px); transition:opacity 0.6s ease, transform 0.75s var(--ease-out); transition-delay:var(--rd, 0ms) }
+.rv.in{ opacity:1; transform:none }
+.rv-zoom{ opacity:0; transform:translateY(34px) scale(0.8); transition:opacity 0.65s ease, transform 0.85s var(--ease-out); }
+.rv-zoom.in{ opacity:1; transform:none }
+
+/* ============================================================
+   PILLARS — the camera zooms in
+   ============================================================ */
+.pillars-head{ text-align:center; padding:120px 0 8px }
+.pillars-head h2{ font-size:clamp(30px, 4.4vw, 46px); font-weight:800; letter-spacing:-0.03em; line-height:1.06; margin-top:16px }
+.pillars-head p{ font-size:15.5px; color:var(--ink-2); margin-top:14px }
+
+.pillar{
+  display:grid; grid-template-columns:1fr 1fr; gap:clamp(36px, 6vw, 88px);
+  align-items:center; padding:clamp(56px, 8vw, 96px) 0;
+}
+.pillar-txt .eyebrow{ margin-bottom:14px }
+.pillar-txt h3{ font-size:clamp(26px, 3.4vw, 36px); font-weight:800; letter-spacing:var(--track-title); line-height:1.08 }
+.pillar-txt p{ font-size:15.5px; color:var(--ink-2); line-height:1.65; margin-top:16px; max-width:42ch }
+.pillar-card{ justify-self:center; width:100%; max-width:470px }
+.pillar.flip .pillar-card{ order:-1; justify-self:start }
+.pillar.flip .pillar-txt{ justify-self:end }
+.cell-meta{
+  font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em;
+  color:var(--placeholder); margin-top:14px; text-align:center;
+}
+
+/* zoom card = same recipe, larger type */
+.zoom{
+  background:var(--surface); border-radius:28px; padding:34px;
+  box-shadow:0 2px 4px rgba(60,30,15,0.04), 0 24px 60px rgba(60,30,15,0.10);
+  display:flex; flex-direction:column;
+}
+.zoom .eyebrow{ font-size:11px; margin-bottom:16px }
+
+.zoom .icon-chip{ width:52px; height:52px; border-radius:16px }
+.zoom .icon-chip svg{ width:24px; height:24px }
+.zoom .v-title{ font-size:23px; font-weight:800; letter-spacing:-0.02em; margin-top:18px }
+.zoom .v-sub{ font-size:15px; margin-top:5px }
+.zoom .badge{ font-size:12.5px; padding:6px 14px; margin-top:16px }
+
+.zoom .t-row{ padding:15px 0; gap:15px }
+.zoom .t-icon{ width:48px; height:48px }
+.zoom .t-icon svg{ width:21px; height:21px }
+.zoom .t-name{ font-size:17.5px }
+.zoom .t-time{ font-size:13.5px; margin-top:2px }
+.zoom .t-pill{ font-size:13px; padding:8px 17px }
+.zoom .t-done{ width:32px; height:32px }
+.zoom .t-done svg{ width:15px; height:15px }
+
+.zoom .person{ gap:15px }
+.zoom .person .ava{ width:58px; height:58px; font-size:19px }
+.zoom .person .nm{ font-size:19px }
+.zoom .person .nm .star{ width:14px; height:14px }
+.zoom .person .nm .rating{ font-size:14.5px }
+.zoom .person .what{ font-size:15px; margin-top:2px }
+.zoom .badge-ok{ font-size:12.5px; padding:6px 14px }
+.zoom .foot{ margin-top:26px; padding-top:17px; border-top:1px solid var(--line); font-size:14.5px; color:var(--ink-3); font-weight:500 }
+
+.zoom.zoom-memory{
+  min-height:340px; justify-content:flex-end; overflow:hidden;
+  background:
+    radial-gradient(110% 95% at 18% 88%, #FBE7DD 0%, rgba(251,231,221,0) 62%),
+    radial-gradient(85% 75% at 82% 14%, #FFEDE3 0%, rgba(255,237,227,0) 65%),
+    radial-gradient(60% 55% at 62% 72%, rgba(232,93,42,0.14) 0%, rgba(232,93,42,0) 70%),
+    linear-gradient(160deg, #FFF7F0 0%, #F6EADF 100%);
+}
+.zoom.zoom-memory .eyebrow{ color:rgba(154,90,62,0.72) }
+.zoom .mem-chip{ font-size:14.5px; padding:10px 19px }
+
+/* ============================================================
+   HOW IT WORKS — mini bento
+   ============================================================ */
+.how{ padding:110px 0 40px; text-align:center }
+.how h2{ font-size:clamp(28px, 4vw, 42px); font-weight:800; letter-spacing:-0.03em; line-height:1.06; margin-top:16px }
+.how-grid{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:13px; margin-top:44px; text-align:left }
+.how-cell{
+  background:var(--surface); border-radius:var(--r-group); box-shadow:var(--shadow-warm);
+  padding:28px 26px;
+  transition:transform var(--t-slow) var(--ease-out), box-shadow var(--t-slow) ease;
+}
+.how-cell:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lift) }
+.how-num{
+  width:40px; height:40px; border-radius:12px; background:var(--peach);
+  color:var(--coral); font-size:16px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+}
+.how-cell h3{ font-size:17.5px; font-weight:800; letter-spacing:-0.01em; margin-top:18px }
+.how-cell p{ font-size:14px; color:var(--ink-2); line-height:1.6; margin-top:7px }
+
+/* ============================================================
+   POCKET — phone in a wide cell
+   ============================================================ */
+.pocket{ padding:90px 0 30px }
+.pocket-card{
+  position:relative; background:var(--surface); border-radius:26px;
+  box-shadow:var(--shadow-warm); overflow:hidden;
+  display:grid; grid-template-columns:1fr 1fr; align-items:center;
+  min-height:460px;
+}
+.pocket-txt{ padding:clamp(30px, 5vw, 64px) }
+.pocket-txt h2{ font-size:clamp(28px, 3.6vw, 40px); font-weight:800; letter-spacing:-0.03em; line-height:1.08; margin-top:14px }
+.pocket-txt p{ font-size:15.5px; color:var(--ink-2); line-height:1.65; margin-top:16px; max-width:40ch }
+.pocket-link{
+  display:inline-flex; align-items:center; gap:7px; margin-top:24px;
+  font-size:14.5px; font-weight:700; color:var(--coral);
+  transition:gap var(--t-normal) var(--ease-out);
+}
+.pocket-link svg{ width:15px; height:15px; stroke:var(--coral) }
+.pocket-link:hover{ gap:11px }
+.pocket-stage{ position:relative; height:460px }
+
+/* ---------- the phone ---------- */
+.phone{
+  position:absolute; top:52px; left:50%; transform:translateX(-50%);
+  width:292px; background:#1A1714; border-radius:44px; padding:9px;
+  box-shadow:0 2px 6px rgba(60,30,15,0.08), 0 30px 70px rgba(60,30,15,0.20);
+}
+.ph-screen{
+  position:relative; background:var(--bg); border-radius:35px; overflow:hidden;
+  width:274px; height:593px;
+}
+.ph-island{
+  position:absolute; top:9px; left:50%; transform:translateX(-50%);
+  width:80px; height:23px; background:#000; border-radius:var(--r-full); z-index:5;
+}
+.ph-status{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 24px 0; font-size:12.5px; font-weight:600;
+}
+.ph-glyphs{ display:flex; align-items:center; gap:5px }
+.ph-glyphs svg{ height:11px }
+.ph-body{ padding:14px 16px 0 }
+.ph-greet{ font-size:18px; font-weight:700; letter-spacing:-0.01em }
+.ph-greet b{ font-weight:800 }
+.ph-greet-sub{ font-size:10.5px; color:var(--ink-2); margin-top:2px }
+.ph-pets{ display:flex; gap:14px; margin-top:12px }
+.ph-pet{ display:flex; flex-direction:column; align-items:center; gap:4px }
+.ph-pet .a{
+  width:40px; height:40px; border-radius:50%; color:#fff; font-weight:800; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.ph-pet.b .a{ background:#BE8F68; box-shadow:0 0 0 2px var(--bg), 0 0 0 3.5px var(--coral) }
+.ph-pet.l .a{ background:#C9C2B8 }
+.ph-pet .n{ font-size:9.5px; font-weight:600 }
+.ph-pet.l .n{ color:var(--ink-3) }
+.ph-quick{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:7px; margin-top:13px }
+.ph-q{
+  background:var(--surface); border-radius:11px; padding:8px 9px;
+  box-shadow:0 1px 2px rgba(60,30,15,0.03), 0 3px 8px rgba(60,30,15,0.04);
+}
+.ph-q .v{ font-size:13px; font-weight:700 }
+.ph-q .l{ font-size:7px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-3); margin-top:1px }
+.ph-label{
+  font-size:8.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em;
+  color:var(--label); margin:14px 0 7px;
+}
+.ph-card{
+  background:var(--surface); border-radius:13px; padding:10px 11px;
+  box-shadow:0 1px 2px rgba(60,30,15,0.03), 0 4px 10px rgba(60,30,15,0.04);
+}
+.ph-book-top{ display:flex; align-items:center; gap:8px }
+.ph-book .ma{
+  width:27px; height:27px; border-radius:50%; background:#D9CBBA; color:#fff;
+  font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.ph-book .who{ flex:1; min-width:0 }
+.ph-book .nm{ font-size:10.5px; font-weight:700; display:flex; align-items:center; gap:3px }
+.ph-book .nm svg{ width:7px; height:7px; fill:var(--coral) }
+.ph-book .nm span{ font-size:9px; font-weight:600; color:var(--ink-2) }
+.ph-book .wt{ font-size:9px; color:var(--ink-2) }
+.ph-badge{
+  font-size:7.5px; font-weight:700; color:var(--ok); background:#F0F7ED;
+  border:1px solid #D7EBDD; border-radius:var(--r-full); padding:2px 6px; flex-shrink:0;
+}
+.ph-book .dt{
+  font-size:8.5px; color:var(--ink-3); font-weight:500;
+  border-top:1px solid var(--line); margin-top:8px; padding-top:7px;
+}
+.ph-row{ display:flex; align-items:center; gap:8px; padding:7px 0 }
+.ph-row + .ph-row{ border-top:1px solid var(--line) }
+.ph-row .ic{
+  width:27px; height:27px; border-radius:50%; background:var(--chip);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.ph-row .ic svg{ width:12px; height:12px; stroke:var(--coral) }
+.ph-row .m{ flex:1 }
+.ph-row .t1{ font-size:10.5px; font-weight:600 }
+.ph-row .t2{ font-size:8.5px; color:var(--ink-3) }
+.ph-row .done{
+  font-size:8px; font-weight:700; color:var(--ink-2); background:var(--chip);
+  border-radius:var(--r-full); padding:4px 9px;
+}
+.ph-dock{
+  position:absolute; left:12px; right:12px; bottom:11px; height:46px;
+  background:rgba(255,255,255,0.85); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
+  border-radius:20px; box-shadow:0 2px 20px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.04);
+  display:flex; align-items:center; justify-content:space-around; padding:0 8px;
+}
+.ph-dock .di{ display:flex; flex-direction:column; align-items:center; gap:2px }
+.ph-dock .di svg{ width:15px; height:15px; stroke:var(--ink-3); stroke-width:1.6 }
+.ph-dock .di.on svg{ stroke:var(--coral); stroke-width:2.2 }
+.ph-dock .di.on .dl{ font-size:6.5px; font-weight:700; color:var(--coral) }
+.ph-fab{
+  width:31px; height:31px; border-radius:50%; background:var(--coral);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 12px rgba(232,93,42,0.35);
+}
+.ph-fab svg{ width:13px; height:13px; stroke:#fff; stroke-width:2.4 }
+
+/* ============================================================
+   LATER — ecosystem chips
+   ============================================================ */
+.later{ padding:90px 0 20px; text-align:center }
+.later h2{ font-size:clamp(24px, 3.2vw, 34px); font-weight:800; letter-spacing:var(--track-title); margin-top:14px }
+.later-chips{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:26px; max-width:640px; margin-left:auto; margin-right:auto }
+.later-chips span{
+  font-size:13px; font-weight:600; color:var(--ink); background:var(--chip);
+  border-radius:var(--r-full); padding:9px 18px;
+}
+.later p{ font-size:13px; color:var(--ink-3); margin-top:22px }
+
+/* ============================================================
+   FRIEND — the silence
+   ============================================================ */
+.friend{
+  min-height:92vh; display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:80px 24px;
+}
+.friend-inner{ max-width:660px }
+.friend h2{
+  font-size:clamp(27px, 4.4vw, 44px); font-weight:800;
+  letter-spacing:-0.03em; line-height:1.18;
+}
+.friend h2 em{ font-style:normal; color:var(--coral) }
+.friend p{
+  font-size:clamp(16px, 2.2vw, 20px); color:var(--ink-2); line-height:1.6; margin-top:26px;
+}
+
+/* ============================================================
+   WAITLIST + FOOTER
+   ============================================================ */
+.waitlist{ padding:20px 0 130px; text-align:center }
+.waitlist h2{ font-size:clamp(28px, 4vw, 42px); font-weight:800; letter-spacing:-0.03em; line-height:1.08; margin-top:16px }
+.waitlist .sub{ font-size:16px; color:var(--ink-2); margin-top:14px }
+.wl-form{
+  display:flex; gap:10px; justify-content:center; margin:32px auto 0; max-width:460px;
+  transition:opacity 240ms ease, transform 240ms ease;
+}
+.wl-form.hide{ opacity:0; transform:scale(0.96); pointer-events:none }
+.wl-input{
+  flex:1; min-width:0; height:var(--h-cta); padding:0 18px;
+  background:var(--surface); border:1px solid transparent; border-radius:var(--r-input);
+  font-family:inherit; font-size:15px; color:var(--ink); box-shadow:var(--shadow-warm);
+}
+.wl-input::placeholder{ color:var(--placeholder) }
+.wl-input:focus{ outline:none; border-color:var(--coral); box-shadow:0 0 0 3px rgba(232,93,42,0.14) }
+.wl-btn{
+  height:var(--h-cta); padding:0 24px; border:none; border-radius:var(--r-card);
+  background:var(--coral); color:#fff; font-size:15px; font-weight:700;
+  box-shadow:var(--glow-cta); white-space:nowrap;
+  transition:background var(--t-normal) ease, transform var(--t-tap) ease;
+}
+.wl-btn:hover{ background:var(--coral-hover); transform:translateY(-1px) }
+.wl-btn:active{ transform:scale(0.98) }
+.wl-success{
+  display:none; align-items:center; justify-content:center; gap:12px;
+  margin:32px auto 0; opacity:0; transform:translateY(10px) scale(0.97);
+  transition:opacity 0.45s ease, transform 0.55s var(--ease-spring);
+}
+.wl-success.show{ opacity:1; transform:none }
+.wl-check{
+  width:40px; height:40px; border-radius:50%; background:var(--ok-bg);
+  border:1px solid #D7EBDD; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.wl-check svg{ width:18px; height:18px; stroke:var(--ok) }
+.wl-success p{ font-size:16px; font-weight:600; color:var(--ink) }
+
+footer{ border-top:1px solid var(--hair); padding:40px 0 110px }
+.foot-inner{
+  max-width:1140px; margin:0 auto; padding:0 24px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+}
+.foot-left{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap }
+.foot-left .tag{ font-size:13px; color:var(--ink-2); font-weight:500 }
+.foot-left .meta{ font-size:12px; color:var(--ink-3) }
+.foot-links{ display:flex; align-items:center; gap:18px; font-size:12.5px; color:var(--ink-3); flex-wrap:wrap }
+.foot-links a{ transition:color var(--t-normal) ease }
+.foot-links a:hover{ color:var(--coral) }
+
+/* ============================================================
+   LAB SWITCHER
+   ============================================================ */
+.lab{
+  position:fixed; left:16px; bottom:16px; z-index:80;
+  display:flex; align-items:center; gap:2px;
+  background:rgba(255,255,255,0.72);
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  border:1px solid var(--hair); border-radius:var(--r-full);
+  padding:5px 7px; font-size:11px; font-weight:600; color:var(--ink-3);
+  box-shadow:var(--shadow-float);
+}
+.lab a{ display:flex; align-items:center; padding:4px 6px; border-radius:var(--r-full); transition:color var(--t-normal) ease, background var(--t-normal) ease }
+.lab a:hover{ color:var(--coral); background:rgba(232,93,42,0.07) }
+.lab svg{ width:11px; height:11px; stroke:currentColor }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width:1024px){
+  .bento{ gap:12px }
+  .pillar{ gap:40px }
+}
+@media (max-width:900px){
+  .pillar{ grid-template-columns:1fr; gap:34px; padding:60px 0 }
+  .pillar.flip .pillar-card{ order:0; justify-self:center }
+  .pillar.flip .pillar-txt{ justify-self:start }
+  .pillar-txt p{ max-width:56ch }
+  .pocket-card{ grid-template-columns:1fr; min-height:0 }
+  .pocket-stage{ height:400px }
+  .phone{ top:36px }
+}
+@media (max-width:768px){
+  .nav-links{ display:none }
+  .hero{ padding-top:122px }
+  .bento{ grid-template-columns:repeat(4, minmax(0,1fr)); grid-auto-rows:auto; gap:12px }
+  .b-cell{ min-height:132px }
+  .c-greeting{ grid-column:span 4; grid-row:auto; order:1 }
+  .c-vaccine{ grid-column:span 2; order:2 }
+  .c-pets{ grid-column:span 2; order:3 }
+  .c-marco{ grid-column:span 4; order:4 }
+  .c-live{ grid-column:span 4; order:5 }
+  .c-cta{ grid-column:span 4; order:6 }
+  .c-today{ grid-column:span 4; grid-row:auto; order:7 }
+  .c-spark{ grid-column:span 4; order:8 }
+  .c-wallet{ grid-column:span 2; order:9 }
+  .c-docs{ grid-column:span 2; order:10 }
+  .c-memory{ grid-column:span 4; min-height:170px; order:11 }
+  .c-frost.f-tele{ grid-column:span 2; order:12 }
+  .c-frost.f-ins{ grid-column:span 2; order:13 }
+  .fr-top{ flex-direction:column; align-items:flex-start }
+  .how-grid{ grid-template-columns:1fr; gap:12px }
+  .friend{ min-height:78vh }
+}
+@media (max-width:480px){
+  .wrap, .wrap-narrow, .nav-inner, .foot-inner{ padding-left:18px; padding-right:18px }
+  .bento{ grid-template-columns:repeat(2, minmax(0,1fr)) }
+  .c-greeting,.c-vaccine,.c-pets,.c-marco,.c-live,.c-cta,.c-today,.c-spark,.c-memory{ grid-column:span 2 }
+  .c-wallet,.c-docs,.c-frost.f-tele,.c-frost.f-ins{ grid-column:span 1 }
+  .b-cell{ padding:19px; min-height:120px }
+  .c-live{ flex-direction:column; align-items:flex-start; gap:8px }
+  .route svg{ height:64px }
+  .quick-grid{ gap:8px }
+  .q-tile{ padding:11px 12px }
+  .q-tile .v{ font-size:17px }
+  .hero-ctas{ flex-direction:column; align-items:stretch }
+  .wl-form{ flex-direction:column }
+  .zoom{ padding:26px; border-radius:24px }
+  .pocket-stage{ height:340px }
+  .phone{ width:252px; top:30px }
+  .ph-screen{ width:234px; height:506px }
+  .foot-inner{ flex-direction:column; align-items:flex-start }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto }
+  .hero .rise{ animation:none; opacity:1; transform:none }
+  .b-cell, .bento.on .b-cell{ animation:none !important; opacity:1 !important; transform:none !important }
+  .rv, .rv-zoom{ opacity:1 !important; transform:none !important; transition:none !important }
+  .live-dot, .route .trail, .route .r-halo{ animation:none !important }
+  .spark polyline{ stroke-dasharray:none !important; stroke-dashoffset:0 !important; transition:none !important }
+  .b-cell:hover, .how-cell:hover{ transform:none }
+}
+</style>
+<noscript>
+<style>
+  .b-cell, .rv, .rv-zoom, .hero .rise{ opacity:1 !important; transform:none !important; animation:none !important }
+  .nav{ background:rgba(247,245,242,0.9); border-bottom-color:var(--hair) }
+</style>
+</noscript>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="wordmark" aria-label="Fylos — home">FYLOS<span class="dot" aria-hidden="true"></span></a>
+    <nav aria-label="Main">
+      <ul class="nav-links">
+        <li><a href="#bento">At a glance</a></li>
+        <li><a href="#pillars">Closer</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#pocket">The app</a></li>
+      </ul>
+    </nav>
+    <a href="#waitlist" class="nav-cta">Join the waitlist</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap">
+      <p class="eyebrow rise">One calm place</p>
+      <h1 id="hero-h" class="rise d1">Everything, at a&nbsp;glance.</h1>
+      <p class="rise d2">Fylos keeps health records, daily rhythms, and trusted people in one calm place — so you can be there for the good parts.</p>
+      <div class="hero-ctas rise d3">
+        <a href="#waitlist" class="btn-primary">Join the waitlist</a>
+        <a href="#how" class="btn-secondary">See how it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE BENTO ================= -->
+  <section class="bento-zone" id="bento" aria-label="The whole of Fylos, in one grid">
+    <div class="wrap">
+      <div class="bento" id="bentoGrid">
+
+        <!-- greeting · 2x2 -->
+        <div class="b-cell c-greeting" style="--d:0ms">
+          <div>
+            <p class="eyebrow">Saturday · Jul 11</p>
+            <h2>Good morning, Anna.</h2>
+            <p class="sub">What's on the schedule today?</p>
+          </div>
+          <div class="quick-grid">
+            <div class="q-tile"><p class="v">2</p><p class="l">Pets</p></div>
+            <div class="q-tile"><p class="v">1</p><p class="l">Bookings</p></div>
+            <div class="q-tile"><p class="v">12</p><p class="l">Docs</p></div>
+          </div>
+        </div>
+
+        <!-- pet switcher · 1x1 -->
+        <div class="b-cell c-pets" style="--d:45ms">
+          <p class="eyebrow">Your Fylos</p>
+          <div class="pets-row">
+            <div class="pet bobby">
+              <div class="ava" aria-hidden="true">B</div>
+              <p class="name">Bobby</p>
+            </div>
+            <div class="pet luna">
+              <div class="ava" aria-hidden="true">L</div>
+              <p class="name">Luna</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- vaccine countdown · 1x1 · zooms to Health -->
+        <a class="b-cell c-vaccine" href="#p-health" style="--d:90ms" aria-label="Rabies booster in 14 days — read about health, remembered">
+          <span class="peek" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p class="eyebrow">Health</p>
+          <div class="icon-chip" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+          </div>
+          <p class="v-title">Rabies booster</p>
+          <p class="v-sub">Bobby · due Jul 25</p>
+          <span class="badge badge-warn">in 14 days</span>
+        </a>
+
+        <!-- live walk · the wide cell -->
+        <div class="b-cell c-live" style="--d:135ms">
+          <div class="live-left">
+            <p class="eyebrow">Right now</p>
+            <p class="live-chip"><span class="live-dot" aria-hidden="true"></span>Live · 32 min · 2.1 km</p>
+            <p class="live-sub">Marco is out with Bobby.</p>
+          </div>
+          <div class="route" aria-hidden="true">
+            <svg viewBox="0 0 260 96" preserveAspectRatio="xMidYMid meet">
+              <path class="street" d="M10 76 C 44 68, 46 38, 80 42 C 114 46, 120 82, 152 76 C 184 70, 180 30, 212 26 C 228 24, 240 34, 250 24"/>
+              <path class="trail" d="M10 76 C 44 68, 46 38, 80 42 C 114 46, 120 82, 152 76 C 184 70, 180 30, 212 26 C 228 24, 240 34, 250 24"/>
+              <circle cx="10" cy="76" r="4" fill="#FFFFFF" stroke="#CFCFD4" stroke-width="2"/>
+              <circle class="r-halo" cx="250" cy="24" r="9"/>
+              <circle cx="250" cy="24" r="4.5" fill="#34C759"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- marco booking · zooms to People -->
+        <a class="b-cell c-marco" href="#p-people" style="--d:180ms" aria-label="Upcoming walk with Marco — read about people you trust">
+          <span class="peek" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p class="eyebrow">Upcoming</p>
+          <div class="person">
+            <div class="ava" aria-hidden="true">MK</div>
+            <div class="who">
+              <p class="nm">Marco K.
+                <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.3 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.3 1.3-6.6L2.5 9.1l6.6-.8Z"/></svg>
+                <span class="rating">4.9</span>
+              </p>
+              <p class="what">Dog walk · Bobby</p>
+            </div>
+            <span class="badge badge-ok">Confirmed</span>
+          </div>
+          <p class="foot">Sat, Jul 11 · 09:00</p>
+        </a>
+
+        <!-- today rows · 1x2 · zooms to Rhythm -->
+        <a class="b-cell c-today" href="#p-rhythm" style="--d:225ms" aria-label="Today's reminders — read about a gentle rhythm">
+          <span class="peek" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <p class="eyebrow">Today</p>
+          <div class="t-rows">
+            <div class="t-row is-done">
+              <div class="t-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
+              <div class="t-main"><p class="t-name">Morning walk</p><p class="t-time">07:30</p></div>
+              <span class="t-done" aria-label="Done"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            </div>
+            <div class="t-row">
+              <div class="t-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div>
+              <div class="t-main"><p class="t-name">Heartworm chew</p><p class="t-time">08:00</p></div>
+              <span class="t-pill">Done</span>
+            </div>
+            <div class="t-row">
+              <div class="t-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M5 11l1.5 7a2 2 0 0 0 2 1.6h7a2 2 0 0 0 2-1.6L19 11"/></svg></div>
+              <div class="t-main"><p class="t-name">Dinner</p><p class="t-time">18:00</p></div>
+              <span class="t-pill">Done</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- weight/walks sparkline -->
+        <div class="b-cell c-spark" style="--d:270ms">
+          <div>
+            <p class="eyebrow">This week</p>
+            <p class="s-val">12.4 km</p>
+            <p class="s-sub">4 walks with Bobby</p>
+          </div>
+          <div class="spark" aria-hidden="true">
+            <svg viewBox="0 0 240 48" preserveAspectRatio="none">
+              <polyline id="sparkline" points="2,40 34,34 66,38 98,22 130,27 162,12 194,18 238,6"/>
+              <circle class="end" cx="238" cy="6" r="3.5"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- wallet line -->
+        <div class="b-cell c-wallet" style="--d:315ms">
+          <p class="eyebrow">Wallet</p>
+          <div>
+            <p class="stat-v">CHF 24.00</p>
+            <p class="stat-l">Walk with Marco</p>
+          </div>
+        </div>
+
+        <!-- docs stat -->
+        <div class="b-cell c-docs" style="--d:360ms">
+          <svg class="mini-ic" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M15 2v5h5"/></svg>
+          <div>
+            <p class="stat-v">12</p>
+            <p class="stat-l">Documents</p>
+          </div>
+        </div>
+
+        <!-- memory card · zooms to Story -->
+        <a class="b-cell c-memory" href="#p-story" style="--d:405ms" aria-label="A kept memory — read about the story of you two">
+          <p class="eyebrow">Memory</p>
+          <span class="mem-chip">Sunday at the lake</span>
+        </a>
+
+        <!-- frosted future · telehealth -->
+        <div class="b-cell c-frost f-tele" style="--d:450ms">
+          <div class="frost-bg" aria-hidden="true"><span class="b1"></span><span class="b2"></span><span class="b3"></span></div>
+          <div class="frost-veil" aria-hidden="true"></div>
+          <div class="fr fr-top">
+            <p class="fr-name">
+              <span class="icon-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="13" height="12" rx="2.5"/><path d="m15 10 6-3v10l-6-3"/></svg></span>
+              Vet telehealth
+            </p>
+            <span class="soon">Coming soon</span>
+          </div>
+          <p class="fr fr-line">A vet on video, when you're unsure.</p>
+        </div>
+
+        <!-- frosted future · insurance -->
+        <div class="b-cell c-frost f-ins" style="--d:495ms">
+          <div class="frost-bg" aria-hidden="true"><span class="b1" style="left:auto;right:-20px"></span><span class="b2" style="right:auto;left:26px"></span><span class="b3" style="right:auto;left:96px"></span></div>
+          <div class="frost-veil" aria-hidden="true"></div>
+          <div class="fr fr-top">
+            <p class="fr-name">
+              <span class="icon-chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V6l8-3 8 3Z"/></svg></span>
+              Insurance companion
+            </p>
+            <span class="soon">Coming soon</span>
+          </div>
+          <p class="fr fr-line">Claims and cover, kept simple.</p>
+        </div>
+
+        <!-- THE coral cell · lands last -->
+        <a class="b-cell c-cta" href="#waitlist" style="--d:640ms">
+          <p class="eyebrow">Be first</p>
+          <div class="cta-line">
+            <p class="txt">Join the waitlist</p>
+            <span class="cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </div>
+          <p class="cta-sub">Launching first in Switzerland · 2026</p>
+        </a>
+
+      </div>
+      <p class="bento-cap rv">Every card above is the real product. Four of them open up below.</p>
+    </div>
+  </section>
+
+  <!-- ================= PILLARS · the camera moves in ================= -->
+  <section id="pillars" aria-labelledby="pillars-h">
+    <div class="pillars-head wrap-narrow rv">
+      <p class="eyebrow">What Fylos does</p>
+      <h2 id="pillars-h">Now, closer.</h2>
+      <p>The same cards — enlarged, one by one.</p>
+    </div>
+
+    <div class="wrap">
+
+      <!-- 01 · Health -->
+      <article class="pillar" id="p-health" aria-labelledby="ph-h">
+        <div class="pillar-txt rv">
+          <p class="eyebrow">01 · Health, remembered</p>
+          <h3 id="ph-h">Vaccines, meds and records — with you, not in a drawer.</h3>
+          <p>Fylos keeps the dates and the papers, and tells you before it matters. Quietly, two weeks ahead.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="zoom rv-zoom">
+            <p class="eyebrow">Health</p>
+            <div class="icon-chip" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+            </div>
+            <p class="v-title">Rabies booster</p>
+            <p class="v-sub">Bobby · due Jul 25</p>
+            <span class="badge badge-warn">in 14 days</span>
+          </div>
+          <p class="cell-meta rv">From the grid · shown closer</p>
+        </div>
+      </article>
+
+      <!-- 02 · Rhythm -->
+      <article class="pillar flip" id="p-rhythm" aria-labelledby="pr-h">
+        <div class="pillar-card">
+          <div class="zoom rv-zoom">
+            <p class="eyebrow">Today</p>
+            <div class="t-rows">
+              <div class="t-row is-done">
+                <div class="t-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></div>
+                <div class="t-main"><p class="t-name">Morning walk</p><p class="t-time">07:30</p></div>
+                <span class="t-done" aria-label="Done"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+              </div>
+              <div class="t-row">
+                <div class="t-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div>
+                <div class="t-main"><p class="t-name">Heartworm chew</p><p class="t-time">08:00</p></div>
+                <span class="t-pill">Done</span>
+              </div>
+              <div class="t-row">
+                <div class="t-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M5 11l1.5 7a2 2 0 0 0 2 1.6h7a2 2 0 0 0 2-1.6L19 11"/></svg></div>
+                <div class="t-main"><p class="t-name">Dinner</p><p class="t-time">18:00</p></div>
+                <span class="t-pill">Done</span>
+              </div>
+            </div>
+          </div>
+          <p class="cell-meta rv">From the grid · shown closer</p>
+        </div>
+        <div class="pillar-txt rv">
+          <p class="eyebrow">02 · A gentle rhythm</p>
+          <h3 id="pr-h">Walks, meals, reminders — today, at a glance.</h3>
+          <p>Three small things a day, remembered for you. One tap says done, and the day moves on.</p>
+        </div>
+      </article>
+
+      <!-- 03 · People -->
+      <article class="pillar" id="p-people" aria-labelledby="pp-h">
+        <div class="pillar-txt rv">
+          <p class="eyebrow">03 · People you trust</p>
+          <h3 id="pp-h">Walkers, sitters and vets — nearby, verified.</h3>
+          <p>Book Marco again in two taps. Follow the walk live, and pay when it's done.</p>
+        </div>
+        <div class="pillar-card">
+          <div class="zoom rv-zoom">
+            <p class="eyebrow">Upcoming</p>
+            <div class="person">
+              <div class="ava" aria-hidden="true">MK</div>
+              <div class="who">
+                <p class="nm">Marco K.
+                  <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.3 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.3 1.3-6.6L2.5 9.1l6.6-.8Z"/></svg>
+                  <span class="rating">4.9</span>
+                </p>
+                <p class="what">Dog walk · Bobby</p>
+              </div>
+              <span class="badge badge-ok">Confirmed</span>
+            </div>
+            <p class="foot">Sat, Jul 11 · 09:00</p>
+          </div>
+          <p class="cell-meta rv">From the grid · shown closer</p>
+        </div>
+      </article>
+
+      <!-- 04 · Story -->
+      <article class="pillar flip" id="p-story" aria-labelledby="ps-h">
+        <div class="pillar-card">
+          <div class="zoom zoom-memory rv-zoom">
+            <p class="eyebrow">Memory</p>
+            <span class="mem-chip" style="margin-top:auto">Sunday at the lake</span>
+          </div>
+          <p class="cell-meta rv">From the grid · shown closer</p>
+        </div>
+        <div class="pillar-txt rv">
+          <p class="eyebrow">04 · The story of you two</p>
+          <h3 id="ps-h">Memories, kept.</h3>
+          <p>The first swim, the lost ball, the long Sunday. Saved where you'll find them again.</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= HOW IT WORKS ================= -->
+  <section class="how" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="rv">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-h">Three cells, that's all.</h2>
+      </div>
+      <div class="how-grid">
+        <div class="how-cell rv" style="--rd:0ms">
+          <div class="how-num" aria-hidden="true">1</div>
+          <h3>Add your Fylos</h3>
+          <p>Name, breed, quirks — two minutes.</p>
+        </div>
+        <div class="how-cell rv" style="--rd:90ms">
+          <div class="how-num" aria-hidden="true">2</div>
+          <h3>We keep track</h3>
+          <p>Records, reminders, routines — quietly.</p>
+        </div>
+        <div class="how-cell rv" style="--rd:180ms">
+          <div class="how-num" aria-hidden="true">3</div>
+          <h3>Live the good part</h3>
+          <p>Book help, share, remember.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= POCKET · phone in a wide cell ================= -->
+  <section class="pocket" id="pocket" aria-labelledby="pocket-h">
+    <div class="wrap">
+      <div class="pocket-card rv">
+        <div class="pocket-txt">
+          <p class="eyebrow">The app</p>
+          <h2 id="pocket-h">All of it, in your pocket.</h2>
+          <p>The same grid, folded into an iPhone. iOS first, Switzerland 2026.</p>
+          <a class="pocket-link" href="#waitlist">Join the waitlist
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="pocket-stage" aria-label="Preview of the Fylos app home screen">
+          <div class="phone">
+            <div class="ph-screen">
+              <div class="ph-island" aria-hidden="true"></div>
+              <div class="ph-status" aria-hidden="true">
+                <span>9:41</span>
+                <span class="ph-glyphs">
+                  <svg viewBox="0 0 18 12" fill="#111111"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+                  <svg viewBox="0 0 16 12" fill="none" stroke="#111111" stroke-width="1.6" stroke-linecap="round"><path d="M1.5 4.5a9.5 9.5 0 0 1 13 0"/><path d="M4 7.2a6 6 0 0 1 8 0"/><circle cx="8" cy="10" r="1.3" fill="#111111" stroke="none"/></svg>
+                  <svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#111111" opacity="0.4"/><rect x="2.5" y="2.5" width="15" height="7" rx="2" fill="#111111"/><path d="M23.5 4v4a2 2 0 0 0 0-4Z" fill="#111111" opacity="0.4"/></svg>
+                </span>
+              </div>
+              <div class="ph-body">
+                <p class="ph-greet">Good morning, <b>Anna</b></p>
+                <p class="ph-greet-sub">What's on the schedule today?</p>
+                <div class="ph-pets">
+                  <div class="ph-pet b"><span class="a" aria-hidden="true">B</span><span class="n">Bobby</span></div>
+                  <div class="ph-pet l"><span class="a" aria-hidden="true">L</span><span class="n">Luna</span></div>
+                </div>
+                <div class="ph-quick">
+                  <div class="ph-q"><p class="v">2</p><p class="l">Pets</p></div>
+                  <div class="ph-q"><p class="v">1</p><p class="l">Bookings</p></div>
+                  <div class="ph-q"><p class="v">12</p><p class="l">Docs</p></div>
+                </div>
+                <p class="ph-label">Upcoming</p>
+                <div class="ph-card ph-book">
+                  <div class="ph-book-top">
+                    <span class="ma" aria-hidden="true">MK</span>
+                    <div class="who">
+                      <p class="nm">Marco K.<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.3 6.6.8-4.9 4.6 1.3 6.6L12 17l-5.9 3.3 1.3-6.6L2.5 9.1l6.6-.8Z"/></svg><span>4.9</span></p>
+                      <p class="wt">Dog walk · Bobby</p>
+                    </div>
+                    <span class="ph-badge">Confirmed</span>
+                  </div>
+                  <p class="dt">Sat, Jul 11 · 09:00</p>
+                </div>
+                <p class="ph-label">Today</p>
+                <div class="ph-card">
+                  <div class="ph-row">
+                    <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7Z"/><path d="m8.5 8.5 7 7"/></svg></span>
+                    <div class="m"><p class="t1">Heartworm chew</p><p class="t2">08:00</p></div>
+                    <span class="done">Done</span>
+                  </div>
+                  <div class="ph-row">
+                    <span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18"/><path d="M5 11a7 7 0 0 1 14 0"/><path d="M5 11l1.5 7a2 2 0 0 0 2 1.6h7a2 2 0 0 0 2-1.6L19 11"/></svg></span>
+                    <div class="m"><p class="t1">Dinner</p><p class="t2">18:00</p></div>
+                    <span class="done">Done</span>
+                  </div>
+                </div>
+              </div>
+              <div class="ph-dock" aria-hidden="true">
+                <span class="di on">
+                  <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+                  <span class="dl">Home</span>
+                </span>
+                <span class="di"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/></svg></span>
+                <span class="ph-fab"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+                <span class="di"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M19.5 12.6 12 20l-7.5-7.4a5 5 0 1 1 7.5-6.6 5 5 0 1 1 7.5 6.6Z"/></svg></span>
+                <span class="di"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LATER · ecosystem ================= -->
+  <section class="later" id="later" aria-labelledby="later-h">
+    <div class="wrap rv">
+      <p class="eyebrow">Later</p>
+      <h2 id="later-h">More cells to come.</h2>
+      <div class="later-chips">
+        <span>Vet telehealth</span>
+        <span>Health sync</span>
+        <span>Insurance companion</span>
+        <span>Fylos for Pros</span>
+        <span>Neighborhood network</span>
+        <span>Wallet &amp; rewards</span>
+      </div>
+      <p>Quietly in the works for 2027.</p>
+    </div>
+  </section>
+
+  <!-- ================= FRIEND · the silence ================= -->
+  <section class="friend" id="friend" aria-labelledby="friend-h">
+    <div class="friend-inner rv">
+      <h2 id="friend-h">Fylos — <em>φίλος</em> — is Greek for friend.</h2>
+      <p>That is what this is: a friend who remembers, so you can be there.</p>
+    </div>
+  </section>
+
+  <!-- ================= WAITLIST ================= -->
+  <section class="waitlist" id="waitlist" aria-labelledby="wl-h">
+    <div class="wrap-narrow rv">
+      <p class="eyebrow">The waitlist</p>
+      <h2 id="wl-h">Launching first in Switzerland.<br>Be first in line.</h2>
+      <form class="wl-form" id="wlForm" novalidate>
+        <label for="wlEmail" class="eyebrow" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)">Email address</label>
+        <input class="wl-input" id="wlEmail" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+        <button class="wl-btn" type="submit">Join the waitlist</button>
+      </form>
+      <div class="wl-success" id="wlSuccess" role="status" aria-live="polite">
+        <span class="wl-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+        <p>You're on the list. We'll write soon.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-left">
+      <a href="#top" class="wordmark" style="font-size:17px" aria-label="Fylos — back to top">FYLOS<span class="dot" aria-hidden="true"></span></a>
+      <span class="tag">Fylos means friend.</span>
+      <span class="meta">iOS first · Switzerland 2026</span>
+    </div>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+      <span>© 2026 Fylos</span>
+    </nav>
+  </div>
+</footer>
+
+<!-- ================= LAB SWITCHER ================= -->
+<aside class="lab" aria-label="Design lab switcher">
+  <a href="09-dialogue.html" aria-label="Previous variation — Dialogue">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+  </a>
+  <a href="index.html">10/10 · Bento</a>
+  <a href="01-quiet-flagship.html" aria-label="Next variation — Quiet Flagship">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+  </a>
+</aside>
+
+<script>
+(function(){
+  'use strict';
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- nav scroll state (rAF-throttled) ---------- */
+  var nav = document.getElementById('nav');
+  var ticking = false;
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      if(nav){ nav.classList.toggle('scrolled', window.scrollY > 12); }
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  /* ---------- bento load choreography ---------- */
+  var bento = document.getElementById('bentoGrid');
+  if(bento){
+    if(reduced){
+      bento.classList.add('on');
+    } else {
+      /* two frames so initial styles are committed before the stagger begins */
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ bento.classList.add('on'); });
+      });
+    }
+  }
+
+  /* ---------- scroll reveals ---------- */
+  var revealables = document.querySelectorAll('.rv, .rv-zoom');
+  if('IntersectionObserver' in window && !reduced){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold:0.16, rootMargin:'0px 0px -6% 0px' });
+    revealables.forEach(function(el){ io.observe(el); });
+  } else {
+    revealables.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---------- sparkline draws itself when seen ---------- */
+  var spark = document.getElementById('sparkline');
+  if(spark && !reduced && typeof spark.getTotalLength === 'function'){
+    try{
+      var len = spark.getTotalLength();
+      spark.style.strokeDasharray = String(len);
+      spark.style.strokeDashoffset = String(len);
+      var cell = spark.closest('.b-cell');
+      if(cell && 'IntersectionObserver' in window){
+        var sio = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){
+            if(e.isIntersecting){
+              spark.style.transition = 'stroke-dashoffset 1.3s cubic-bezier(0.22,1,0.36,1) 0.45s';
+              spark.style.strokeDashoffset = '0';
+              sio.unobserve(e.target);
+            }
+          });
+        }, { threshold:0.4 });
+        sio.observe(cell);
+      } else {
+        spark.style.strokeDasharray = '';
+        spark.style.strokeDashoffset = '';
+      }
+    } catch(err){ /* SVG not ready — leave fully drawn */ }
+  }
+
+  /* ---------- waitlist morph ---------- */
+  var form = document.getElementById('wlForm');
+  var success = document.getElementById('wlSuccess');
+  var email = document.getElementById('wlEmail');
+  if(form && success && email){
+    form.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var v = email.value.trim();
+      if(!v || v.indexOf('@') < 1){
+        email.focus();
+        email.style.borderColor = '#E85D2A';
+        return;
+      }
+      form.classList.add('hide');
+      window.setTimeout(function(){
+        form.style.display = 'none';
+        success.style.display = 'flex';
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){ success.classList.add('show'); });
+        });
+      }, reduced ? 0 : 250);
+    });
+    email.addEventListener('input', function(){ email.style.borderColor = ''; });
+  }
+})();
+</script>
+</body>
+</html>

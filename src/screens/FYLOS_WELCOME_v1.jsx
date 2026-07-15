@@ -108,7 +108,7 @@ export const ProfileCompletion = () => {
         <div className="flex-1" />
         <div style={{ animation: 'auRise 0.5s 0.2s ease both' }}>
           <CTA onClick={() => { setAuthed(); nav('/add-pet'); }}>Add your first pet</CTA>
-          <button onClick={() => { setAuthed(); nav('/'); }} className="w-full mt-3 py-2.5"><span className="text-[13.5px] font-bold" style={{ color: MUTED }}>Later</span></button>
+          <button onClick={() => { setAuthed(); try { window.sessionStorage.setItem('fylos.warm', '1'); } catch (e) {} nav('/'); }} className="w-full mt-3 py-2.5"><span className="text-[13.5px] font-bold" style={{ color: MUTED }}>Later</span></button>
         </div>
       </div>
     </Frame>

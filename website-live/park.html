@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos · Park card options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --soft:#6E625B; --coral:#E85D2A; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; padding:32px 16px 70px; -webkit-font-smoothing:antialiased }
+  header{ max-width:1020px; margin:0 auto 22px; text-align:center }
+  .mark{ font-weight:800; letter-spacing:.2em; color:var(--coral); font-size:14px }
+  h1{ font-family:'Fraunces',serif; font-weight:600; font-size:29px; letter-spacing:-.02em; margin-top:10px }
+  .sub{ color:var(--soft); font-size:14px; margin-top:8px; line-height:1.6; max-width:660px; margin-left:auto; margin-right:auto }
+  .grid{ max-width:1020px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:16px }
+  @media(max-width:720px){ .grid{ grid-template-columns:1fr } }
+  figure{ background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 12px 34px rgba(90,60,40,.12) }
+  figure img{ width:100%; display:block }
+  figcaption{ padding:14px 17px 17px }
+  .lbl{ font-size:10.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--coral) }
+  figcaption h2{ font-family:'Fraunces',serif; font-weight:600; font-size:17px; margin-top:4px; line-height:1.2 }
+  figcaption p{ color:var(--soft); font-size:12.5px; margin-top:5px; line-height:1.5 }
+  footer{ max-width:1020px; margin:22px auto 0; text-align:center; color:var(--soft); font-size:13px; line-height:1.7 }
+  footer b{ color:var(--ink) }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">FYLOS</div>
+  <h1>Το πάρκο (hazard report) — <span style="color:var(--coral)">κλειδώθηκε το P1</span></h1>
+  <div class="sub">Η στάση του πάρκου: βλέπεις σπασμένα γυαλιά, το αναφέρεις μία φορά, ειδοποιούνται γείτονες + park keeper, μετά «Cleared». Το χειροποίητο κοραλί κύκλωμα δείχνει το hazard. Στο φιλμ αλλάζει σε 2 stages (report → cleared). Πες μου νούμερο.</div>
+</header>
+<div class="grid">
+  <figure style="outline:3px solid var(--coral); outline-offset:-3px"><img src="park/p1.png"><figcaption><div class="lbl">★ P1 · Say it once (ΕΠΙΛΕΓΜΕΝΟ)</div><h2>«Something sharp? Say it once.»</h2><p>Σφιχτό, καθαρό, στο ύφος του φιλμ. Δύο σειρές: reported → warned. Η ασφαλής επιλογή.</p></figcaption></figure>
+  <figure><img src="park/p2.png"><figcaption><div class="lbl">P2 · The chain</div><h2>«See it once, everyone knows.»</h2><p>Δείχνει τον μηχανισμό: You report → Neighbors warned → Cleared. Το πιο ξεκάθαρο «τι γίνεται».</p></figcaption></figure>
+  <figure><img src="park/p3.png"><figcaption><div class="lbl">P3 · Watches out</div><h2>«A neighborhood that watches out.»</h2><p>Η κοινοτική, ζεστή γωνία: κάθε βόλτα άλλο ένα ζευγάρι μάτια στο μονοπάτι.</p></figcaption></figure>
+  <figure><img src="park/p4.png"><figcaption><div class="lbl">P4 · Minimal</div><h2>«Paws safe, because you said something.»</h2><p>Μία δυνατή, συναισθηματική φράση + Reported/Cleared. Η πιο καρδιά.</p></figcaption></figure>
+</div>
+<footer>Διάλεξε νούμερο (ή συνδυασμό) + μικροδιορθώσεις. <b>Εκκρεμεί:</b> batch μέσα στο φιλμ (tag + κτηνίατρος + groomer + πάρκο) όποτε πεις.</footer>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos · Tag layouts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --soft:#6E625B; --coral:#E85D2A; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; padding:34px 18px 70px; -webkit-font-smoothing:antialiased }
+  header{ max-width:1000px; margin:0 auto 26px; text-align:center }
+  .mark{ font-weight:800; letter-spacing:.2em; color:var(--coral); font-size:14px }
+  h1{ font-family:'Fraunces',serif; font-weight:600; font-size:30px; letter-spacing:-.02em; margin-top:10px }
+  .sub{ color:var(--soft); font-size:14.5px; margin-top:8px; line-height:1.6; max-width:620px; margin-left:auto; margin-right:auto }
+  .grid{ max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:30px }
+  figure{ background:#fff; border-radius:22px; overflow:hidden; box-shadow:0 16px 44px rgba(90,60,40,.12) }
+  figure img{ width:100%; display:block }
+  figcaption{ padding:16px 20px 20px }
+  .tagn{ font-size:11px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--coral) }
+  figcaption h2{ font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin-top:5px }
+  figcaption p{ color:var(--soft); font-size:13.5px; margin-top:6px; line-height:1.55 }
+  footer{ max-width:1000px; margin:34px auto 0; text-align:center; color:var(--soft); font-size:13px; line-height:1.6 }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">FYLOS</div>
+  <h1>Tag layouts — διάλεξε</h1>
+  <div class="sub">Πάνω-πάνω η τελική 6η για την κάρτα του tag. Chip «FYLOS ID» στο κολάρο, ψηφιακό ID ενεργό τώρα / μεταλλικό σύντομα. Πες μου νούμερο.</div>
+</header>
+<div class="grid">
+  <figure style="outline:3px solid var(--coral); outline-offset:-3px">
+    <a href="/tag" style="display:block"><img src="layouts/l6-final.png" alt="Layout 6 Final"></a>
+    <figcaption><div class="tagn">★ Layout 6 · Τελικό</div><h2>Τρεις σειρές + ένα καθαρό κουμπί</h2><p>Το private ως τρίτη σειρά, ΕΝΑ ενιαίο πορτοκαλί κουμπί «Get Vida&rsquo;s ID» (δυναμικό όνομα), και το «FYLOS ID» chip κάτω από το ταγκάκι. Ζωντανά στο <a href="/tag" style="color:var(--coral)">/tag</a>.</p></figcaption>
+  </figure>
+  <figure>
+    <img src="layouts/l1.png" alt="Layout 1">
+    <figcaption><div class="tagn">Layout 1 · Status split</div><h2>Δύο σειρές κατάστασης</h2><p>Καθαρό «LIVE NOW» και «COMING SOON». Ο πιο ξεκάθαρος τρόπος να καταλάβει ο χρήστης τι είναι διαθέσιμο.</p></figcaption>
+  </figure>
+  <figure>
+    <img src="layouts/l2.png" alt="Layout 2">
+    <figcaption><div class="tagn">Layout 2 · Bold minimal</div><h2>Σίγουρο και πιασάρικο</h2><p>«Vida's ID, live today.» με το QR καθαρό. Η πιο δυνατή, minimal εκδοχή.</p></figcaption>
+  </figure>
+  <figure>
+    <img src="layouts/l3.png" alt="Layout 3">
+    <figcaption><div class="tagn">Layout 3 · 3 βήματα</div><h2>Πουλάει την απλότητα</h2><p>Πάρε το ID → βάλ' το στο κολάρο → αν χαθεί, τον σκανάρουν και βλέπουν ό,τι επιτρέπεις.</p></figcaption>
+  </figure>
+  <figure>
+    <img src="layouts/l4.png" alt="Layout 4">
+    <figcaption><div class="tagn">Layout 4 · Tag stub</div><h2>Σαν εισιτήριο/ταγκάκι</h2><p>Κάρτα με διάτρητη γραμμή, QR + LIVE NOW. Παιχνιδιάρικο, σαν προϊόν.</p></figcaption>
+  </figure>
+  <figure>
+    <img src="layouts/l5.png" alt="Layout 5">
+    <figcaption><div class="tagn">Layout 5 · Floating chips</div><h2>Ζωντανό, στη γλώσσα του φιλμ</h2><p>Αιωρούμενα chips γύρω από τον σκύλο: digital live now, metal coming soon, you choose what shows.</p></figcaption>
+  </figure>
+</div>
+<footer>Δοκίμασε και το QR: <b>fylos-neighborhood.vercel.app/found</b></footer>
+</body>
+</html>

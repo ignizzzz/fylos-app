@@ -1090,7 +1090,14 @@ export default function App() {
             message="You'll be logged out of your fylos account on this device."
             confirmLabel="Log out"
             danger
-            onConfirm={() => setShowLogout(false)}
+            onConfirm={() => {
+              try {
+                window.localStorage.removeItem('fylos.auth');
+                window.localStorage.removeItem('fylos.intro');
+                window.sessionStorage.clear();
+              } catch (e) {}
+              window.location.href = '/';
+            }}
           />
 
           <DeleteAccountDialog

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>You found Vida · Fylos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-deep:#CF4A1C; --sage:#A9B49A;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:var(--sans); color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, var(--peach) 0%, var(--cream) 46%),
+      var(--cream);
+    min-height:100vh; display:flex; justify-content:center; padding:26px 18px 40px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{width:min(430px,100%); animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes rise{from{opacity:0; transform:translateY(20px)}to{opacity:1; transform:none}}
+
+  .brandrow{display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:26px}
+  .brandrow b{font-weight:800; letter-spacing:.2em; font-size:14px; color:var(--coral)}
+  .paw{width:18px; height:18px; color:var(--coral)}
+
+  .hero{
+    text-align:center; background:#fff; border-radius:30px; padding:34px 28px 30px;
+    box-shadow:0 20px 60px rgba(90,60,40,.14); position:relative; overflow:hidden;
+  }
+  .hero::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:12px;
+    background:repeating-linear-gradient(90deg, var(--coral) 0 16px, #FFD9C7 16px 32px);
+  }
+  .avatar{
+    width:96px; height:96px; border-radius:50%; margin:14px auto 0;
+    background:radial-gradient(circle at 42% 34%, #F4CE8F, #E3A85B 70%);
+    display:grid; place-items:center; box-shadow:0 14px 30px rgba(180,120,50,.28);
+    font-size:46px;
+  }
+  .kick{margin-top:20px; font-size:11.5px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:var(--coral)}
+  h1{font-family:var(--serif); font-weight:600; font-size:38px; letter-spacing:-.02em; margin-top:8px}
+  h1 em{font-style:italic; color:var(--coral)}
+  .say{margin-top:12px; font-size:15px; line-height:1.55; color:var(--ink-soft)}
+
+  .actions{display:flex; gap:12px; margin-top:24px}
+  .btn{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:9px;
+    padding:16px; border-radius:16px; font:800 14.5px var(--sans); text-decoration:none;
+    transition:transform .2s ease;
+  }
+  .btn svg{width:18px; height:18px; fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+  .btn:active{transform:scale(.98)}
+  .btn.call{background:var(--coral); color:#fff; box-shadow:0 12px 26px rgba(232,93,42,.34); stroke:#fff}
+  .btn.msg{background:var(--peach); color:var(--coral); stroke:var(--coral)}
+
+  .facts{margin-top:14px; background:#fff; border-radius:24px; padding:8px; box-shadow:0 14px 40px rgba(90,60,40,.10)}
+  .fact{display:flex; align-items:center; gap:12px; padding:14px 16px}
+  .fact + .fact{border-top:1px solid #F1E9DF}
+  .fic{width:36px; height:36px; border-radius:12px; background:var(--peach); display:grid; place-items:center; flex:none}
+  .fic svg{width:19px; height:19px; stroke:var(--coral); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+  .fact b{display:block; font-size:14px}
+  .fact span{display:block; font-size:12.5px; color:var(--ink-soft); margin-top:1px}
+  .fact .ok{margin-left:auto; color:var(--sage); font-weight:800; font-size:12px}
+
+  .footer{text-align:center; margin-top:22px; font-size:12px; color:var(--ink-soft); line-height:1.6}
+  .footer b{color:var(--coral); font-weight:800; letter-spacing:.12em}
+  .banner{
+    margin-top:18px; text-align:center; font-size:11.5px; color:var(--coral); font-weight:700;
+    background:color-mix(in srgb, var(--peach) 70%, transparent); border-radius:12px; padding:10px;
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="brandrow">
+    <svg class="paw" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 11a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM16.5 11a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM12 7.6a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM12 20.4c-2.8 0-5-1.5-5-3.3 0-1.5 1.5-2.4 2.6-3.3.9-.8 1.4-1.7 2.4-1.7s1.5.9 2.4 1.7c1.1.9 2.6 1.8 2.6 3.3 0 1.8-2.2 3.3-5 3.3Z"/></svg>
+    <b>FYLOS</b>
+  </div>
+
+  <div class="hero">
+    <div class="avatar">🐶</div>
+    <div class="kick">You found a good boy</div>
+    <h1>This is <em>Vida.</em></h1>
+    <div class="say">Thank you for stopping. Vida has a family who misses him. One tap and they'll know he's safe.</div>
+    <div class="actions">
+      <a class="btn call" href="tel:+41000000000"><svg viewBox="0 0 24 24"><path d="M4 5c0 8 7 15 15 15l2.5-3-4.5-2-2 2c-3-1.5-5.5-4-7-7l2-2-2-4.5L4 5z"/></svg>Call the owner</a>
+      <a class="btn msg" href="sms:+41000000000"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg>Message</a>
+    </div>
+  </div>
+
+  <div class="facts">
+    <div class="fact">
+      <div class="fic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-7-10a7 7 0 0 1 14 0c0 5.4-7 10-7 10Z"/><circle cx="12" cy="11" r="2.4"/></svg></div>
+      <div><b>Home is on the square</b><span>Zürich · a short stroll away</span></div>
+    </div>
+    <div class="fact">
+      <div class="fic"><svg viewBox="0 0 24 24"><path d="m7 12 3.5 3.5L17.5 8"/><circle cx="12" cy="12" r="9"/></svg></div>
+      <div><b>Vaccines up to date</b><span>Last check May 12</span></div>
+      <span class="ok">✓</span>
+    </div>
+    <div class="fact">
+      <div class="fic"><svg viewBox="0 0 24 24"><path d="M18 6 8 16m-3 3-2 2m2-2 4-1 8-8-3-3-8 8-1 4"/></svg></div>
+      <div><b>No known allergies</b><span>Safe to offer water</span></div>
+      <span class="ok">✓</span>
+    </div>
+    <div class="fact">
+      <div class="fic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+      <div><b>The rest stays private</b><span>The family chooses what you see</span></div>
+    </div>
+  </div>
+
+  <div class="banner">Live demo · this is exactly what a real Fylos tag opens</div>
+  <div class="footer">
+    Reunited by <b>FYLOS</b><br>No app needed · Made in the neighborhood
+  </div>
+</div>
+</body>
+</html>

@@ -47,3 +47,34 @@ body {
   100% { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Real device / phone-sized viewport: drop the drawn iPhone mockup ──
+   The 390×844 frame + fake island/status-bar/home-bar are copy-pasted into
+   each standalone screen (inline styles or w-[390px] h-[844px] classes).
+   html.fylos-device is set at boot in main.jsx; these overrides make every
+   such frame full-bleed without touching the 60+ screen files. The frame
+   stays `position: fixed` so it remains the containing block for all the
+   `absolute inset-0` content inside it. */
+html.fylos-device div[style*="width: 390px"][style*="height: 844px"],
+html.fylos-device .w-\[390px\].h-\[844px\] {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Fake Dynamic Island and fake home-indicator bar */
+html.fylos-device div[style*="width: 120px"][style*="height: 32px"],
+html.fylos-device div[style*="width: 134px"][style*="height: 5px"] {
+  display: none !important;
+}
+
+/* Fake "9:41" status-bar rows — absolutely positioned, so hiding them
+   causes no layout shift; the real status bar occupies the same zone. */
+html.fylos-device div.absolute.top-0.left-0.right-0[style*="height: 54px"] {
+  display: none !important;
+}
+

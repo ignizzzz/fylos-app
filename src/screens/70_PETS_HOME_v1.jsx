@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AlertTriangle, Bell, Plus, ChevronRight, Scissors, Syringe, Stethoscope, CalendarCheck,
   Footprints, Bone, Scale,
@@ -7,10 +7,12 @@ import {
 /**
  * 70_PETS_HOME_v1.jsx — the Pets tab content.
  * Renders inside the dashboard tab (header + bottom tab bar are the app's).
- * Fresh warm aesthetic: editorial pet photo cards with a smart status,
- * an adaptive "add pet" affordance, and a "coming up" care list — each
- * with its own empty state. Standalone draws a matching header for preview
- * (and accepts ?n= pet count, ?cu=0 to preview empty states).
+ * Fresh warm aesthetic: one editorial photo card per pet in a wallet-style
+ * horizontal deck (next card peeks from the right, à la Apple Wallet), the
+ * app-canonical page indicator floating between the deck and the "add
+ * another pet" bar, and a "coming up" care list — each with its own empty
+ * state. Standalone draws a matching header for preview (and accepts
+ * ?n= pet count, ?cu=0 to preview empty states).
  */
 
 const CORAL = '#E85D2A';
@@ -75,8 +77,27 @@ const SectionHeader = ({ children }) => (
   <div className="text-[10.5px] font-bold uppercase tracking-[0.14em] mb-2.5 mt-7 px-0.5" style={{ color: '#A8A29C' }}>{children}</div>
 );
 
-const PetCard = ({ p, i, onOpenPet }) => (
-  <button onClick={() => onOpenPet && onOpenPet(p.id)} className="fy-in relative rounded-[20px] overflow-hidden text-left active:scale-[0.98] transition-transform" style={{ height: 186, boxShadow: SHADOW, animationDelay: `${i * 60}ms` }}>
+const PetCard = ({ p, i, onOpenPet, active, solo, depth }) => (
+  <button
+    onClick={() => onOpenPet && onOpenPet(p.id)}
+    className="relative shrink-0 rounded-[20px] overflow-hidden text-left transition-all duration-300"
+    style={{
+      // 100% of the deck's content box (pl 20 / pr 32): full-width cards.
+      // Each card after the first is pulled 44px UNDER its neighbour via
+      // negative margin — a sideways Apple-Wallet stack where only a sliver
+      // of the tucked card shows at the screen edge. The focused card rides
+      // on top (zIndex by distance), tucked ones sit lower and dimmer.
+      width: '100%',
+      height: 200,
+      marginLeft: i > 0 && !solo ? -44 : 0,
+      zIndex: 10 - depth,
+      scrollSnapAlign: 'start',
+      boxShadow: SHADOW,
+      transform: active ? 'scale(1)' : 'scale(0.96)',
+      opacity: active ? 1 : 0.92,
+      transitionTimingFunction: 'cubic-bezier(0.22,1,0.36,1)',
+    }}
+  >
     <img src={p.photo} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
     <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(17,17,17,0.64) 0%, rgba(17,17,17,0.12) 44%, rgba(17,17,17,0) 70%)' }} />
     {p.status.tone === 'due' ? (
@@ -90,19 +111,48 @@ const PetCard = ({ p, i, onOpenPet }) => (
         <span className="text-[10.5px] font-bold" style={{ color: GREEN }}>{p.status.label}</span>
       </span>
     )}
-    <div className="absolute left-3.5 right-3 bottom-3">
-      <div className="text-[17px] font-extrabold text-white tracking-[-0.01em] leading-tight">{p.name}</div>
+    <div className="absolute left-4 right-3 bottom-3.5">
+      <div className="text-[18px] font-extrabold text-white tracking-[-0.01em] leading-tight">{p.name}</div>
       <div className="text-[11.5px] mt-0.5 truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>{p.breed} · {p.age}</div>
     </div>
   </button>
 );
 
-const AddPetCard = ({ onAddPet, delay }) => (
-  <button onClick={() => onAddPet && onAddPet()} className="fy-in rounded-[20px] flex flex-col items-center justify-center gap-2 active:scale-[0.98] transition-transform" style={{ height: 186, border: '1.5px dashed #D6CDC2', animationDelay: `${delay}ms` }}>
-    <span className="w-11 h-11 rounded-full flex items-center justify-center" style={{ background: PEACH }}><Plus size={20} color={CORAL} strokeWidth={2.4} /></span>
-    <span className="text-[12.5px] font-semibold" style={{ color: MUTED }}>Add pet</span>
-  </button>
-);
+// Wallet-style deck: one full card per pet, horizontal scroll-snap with the
+// next card peeking from the right. The page indicator lives OUTSIDE the
+// card — floating below the deck (and above the "add another pet" bar).
+const PetDeck = ({ list, onOpenPet }) => {
+  const [idx, setIdx] = useState(0);
+  const solo = list.length === 1;
+  const onScroll = (e) => {
+    const el = e.currentTarget;
+    const card = el.firstElementChild;
+    if (!card) return;
+    const w = card.offsetWidth - 44; // stacked step: card minus the 44px tuck
+    const i = Math.max(0, Math.min(list.length - 1, Math.round(el.scrollLeft / w)));
+    if (i !== idx) setIdx(i);
+  };
+  return (
+    <>
+      <div
+        onScroll={onScroll}
+        className="fy-in fy-deck flex -mx-5 pl-5 overflow-x-auto"
+        style={{ scrollSnapType: 'x mandatory', scrollPaddingLeft: 20, scrollbarWidth: 'none', paddingBottom: 6, paddingRight: solo ? 20 : 32 }}
+      >
+        {list.map((p, i) => (
+          <PetCard key={p.id} p={p} i={i} onOpenPet={onOpenPet} active={i === idx} solo={solo} depth={Math.abs(i - idx)} />
+        ))}
+      </div>
+      {list.length > 1 && (
+        <div className="flex items-center justify-center gap-1.5 mt-2">
+          {list.map((_, i) => (
+            <span key={i} className="rounded-full transition-all duration-300" style={{ height: 5, width: idx === i ? 16 : 5, background: idx === i ? CORAL : '#E0D8CF' }} />
+          ))}
+        </div>
+      )}
+    </>
+  );
+};
 
 const AddPetBar = ({ onAddPet }) => (
   <button onClick={() => onAddPet && onAddPet()} className="w-full mt-3 py-3.5 rounded-[16px] flex items-center justify-center gap-2 active:scale-[0.99] transition-transform" style={{ border: '1.5px dashed #D6CDC2' }}>
@@ -142,8 +192,6 @@ const PetsHome = ({ embedded = false, onOpenPet, onAddPet, pets }) => {
       if (q.get('cu') === '0') comingUp = [];
     } catch (e) { /* ignore */ }
   }
-  const odd = list.length % 2 === 1;
-
   const inner = (
     <div className="absolute inset-0" style={{ background: CREAM }}>
       <div className="absolute inset-0 overflow-y-auto px-5" style={{ paddingTop: 114, paddingBottom: embedded ? 104 : 40, scrollbarWidth: 'none' }}>
@@ -151,12 +199,10 @@ const PetsHome = ({ embedded = false, onOpenPet, onAddPet, pets }) => {
           <EmptyPets onAddPet={onAddPet} />
         ) : (
           <>
-            {/* Pets — editorial cards; odd count → Add fills the gap */}
-            <div className="grid grid-cols-2 gap-3">
-              {list.map((p, i) => <PetCard key={p.id} p={p} i={i} onOpenPet={onOpenPet} />)}
-              {odd && <AddPetCard onAddPet={onAddPet} delay={list.length * 60} />}
-            </div>
-            {!odd && <AddPetBar onAddPet={onAddPet} />}
+            {/* Pets — wallet deck: one card per profile, next card peeks.
+                Page indicator floats free between deck and the add bar. */}
+            <PetDeck list={list} onOpenPet={onOpenPet} />
+            <AddPetBar onAddPet={onAddPet} />
 
             {/* Coming up */}
             <SectionHeader>Coming up</SectionHeader>
@@ -220,6 +266,7 @@ const PetsHome = ({ embedded = false, onOpenPet, onAddPet, pets }) => {
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@800&display=swap');
       @keyframes fyIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
       .fy-in { animation: fyIn 0.42s cubic-bezier(0.22,1,0.36,1) both; }
+      .fy-deck::-webkit-scrollbar { display: none; height: 0; }
     `}</style>
   );
 

@@ -3,6 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script>
+      // Native-only global scale-up: lay the app out ~10% narrower and let
+      // the viewport magnify it back to full width, so text, buttons, icons
+      // and tabs all grow uniformly. Runs before first paint. Desktop
+      // browsers never see this (gated on the Capacitor app shell), so the
+      // design-review mockup view stays pixel-identical.
+      (function () {
+        var SCALE = 1.1;
+        if (location.protocol !== 'capacitor:') return;
+        var meta = document.querySelector('meta[name="viewport"]');
+        if (!meta) return;
+        var pts = Math.min(screen.width, screen.height);
+        var layoutW = Math.round(pts / SCALE);
+        var fit = (pts / layoutW).toFixed(4);
+        meta.setAttribute('content',
+          'width=' + layoutW +
+          ', initial-scale=' + fit +
+          ', minimum-scale=' + fit +
+          ', maximum-scale=' + fit +
+          ', user-scalable=no');
+        document.documentElement.classList.add('is-native');
+      })();
+    </script>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Fylos Mobile UI Viewer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

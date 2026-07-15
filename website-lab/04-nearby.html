@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fylos — good things, nearby. Walkers, sitters, vets and quiet parks around your corner, in one calm place. iOS first, Switzerland 2026.">
+<title>FYLOS — Nearby</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='%23E85D2A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Nunito:wght@800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   FYLOS · Variation 04 — "Nearby"
+   Your neighborhood, seen with warm eyes.
+   ============================================================ */
+
+:root{
+  /* colors */
+  --coral:#E85D2A; --coral-hover:#D04A1C; --coral-deep:#BE4513;
+  --bg:#F7F5F2; --surface:#FFFFFF; --chip:#F3EFEB; --sheet:#FBF9F7;
+  --peach:#FBE7DD; --peach-selected:#FFEDE3;
+  --hair:#EDE8E2; --line:#F1EDE8;
+  --ink:#111111; --ink-2:#6E6058; --ink-3:#9B9B9F;
+  --label:#A8A29C; --placeholder:#C4BBB3; --chevron:#CFCFD4;
+  --ok:#3F8D63; --ok-bg:#EEF7F1; --ok-bg-2:#F0F7ED; --ok-border:#D7EBDD; --ok-dot:#34C759;
+  --danger:#E5484D; --danger-bg:#FFF0F0; --warn:#FF9500; --warn-warm:#B07A3A;
+  --warn-warm-bg:#FFF8F0; --warn-warm-border:#F0E4D0;
+  /* map palette */
+  --map-block:#F3EFEB; --map-park:#E7EDE3; --map-tree:#D9E4D4; --map-water:#EAF0F2;
+  /* type */
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-wordmark:'Nunito',sans-serif;
+  --track-title:-0.02em; --track-label:0.12em;
+  /* geometry */
+  --r-input:12px; --r-card:16px; --r-group:18px; --r-hero:20px; --r-sheet:26px; --r-full:9999px;
+  --h-cta:52px; --h-touch:44px; --gutter:20px;
+  /* shadows */
+  --shadow-warm:0 1px 2px rgba(60,30,15,0.03), 0 5px 14px rgba(60,30,15,0.05);
+  --shadow-chrome:0 1px 2px rgba(60,30,15,0.04), 0 4px 12px rgba(60,30,15,0.08);
+  --shadow-float:0 8px 24px rgba(0,0,0,0.06);
+  --glow-cta:0 8px 22px rgba(232,93,42,0.28);
+  --glow-cta-sm:0 4px 14px rgba(232,93,42,0.25);
+  /* motion */
+  --t-tap:120ms; --t-normal:200ms; --t-slow:300ms;
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out:cubic-bezier(0.22,1,0.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+
+html,body{ overflow-x:clip; }
+html{ scroll-behavior:smooth; }
+
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+::selection{ background:var(--peach-selected); color:var(--coral-deep); }
+
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; border:0; background:none; cursor:pointer; color:inherit; }
+input{ font:inherit; }
+svg{ display:block; }
+
+:focus-visible{
+  outline:2px solid var(--coral);
+  outline-offset:3px;
+  border-radius:6px;
+}
+
+/* ---------- shared layout ---------- */
+
+.container{
+  max-width:1160px;
+  margin:0 auto;
+  padding:0 24px;
+}
+
+section{ position:relative; }
+
+.eyebrow{
+  display:inline-block;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:var(--track-label);
+  color:var(--label);
+  margin-bottom:16px;
+}
+
+.h2{
+  font-size:clamp(28px,4vw,42px);
+  font-weight:800;
+  letter-spacing:-0.025em;
+  line-height:1.08;
+  color:var(--ink);
+}
+
+.lede{
+  font-size:16px;
+  color:var(--ink-2);
+  line-height:1.6;
+  max-width:52ch;
+}
+
+/* ---------- wordmark ---------- */
+
+.wordmark{
+  font-family:var(--font-wordmark);
+  font-weight:800;
+  font-size:21px;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+  display:inline-flex;
+  align-items:baseline;
+  line-height:1;
+}
+.wm-dot{
+  display:inline-block;
+  width:0.22em; height:0.22em;
+  margin-left:0.12em;
+  border-radius:50%;
+  background:var(--coral);
+}
+
+/* ---------- buttons ---------- */
+
+.btn-primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  height:var(--h-cta);
+  padding:0 28px;
+  border-radius:var(--r-card);
+  background:var(--coral);
+  color:#fff;
+  font-size:15px;
+  font-weight:700;
+  box-shadow:var(--glow-cta);
+  transition:background var(--t-normal) var(--ease-out),
+             transform var(--t-tap) ease,
+             box-shadow var(--t-normal) var(--ease-out);
+  will-change:transform;
+}
+.btn-primary:hover{
+  background:var(--coral-hover);
+  transform:translateY(-1px);
+  box-shadow:0 10px 26px rgba(232,93,42,0.32);
+}
+.btn-primary:active{ transform:scale(0.98); transition-duration:var(--t-tap); }
+
+.btn-ghost{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:var(--h-cta);
+  padding:0 10px;
+  color:var(--coral);
+  font-size:15px;
+  font-weight:700;
+  border-radius:12px;
+  transition:color var(--t-normal) ease;
+}
+.btn-ghost:hover{ color:var(--coral-hover); }
+.btn-ghost svg{ transition:transform var(--t-normal) var(--ease-out); }
+.btn-ghost:hover svg{ transform:translateY(2px); }
+
+/* ---------- chips ---------- */
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:34px;
+  padding:0 15px;
+  border-radius:var(--r-full);
+  background:var(--chip);
+  color:var(--ink);
+  font-size:13px;
+  font-weight:600;
+  white-space:nowrap;
+  transition:background var(--t-normal) ease,
+             color var(--t-normal) ease,
+             box-shadow var(--t-normal) ease,
+             transform var(--t-tap) ease;
+}
+.chip:hover{ background:#EFE9E2; }
+.chip:active{ transform:scale(0.97); }
+.chip[aria-pressed="true"]{
+  background:var(--peach-selected);
+  color:var(--coral);
+  box-shadow:inset 0 0 0 1.5px var(--coral);
+}
+
+/* ---------- badges ---------- */
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 8px;
+  border-radius:var(--r-full);
+  line-height:1.6;
+  white-space:nowrap;
+}
+.badge-ok{ color:var(--ok); background:var(--ok-bg-2); border:1px solid var(--ok-border); }
+.badge-warn{ color:var(--warn-warm); background:var(--warn-warm-bg); border:1px solid var(--warn-warm-border); }
+
+.live-dot{
+  width:6px; height:6px;
+  border-radius:50%;
+  background:var(--ok-dot);
+  flex:none;
+  animation:livepulse 1.6s ease-in-out infinite;
+}
+@keyframes livepulse{
+  0%,100%{ opacity:1; transform:scale(1); }
+  50%{ opacity:0.45; transform:scale(0.8); }
+}
+
+/* ---------- nav ---------- */
+
+.nav{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:100;
+  transition:background var(--t-slow) var(--ease-out),
+             box-shadow var(--t-slow) var(--ease-out);
+  background:transparent;
+}
+.nav.scrolled{
+  background:rgba(247,245,242,0.85);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  box-shadow:0 1px 0 var(--hair);
+}
+.nav-inner{
+  max-width:1160px;
+  margin:0 auto;
+  padding:0 24px;
+  height:68px;
+  display:flex;
+  align-items:center;
+  gap:32px;
+}
+.nav-links{
+  display:flex;
+  gap:28px;
+  margin-left:auto;
+}
+.nav-links a{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink-2);
+  transition:color var(--t-normal) ease;
+}
+.nav-links a:hover{ color:var(--ink); }
+.nav-cta{
+  display:inline-flex;
+  align-items:center;
+  height:40px;
+  padding:0 20px;
+  border-radius:var(--r-full);
+  background:var(--coral);
+  color:#fff;
+  font-size:13.5px;
+  font-weight:700;
+  box-shadow:var(--glow-cta-sm);
+  transition:background var(--t-normal) ease, transform var(--t-tap) ease;
+}
+.nav-cta:hover{ background:var(--coral-hover); }
+.nav-cta:active{ transform:scale(0.98); }
+
+.menu-btn{
+  display:none;
+  width:40px; height:40px;
+  border-radius:50%;
+  background:var(--surface);
+  box-shadow:var(--shadow-chrome);
+  align-items:center;
+  justify-content:center;
+}
+.menu-btn svg{ stroke:var(--ink); }
+
+.menu-sheet{
+  position:fixed;
+  top:76px; left:16px; right:16px;
+  z-index:99;
+  background:rgba(255,255,255,0.8);
+  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,0.5);
+  box-shadow:var(--shadow-float), inset 0 1px 0 rgba(255,255,255,0.8);
+  border-radius:20px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  opacity:0;
+  transform:translateY(-8px) scale(0.98);
+  pointer-events:none;
+  visibility:hidden;
+  transition:opacity var(--t-normal) ease, transform var(--t-slow) var(--ease-spring),
+             visibility 0s linear var(--t-slow);
+}
+body.menu-open .menu-sheet{
+  opacity:1;
+  transform:none;
+  pointer-events:auto;
+  visibility:visible;
+  transition:opacity var(--t-normal) ease, transform var(--t-slow) var(--ease-spring),
+             visibility 0s;
+}
+.menu-sheet a{
+  padding:14px 16px;
+  font-size:15px;
+  font-weight:600;
+  color:var(--ink);
+  border-radius:12px;
+  transition:background var(--t-tap) ease;
+}
+.menu-sheet a:active{ background:rgba(0,0,0,0.03); }
+
+/* ---------- hero ---------- */
+
+.hero{
+  padding-top:68px;
+  overflow:visible;
+}
+.hero-inner{
+  display:grid;
+  grid-template-columns:minmax(380px,460px) 1fr;
+  gap:clamp(24px,4vw,60px);
+  align-items:center;
+  padding-left:max(24px, calc((100vw - 1160px) / 2 + 24px));
+}
+.hero-copy{
+  padding:72px 0 64px;
+}
+.hero-copy .eyebrow{ margin-bottom:20px; }
+.h1{
+  font-size:clamp(42px,5.4vw,72px);
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  color:var(--ink);
+}
+.h1 .dot-accent{ color:var(--coral); }
+.hero-sub{
+  margin-top:22px;
+  font-size:17px;
+  line-height:1.6;
+  color:var(--ink-2);
+  max-width:42ch;
+}
+.hero-actions{
+  margin-top:32px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.hero-meta{
+  margin-top:26px;
+  font-size:12.5px;
+  font-weight:600;
+  color:var(--ink-3);
+  letter-spacing:0.01em;
+}
+.hero-meta .sep{ margin:0 8px; color:var(--chevron); }
+
+/* ---------- the map ---------- */
+
+.map-stage{
+  position:relative;
+  height:min(660px,80vh);
+  min-height:480px;
+}
+.map-canvas{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  border-radius:28px 0 0 28px;
+  background:var(--map-block);
+}
+.map-canvas svg{
+  width:100%;
+  height:100%;
+}
+.map-fade{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg, rgba(247,245,242,0.9) 0%, rgba(247,245,242,0) 10%),
+    linear-gradient(180deg, rgba(247,245,242,0.5) 0%, rgba(247,245,242,0) 8%),
+    linear-gradient(0deg, rgba(247,245,242,0.5) 0%, rgba(247,245,242,0) 8%);
+}
+
+/* animated dotted route */
+.route{
+  stroke-dasharray:0.5 10;
+  animation:routeflow 7s linear infinite;
+}
+@keyframes routeflow{
+  to{ stroke-dashoffset:-105; }
+}
+
+/* category chips floating over map */
+.map-chips{
+  position:absolute;
+  top:18px; left:26px;
+  z-index:5;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  padding:6px;
+  border-radius:var(--r-full);
+  background:rgba(255,255,255,0.6);
+  -webkit-backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.5);
+  box-shadow:var(--shadow-warm), inset 0 1px 0 rgba(255,255,255,0.8);
+  max-width:calc(100% - 52px);
+}
+.map-chips .chip{ height:32px; padding:0 13px; font-size:12.5px; background:transparent; }
+.map-chips .chip:hover{ background:rgba(243,239,235,0.9); }
+.map-chips .chip[aria-pressed="true"]{ background:var(--peach-selected); }
+
+.map-hint{
+  position:absolute;
+  bottom:20px; left:26px;
+  z-index:5;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  height:32px;
+  padding:0 14px;
+  border-radius:var(--r-full);
+  background:rgba(255,255,255,0.7);
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.5);
+  box-shadow:var(--shadow-warm), inset 0 1px 0 rgba(255,255,255,0.8);
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink-2);
+  pointer-events:none;
+}
+.map-hint svg{ stroke:var(--coral); }
+
+/* ---------- pins ---------- */
+
+.pins-layer{
+  position:absolute;
+  inset:0;
+  z-index:4;
+}
+.pin-wrap{
+  position:absolute;
+  left:var(--x);
+  top:var(--y);
+  transform:translate(-50%,-50%) scale(1);
+  transition:opacity var(--t-normal) ease, transform var(--t-normal) var(--ease-out);
+}
+.pin-wrap.open{ z-index:12; }
+.pin-wrap.filtered{
+  opacity:0;
+  transform:translate(-50%,-50%) scale(0.45);
+  pointer-events:none;
+}
+
+.pin{
+  position:relative;
+  width:36px; height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+}
+.pin-dot{
+  width:20px; height:20px;
+  border-radius:50%;
+  background:var(--coral);
+  border:2.5px solid #fff;
+  box-shadow:var(--shadow-chrome);
+  transition:transform var(--t-slow) var(--ease-spring);
+}
+.pin:hover .pin-dot,
+.pin-wrap.open .pin-dot{ transform:scale(1.18); }
+.pin::before{
+  content:"";
+  position:absolute;
+  width:20px; height:20px;
+  border-radius:50%;
+  border:1.5px solid rgba(232,93,42,0.55);
+  animation:pinpulse 2.8s var(--ease-out) infinite;
+  animation-delay:var(--pd,0s);
+}
+@keyframes pinpulse{
+  0%{ transform:scale(1); opacity:0.9; }
+  70%{ transform:scale(2.4); opacity:0; }
+  100%{ transform:scale(2.4); opacity:0; }
+}
+
+/* live pin: white circle, green pulsing core */
+.pin--live .pin-dot{
+  background:#fff;
+  border:none;
+  width:24px; height:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+.pin--live .pin-dot::after{
+  content:"";
+  width:10px; height:10px;
+  border-radius:50%;
+  background:var(--ok-dot);
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  animation:livepulse 1.6s ease-in-out infinite;
+}
+.pin--live::before{
+  border-color:rgba(52,199,89,0.5);
+}
+
+/* ---------- pin popover cards ---------- */
+
+.pcard{
+  position:absolute;
+  width:238px;
+  padding:13px 14px 12px;
+  border-radius:var(--r-card);
+  background:rgba(255,255,255,0.78);
+  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,0.55);
+  box-shadow:var(--shadow-float), 0 2px 8px rgba(60,30,15,0.06), inset 0 1px 0 rgba(255,255,255,0.85);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 160ms ease, transform 160ms ease;
+}
+.pin-wrap.open .pcard{
+  opacity:1;
+  pointer-events:auto;
+  transition:opacity var(--t-normal) ease, transform 340ms var(--ease-spring);
+}
+
+.place-r .pcard{
+  left:calc(100% + 10px); top:50%;
+  transform:translate(-8px,-50%) scale(0.86);
+  transform-origin:left center;
+}
+.place-r.open .pcard{ transform:translate(0,-50%) scale(1); }
+
+.place-l .pcard{
+  right:calc(100% + 10px); top:50%;
+  transform:translate(8px,-50%) scale(0.86);
+  transform-origin:right center;
+}
+.place-l.open .pcard{ transform:translate(0,-50%) scale(1); }
+
+.place-t .pcard{
+  bottom:calc(100% + 10px); left:50%;
+  transform:translate(-50%,8px) scale(0.86);
+  transform-origin:center bottom;
+}
+.place-t.open .pcard{ transform:translate(-50%,0) scale(1); }
+
+.pcard-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.pavatar{
+  width:38px; height:38px;
+  flex:none;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  font-weight:700;
+  color:var(--coral);
+  background:var(--peach);
+  border:1px solid rgba(0,0,0,0.04);
+}
+.pavatar--dog{
+  background:radial-gradient(circle at 32% 30%, #C0906E, #8D6547);
+  color:#fff;
+}
+.pavatar--park{
+  background:var(--map-park);
+  color:#5F7A62;
+}
+.pavatar--park svg{ stroke:#5F7A62; }
+.pcard-name{
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.25;
+}
+.pcard-meta{
+  font-size:12px;
+  color:var(--ink-2);
+  margin-top:2px;
+}
+.pcard-meta .star{ color:var(--coral); }
+.pcard-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:11px;
+  padding-top:10px;
+  border-top:1px solid rgba(237,232,226,0.8);
+}
+.pcard-price{
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--ink);
+}
+
+/* ---------- generic section rhythm ---------- */
+
+.section{ padding:clamp(72px,9vw,128px) 0; }
+.section-head{ max-width:560px; margin-bottom:clamp(36px,5vw,60px); }
+.section-head .lede{ margin-top:16px; }
+.section-head.centered{
+  margin-left:auto; margin-right:auto;
+  text-align:center;
+}
+.section-head.centered .lede{ margin-left:auto; margin-right:auto; }
+
+/* ---------- pillars ---------- */
+
+.pillars{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+.pillar{
+  background:var(--surface);
+  border-radius:var(--r-group);
+  box-shadow:var(--shadow-warm);
+  padding:26px 24px 28px;
+  transition:transform var(--t-slow) var(--ease-out), box-shadow var(--t-slow) var(--ease-out);
+}
+.pillar:hover{
+  transform:translateY(-3px);
+  box-shadow:0 2px 4px rgba(60,30,15,0.04), 0 14px 30px rgba(60,30,15,0.08);
+}
+.pillar-icon{
+  width:44px; height:44px;
+  border-radius:12px;
+  background:var(--peach);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:18px;
+}
+.pillar-icon svg{ stroke:var(--coral); }
+.pillar h3{
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  margin-bottom:7px;
+}
+.pillar p{
+  font-size:14px;
+  color:var(--ink-2);
+  line-height:1.55;
+}
+
+/* ---------- how it works ---------- */
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+  counter-reset:step;
+}
+.step{
+  position:relative;
+  background:var(--surface);
+  border-radius:var(--r-group);
+  box-shadow:var(--shadow-warm);
+  padding:28px 26px 30px;
+}
+.step-num{
+  width:36px; height:36px;
+  border-radius:50%;
+  background:var(--peach-selected);
+  color:var(--coral);
+  font-size:14px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:18px;
+}
+.step h3{
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  margin-bottom:7px;
+}
+.step p{
+  font-size:14px;
+  color:var(--ink-2);
+}
+
+/* ---------- app preview ---------- */
+
+.app-split{
+  display:grid;
+  grid-template-columns:1fr minmax(320px,420px);
+  gap:clamp(32px,6vw,88px);
+  align-items:center;
+}
+.app-copy .lede{ margin-top:16px; }
+.app-points{
+  margin-top:28px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  list-style:none;
+}
+.app-points li{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  font-size:14.5px;
+  color:var(--ink-2);
+}
+.app-points .tick{
+  flex:none;
+  width:22px; height:22px;
+  margin-top:1px;
+  border-radius:50%;
+  background:var(--ok-bg-2);
+  border:1px solid var(--ok-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.app-points .tick svg{ stroke:var(--ok); }
+.app-points b{ color:var(--ink); font-weight:600; }
+
+.phone-wrap{
+  position:relative;
+  display:flex;
+  justify-content:center;
+}
+
+/* floating fragments near the phone */
+.float-card{
+  position:absolute;
+  z-index:5;
+  background:var(--surface);
+  border-radius:var(--r-card);
+  box-shadow:var(--shadow-float), var(--shadow-warm);
+  animation:drift 7s ease-in-out infinite alternate;
+}
+@keyframes drift{
+  from{ transform:translateY(0); }
+  to{ transform:translateY(-10px); }
+}
+.float-booking{
+  top:64px; right:-58px;
+  width:236px;
+  padding:14px;
+}
+.float-booking .fb-head{ display:flex; align-items:center; gap:10px; }
+.fb-avatar{
+  width:36px; height:36px;
+  flex:none;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 30%, #B9AA9B, #8C7E71);
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.fb-name{ font-size:13.5px; font-weight:700; }
+.fb-name .star{ color:var(--coral); font-weight:600; }
+.fb-role{ font-size:12px; color:var(--ink-2); margin-top:1px; }
+.fb-foot{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:11px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+  font-size:11.5px;
+  color:var(--ink-3);
+  font-weight:500;
+}
+.fb-foot svg{ stroke:var(--ink-3); }
+.float-vaccine{
+  bottom:96px; left:-52px;
+  padding:11px 14px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  animation-delay:1.6s;
+}
+.float-vaccine .vx-icon{
+  width:30px; height:30px;
+  flex:none;
+  border-radius:10px;
+  background:var(--warn-warm-bg);
+  border:1px solid var(--warn-warm-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.float-vaccine .vx-icon svg{ stroke:var(--warn-warm); }
+.float-vaccine .vx-t{ font-size:12.5px; font-weight:600; color:var(--ink); line-height:1.3; }
+.float-vaccine .vx-s{ font-size:11px; color:var(--warn-warm); font-weight:700; }
+
+/* ---------- phone mockup ---------- */
+
+.phone{
+  position:relative;
+  width:min(340px,84vw);
+  aspect-ratio:390/844;
+  background:#1A1714;
+  border-radius:54px;
+  padding:11px;
+  box-shadow:
+    0 2px 6px rgba(60,30,15,0.08),
+    0 30px 60px rgba(60,30,15,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.screen{
+  position:relative;
+  width:100%; height:100%;
+  background:var(--bg);
+  border-radius:44px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.island{
+  position:absolute;
+  top:10px; left:50%;
+  transform:translateX(-50%);
+  width:96px; height:26px;
+  background:#1A1714;
+  border-radius:20px;
+  z-index:10;
+}
+.statusbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 26px 0;
+  height:46px;
+  flex:none;
+}
+.statusbar .time{ font-size:14px; font-weight:600; letter-spacing:0.01em; }
+.statusbar svg{ stroke:none; }
+
+.scr-body{
+  flex:1;
+  padding:10px 18px 0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+}
+.scr-title{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-0.02em;
+  line-height:1.15;
+}
+.scr-sub{
+  font-size:12.5px;
+  color:var(--ink-2);
+  margin-top:2px;
+}
+
+.mini-map{
+  position:relative;
+  border-radius:16px;
+  overflow:hidden;
+  height:138px;
+  flex:none;
+  box-shadow:var(--shadow-warm);
+}
+.mini-map svg{ width:100%; height:100%; }
+.mini-map-label{
+  position:absolute;
+  top:9px; left:9px;
+  padding:3px 9px;
+  border-radius:var(--r-full);
+  background:rgba(255,255,255,0.8);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  font-size:9.5px;
+  font-weight:700;
+  color:var(--ink-2);
+  border:1px solid rgba(255,255,255,0.5);
+}
+
+.scr-chips{
+  display:flex;
+  gap:6px;
+  flex:none;
+}
+.scr-chip{
+  height:28px;
+  padding:0 12px;
+  display:inline-flex;
+  align-items:center;
+  border-radius:var(--r-full);
+  background:var(--chip);
+  font-size:11.5px;
+  font-weight:600;
+  color:var(--ink);
+  white-space:nowrap;
+}
+.scr-chip.on{
+  background:var(--peach-selected);
+  color:var(--coral);
+  box-shadow:inset 0 0 0 1.5px var(--coral);
+}
+
+.scr-section{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:-4px;
+}
+
+.plist{
+  background:var(--surface);
+  border-radius:var(--r-group);
+  box-shadow:var(--shadow-warm);
+  overflow:hidden;
+  flex:none;
+}
+.prow{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:11px 13px;
+  position:relative;
+}
+.prow + .prow::before{
+  content:"";
+  position:absolute;
+  top:0; left:60px; right:0;
+  height:1px;
+  background:var(--line);
+}
+.prow-avatar{
+  width:36px; height:36px;
+  flex:none;
+  border-radius:50%;
+  background:var(--peach);
+  color:var(--coral);
+  font-size:13px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.prow-main{ flex:1; min-width:0; }
+.prow-name{ font-size:13.5px; font-weight:600; line-height:1.3; }
+.prow-meta{ font-size:11.5px; color:var(--ink-2); margin-top:1px; }
+.prow-side{ text-align:right; flex:none; }
+.prow-rate{ font-size:11px; color:var(--ink-2); font-weight:500; }
+.prow-rate .star{ color:var(--coral); }
+.prow-price{ font-size:12px; font-weight:700; margin-top:1px; }
+.prow-chev{ flex:none; margin-left:2px; }
+.prow-chev svg{ stroke:var(--chevron); }
+
+/* phone dock */
+.dock{
+  position:absolute;
+  left:16px; right:16px; bottom:14px;
+  height:56px;
+  border-radius:26px;
+  background:rgba(255,255,255,0.82);
+  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(24px);
+  box-shadow:0 2px 20px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.04);
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  padding:0 10px;
+  z-index:9;
+}
+.dock-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  width:44px;
+}
+.dock-item svg{ stroke:var(--ink-3); }
+.dock-item.active svg{ stroke:var(--coral); }
+.dock-item .dlabel{
+  font-size:9px;
+  font-weight:700;
+  color:var(--coral);
+}
+.dock-fab{
+  width:40px; height:40px;
+  border-radius:50%;
+  background:var(--coral);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 14px rgba(232,93,42,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.dock-fab svg{ stroke:#fff; }
+
+/* ---------- live section ---------- */
+
+.live-split{
+  display:grid;
+  grid-template-columns:minmax(300px,460px) 1fr;
+  gap:clamp(32px,6vw,88px);
+  align-items:center;
+}
+.live-quote{
+  margin-top:22px;
+  font-size:17px;
+  font-weight:600;
+  color:var(--ink);
+  letter-spacing:-0.01em;
+}
+.live-quote .qmark{ color:var(--coral); }
+
+.live-card{
+  background:var(--surface);
+  border-radius:var(--r-hero);
+  box-shadow:0 2px 4px rgba(60,30,15,0.04), 0 14px 30px rgba(60,30,15,0.10);
+  padding:22px;
+  max-width:520px;
+  justify-self:end;
+  width:100%;
+}
+.live-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.live-avatar{
+  width:44px; height:44px;
+  flex:none;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 30%, #C0906E, #8D6547);
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.live-name{ font-size:14.5px; font-weight:700; }
+.live-role{ font-size:12.5px; color:var(--ink-2); margin-top:1px; }
+.live-chip{
+  margin-left:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  height:26px;
+  padding:0 11px;
+  border-radius:var(--r-full);
+  background:var(--ok-bg);
+  border:1px solid var(--ok-border);
+  color:var(--ok);
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.live-route{
+  margin-top:16px;
+  border-radius:14px;
+  background:var(--bg);
+  border:1px solid var(--hair);
+  overflow:hidden;
+  height:120px;
+}
+.live-route svg{ width:100%; height:100%; }
+
+.now-dot{
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:livepulse 1.6s ease-in-out infinite;
+}
+.now-ring{
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:nowring 2s var(--ease-out) infinite;
+}
+@keyframes nowring{
+  0%{ transform:scale(1); opacity:0.8; }
+  80%{ transform:scale(2.6); opacity:0; }
+  100%{ transform:scale(2.6); opacity:0; }
+}
+
+.timeline{
+  margin-top:16px;
+  display:flex;
+  flex-direction:column;
+}
+.tl-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px 2px;
+}
+.tl-row + .tl-row{ border-top:1px solid var(--line); }
+.tl-time{
+  width:44px;
+  flex:none;
+  font-size:12px;
+  font-weight:700;
+  color:var(--ink-3);
+  font-variant-numeric:tabular-nums;
+}
+.tl-mark{
+  width:22px; height:22px;
+  flex:none;
+  border-radius:50%;
+  background:var(--ok-bg-2);
+  border:1px solid var(--ok-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.tl-mark svg{ stroke:var(--ok); }
+.tl-mark--now{
+  background:#fff;
+  border-color:var(--ok-border);
+  position:relative;
+}
+.tl-mark--now::after{
+  content:"";
+  width:8px; height:8px;
+  border-radius:50%;
+  background:var(--ok-dot);
+  animation:livepulse 1.6s ease-in-out infinite;
+}
+.tl-label{ font-size:13.5px; font-weight:600; color:var(--ink); }
+.tl-sub{ font-size:12px; color:var(--ink-2); margin-top:1px; }
+.tl-row.now .tl-time{ color:var(--ok); }
+
+/* ---------- trust ---------- */
+
+.trust-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:clamp(20px,4vw,56px);
+}
+.trust-item{ max-width:300px; }
+.trust-icon{
+  width:44px; height:44px;
+  border-radius:12px;
+  background:var(--peach);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:16px;
+}
+.trust-icon svg{ stroke:var(--coral); }
+.trust-item h3{
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  margin-bottom:6px;
+}
+.trust-item p{
+  font-size:14px;
+  color:var(--ink-2);
+  line-height:1.55;
+}
+
+/* ---------- roadmap ---------- */
+
+.roadmap-chips{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  max-width:720px;
+  margin:0 auto;
+}
+.roadmap-chips .chip{
+  height:40px;
+  padding:0 20px;
+  font-size:14px;
+  cursor:default;
+}
+.roadmap-chips .chip:hover{ background:var(--chip); }
+.roadmap-note{
+  text-align:center;
+  margin-top:24px;
+  font-size:13px;
+  color:var(--ink-3);
+  font-weight:500;
+}
+
+/* ---------- emotional beat ---------- */
+
+.emotion{
+  text-align:center;
+}
+.emotion-inner{ max-width:760px; margin:0 auto; }
+.emotion p{
+  font-size:clamp(24px,3.6vw,38px);
+  font-weight:800;
+  letter-spacing:-0.025em;
+  line-height:1.25;
+  color:var(--ink);
+}
+.emotion .gr{ color:var(--coral); }
+.emotion .soft{ color:var(--ink-2); font-weight:700; }
+
+/* ---------- join / final CTA ---------- */
+
+.join-box{
+  max-width:560px;
+  margin:0 auto;
+  text-align:center;
+}
+.join-form-zone{
+  position:relative;
+  margin-top:34px;
+  min-height:64px;
+}
+.join-form{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  transition:opacity var(--t-slow) ease, transform var(--t-slow) var(--ease-out);
+}
+.join-input{
+  flex:1;
+  max-width:300px;
+  height:var(--h-cta);
+  padding:0 18px;
+  border-radius:var(--r-input);
+  border:1px solid transparent;
+  background:var(--surface);
+  box-shadow:var(--shadow-warm);
+  font-size:15px;
+  color:var(--ink);
+  transition:box-shadow var(--t-normal) ease, border-color var(--t-normal) ease;
+}
+.join-input::placeholder{ color:var(--placeholder); }
+.join-input:focus{
+  outline:none;
+  border-color:var(--coral);
+  box-shadow:0 0 0 3px rgba(232,93,42,0.12), var(--shadow-warm);
+}
+.join-input.error{
+  border-color:var(--coral);
+  animation:nudge 300ms ease;
+}
+@keyframes nudge{
+  0%,100%{ transform:translateX(0); }
+  30%{ transform:translateX(-5px); }
+  60%{ transform:translateX(5px); }
+}
+.join-success{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  opacity:0;
+  transform:translateY(8px) scale(0.98);
+  pointer-events:none;
+  transition:opacity var(--t-slow) ease 120ms, transform 420ms var(--ease-spring) 120ms;
+}
+.join-zone.done .join-form{
+  opacity:0;
+  transform:scale(0.97);
+  pointer-events:none;
+}
+.join-zone.done .join-success{
+  opacity:1;
+  transform:none;
+}
+.join-success .ok-circle{
+  width:36px; height:36px;
+  flex:none;
+  border-radius:50%;
+  background:var(--ok-bg-2);
+  border:1px solid var(--ok-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.join-success .ok-circle svg{ stroke:var(--ok); }
+.join-success p{
+  font-size:15.5px;
+  font-weight:600;
+  color:var(--ink);
+}
+.join-small{
+  margin-top:20px;
+  font-size:12.5px;
+  color:var(--ink-3);
+  font-weight:500;
+}
+
+/* ---------- footer ---------- */
+
+footer{
+  border-top:1px solid var(--hair);
+  padding:44px 0 40px;
+}
+.foot-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.foot-brand p{
+  margin-top:10px;
+  font-size:13.5px;
+  color:var(--ink-2);
+}
+.foot-meta{
+  text-align:right;
+  font-size:12.5px;
+  color:var(--ink-3);
+  font-weight:500;
+}
+.foot-links{
+  display:flex;
+  gap:18px;
+  justify-content:flex-end;
+  margin-top:8px;
+}
+.foot-links a{
+  color:var(--ink-2);
+  font-weight:600;
+  font-size:12.5px;
+  transition:color var(--t-normal) ease;
+}
+.foot-links a:hover{ color:var(--coral); }
+.foot-bottom{
+  margin-top:34px;
+  font-size:12px;
+  color:var(--ink-3);
+}
+
+/* ---------- lab switcher ---------- */
+
+.lab{
+  position:fixed;
+  bottom:16px; left:16px;
+  z-index:120;
+  display:flex;
+  align-items:center;
+  height:30px;
+  padding:0 4px;
+  border-radius:var(--r-full);
+  background:rgba(255,255,255,0.65);
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,0.5);
+  box-shadow:var(--shadow-warm);
+  font-size:11px;
+  font-weight:600;
+  color:var(--ink-2);
+}
+.lab a{
+  display:flex;
+  align-items:center;
+  height:24px;
+  padding:0 8px;
+  border-radius:var(--r-full);
+  transition:background var(--t-tap) ease, color var(--t-tap) ease;
+}
+.lab a:hover{ background:rgba(243,239,235,0.9); color:var(--ink); }
+.lab .lab-arrow{ font-size:13px; padding:0 7px; color:var(--ink-3); }
+
+/* ---------- reveals ---------- */
+
+[data-reveal]{
+  opacity:0;
+  transform:translateY(26px);
+  transition:opacity 640ms var(--ease-out), transform 640ms var(--ease-out);
+  transition-delay:var(--rd,0ms);
+}
+[data-reveal].in{
+  opacity:1;
+  transform:none;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width:1120px){
+  .float-booking{ right:-24px; }
+  .float-vaccine{ left:-20px; }
+}
+
+@media (max-width:1024px){
+  .hero-inner{
+    grid-template-columns:1fr;
+    padding-left:24px;
+    padding-right:24px;
+    gap:8px;
+  }
+  .hero-copy{ padding:64px 0 36px; }
+  .map-stage{ height:540px; min-height:0; margin-bottom:56px; }
+  .map-canvas{ border-radius:28px; }
+  .map-fade{ background:none; }
+  .pillars{ grid-template-columns:repeat(2,1fr); }
+  .app-split{ grid-template-columns:1fr; }
+  .phone-wrap{ order:2; margin-top:20px; }
+  .float-booking{ right:max(-16px, calc(50% - 300px)); }
+  .float-vaccine{ left:max(-12px, calc(50% - 290px)); }
+  .live-split{ grid-template-columns:1fr; }
+  .live-card{ justify-self:start; }
+  .trust-grid{ grid-template-columns:1fr; gap:36px; }
+}
+
+@media (max-width:768px){
+  .nav-links{ display:none; }
+  .nav-cta{ margin-left:auto; }
+  .menu-btn{ display:flex; }
+  .steps{ grid-template-columns:1fr; }
+  .h1{ font-size:clamp(38px,10vw,52px); }
+  .hero-actions .btn-ghost{ padding-left:2px; }
+  .join-form{ flex-direction:column; align-items:stretch; }
+  .join-input{ max-width:none; }
+  .foot-meta,.foot-links{ text-align:left; justify-content:flex-start; }
+}
+
+@media (max-width:480px){
+  .pillars{ grid-template-columns:1fr; }
+  .map-stage{ height:480px; }
+  .map-chips{ left:14px; top:14px; max-width:calc(100% - 28px); border-radius:22px; }
+  .map-hint{ left:14px; bottom:14px; }
+  .float-booking,.float-vaccine{ display:none; }
+  .pcard{ width:212px; }
+  /* keep provider cards on-screen: mid-map pins open below the pin, centered */
+  .place-l .pcard,
+  .pin-wrap[data-cat="sitters"] .pcard{
+    right:auto; left:50%; top:calc(100% + 8px); bottom:auto;
+    transform:translate(-50%,8px) scale(0.86);
+    transform-origin:center top;
+  }
+  .place-l.open .pcard,
+  .pin-wrap[data-cat="sitters"].open .pcard{
+    transform:translate(-50%,0) scale(1);
+  }
+  .live-card{ padding:18px; }
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    transition-delay:0ms !important;
+  }
+  [data-reveal]{ opacity:1; transform:none; }
+  .route{ animation:none; }
+  .float-card{ animation:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="wordmark" aria-label="Fylos home">FYLOS<span class="wm-dot"></span></a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#app">The app</a>
+      <a href="#trust">Trust</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+    <a href="#join" class="nav-cta">Join the waitlist</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menuSheet">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="menu-sheet" id="menuSheet" aria-hidden="true">
+  <a href="#how">How it works</a>
+  <a href="#app">The app</a>
+  <a href="#trust">Trust</a>
+  <a href="#roadmap">Roadmap</a>
+</div>
+
+<main id="top">
+
+<!-- ================= HERO + MAP ================= -->
+<section class="hero" aria-label="Fylos — good things, nearby">
+  <div class="hero-inner">
+
+    <div class="hero-copy">
+      <span class="eyebrow" data-reveal>Zürich · and everywhere after</span>
+      <h1 class="h1" data-reveal style="--rd:70ms">Good things, nearby<span class="dot-accent">.</span></h1>
+      <p class="hero-sub" data-reveal style="--rd:140ms">Fylos keeps health records, daily rhythms, and trusted people in one calm place — starting with the ones around your corner.</p>
+      <div class="hero-actions" data-reveal style="--rd:210ms">
+        <a href="#join" class="btn-primary">Join the waitlist</a>
+        <a href="#how" class="btn-ghost">
+          See how it works
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </a>
+      </div>
+      <p class="hero-meta" data-reveal style="--rd:280ms">iOS first<span class="sep">·</span>Switzerland 2026</p>
+    </div>
+
+    <div class="map-stage" id="map">
+      <div class="map-canvas" aria-hidden="true">
+        <!-- Hand-drawn district: cream blocks, white streets, sage parks, a lakeside -->
+        <svg viewBox="0 0 800 720" preserveAspectRatio="none" role="img" aria-label="A calm illustrated map of a Zürich neighborhood">
+          <!-- land -->
+          <rect x="0" y="0" width="800" height="720" fill="#F3EFEB"/>
+
+          <!-- water: the lake edge -->
+          <path d="M660,-10 C620,120 618,240 648,360 C676,470 640,590 610,730 L810,730 L810,-10 Z" fill="#EAF0F2"/>
+          <path d="M660,-10 C620,120 618,240 648,360 C676,470 640,590 610,730" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+          <path d="M692,140 C708,180 706,220 694,260" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M722,330 C736,370 734,410 722,450" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M676,520 C688,556 686,592 676,624" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- streets: main avenues -->
+          <g stroke="#FFFFFF" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M120,-10 L108,730" stroke-width="7"/>
+            <path d="M340,-10 C336,240 348,480 338,730" stroke-width="7"/>
+            <path d="M-10,192 C200,186 420,196 630,188" stroke-width="7"/>
+            <path d="M-10,424 C220,416 430,428 652,420" stroke-width="7"/>
+            <path d="M-20,620 C180,500 300,320 430,-20" stroke-width="7"/>
+            <!-- secondary streets -->
+            <path d="M230,-10 L224,730" stroke-width="4.5"/>
+            <path d="M450,-10 L458,730" stroke-width="4.5"/>
+            <path d="M560,-10 C570,200 552,420 566,730" stroke-width="4.5"/>
+            <path d="M-10,104 L640,96" stroke-width="4.5"/>
+            <path d="M-10,300 L640,306" stroke-width="4.5"/>
+            <path d="M-10,540 L628,546" stroke-width="4.5"/>
+            <path d="M-10,644 L600,636" stroke-width="4.5"/>
+            <!-- lakeside promenade -->
+            <path d="M636,-10 C600,120 598,240 626,360 C652,470 618,590 588,730" stroke-width="4.5"/>
+            <!-- small lanes -->
+            <path d="M285,96 L285,192" stroke-width="3"/>
+            <path d="M175,300 L180,424" stroke-width="3"/>
+            <path d="M505,192 L512,306" stroke-width="3"/>
+            <path d="M395,540 L390,644" stroke-width="3"/>
+            <path d="M60,424 L56,540" stroke-width="3"/>
+          </g>
+
+          <!-- gentle building hints -->
+          <g fill="rgba(255,255,255,0.45)">
+            <rect x="140" y="120" width="60" height="40" rx="5"/>
+            <rect x="250" y="212" width="68" height="50" rx="5"/>
+            <rect x="360" y="330" width="54" height="44" rx="5"/>
+            <rect x="470" y="112" width="62" height="46" rx="5"/>
+            <rect x="150" y="562" width="64" height="44" rx="5"/>
+            <rect x="298" y="470" width="56" height="40" rx="5"/>
+            <rect x="482" y="562" width="58" height="42" rx="5"/>
+          </g>
+
+          <!-- park: Rieter meadow -->
+          <path d="M430,300 C430,272 460,258 495,262 C535,266 556,290 550,322 C545,352 512,368 478,364 C446,360 430,330 430,300 Z" fill="#E7EDE3"/>
+          <path d="M436,326 C470,320 504,308 548,302" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+          <g fill="#D9E4D4">
+            <circle cx="462" cy="290" r="7"/>
+            <circle cx="506" cy="298" r="9"/>
+            <circle cx="486" cy="338" r="6"/>
+            <circle cx="530" cy="320" r="5"/>
+          </g>
+
+          <!-- park: small green -->
+          <path d="M96,470 C96,448 120,438 148,442 C176,446 190,462 186,486 C182,508 156,518 130,514 C106,510 96,492 96,470 Z" fill="#E7EDE3"/>
+          <g fill="#D9E4D4">
+            <circle cx="126" cy="466" r="6"/>
+            <circle cx="158" cy="486" r="7"/>
+          </g>
+
+          <!-- the live walk: a slowly flowing dotted route from the park to the lakeside -->
+          <path class="route" d="M520,330 C540,380 500,420 524,460 C544,492 536,512 546,530"
+                fill="none" stroke="#E85D2A" stroke-width="3.2" stroke-linecap="round"/>
+          <circle cx="520" cy="330" r="4" fill="#E85D2A" opacity="0.55"/>
+        </svg>
+        <div class="map-fade"></div>
+      </div>
+
+      <!-- category filter chips -->
+      <div class="map-chips" role="group" aria-label="Filter nearby places">
+        <button class="chip" data-cat="all" aria-pressed="true">All</button>
+        <button class="chip" data-cat="walks" aria-pressed="false">Walks</button>
+        <button class="chip" data-cat="vets" aria-pressed="false">Vets</button>
+        <button class="chip" data-cat="parks" aria-pressed="false">Parks</button>
+        <button class="chip" data-cat="grooming" aria-pressed="false">Grooming</button>
+        <button class="chip" data-cat="sitters" aria-pressed="false">Sitters</button>
+      </div>
+
+      <div class="map-hint">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Tap a pin to meet a neighbor
+      </div>
+
+      <!-- pins -->
+      <div class="pins-layer">
+
+        <div class="pin-wrap place-r" style="--x:12%; --y:20%; --pd:0.4s" data-cat="walks">
+          <button class="pin" aria-expanded="false" aria-label="Jonas T., dog walker, 4.7 stars, 480 meters away, from 22 francs">
+            <span class="pin-dot"></span>
+          </button>
+          <div class="pcard">
+            <div class="pcard-head">
+              <span class="pavatar">J</span>
+              <div>
+                <div class="pcard-name">Jonas T. · Dog walker</div>
+                <div class="pcard-meta">4.7 <span class="star">★</span> · 480 m</div>
+              </div>
+            </div>
+            <div class="pcard-foot">
+              <span class="badge badge-ok">Verified</span>
+              <span class="pcard-price">from CHF 22</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pin-wrap place-r" style="--x:30%; --y:26%; --pd:1.1s" data-cat="walks">
+          <button class="pin" aria-expanded="false" aria-label="Léa M., dog walker, 4.9 stars, 320 meters away, from 24 francs">
+            <span class="pin-dot"></span>
+          </button>
+          <div class="pcard">
+            <div class="pcard-head">
+              <span class="pavatar">L</span>
+              <div>
+                <div class="pcard-name">Léa M. · Dog walker</div>
+                <div class="pcard-meta">4.9 <span class="star">★</span> · 320 m</div>
+              </div>
+            </div>
+            <div class="pcard-foot">
+              <span class="badge badge-ok">Verified</span>
+              <span class="pcard-price">from CHF 24</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pin-wrap place-l" style="--x:55%; --y:18%; --pd:1.8s" data-cat="vets">
+          <button class="pin" aria-expanded="false" aria-label="Dr. S. Keller, veterinarian, 4.8 stars, 850 meters away, from 80 francs">
+            <span class="pin-dot"></span>
+          </button>
+          <div class="pcard">
+            <div class="pcard-head">
+              <span class="pavatar">K</span>
+              <div>
+                <div class="pcard-name">Dr. S. Keller · Vet</div>
+                <div class="pcard-meta">4.8 <span class="star">★</span> · 850 m</div>
+              </div>
+            </div>
+            <div class="pcard-foot">
+              <span class="badge badge-ok">Verified</span>
+              <span class="pcard-price">from CHF 80</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pin-wrap place-r" style="--x:18%; --y:55%; --pd:0.8s" data-cat="grooming">
+          <button class="pin" aria-expanded="false" aria-label="Milo and Co., grooming, 4.9 stars, 1.1 kilometers away, from 45 francs">
+            <span class="pin-dot"></span>
+          </button>
+          <div class="pcard">
+            <div class="pcard-head">
+              <span class="pavatar">M</span>
+              <div>
+                <div class="pcard-name">Milo &amp; Co. · Grooming</div>
+                <div class="pcard-meta">4.9 <span class="star">★</span> · 1.1 km</div>
+              </div>
+            </div>
+            <div class="pcard-foot">
+              <span class="badge badge-ok">Verified</span>
+              <span class="pcard-price">from CHF 45</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pin-wrap place-r" style="--x:46%; --y:63%; --pd:2.3s" data-cat="sitters">
+          <button class="pin" aria-expanded="false" aria-label="Nora B., pet sitter, 5.0 stars, 600 meters away, from 30 francs">
+            <span class="pin-dot"></span>
+          </button>
+          <div class="pcard">
+            <div class="pcard-head">
+              <span class="pavatar">N</span>
+              <div>
+                <div class="pcard-name">Nora B. · Pet sitter</div>
+                <div class="pcard-meta">5.0 <span class="star">★</span> · 600 m</div>
+              </div>
+            </div>
+            <div class="pcard-foot">
+              <span class="badge badge-ok">Verified</span>
+              <span class="pcard-price">from CHF 30</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pin-wrap place-l" style="--x:60%; --y:44%; --pd:1.5s" data-cat="parks">
+          <button class="pin" aria-expanded="false" aria-label="Rieterpark, off-leash meadow, 12 dogs this morning">
+            <span class="pin-dot"></span>
+          </button>
+          <div class="pcard">
+            <div class="pcard-head">
+              <span class="pavatar pavatar--park">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M12 14v6"/></svg>
+              </span>
+              <div>
+                <div class="pcard-name">Rieterpark · Park</div>
+                <div class="pcard-meta">Off-leash meadow · 700 m</div>
+              </div>
+            </div>
+            <div class="pcard-foot">
+              <span class="badge badge-ok">Open now</span>
+              <span class="pcard-price">12 dogs this morning</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pin-wrap pin-live place-l" style="--x:68%; --y:74%" data-cat="live" data-always>
+          <button class="pin pin--live" aria-expanded="false" aria-label="Live walk, Bobby with Marco K., 32 minutes, 2.1 kilometers">
+            <span class="pin-dot"></span>
+          </button>
+          <div class="pcard">
+            <div class="pcard-head">
+              <span class="pavatar pavatar--dog">B</span>
+              <div>
+                <div class="pcard-name">Bobby · with Marco K.</div>
+                <div class="pcard-meta">Dog walk · lakeside loop</div>
+              </div>
+            </div>
+            <div class="pcard-foot">
+              <span class="live-chip" style="margin-left:0"><span class="live-dot"></span>Live</span>
+              <span class="pcard-price">2.1 km · 32 min</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= PILLARS ================= -->
+<section class="section" id="what" aria-label="What Fylos does">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-reveal>What Fylos does</span>
+      <h2 class="h2" data-reveal style="--rd:70ms">One calm place.</h2>
+      <p class="lede" data-reveal style="--rd:140ms">A second mind for life with your pet — it remembers, so you can be there.</p>
+    </div>
+    <div class="pillars">
+      <article class="pillar" data-reveal>
+        <div class="pillar-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <h3>Health, remembered</h3>
+        <p>Vaccines, meds and records — with you, not in a drawer.</p>
+      </article>
+      <article class="pillar" data-reveal style="--rd:80ms">
+        <div class="pillar-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3>A gentle rhythm</h3>
+        <p>Walks, meals, reminders — today, at a glance.</p>
+      </article>
+      <article class="pillar" data-reveal style="--rd:160ms">
+        <div class="pillar-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>People you trust</h3>
+        <p>Walkers, sitters and vets — nearby, verified.</p>
+      </article>
+      <article class="pillar" data-reveal style="--rd:240ms">
+        <div class="pillar-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3>The story of you two</h3>
+        <p>Memories, kept.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="section" id="how" aria-label="How it works">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-reveal>How it works</span>
+      <h2 class="h2" data-reveal style="--rd:70ms">Three small steps.</h2>
+    </div>
+    <div class="steps">
+      <article class="step" data-reveal>
+        <div class="step-num">1</div>
+        <h3>Add your Fylos</h3>
+        <p>Name, breed, quirks — two minutes.</p>
+      </article>
+      <article class="step" data-reveal style="--rd:90ms">
+        <div class="step-num">2</div>
+        <h3>We keep track</h3>
+        <p>Records, reminders, routines — quietly.</p>
+      </article>
+      <article class="step" data-reveal style="--rd:180ms">
+        <div class="step-num">3</div>
+        <h3>Live the good part</h3>
+        <p>Book help, share, remember.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APP PREVIEW ================= -->
+<section class="section" id="app" aria-label="The app">
+  <div class="container">
+    <div class="app-split">
+
+      <div class="app-copy">
+        <span class="eyebrow" data-reveal>The app</span>
+        <h2 class="h2" data-reveal style="--rd:70ms">Honest, to the pixel.</h2>
+        <p class="lede" data-reveal style="--rd:140ms">This is the services screen as it ships — real people, real distances, real prices. Nothing staged.</p>
+        <ul class="app-points" data-reveal style="--rd:210ms">
+          <li>
+            <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span><b>Your corner first.</b> The map opens where you live, not where the world is.</span>
+          </li>
+          <li>
+            <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span><b>Prices up front.</b> From CHF 22 means from CHF 22.</span>
+          </li>
+          <li>
+            <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <span><b>Booked in three taps.</b> Then Fylos remembers the rest.</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="phone-wrap" data-reveal style="--rd:120ms">
+        <!-- floating fragment: confirmed booking -->
+        <aside class="float-card float-booking" aria-label="Upcoming booking card from the app">
+          <div class="fb-head">
+            <span class="fb-avatar">M</span>
+            <div style="flex:1">
+              <div class="fb-name">Marco K. · <span class="star">4.9 ★</span></div>
+              <div class="fb-role">Dog walk · Bobby</div>
+            </div>
+            <span class="badge badge-ok">Confirmed</span>
+          </div>
+          <div class="fb-foot">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Sat, Jul 11 · 09:00
+          </div>
+        </aside>
+
+        <!-- floating fragment: vaccine countdown -->
+        <aside class="float-card float-vaccine" aria-label="Vaccine reminder from the app">
+          <span class="vx-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2.5 2.5"/></svg>
+          </span>
+          <div>
+            <div class="vx-t">Rabies booster</div>
+            <div class="vx-s">in 14 days</div>
+          </div>
+        </aside>
+
+        <!-- the phone -->
+        <div class="phone" role="img" aria-label="The Fylos app showing the nearby services screen: a small map, category chips and three provider rows">
+          <div class="screen">
+            <div class="island"></div>
+            <div class="statusbar">
+              <span class="time">9:41</span>
+              <svg width="62" height="12" viewBox="0 0 62 12" aria-hidden="true">
+                <g fill="#111111">
+                  <rect x="0" y="7" width="3" height="4" rx="1"/>
+                  <rect x="4.5" y="5" width="3" height="6" rx="1"/>
+                  <rect x="9" y="3" width="3" height="8" rx="1"/>
+                  <rect x="13.5" y="1" width="3" height="10" rx="1"/>
+                </g>
+                <g fill="#111111">
+                  <path d="M28.5 4.2c2.2-2 5.8-2 8 0l-1.2 1.3c-1.6-1.4-4-1.4-5.6 0z"/>
+                  <path d="M30.3 6.4c1.2-1 3.2-1 4.4 0l-1.2 1.3c-.6-.5-1.4-.5-2 0z"/>
+                  <circle cx="32.5" cy="9.4" r="1.3"/>
+                </g>
+                <g>
+                  <rect x="44" y="1.5" width="15" height="9" rx="2.5" fill="none" stroke="#111111" stroke-opacity="0.4"/>
+                  <rect x="45.5" y="3" width="10" height="6" rx="1.2" fill="#111111"/>
+                  <rect x="60" y="4.5" width="1.6" height="3" rx="0.8" fill="#111111" fill-opacity="0.4"/>
+                </g>
+              </svg>
+            </div>
+
+            <div class="scr-body">
+              <div>
+                <div class="scr-title">Nearby</div>
+                <div class="scr-sub">Trusted help around Kreis 2</div>
+              </div>
+
+              <div class="mini-map">
+                <svg viewBox="0 0 360 150" preserveAspectRatio="none" aria-hidden="true">
+                  <rect width="360" height="150" fill="#F3EFEB"/>
+                  <path d="M300,-5 C282,40 280,80 296,110 C306,130 300,145 296,155 L365,155 L365,-5 Z" fill="#EAF0F2"/>
+                  <path d="M300,-5 C282,40 280,80 296,110 C306,130 300,145 296,155" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                  <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
+                    <path d="M60,-5 L56,155" stroke-width="4"/>
+                    <path d="M150,-5 L146,155" stroke-width="4"/>
+                    <path d="M228,-5 L234,155" stroke-width="3"/>
+                    <path d="M-5,48 L292,44" stroke-width="4"/>
+                    <path d="M-5,104 L286,108" stroke-width="4"/>
+                    <path d="M-8,140 C80,90 160,40 240,-8" stroke-width="3"/>
+                  </g>
+                  <path d="M180,64 C180,52 194,46 210,48 C226,50 234,60 231,74 C228,86 212,92 197,89 C184,86 180,74 180,64 Z" fill="#E7EDE3"/>
+                  <circle cx="198" cy="64" r="4" fill="#D9E4D4"/>
+                  <circle cx="216" cy="72" r="5" fill="#D9E4D4"/>
+                  <g>
+                    <circle cx="96" cy="78" r="6" fill="#E85D2A" stroke="#FFFFFF" stroke-width="2"/>
+                    <circle cx="204" cy="118" r="6" fill="#E85D2A" stroke="#FFFFFF" stroke-width="2"/>
+                    <circle cx="262" cy="60" r="7" fill="#FFFFFF"/>
+                    <circle cx="262" cy="60" r="3.2" fill="#34C759"/>
+                  </g>
+                </svg>
+                <span class="mini-map-label">Kreis 2 · Zürich</span>
+              </div>
+
+              <div class="scr-chips" aria-hidden="true">
+                <span class="scr-chip on">All</span>
+                <span class="scr-chip">Walks</span>
+                <span class="scr-chip">Vets</span>
+                <span class="scr-chip">Grooming</span>
+              </div>
+
+              <div class="scr-section">Providers</div>
+
+              <div class="plist">
+                <div class="prow">
+                  <span class="prow-avatar">L</span>
+                  <div class="prow-main">
+                    <div class="prow-name">Léa M.</div>
+                    <div class="prow-meta">Dog walker · 320 m</div>
+                  </div>
+                  <div class="prow-side">
+                    <div class="prow-rate">4.9 <span class="star">★</span></div>
+                    <div class="prow-price">from CHF 24</div>
+                  </div>
+                  <span class="prow-chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                </div>
+                <div class="prow">
+                  <span class="prow-avatar">N</span>
+                  <div class="prow-main">
+                    <div class="prow-name">Nora B.</div>
+                    <div class="prow-meta">Pet sitter · 600 m</div>
+                  </div>
+                  <div class="prow-side">
+                    <div class="prow-rate">5.0 <span class="star">★</span></div>
+                    <div class="prow-price">from CHF 30</div>
+                  </div>
+                  <span class="prow-chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                </div>
+                <div class="prow">
+                  <span class="prow-avatar">M</span>
+                  <div class="prow-main">
+                    <div class="prow-name">Milo &amp; Co.</div>
+                    <div class="prow-meta">Grooming · 1.1 km</div>
+                  </div>
+                  <div class="prow-side">
+                    <div class="prow-rate">4.9 <span class="star">★</span></div>
+                    <div class="prow-price">from CHF 45</div>
+                  </div>
+                  <span class="prow-chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dock" aria-hidden="true">
+              <span class="dock-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+              </span>
+              <span class="dock-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16.24 7.76L14.12 14.12 7.76 16.24 9.88 9.88z"/></svg>
+                <span class="dlabel">Nearby</span>
+              </span>
+              <span class="dock-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              </span>
+              <span class="dock-item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <span class="dock-fab">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= LIVE ================= -->
+<section class="section" id="live" aria-label="Live walks">
+  <div class="container">
+    <div class="live-split">
+
+      <div>
+        <span class="eyebrow" data-reveal>While it happens</span>
+        <h2 class="h2" data-reveal style="--rd:70ms">A walk you can watch.</h2>
+        <p class="lede" data-reveal style="--rd:140ms">When someone walks your Fylos, the walk is not a promise — it is a line on a map, moving. Pickup, park, home.</p>
+        <p class="live-quote" data-reveal style="--rd:210ms"><span class="qmark">—</span> You see what is happening, while it happens.</p>
+      </div>
+
+      <div class="live-card" data-reveal style="--rd:120ms" aria-label="A live walk card from the app">
+        <div class="live-head">
+          <span class="live-avatar">B</span>
+          <div>
+            <div class="live-name">Bobby · with Marco K.</div>
+            <div class="live-role">Dog walk · lakeside loop</div>
+          </div>
+          <span class="live-chip"><span class="live-dot"></span>Live · 32 min · 2.1 km</span>
+        </div>
+
+        <div class="live-route" aria-hidden="true">
+          <svg viewBox="0 0 480 120" preserveAspectRatio="none">
+            <rect width="480" height="120" fill="#F7F5F2"/>
+            <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
+              <path d="M90,-5 L86,125" stroke-width="5"/>
+              <path d="M210,-5 L216,125" stroke-width="5"/>
+              <path d="M340,-5 L336,125" stroke-width="4"/>
+              <path d="M-5,44 L485,40" stroke-width="5"/>
+              <path d="M-5,90 L485,94" stroke-width="4"/>
+            </g>
+            <path d="M250,30 C250,20 264,14 280,16 C296,18 304,28 301,42 C298,54 282,60 267,57 C254,54 250,40 250,30 Z" fill="#E7EDE3"/>
+            <circle cx="270" cy="32" r="4" fill="#D9E4D4"/>
+            <circle cx="288" cy="40" r="5" fill="#D9E4D4"/>
+            <path class="route" d="M36,96 C100,92 140,60 200,56 C240,54 258,44 276,38 C310,28 360,42 416,64"
+                  fill="none" stroke="#E85D2A" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="36" cy="96" r="4" fill="#E85D2A" opacity="0.55"/>
+            <circle class="now-ring" cx="416" cy="64" r="7" fill="none" stroke="#34C759" stroke-width="1.5"/>
+            <circle class="now-dot" cx="416" cy="64" r="5.5" fill="#34C759" stroke="#FFFFFF" stroke-width="2"/>
+          </svg>
+        </div>
+
+        <div class="timeline">
+          <div class="tl-row">
+            <span class="tl-time">09:02</span>
+            <span class="tl-mark"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div>
+              <div class="tl-label">Picked up</div>
+              <div class="tl-sub">Seefeldstrasse 14</div>
+            </div>
+          </div>
+          <div class="tl-row">
+            <span class="tl-time">09:14</span>
+            <span class="tl-mark"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div>
+              <div class="tl-label">Reached the park</div>
+              <div class="tl-sub">Rieterpark meadow</div>
+            </div>
+          </div>
+          <div class="tl-row now">
+            <span class="tl-time">Now</span>
+            <span class="tl-mark tl-mark--now"></span>
+            <div>
+              <div class="tl-label">Along the lake</div>
+              <div class="tl-sub">2.1 km · 32 min · heading home</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRUST ================= -->
+<section class="section" id="trust" aria-label="Trust">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-reveal>Trust</span>
+      <h2 class="h2" data-reveal style="--rd:70ms">Careful, by design.</h2>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-item" data-reveal>
+        <div class="trust-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h4M15 12h4M6.5 16c.5-1.6 4.5-1.6 5 0"/></svg>
+        </div>
+        <h3>ID-verified people</h3>
+        <p>Every walker, sitter and vet shows who they are before they ever meet your Fylos.</p>
+      </div>
+      <div class="trust-item" data-reveal style="--rd:90ms">
+        <div class="trust-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Insured walks</h3>
+        <p>Every booked walk is covered — from pickup to the moment they are home again.</p>
+      </div>
+      <div class="trust-item" data-reveal style="--rd:180ms">
+        <div class="trust-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z"/></svg>
+        </div>
+        <h3>Reviewed by neighbors</h3>
+        <p>Ratings come from people around your corner — not from strangers far away.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROADMAP ================= -->
+<section class="section" id="roadmap" aria-label="Roadmap">
+  <div class="container">
+    <div class="section-head centered">
+      <span class="eyebrow" data-reveal>After launch</span>
+      <h2 class="h2" data-reveal style="--rd:70ms">It grows around the corner.</h2>
+    </div>
+    <div class="roadmap-chips" data-reveal style="--rd:140ms">
+      <span class="chip">Playdates nearby</span>
+      <span class="chip">Lost-pet alerts</span>
+      <span class="chip">Neighborhood pros</span>
+      <span class="chip">Vet telehealth</span>
+      <span class="chip">Health sync</span>
+      <span class="chip">Insurance companion</span>
+      <span class="chip">Wallet &amp; rewards</span>
+    </div>
+    <p class="roadmap-note" data-reveal style="--rd:210ms">Coming after launch — quietly, one by one.</p>
+  </div>
+</section>
+
+<!-- ================= EMOTIONAL BEAT ================= -->
+<section class="section emotion" aria-label="Fylos means friend">
+  <div class="container">
+    <div class="emotion-inner" data-reveal>
+      <span class="eyebrow">Why the name</span>
+      <p>Fylos — <span class="gr">φίλος</span> — is Greek for friend. <span class="soft">That is what this is: a friend who remembers, so you can be there.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= JOIN ================= -->
+<section class="section" id="join" aria-label="Join the waitlist">
+  <div class="container">
+    <div class="join-box">
+      <span class="eyebrow" data-reveal>Be first</span>
+      <h2 class="h2" data-reveal style="--rd:70ms">Launching first in Switzerland.<br>Be first in line.</h2>
+      <div class="join-zone" data-reveal style="--rd:140ms">
+        <div class="join-form-zone">
+          <form class="join-form" id="joinForm" novalidate>
+            <label class="sr-only" for="joinEmail" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Email address</label>
+            <input class="join-input" id="joinEmail" type="email" name="email" placeholder="you@example.ch" autocomplete="email" required>
+            <button type="submit" class="btn-primary">Join the waitlist</button>
+          </form>
+          <div class="join-success" role="status" aria-live="polite" aria-hidden="true">
+            <span class="ok-circle">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </span>
+            <p>You&rsquo;re on the list. We&rsquo;ll write soon.</p>
+          </div>
+        </div>
+        <p class="join-small">No noise — one note when we open the doors in your city.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="container">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="wordmark" style="font-size:19px">FYLOS<span class="wm-dot"></span></span>
+        <p>Fylos means friend.</p>
+      </div>
+      <div class="foot-meta">
+        <div>iOS first · Switzerland 2026</div>
+        <div class="foot-links">
+          <a href="#top">Privacy</a>
+          <a href="#top">Terms</a>
+          <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">&copy; 2026 Fylos</div>
+  </div>
+</footer>
+
+<!-- ================= LAB SWITCHER ================= -->
+<nav class="lab" aria-label="Lab variations">
+  <a class="lab-arrow" href="03-one-day.html" aria-label="Previous variation">&lsaquo;</a>
+  <a href="index.html">04/10 · Nearby</a>
+  <a class="lab-arrow" href="05-pet-os.html" aria-label="Next variation">&rsaquo;</a>
+</nav>
+
+<script>
+(function(){
+  'use strict';
+
+  var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* ---------- nav scroll state (rAF-throttled) ---------- */
+  var nav = document.getElementById('nav');
+  var scrollTicking = false;
+  function onScroll(){
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(function(){
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
+      scrollTicking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  /* ---------- mobile menu sheet ---------- */
+  var menuBtn = document.getElementById('menuBtn');
+  var menuSheet = document.getElementById('menuSheet');
+  function setMenu(open){
+    document.body.classList.toggle('menu-open', open);
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', String(open));
+    if (menuSheet) menuSheet.setAttribute('aria-hidden', String(!open));
+  }
+  function closeMenu(){ setMenu(false); }
+  if (menuBtn){
+    menuBtn.addEventListener('click', function(e){
+      e.stopPropagation();
+      setMenu(!document.body.classList.contains('menu-open'));
+    });
+  }
+  if (menuSheet){
+    menuSheet.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', closeMenu);
+    });
+  }
+  document.addEventListener('click', function(e){
+    if (document.body.classList.contains('menu-open') &&
+        menuSheet && !menuSheet.contains(e.target) &&
+        menuBtn && !menuBtn.contains(e.target)){
+      closeMenu();
+    }
+  });
+
+  /* ---------- scroll reveals ---------- */
+  var revealEls = document.querySelectorAll('[data-reveal]');
+  if ('IntersectionObserver' in window && revealEls.length){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---------- map pins: one open at a time ---------- */
+  var wraps = Array.prototype.slice.call(document.querySelectorAll('.pin-wrap'));
+  var openWrap = null;
+
+  function setExpanded(wrap, val){
+    var btn = wrap.querySelector('.pin');
+    if (btn) btn.setAttribute('aria-expanded', String(val));
+  }
+  function closePin(wrap){
+    if (!wrap) return;
+    wrap.classList.remove('open');
+    setExpanded(wrap, false);
+    if (openWrap === wrap) openWrap = null;
+  }
+  function openPin(wrap){
+    if (!wrap || wrap.classList.contains('filtered')) return;
+    if (openWrap && openWrap !== wrap) closePin(openWrap);
+    wrap.classList.add('open');
+    setExpanded(wrap, true);
+    openWrap = wrap;
+  }
+
+  wraps.forEach(function(wrap){
+    var btn = wrap.querySelector('.pin');
+    if (!btn) return;
+
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      if (wrap.classList.contains('open')) closePin(wrap);
+      else openPin(wrap);
+    });
+
+    if (canHover){
+      var leaveTimer = null;
+      wrap.addEventListener('pointerenter', function(){
+        if (leaveTimer){ clearTimeout(leaveTimer); leaveTimer = null; }
+        openPin(wrap);
+      });
+      wrap.addEventListener('pointerleave', function(){
+        leaveTimer = setTimeout(function(){ closePin(wrap); }, 140);
+      });
+    }
+
+    wrap.addEventListener('focusout', function(e){
+      /* only close on real focus moves (Tab away); plain taps on the card
+         blur to null and are handled by the document click handler */
+      if (e.relatedTarget && !wrap.contains(e.relatedTarget)) closePin(wrap);
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if (openWrap && !openWrap.contains(e.target)) closePin(openWrap);
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape'){
+      if (openWrap) closePin(openWrap);
+      closeMenu();
+    }
+  });
+
+  /* ---------- category filter chips ---------- */
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.map-chips .chip'));
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var cat = chip.getAttribute('data-cat') || 'all';
+      chips.forEach(function(c){
+        c.setAttribute('aria-pressed', String(c === chip));
+      });
+      wraps.forEach(function(wrap){
+        var always = wrap.hasAttribute('data-always');
+        var match = (cat === 'all') || always || (wrap.getAttribute('data-cat') === cat);
+        wrap.classList.toggle('filtered', !match);
+        if (!match && wrap.classList.contains('open')) closePin(wrap);
+      });
+    });
+  });
+
+  /* ---------- waitlist form ---------- */
+  var joinForm = document.getElementById('joinForm');
+  var joinEmail = document.getElementById('joinEmail');
+  var joinZone = joinForm ? joinForm.closest('.join-zone') : null;
+  if (joinForm && joinEmail && joinZone){
+    joinEmail.addEventListener('input', function(){
+      joinEmail.classList.remove('error');
+    });
+    joinForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var value = (joinEmail.value || '').trim();
+      var ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+      if (!ok){
+        joinEmail.classList.remove('error');
+        void joinEmail.offsetWidth; /* restart nudge animation */
+        joinEmail.classList.add('error');
+        joinEmail.focus();
+        return;
+      }
+      joinZone.classList.add('done');
+      var joinSuccess = joinZone.querySelector('.join-success');
+      if (joinSuccess) joinSuccess.setAttribute('aria-hidden', 'false');
+    });
+  }
+})();
+</script>
+</body>
+</html>

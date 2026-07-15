@@ -157,7 +157,9 @@ function App() {
       <Route path="/language" element={<LanguageSettingsScreen />} />
       <Route path="/subscription" element={<SubscriptionScreen />} />
       <Route path="/pro-registration" element={<ProRegistrationScreen />} />
-      <Route path="/pro-dashboard" element={<ProDashboardScreen />} />
+      {/* Standalone reference route gets a framed render and a working exit
+          (inside the app, pro mode renders via the UnifiedApp shell). */}
+      <Route path="/pro-dashboard" element={<ProDashboardScreen standalone onExitPro={() => { try { window.localStorage.removeItem('fylos.proMode'); window.sessionStorage.removeItem('fylos.proMode'); } catch (e) {} window.location.href = '/'; }} />} />
       <Route path="/pro-requests" element={<ProRequestsScreen />} />
       <Route path="/pro-walk" element={<ProWalkCheckinScreen />} />
       <Route path="/pro-earnings" element={<ProEarningsScreen />} />

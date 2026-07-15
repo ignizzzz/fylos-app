@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos · Vet cards (final)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --soft:#6E625B; --coral:#E85D2A; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{ background:var(--cream); color:var(--ink); font-family:'Inter',sans-serif; padding:32px 16px 70px; -webkit-font-smoothing:antialiased }
+  header{ max-width:1000px; margin:0 auto 22px; text-align:center }
+  .mark{ font-weight:800; letter-spacing:.2em; color:var(--coral); font-size:14px }
+  h1{ font-family:'Fraunces',serif; font-weight:600; font-size:29px; letter-spacing:-.02em; margin-top:10px }
+  .sub{ color:var(--soft); font-size:14px; margin-top:8px; line-height:1.6; max-width:640px; margin-left:auto; margin-right:auto }
+  .grid{ max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:12px }
+  .block{ margin-bottom:12px }
+  .step{ display:flex; align-items:center; gap:10px; margin:0 0 12px; font-weight:800; color:var(--coral); font-size:12px; letter-spacing:.14em; text-transform:uppercase }
+  .step .n{ width:26px;height:26px;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-size:12px }
+  figure{ background:#fff; border-radius:20px; overflow:hidden; box-shadow:0 16px 44px rgba(90,60,40,.12) }
+  figure img{ width:100%; display:block }
+  figcaption{ padding:15px 20px 19px }
+  figcaption h2{ font-family:'Fraunces',serif; font-weight:600; font-size:19px }
+  figcaption p{ color:var(--soft); font-size:13.5px; margin-top:6px; line-height:1.55 }
+  .arrow{ text-align:center; color:#C6B6A6; font-size:20px; margin:4px 0 }
+  footer{ max-width:1000px; margin:28px auto 0; text-align:center; color:var(--soft); font-size:13px; line-height:1.7 }
+  footer b{ color:var(--ink) }
+</style>
+</head>
+<body>
+<header>
+  <div class="mark">FYLOS</div>
+  <h1>Ο κτηνίατρος — το τελικό σετ των 3 καρτών</h1>
+  <div class="sub">Οι επιλογές σου, χτισμένες. Οι κάρτες μένουν και αλλάζουν με το scroll (1 → 2 → 3). Ρίξε μια τελευταία ματιά· αν είναι οκ, τα περνάω μέσα στο φιλμ.</div>
+</header>
+
+<div class="grid">
+  <div class="block">
+    <div class="step"><span class="n">1</span> Health book</div>
+    <figure><img src="vet/final1.png" alt="Card 1">
+      <figcaption><h2>«Vida&rsquo;s health book, always up to date.»</h2><p>Το 1A που διάλεξες: εμβόλια, επόμενο check, βάρος, αλλεργίες. Ένα ζωντανό ιστορικό.</p></figcaption>
+    </figure>
+  </div>
+  <div class="arrow">↓ scroll</div>
+  <div class="block">
+    <div class="step"><span class="n">2</span> Your call · vet / walker / sitter</div>
+    <figure><img src="vet/final2.png" alt="Card 2">
+      <figcaption><h2>«You choose what travels, and to whom.»</h2><p>2A + 2C μαζί, και ανοιχτό πέρα από τον κτηνίατρο: αριστερά διαλέγεις τι υπάρχει στο Book, δεξιά ποιος το βλέπει — <b>Vet</b> (πλήρες ιστορικό), <b>Walker</b> (αλλεργίες, ρουτίνα, πώς να τον χειριστεί), <b>Sitter</b> (τάισμα, φάρμακα, επαφή κτηνιάτρου). Η επιλογή μένει στον user. Foot: οι σημειώσεις/updates γυρίζουν πίσω στο ίδιο Book (αμφίδρομο).</p></figcaption>
+    </figure>
+  </div>
+  <div class="arrow">↓ scroll</div>
+  <div class="block">
+    <div class="step"><span class="n">3</span> Run a clinic + reception screen</div>
+    <figure><img src="vet/final3.png" alt="Card 3">
+      <figcaption><h2>«Run a clinic? One book, both sides of the leash.»</h2><p>Το 3A στην άκρη (αριστερά) + το μαύρο reception-screen του 3B πάνω στο monitor, με τον ίδιο τρόπο: εισερχόμενο ραντεβού «15:30 · Vida · History loaded». Coming soon + Apply, ζεστό peach κουτί.</p></figcaption>
+    </figure>
+  </div>
+</div>
+
+<footer>
+  Αν όλα οκ, τα <b>περνάω κανονικά μέσα στο φιλμ</b> (index.html, οι 3 stages του κτηνιάτρου) και σου το δίνω ζωντανό να το σκρολάρεις. Πες μου και αν θες κάποια μικροδιόρθωση κειμένου.
+</footer>
+</body>
+</html>
