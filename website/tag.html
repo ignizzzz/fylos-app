@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos tag — private variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B; --coral:#E85D2A; --coral-deep:#CF4A1C; --sage:#7C9271; --serif:'Fraunces',serif; --sans:'Inter',sans-serif; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans); background:#EDE7E0}
+  .screen{position:relative; width:1440px; height:810px; overflow:hidden; background:url("assets/ktagqr-hi.jpg") center/cover no-repeat}
+  .tag{position:absolute; top:22px; left:22px; z-index:30; background:var(--ink); color:var(--cream); font-weight:800; font-size:12px; letter-spacing:.12em; text-transform:uppercase; padding:9px 16px; border-radius:10px}
+  .tag b{color:#FF8B5E}
+  .card{position:absolute; left:5%; top:50%; transform:translateY(-50%); width:485px; background:color-mix(in srgb,var(--cream) 90%,transparent); backdrop-filter:blur(16px); border-radius:26px; padding:28px 34px 26px; box-shadow:0 26px 64px rgba(90,60,40,.20)}
+  .livetop{display:inline-flex; align-items:center; gap:9px; font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--sage); background:#E9F0E5; padding:8px 14px; border-radius:99px}
+  .dotlive{width:8px;height:8px;border-radius:50%;background:var(--sage);position:relative}
+  .dotlive::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid var(--sage);opacity:.5;animation:pl 1.8s ease-out infinite}
+  @keyframes pl{0%{transform:scale(.6);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+  h3{font-family:var(--serif); font-weight:600; font-size:46px; letter-spacing:-.02em; line-height:1.02; margin:14px 0 0; color:var(--ink)}
+  h3 em{font-style:italic; color:var(--coral)}
+  .lede{margin-top:12px; font-size:14px; line-height:1.6; color:var(--ink-soft)}
+  .status{display:flex; flex-direction:column; gap:9px; margin-top:18px}
+  .srow{display:flex; align-items:center; gap:11px; background:#fff; border-radius:14px; padding:11px 14px; box-shadow:0 4px 14px rgba(90,60,40,.07)}
+  .srow .ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none}
+  .srow .ico svg{width:17px;height:17px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .srow b{font-size:13px; color:var(--ink)}
+  .srow span{display:block; font-size:11.5px; color:var(--ink-soft); margin-top:1px}
+  .badge{margin-left:auto; font:800 9.5px var(--sans); letter-spacing:.08em; text-transform:uppercase; padding:6px 11px; border-radius:99px; white-space:nowrap}
+  .badge.live{background:var(--sage); color:#fff}
+  .badge.soon{background:#EFE7DD; color:var(--ink-soft)}
+  .badge.you{background:#F3E7DC; color:var(--coral)}
+  .live .ico{background:#E9F0E5} .live .ico svg{stroke:var(--sage)}
+  .soon .ico{background:#EFE7DD} .soon .ico svg{stroke:var(--ink-soft)}
+  .priv .ico{background:#F3E7DC} .priv .ico svg{stroke:var(--coral)}
+  .getrow{margin-top:20px; padding-top:18px; border-top:1px solid #E9DECF}
+  .getlbl{font:800 11px var(--sans); letter-spacing:.1em; text-transform:uppercase; color:var(--coral); margin-bottom:11px}
+  .badges{display:flex; gap:11px}
+  .sbadge{display:inline-flex; align-items:center; gap:11px; background:var(--ink); color:var(--cream); border-radius:13px; padding:10px 18px; text-decoration:none}
+  .sbadge svg{width:22px; height:22px; color:var(--cream); flex:none}
+  .sbadge .t{display:flex; flex-direction:column; line-height:1.12}
+  .sbadge .t span{font-size:9px; opacity:.82}
+  .sbadge .t b{font-size:14px; font-weight:700}
+  .idchip{position:absolute; left:64%; top:92.5%; transform:translate(-50%,-50%); z-index:20; background:color-mix(in srgb,#fff 92%,transparent); backdrop-filter:blur(8px); border-radius:999px; padding:8px 15px; font:800 10px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--ink); box-shadow:0 8px 22px rgba(90,60,40,.18); white-space:nowrap; display:flex; align-items:center; gap:8px}
+  .idchip .paw{width:12px;height:12px;color:var(--coral)}
+
+  /* Variant A: private as its own soft pill banner */
+  .privbar{display:flex; align-items:center; gap:11px; margin-top:16px; background:#F3E7DC; border-radius:14px; padding:12px 15px}
+  .privbar .lk{width:30px;height:30px;border-radius:9px;background:#fff;display:grid;place-items:center;flex:none}
+  .privbar .lk svg{width:16px;height:16px;fill:none;stroke:var(--coral);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .privbar b{font-size:12.5px; color:var(--ink)}
+  .privbar span{display:block; font-size:11px; color:var(--ink-soft); margin-top:1px}
+
+  .cta{display:flex; align-items:center; justify-content:center; gap:9px; width:100%; margin-top:20px;
+    background:var(--coral); color:#fff; font:800 15px var(--sans); letter-spacing:.01em;
+    padding:17px 24px; border-radius:15px; text-decoration:none;
+    box-shadow:0 14px 30px rgba(232,93,42,.34); transition:transform .2s ease, background .2s ease}
+  .cta:hover{transform:translateY(-2px); background:var(--coral-deep)}
+  .cta .ar{font-size:17px}
+  .ctacap{text-align:center; margin-top:10px; font:600 11.5px var(--sans); color:var(--ink-soft)}
+
+  /* responsive: scale the fixed 1440x810 stage to fit any screen */
+  html,body{background:#EDE7E0}
+  body{min-height:100vh; display:flex; align-items:center; justify-content:center}
+  .frame{position:relative; width:100vw; max-width:1440px; height:calc(100vw*810/1440); max-height:810px; margin:0 auto; overflow:hidden}
+  .screen{position:absolute; top:0; left:0; transform-origin:top left}
+</style>
+</head>
+<body>
+<div class="frame">
+<section class="screen">
+  <div class="tag">Layout 6 &middot; <b>Final</b></div>
+  <div class="card">
+    <div class="livetop"><span class="dotlive"></span>Live now in the app</div>
+    <h3>One scan, and Vida walks <em>home.</em></h3>
+    <div class="lede">If he ever wanders, whoever finds him sees only what you allow, his allergies and your number, and reaches you in seconds. No app to download.</div>
+    <div class="status">
+      <div class="srow live"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 4v11m0 0-4-4m4 4 4-4"/><path d="M5 19h14"/></svg></div><div><b>Digital ID &middot; ready today</b><span>Download in the app, add it to his collar</span></div><span class="badge live">Live now</span></div>
+      <div class="srow soon"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M9 3h6"/></svg></div><div><b>Engraved metal tag</b><span>Handsome, durable, landing very soon</span></div><span class="badge soon">Coming soon</span></div>
+      <div class="srow priv"><div class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><div><b>You always choose what a finder sees</b><span>Private by default, nothing else shared</span></div><span class="badge you">Your call</span></div>
+    </div>
+    <a class="cta" href="#">Get Vida&rsquo;s ID <span class="ar">&rarr;</span></a>
+  </div>
+  <div class="idchip"><svg class="paw" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 11a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM16.5 11a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM12 7.6a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM12 20.4c-2.8 0-5-1.5-5-3.3 0-1.5 1.5-2.4 2.6-3.3.9-.8 1.4-1.7 2.4-1.7s1.5.9 2.4 1.7c1.1.9 2.6 1.8 2.6 3.3 0 1.8-2.2 3.3-5 3.3Z"/></svg>Fylos ID</div>
+</section>
+</div>
+<script>
+(function(){
+  var scr=document.querySelector('.screen'), fr=document.querySelector('.frame');
+  function fit(){ scr.style.transform='scale('+(fr.clientWidth/1440)+')'; }
+  fit(); addEventListener('resize',fit);
+  if(location.hash.indexOf('still')>-1) document.body.classList.add('still');
+})();
+</script>
+</body>
+</html>
