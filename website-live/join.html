@@ -176,7 +176,7 @@
       <span class="fast pcchip">Coming soon &middot; first in line</span>
       <h2>Groomers</h2>
       <p>Fylos for groomers is coming, right after the vets. The first shops get their neighborhood to themselves, so apply for early access now.</p>
-      <a class="pbtn ghost" href="#proform">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
+      <a class="pbtn ghost" href="#groomerform">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
     </div>
   </div>
 
@@ -185,28 +185,45 @@
     <p>Every other pro, from trainers to boarding to crafts we have not met yet: vets and groomers come first, but we read every application. <a href="#proform">Tell us what you do</a> and you will be the first to hear when your door opens.</p>
   </div>
 
-  <div class="or">The pro application</div>
+  <div class="or">The groomer application · early access</div>
+
+  <form id="groomerForm" novalidate>
+    <div class="sec" id="groomerform">
+      <div class="sec-h"><span class="sec-n">Groomers, first in line</span></div>
+      <div class="note">Only for grooming shops and independent groomers. Fylos for groomers is coming right after the vets, and the shops that apply now go first.</div>
+      <input type="hidden" name="profession" value="Groomer">
+      <div class="grid2">
+        <div class="field"><label>Shop or business name<span class="rq">*</span></label><input name="business" required placeholder="Your shop as people know it"></div>
+        <div class="field"><label>Your name<span class="rq">*</span></label><input name="name" required></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>City or area<span class="rq">*</span></label><input name="city" required></div>
+        <div class="field"><label>Website or Instagram<span class="opt">optional</span></label><input name="website" placeholder="yourshop.ch or @yourshop"></div>
+      </div>
+      <div class="field"><label>What you offer<span class="opt">optional</span></label><textarea name="offer" placeholder="Grooming, baths, nails, one or two lines is plenty"></textarea></div>
+      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required placeholder="you@yourshop.ch"><div class="help">Where your early access invitation will go. We reply personally.</div></div>
+      <label class="check"><input type="checkbox" name="consent" required><span>I understand groomer booking is not live yet, this is an application for early access, and Fylos can contact me about it.<span class="rq">*</span></span></label>
+      <button type="submit" class="submit">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
+    </div>
+  </form>
+
+  <div class="or">Every other pro · tell us what you do</div>
 
   <form id="joinForm" novalidate>
     <div class="sec" id="proform">
-      <div class="sec-h"><span class="sec-n">Tell us about your work</span></div>
-      <div class="note">For groomers, trainers, boarding, daycare and any other pet professional. A few quick details, that is all for now.</div>
+      <div class="sec-h"><span class="sec-n">Every other pro</span></div>
+      <div class="note">For trainers, boarding, daycare and every other pet professional. Vets and groomers come first, but this list is how we learn where to open the next door. A few quick details, that is all for now.</div>
 
       <div class="field">
         <label>What do you do<span class="rq">*</span></label>
         <select name="profession" id="prof" required>
           <option value="" disabled selected>Choose one</option>
-          <optgroup label="Groomers · coming soon, first in line">
-            <option>Groomer</option>
-          </optgroup>
-          <optgroup label="Every other pro">
-            <option>Dog trainer</option>
-            <option>Boarding or daycare</option>
-            <option>Pet sitting business</option>
-            <option>Pet photographer</option>
-            <option>Pet taxi or transport</option>
-            <option value="other">Something else</option>
-          </optgroup>
+          <option>Dog trainer</option>
+          <option>Boarding or daycare</option>
+          <option>Pet sitting business</option>
+          <option>Pet photographer</option>
+          <option>Pet taxi or transport</option>
+          <option value="other">Something else</option>
         </select>
       </div>
       <div class="field" id="otherWrap">
@@ -289,6 +306,31 @@
     var on = prof.value === 'other';
     otherWrap.style.display = on ? 'flex' : 'none';
     profOther.required = on;
+  });
+
+  var gform = document.getElementById('groomerForm');
+  var gstarted = false;
+  gform.addEventListener('input', function(){
+    if (gstarted) return;
+    gstarted = true;
+    if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'join-groomer', formName: 'Groomer early access' });
+  });
+  gform.addEventListener('submit', function(e){
+    e.preventDefault();
+    var missing = null;
+    gform.querySelectorAll('[required]').forEach(function(el){
+      var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
+      if (bad && !missing) missing = el;
+    });
+    if (missing){ missing.focus(); missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+    if (window.FylosAnalytics) {
+      var names = Array.prototype.map.call(gform.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+      FylosAnalytics.formSubmitted({ formId: 'join-groomer', fields: names, success: true });
+    }
+    gform.style.display = 'none';
+    var orG = gform.previousElementSibling; if (orG && orG.classList.contains('or')) orG.style.display = 'none';
+    document.getElementById('donePanel').classList.add('on');
+    window.scrollTo({top:0, behavior:'smooth'});
   });
 
   var form = document.getElementById('joinForm');
