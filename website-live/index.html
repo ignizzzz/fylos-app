@@ -616,7 +616,7 @@
   }
 
   /* roles + end band */
-  #fylos{ position:relative; z-index:7; background:var(--cream) }
+  #fylos{ position:relative; z-index:7; background:var(--cream); display:block }
   .roles{ max-width:1280px; margin:0 auto; padding:13vh 6vw 10vh; text-align:center }
   .rolerow{ display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; margin-top:96px }
   @media (max-width: 920px){ .rolerow{ grid-template-columns:1fr; gap:86px } }
@@ -667,11 +667,11 @@
   .tagchip .p{width:6px; height:6px; border-radius:50%; background:var(--coral); display:inline-block; flex:none}
   .sketchring{
     position:absolute; left:0; top:0;
-    width:clamp(200px, 17vw, 330px); height:auto; aspect-ratio:150/96; margin:0;
-    transform:translate(-50%,-52%) rotate(-3deg) scale(.7); opacity:0;
+    width:clamp(250px, 30vw, 540px); height:auto; aspect-ratio:150/96; margin:0;
+    transform:translate(-40%,-36%) rotate(-3deg) scale(.7); opacity:0;
     transition:transform .55s cubic-bezier(.34,1.4,.5,1), opacity .3s;
   }
-  .ovl.on .sketchring{transform:translate(-50%,-52%) rotate(-3deg) scale(1); opacity:1}
+  .ovl.on .sketchring{transform:translate(-40%,-36%) rotate(-3deg) scale(1); opacity:1}
   .sketchring rect{
     fill:none; stroke:var(--coral); stroke-width:2.4; stroke-linecap:round;
     stroke-dasharray:9 8;
@@ -767,7 +767,7 @@
   .ovl .row .nend i{display:block; font-style:normal; font-weight:500; font-size:10px; color:var(--ink-soft); margin-top:1px}
   .ovl .recip .end{margin-left:auto; align-self:center; color:var(--sage); font-weight:800; font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap}
   .recpanel{
-    --lift: clamp(100px, 15vh, 175px);
+    --lift: clamp(110px, 18vh, 235px);
     position:absolute; left:0; bottom:var(--lift); transform:translateX(-50%) translateY(8px);
     width:236px; text-align:left; background:rgba(30,25,21,.92);
     backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
@@ -956,7 +956,7 @@
     </div>
 
     <div class="ovl" id="ovl-groomer" data-stage="0">
-      <div class="card" style="left:6vw; top:11vh; max-width:350px">
+      <div class="card" style="left:24vw; top:35vh; max-width:350px">
         <div class="cardawning"></div>
         <div class="kicker">03 · The groomer</div>
         <div class="vstage s0">
@@ -1017,26 +1017,12 @@
     </div>
 
 
-    <div class="ovl" id="ovl-night" data-stage="0">
-      <div class="anchor" id="anc-sos">
-        <div class="chipfloat sos"><span class="sosdot"></span>SOS · nearest open clinic 4 min</div>
-      </div>
-      <div class="anchor" id="anc-info1">
-        <div class="chipfloat"><span style="width:7px;height:7px;border-radius:50%;background:var(--coral)"></span>Tonight&rsquo;s walk · 32 min · saved to the journal</div>
-      </div>
-      <div class="anchor" id="anc-info2">
-        <div class="chipfloat"><span style="width:7px;height:7px;border-radius:50%;background:var(--coral)"></span>3 neighbors out now · wave on the map</div>
-      </div>
-      <div class="vstage s1" style="display:none">
-        <div class="nightchips">
-          <div class="nightshop">
-            <b>The little shop</b>
-            <span>Food · Treats · Accessories</span>
-            <i>Coming soon</i>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Night scene: intentionally empty per founder (2026-07-16). The info
+         chips (SOS, walk, neighbors) and The little shop teaser were removed;
+         the shop stays a hidden vision for now. The glowing route lives in the
+         frames themselves. Keep this wrapper: the engine's ovls registry and
+         stage logic reference it. -->
+    <div class="ovl" id="ovl-night" data-stage="0"></div>
   </div>
 </section>
 
