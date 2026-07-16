@@ -47,16 +47,15 @@ truth for decisions is [HANDOFF_STATUS.md](../HANDOFF_STATUS.md).
 ## Missing / not done yet
 
 ### Website — content & wiring
-1. **New cards not yet wired into the film.** The updated tag / vet / groomer /
-   park cards (HANDOFF_STATUS §4) currently live only as standalone gallery pages
-   and mockups. The live film (`website-live/index.html`) still shows the OLD
-   overlay cards. The film already has the anchor systems needed
-   (`#anc-screen` + leader line for the vet monitor, `#anc-pin` + sketch-circle
-   for the park), so wiring reuses them. **Note:** the film is LOCKED — this
-   integration is a founder-directed change to the locked file, not routine work.
-2. **Footer role links.** The walker/groomer role cards in the film footer still
-   point to `fylos.me`; they should point to `/join`. (Clinic links already point
-   to `/apply`.)
+1. ~~New cards not yet wired into the film~~ **DONE 2026-07-16, founder-directed.**
+   All chosen cards (HANDOFF_STATUS §4) are wired into the film: tag Layout 6
+   with the coral "Get {pet}'s ID" CTA, vet 3 stages + the dark reception screen
+   on the desk monitor (stage 2) + Allergies toggle, groomer converted to a
+   3-stage swap (shop / neighbors / join), park P1 was already in. Engine
+   untouched except groomer dwell 1500→2600 and one stage-threshold line.
+2. ~~Footer role links~~ **DONE 2026-07-16.** Clinic card → `/apply`, walker →
+   `/join`, zero dead `href="#"` left; the film footer now links every site page
+   (Explore + Partners columns) and the store badges point to app.fylos.me.
 
 ### Website — backend (out of scope for this repo)
 3. **`/apply` and `/join` do not submit anywhere.** Both render a thank-you state
@@ -95,7 +94,8 @@ truth for decisions is [HANDOFF_STATUS.md](../HANDOFF_STATUS.md).
 | Analytics + consent on the site | ✅ Wired (shell pages + commercial pages), consent-gated, PII-safe, no real provider |
 | `/apply`, `/join` submission | ⚠️ Front-end only, no backend (now fire `form_started`/`form_submitted`) |
 | Per-tag QR (`/p/<id>`) | ❌ Not built (demo `/found` only) |
-| Film footer role links | ❌ Still point to `fylos.me`, should be `/join` (locked-file change, founder-directed) |
+| Film: chosen cards wired (tag L6, vet 3-stage + reception, groomer 3-stage, park P1) | ✅ Done 2026-07-16, founder-directed |
+| Film footer links (roles, badges, page links) | ✅ Fixed 2026-07-16, zero dead links |
 | Main app: build · typecheck · lint · test | ✅ Green |
 | Email module (`src/email`) checks | ✅ Green |
 | Admin CRM (`src/admin`) checks | ✅ Green |
