@@ -802,31 +802,89 @@
   #ovl-vet[data-stage="2"] .recpanel{opacity:1; transform:translateX(-50%) translateY(0)}
   .endbar small a{color:inherit; text-decoration:underline; text-underline-offset:2px}
   .endbar small a:hover{color:#fff}
-  /* burger + drawer on the film pill (founder: the pages deserve a door up top) */
-  .navburger{display:inline-flex; flex-direction:column; justify-content:center; gap:4px;
+  /* burger + N4 glass canopy on the film pill (founder pick) */
+  .navburger{display:inline-flex; flex-direction:column; justify-content:center; align-items:flex-start; gap:4px;
     width:34px; height:34px; margin-left:2px; padding:0 8px; border:0; border-radius:99px;
     background:transparent; cursor:pointer}
   .navburger:hover{background:rgba(43,35,32,.06)}
-  .navburger span{display:block; height:2px; border-radius:2px; background:var(--ink)}
+  .navburger span{display:block; height:2px; border-radius:2px; background:var(--ink);
+    transition:transform .3s ease, width .3s ease}
   .navburger span:first-child{width:16px}
   .navburger span:last-child{width:11px}
-  .drawer{position:fixed; inset:0; z-index:94; pointer-events:none}
-  .drawer-bg{position:absolute; inset:0; background:rgba(43,35,32,.28); opacity:0; transition:opacity .3s ease}
-  .drawer-panel{position:absolute; top:0; right:0; bottom:0; width:min(320px, 86vw);
-    background:color-mix(in srgb, var(--cream) 92%, transparent);
+  .nav.open .navburger span:first-child{transform:translateY(3px) rotate(45deg); width:16px}
+  .nav.open .navburger span:last-child{transform:translateY(-3px) rotate(-45deg); width:16px}
+  .canopy{
+    position:absolute; top:calc(100% + 10px); left:50%;
+    transform:translateX(-50%) scale(.72); transform-origin:top center;
+    width:min(560px, 92vw); opacity:0; pointer-events:none;
+    background:color-mix(in srgb, var(--cream) 88%, transparent);
+    backdrop-filter:blur(18px) saturate(1.15); -webkit-backdrop-filter:blur(18px) saturate(1.15);
+    border:1px solid rgba(255,255,255,.55); border-radius:24px;
+    box-shadow:0 22px 60px rgba(90,60,40,.24), inset 0 1px 0 rgba(255,255,255,.6);
+    padding:16px 24px 20px;
+    transition:transform .4s cubic-bezier(.34,1.3,.5,1), opacity .3s ease;
+    display:grid; grid-template-columns:1fr 1fr; gap:2px 30px; text-align:left;
+  }
+  .nav.open .canopy{transform:translateX(-50%) scale(1); opacity:1; pointer-events:auto}
+  .canopy b{font:800 9.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral); margin-top:8px}
+  .canopy a{font:600 13px var(--sans); color:var(--ink); text-decoration:none; padding:7px 0;
+    border-bottom:1px solid rgba(43,35,32,.05); display:block}
+  .canopy a:hover{color:var(--coral)}
+  /* waitlist modal: the film's join moments open here, nobody leaves the page */
+  .wlmodal{position:fixed; inset:0; z-index:96; display:grid; place-items:center; padding:18px;
+    opacity:0; pointer-events:none; transition:opacity .3s ease}
+  .wlmodal.open{opacity:1; pointer-events:auto}
+  .wlm-bg{position:absolute; inset:0; background:rgba(43,35,32,.34); backdrop-filter:blur(3px)}
+  .wlm-card{position:relative; width:min(460px, 94vw); text-align:center;
+    background:color-mix(in srgb, var(--cream) 94%, transparent);
     backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
-    box-shadow:-18px 0 50px rgba(43,35,32,.18);
-    padding:22px 26px 30px; overflow-y:auto;
-    transform:translateX(102%); transition:transform .38s cubic-bezier(.22,1,.36,1)}
-  .drawer.open{pointer-events:auto}
-  .drawer.open .drawer-bg{opacity:1}
-  .drawer.open .drawer-panel{transform:none}
-  .drawer-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
-  .drawer-close{width:34px; height:34px; border:0; border-radius:50%; background:rgba(43,35,32,.06); cursor:pointer; display:grid; place-items:center}
-  .drawer-close svg{width:15px; height:15px; fill:none; stroke:var(--ink); stroke-width:2.2; stroke-linecap:round}
-  .drawer-panel b{display:block; margin:18px 0 6px; font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral)}
-  .drawer-panel a{display:block; padding:9px 2px; font:600 15px var(--sans); color:var(--ink); text-decoration:none; border-bottom:1px solid rgba(43,35,32,.06)}
-  .drawer-panel a:hover{color:var(--coral)}
+    border:1px solid rgba(255,255,255,.6); border-radius:26px;
+    box-shadow:0 30px 80px rgba(43,35,32,.3); padding:34px 30px 26px;
+    transform:translateY(14px) scale(.94); transition:transform .35s cubic-bezier(.34,1.3,.5,1)}
+  .wlmodal.open .wlm-card{transform:none}
+  .wlm-x{position:absolute; top:12px; right:12px; width:32px; height:32px; border:0; border-radius:50%;
+    background:rgba(43,35,32,.06); cursor:pointer; display:grid; place-items:center}
+  .wlm-x svg{width:14px; height:14px; fill:none; stroke:var(--ink); stroke-width:2.2; stroke-linecap:round}
+  .wlm-k{font:800 10.5px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--coral)}
+  .wlm-card h3{font-family:var(--serif); font-weight:600; font-size:26px; letter-spacing:-.015em; margin-top:8px}
+  .wlm-card h3 em{font-style:italic; color:var(--coral)}
+  .wlm-card>p{margin-top:8px; font-size:13px; line-height:1.6; color:var(--ink-soft)}
+  .wlm-form{display:flex; gap:8px; margin-top:16px}
+  .wlm-form input{flex:1; min-width:0; font:500 14px var(--sans); color:var(--ink); background:#fff;
+    border:1.5px solid #EADDCE; border-radius:99px; padding:12px 17px; outline:none}
+  .wlm-form input:focus{border-color:var(--coral); box-shadow:0 0 0 4px rgba(232,93,42,.13)}
+  .wlm-form button{font:800 13px var(--sans); background:var(--coral); color:#fff; border:0; border-radius:99px;
+    padding:12px 20px; cursor:pointer; white-space:nowrap; box-shadow:0 10px 24px rgba(232,93,42,.3)}
+  .wlm-form button:hover{background:var(--coral-deep)}
+  .wlm-form button[disabled]{opacity:.6; cursor:wait}
+  .wlm-err{display:none; margin-top:10px; font-size:12px; font-weight:600; color:#A83A1A}
+  .wlm-err.on{display:block}
+  .wlm-fine{margin-top:12px; font-size:10.5px; color:#B3937E}
+  .wlm-done{display:none; margin-top:14px; font:700 14px var(--sans); color:#5C7150}
+  .wlm-done.on{display:block}
+  @media (max-width:480px){ .wlm-form{flex-direction:column} .wlm-form button{width:100%} }
+  /* the optional waitlist line under the name gate */
+  .gatewait{
+    position:absolute; bottom:calc(14.5vh - 62px); left:50%; transform:translateX(-50%);
+    z-index:6; display:flex; align-items:center; gap:6px;
+    width:min(470px, 86vw);
+    background:color-mix(in srgb, #fff 82%, transparent);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-radius:999px; padding:5px 5px 5px 18px;
+    box-shadow:0 14px 40px rgba(90,60,40,.16);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .gatewait.hide{opacity:0; pointer-events:none; transform:translateX(-50%) translateY(8px)}
+  .gatewait input{flex:1; min-width:0; border:0; outline:none; background:transparent;
+    font:500 13px var(--sans); color:var(--ink)}
+  .gatewait input::placeholder{color:#B7A899}
+  .gatewait button{font:800 11.5px var(--sans); color:var(--coral-deep); background:var(--peach);
+    border:0; border-radius:99px; padding:9px 15px; cursor:pointer; white-space:nowrap}
+  .gatewait button:hover{background:#FBDCC8}
+  .gatewait .gwok{display:none; font:800 11.5px var(--sans); color:#5C7150; padding:9px 13px; white-space:nowrap}
+  .gatewait.ok input, .gatewait.ok button{display:none}
+  .gatewait.ok .gwok{display:block}
+  .gatewait.ok{width:auto; padding:5px 10px 5px 18px}
   /* vet: the dotted leader line is retired (founder call); the monitor ring and
      reception panel carry the stage 2 story on their own */
   #ovl-vet .leader{display:none}
@@ -859,31 +917,28 @@
   <span class="mark">FYLOS</span>
   <a href="#partners">For partners</a>
   <a href="/waitlist" class="cta">Join the waitlist</a>
-  <button class="navburger" id="navBurger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer"><span></span><span></span></button>
+  <button class="navburger" id="navBurger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navCanopy"><span></span><span></span></button>
+  <div class="canopy" id="navCanopy" aria-hidden="true">
+    <b>The product</b><b>Partners</b>
+    <div class="ccol">
+      <a href="/product">Overview</a>
+      <a href="/features">Features</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/health-book">The health book</a>
+      <a href="/book-care">Book care</a>
+      <a href="/the-tag">The tag</a>
+    </div>
+    <div class="ccol">
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a href="/partners">For partners</a>
+      <a href="/pilot">Pilot program</a>
+      <a href="/demo">Request a demo</a>
+      <a href="/waitlist">Join the waitlist</a>
+    </div>
+  </div>
 </nav>
 
-<div class="drawer" id="navDrawer" aria-hidden="true">
-  <div class="drawer-bg" id="drawerBg"></div>
-  <nav class="drawer-panel" role="dialog" aria-modal="true" aria-label="All pages">
-    <div class="drawer-head">
-      <span class="mark">FYLOS</span>
-      <button class="drawer-close" id="drawerClose" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    </div>
-    <b>The product</b>
-    <a href="/product">Overview</a>
-    <a href="/features">Features</a>
-    <a href="/how-it-works">How it works</a>
-    <a href="/health-book">The health book</a>
-    <a href="/book-care">Book care</a>
-    <a href="/the-tag">The tag</a>
-    <b>Partners</b>
-    <a href="/apply">For vets</a>
-    <a href="/join">For pros</a>
-    <a href="/partners">For partners</a>
-    <a href="/pilot">Pilot program</a>
-    <a href="/demo">Request a demo</a>
-  </nav>
-</div>
 
 <section id="film">
   <div class="sticky" id="stickyEl">
@@ -931,6 +986,11 @@
       <button class="skip" id="gateSkip" type="button">Just looking around</button>
       <button class="go" type="submit">Let's stroll</button>
     </form>
+    <form class="gatewait" id="gateWait" novalidate>
+      <input type="email" id="gwEmail" placeholder="Your email, and the door opens for you first" aria-label="Your email">
+      <button type="submit">Join the waitlist</button>
+      <span class="gwok">On the list, see you at the door</span>
+    </form>
     <div class="scrollhint" id="scrollHint">Scroll to come closer</div>
 
     <div id="ballbar"><div class="rail"></div><div class="ball" id="ballEl"></div></div>
@@ -965,7 +1025,7 @@
           <div class="row"><span class="dot"></span><span class="rt"><b>Engraved metal tag</b><i>Handsome, durable, landing very soon</i></span><span class="end soon">COMING SOON</span></div>
           <div class="row"><span class="dot"></span><span class="rt"><b>You always choose what a finder sees</b><i>Private by default, nothing else shared</i></span><span class="end">YOUR CALL</span></div>
         </div>
-        <a class="cta" href="https://app.fylos.me" target="_blank" rel="noopener"><span>Get <span class="petname">your pet</span>&rsquo;s ID</span> <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
+        <a class="cta" href="/waitlist"><span>Get <span class="petname">your pet</span>&rsquo;s ID</span> <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
       </div>
     </div>
 
@@ -1638,24 +1698,113 @@
   resize(); onScroll(); tick();
 })();
 </script>
+<div class="wlmodal" id="wlModal" aria-hidden="true">
+  <div class="wlm-bg" id="wlmBg"></div>
+  <div class="wlm-card" role="dialog" aria-modal="true" aria-label="Join the waitlist">
+    <button class="wlm-x" id="wlmX" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="wlm-k">The waitlist</div>
+    <h3>Be first <em>through the door.</em></h3>
+    <p>The app is a few weeks away. Leave your email and we will write to you once, the day the neighborhood opens.</p>
+    <form class="wlm-form" id="wlmForm" novalidate>
+      <input type="email" id="wlmEmail" required placeholder="you@example.com" autocomplete="email" aria-label="Your email">
+      <button type="submit" id="wlmBtn">Join the waitlist</button>
+    </form>
+    <p class="wlm-err" id="wlmErr">That did not go through. Try once more, or write to hello@fylos.me.</p>
+    <div class="wlm-done" id="wlmDone">You are on the list. See you at the door.</div>
+    <p class="wlm-fine">One email at launch, nothing else. Remove yourself any time at privacy@fylos.me.</p>
+  </div>
+</div>
+
 <script>
 (function(){
-  var d = document.getElementById('navDrawer'), b = document.getElementById('navBurger');
-  if (!d || !b) return;
-  var close = document.getElementById('drawerClose'), bg = document.getElementById('drawerBg');
-  function set(open){
-    d.classList.toggle('open', open);
-    d.setAttribute('aria-hidden', open ? 'false' : 'true');
-    b.setAttribute('aria-expanded', open ? 'true' : 'false');
-    if (open) (close || d).focus && close.focus();
-    else b.focus();
+  /* N4 canopy on the pill */
+  var nav = document.getElementById('nav'), b = document.getElementById('navBurger'), can = document.getElementById('navCanopy');
+  if (nav && b && can){
+    function set(open){
+      nav.classList.toggle('open', open);
+      can.setAttribute('aria-hidden', open ? 'false' : 'true');
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    b.addEventListener('click', function(e){ e.stopPropagation(); set(!nav.classList.contains('open')); });
+    document.addEventListener('click', function(e){
+      if (nav.classList.contains('open') && !nav.contains(e.target)) set(false);
+    });
+    document.addEventListener('keydown', function(e){
+      if ((e.key === 'Escape' || e.key === 'Esc') && nav.classList.contains('open')) set(false);
+    });
   }
-  b.addEventListener('click', function(){ set(!d.classList.contains('open')); });
-  close.addEventListener('click', function(){ set(false); });
-  bg.addEventListener('click', function(){ set(false); });
-  document.addEventListener('keydown', function(e){
-    if ((e.key === 'Escape' || e.key === 'Esc') && d.classList.contains('open')) set(false);
+
+  /* the real waitlist: browser -> the email platform's public client endpoint */
+  var WL_COMPANY = 'WMLwVg', WL_LIST = 'WLGCbr';
+  function wlSubscribe(email, props){
+    var attrs = { email: email };
+    if (props) attrs.properties = props;
+    return fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + WL_COMPANY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'revision': '2024-10-15' },
+      body: JSON.stringify({ data: { type: 'subscription',
+        attributes: { custom_source: 'fylos film', profile: { data: { type: 'profile', attributes: attrs } } },
+        relationships: { list: { data: { type: 'list', id: WL_LIST } } } } })
+    }).then(function(res){ if (!res.ok) throw new Error('status ' + res.status); });
+  }
+  function okEmail(v){ v = (v || '').trim(); return v.indexOf('@') > 0 && v.indexOf('.') > 0; }
+
+  /* modal: every /waitlist link in the film opens it in place */
+  var modal = document.getElementById('wlModal');
+  function openModal(){ modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+    setTimeout(function(){ document.getElementById('wlmEmail').focus(); }, 250); }
+  function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); }
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href="/waitlist"]') : null;
+    if (a){ e.preventDefault(); openModal(); }
   });
+  document.getElementById('wlmX').addEventListener('click', closeModal);
+  document.getElementById('wlmBg').addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e){
+    if ((e.key === 'Escape' || e.key === 'Esc') && modal.classList.contains('open')) closeModal();
+  });
+  document.getElementById('wlmForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var err = document.getElementById('wlmErr'), btn = document.getElementById('wlmBtn'),
+        input = document.getElementById('wlmEmail');
+    err.classList.remove('on');
+    if (!okEmail(input.value)){ input.focus(); return; }
+    btn.disabled = true; btn.textContent = 'One moment';
+    wlSubscribe(input.value.trim()).then(function(){
+      document.getElementById('wlmForm').style.display = 'none';
+      document.getElementById('wlmDone').classList.add('on');
+    }).catch(function(){
+      err.classList.add('on');
+      btn.disabled = false; btn.textContent = 'Join the waitlist';
+    });
+  });
+
+  /* the optional line under the name gate: email + the pet's name, together */
+  var gw = document.getElementById('gateWait');
+  if (gw){
+    gw.addEventListener('submit', function(e){
+      e.preventDefault();
+      var input = document.getElementById('gwEmail');
+      if (!okEmail(input.value)){ input.focus(); return; }
+      var btn = gw.querySelector('button');
+      btn.disabled = true;
+      var nm = document.getElementById('gateName');
+      var props = nm && nm.value.trim() ? { pet_name: nm.value.trim() } : null;
+      wlSubscribe(input.value.trim(), props).then(function(){
+        gw.classList.add('ok');
+      }).catch(function(){
+        btn.disabled = false; input.focus();
+      });
+    });
+    /* fades away with the intro, like the gate itself */
+    var hideGw = function(){
+      if (window.scrollY > 380) { gw.classList.add('hide'); window.removeEventListener('scroll', hideGw); }
+    };
+    window.addEventListener('scroll', hideGw, { passive: true });
+    var gf = document.getElementById('gateForm'), gs = document.getElementById('gateSkip');
+    if (gf) gf.addEventListener('submit', function(){ gw.classList.add('hide'); });
+    if (gs) gs.addEventListener('click', function(){ gw.classList.add('hide'); });
+  }
 })();
 </script>
 </body>
