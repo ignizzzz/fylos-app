@@ -35,6 +35,9 @@ storytelling film** — see [LOCKED_STORYTELLING.md](LOCKED_STORYTELLING.md).
 | `/health-book` | `website-live/health-book.html` | The pet health book (feature page) | Built, awaiting deploy |
 | `/book-care` | `website-live/book-care.html` | Book walks, sitting, grooming (feature page) | Built, awaiting deploy |
 | `/the-tag` | `website-live/the-tag.html` | Digital ID / lost-pet tag (feature page) | Built, awaiting deploy |
+| `/privacy` | `website-live/privacy.html` | Privacy, plain language summary (noindex) | Built |
+| `/terms` | `website-live/terms.html` | Terms, plain language summary (noindex) | Built |
+| `/impressum` | `website-live/impressum.html` | Impressum, company info (noindex) | Built |
 | `/partners` | `website-live/partners.html` | Partner / commercial overview. Funnels into `/apply` and `/join` | Live |
 | `/for-vets` | `website-live/for-vets.html` | Vet-clinic commercial page. Funnels into `/apply` | Live |
 | `/pilot` | `website-live/pilot.html` | Pilot-program page. Funnels into `/apply` and `/join` | Live |

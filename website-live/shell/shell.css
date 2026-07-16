@@ -35,21 +35,29 @@
 /* ==========================================================================
    HEADER + DESKTOP NAV
    ========================================================================== */
+/* Floating liquid-glass pill, the same language as the film's nav (founder ask):
+   the bar is transparent, the pill carries the glass. */
 .fy-header{
-  position:sticky; top:0; z-index:60;
-  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-  background:color-mix(in srgb, var(--fy-cream) 80%, transparent);
-  border-bottom:1px solid rgba(236,224,210,.7);
+  position:sticky; top:14px; z-index:60;
+  background:transparent; border-bottom:0;
+  display:flex; justify-content:center;
+  padding:0 clamp(12px,3vw,24px);
+  pointer-events:none;
+}
+.fy-header__inner{
+  pointer-events:auto;
+  display:flex; align-items:center; gap:8px;
+  min-height:0; max-width:calc(100vw - 24px);
+  padding:7px 10px 7px 20px;
+  border-radius:999px;
+  background:color-mix(in srgb, var(--fy-cream) 82%, transparent);
+  backdrop-filter:blur(16px) saturate(1.15); -webkit-backdrop-filter:blur(16px) saturate(1.15);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:0 12px 34px rgba(90,60,40,.16), inset 0 1px 0 rgba(255,255,255,.6);
 }
 /* graceful fallback where color-mix is unsupported */
 @supports not (background:color-mix(in srgb, red, red)){
-  .fy-header{ background:rgba(251,247,242,.9) }
-}
-.fy-header__inner{
-  max-width:1120px; margin:0 auto;
-  min-height:var(--fy-header-h);
-  display:flex; align-items:center; justify-content:space-between; gap:18px;
-  padding:10px clamp(18px,5vw,44px);
+  .fy-header__inner{ background:rgba(251,247,242,.92) }
 }
 .fy-brand{
   font:800 15px var(--fy-sans); letter-spacing:.22em; color:var(--fy-coral);
@@ -215,6 +223,11 @@
   padding:0 clamp(18px,5vw,44px) 34px;
   font:500 11.5px var(--fy-sans); color:var(--fy-ink-soft); line-height:1.6;
 }
+/* the quiet legal links row inside the legal line (privacy, terms, impressum) */
+.fy-footer__leglinks{ display:inline-flex; gap:14px; margin-left:14px; flex-wrap:wrap }
+.fy-footer__leglinks a{ color:var(--fy-ink-soft); text-decoration:underline; text-underline-offset:2px }
+.fy-footer__leglinks a:hover{ color:var(--fy-coral) }
+.fy-footer__leglinks a:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px; border-radius:3px }
 /* "Cookie preferences" control injected into the legal line by shell.js when
    the analytics + consent bundle is present. Reads as part of the legal text. */
 .fy-footer__cookie{

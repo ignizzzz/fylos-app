@@ -3,21 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page not found · Fylos</title>
+<title>Fylos · Privacy</title>
+<meta name="description" content="How this website and the early access forms handle your data. Plain language, Swiss data protection, nothing nonessential without consent.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#FBF7F2">
+<link rel="canonical" href="https://fylos-neighborhood.vercel.app/privacy">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{background:#FBF7F2; color:#2B2320; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
-    background-image:radial-gradient(1100px 520px at 80% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
-                     radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shell/shell.css">
 <noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
 <script defer src="/shell/shell.js"></script>
+<style>
+  :root{--cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B; --coral:#E85D2A; --coral-deep:#CF4A1C; --line:#ECE0D2;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; overflow-x:clip}
+  .wrap{max-width:680px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 96px}
+  .kicker{font:800 11px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral);
+    display:inline-flex; align-items:center; gap:9px; margin-top:clamp(40px,6vh,64px)}
+  .kicker::before{content:''; width:22px; height:2px; background:var(--coral); border-radius:2px}
+  h1{font-family:var(--serif); font-weight:600; font-size:clamp(28px,4vw,40px); letter-spacing:-.02em; line-height:1.08; margin-top:12px}
+  h1 em{font-style:italic; color:var(--coral)}
+  .updated{margin-top:8px; font-size:12px; color:var(--ink-soft)}
+  h2{font-family:var(--serif); font-weight:600; font-size:20px; margin-top:34px}
+  p{margin-top:10px; font-size:14px; line-height:1.7; color:var(--ink-soft)}
+  p b{color:var(--ink)}
+  a{color:var(--coral-deep); font-weight:700; text-decoration:none}
+  a:hover{text-decoration:underline; text-underline-offset:3px}
+  .note{margin-top:34px; background:var(--peach); border-radius:18px; padding:16px 20px; font-size:12.5px; line-height:1.6; color:#7c5a42}
+</style>
 </head>
 <body>
 
@@ -65,21 +80,27 @@
   </nav>
 </div>
 
-<main class="fy-container" id="fy-main" tabindex="-1">
-  <section class="fy-state">
-    <span class="fy-state__mark">Fylos</span>
-    <div class="fy-state__code">404</div>
-    <h1>This corner of the <em>neighborhood</em> is not here.</h1>
-    <p>The page you were looking for moved, or it never existed. Let us walk you back to somewhere familiar.</p>
-    <div class="fy-state__actions">
-      <a class="fy-btn fy-btn--primary" href="/">Back to home</a>
-      <a class="fy-btn fy-btn--ghost" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
-    </div>
-    <div class="fy-state__links">
-      <a href="/apply">For vets</a>
-      <a href="/join">For pros</a>
-    </div>
-  </section>
+<main class="wrap" id="fy-main" tabindex="-1">
+
+  <span class="kicker">The fine print</span>
+  <h1>Privacy, <em>plainly.</em></h1>
+  <p class="updated">Last updated July 16, 2026</p>
+
+  <h2>Who we are</h2>
+  <p><b>Fylos AG</b>, Zürich, Switzerland, runs this website and the Fylos app. For anything about your data, write to <a href="mailto:privacy@fylos.me">privacy@fylos.me</a> and a person will reply.</p>
+
+  <h2>What this website collects</h2>
+  <p><b>Nothing nonessential without your consent.</b> Analytics and marketing cookies stay off until you accept them in the cookie banner, and you can change your mind any time from the Cookie preferences link in the footer. The site works fully if you decline.</p>
+  <p>Our analytics are built so that no name, email, message, or pet health detail is ever sent with an event, even after consent.</p>
+
+  <h2>What the application forms collect</h2>
+  <p>If you apply for early access, we receive what you type: your name, contact details, and what you tell us about your clinic or work. We use it only to assess and reply to your application, we never sell it, and if we are not a fit we delete applications within twelve months.</p>
+
+  <h2>Your rights</h2>
+  <p>Under Swiss data protection law you can ask to see, correct, or delete your details at any time at <a href="mailto:privacy@fylos.me">privacy@fylos.me</a>.</p>
+
+  <div class="note">This page is the plain language summary for the website and the early access period. The full privacy policy for the Fylos app ships with the app's public launch.</div>
+
 </main>
 
 <footer class="fy-footer">
@@ -95,20 +116,11 @@
         <a href="/features">Features</a>
         <a href="/how-it-works">How it works</a>
       </nav>
-      <nav class="fy-footer__col" aria-label="Features">
-        <b>Features</b>
-        <a href="/health-book">Health book</a>
-        <a href="/book-care">Book care</a>
-        <a href="/the-tag">The tag</a>
-      </nav>
       <nav class="fy-footer__col" aria-label="Partners">
         <b>Partners</b>
-        <a href="/apply">Apply for early access</a>
-        <a href="/join">Join as a pro</a>
+        <a href="/apply">For vets</a>
+        <a href="/join">For pros</a>
         <a href="/partners">For partners</a>
-        <a href="/for-vets">Fylos for vets</a>
-        <a href="/pilot">Pilot program</a>
-        <a href="/demo">Request a demo</a>
       </nav>
       <div class="fy-footer__col">
         <b>Fylos</b>

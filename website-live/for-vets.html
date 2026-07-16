@@ -8,8 +8,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Consent-gated, PII-safe analytics + consent banner. No real provider wired in. See docs/BACKEND_INTEGRATION_GUIDE.md. -->
-<script defer src="/analytics/fylos-analytics.global.js"></script>
+<link rel="stylesheet" href="/shell/shell.css">
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}  .stage-photo{position:relative; border-radius:24px; overflow:hidden; box-shadow:0 26px 60px rgba(90,60,40,.22); aspect-ratio:4/3.1}
+  .stage-photo img{width:100%; height:100%; object-fit:cover; display:block}
+  .stage-photo .glass{position:absolute; left:12px; bottom:12px; right:12px}
+</style></noscript>
+<script defer src="/shell/shell.js"></script>
 <style>
   :root{
     --cream:#FBF7F2; --peach:#FFE9DC; --peach-deep:#F5E0D0; --ink:#2B2320; --ink-soft:#6E625B;
@@ -126,12 +130,51 @@
 </head>
 <body>
 
-<header class="top">
-  <a class="brand" href="/">FYLOS</a>
-  <a class="back" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Back to Fylos</a>
+<a class="fy-skip" href="#fy-main">Skip to content</a>
+
+<header class="fy-header" data-fy-header>
+  <div class="fy-header__inner">
+    <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+    <nav class="fy-nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/product">Product</a>
+      <a href="/features">Features</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a class="fy-nav__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
+    </nav>
+    <button class="fy-burger" type="button" data-fy-burger
+            aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
+      <span class="fy-burger__box"><span class="fy-burger__line"></span></span>
+    </button>
+  </div>
 </header>
 
-<main class="wrap">
+<div class="fy-menu" id="fy-menu" data-fy-menu>
+  <div class="fy-menu__backdrop" data-fy-menu-backdrop></div>
+  <nav class="fy-menu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="fy-menu__head">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <button class="fy-menu__close" type="button" data-fy-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="fy-menu__link" href="/">Home</a>
+    <a class="fy-menu__link" href="/product">Product</a>
+    <a class="fy-menu__link" href="/features">Features</a>
+    <a class="fy-menu__link" href="/how-it-works">How it works</a>
+    <a class="fy-menu__link" href="/health-book">Health book</a>
+    <a class="fy-menu__link" href="/book-care">Book care</a>
+    <a class="fy-menu__link" href="/the-tag">The tag</a>
+    <a class="fy-menu__link" href="/apply">For vets</a>
+    <a class="fy-menu__link" href="/join">For pros</a>
+    <a class="fy-menu__link" href="/partners">For partners</a>
+    <a class="fy-menu__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
+  </nav>
+</div>
+
+<main class="wrap" id="fy-main" tabindex="-1">
 
   <section class="hero">
     <div>
@@ -143,15 +186,8 @@
         <a class="cta ghost" href="/demo?type=vet&amp;from=for-vets">Request a demo</a>
       </div>
     </div>
-    <div class="stage" aria-hidden="true">
-      <div class="screen">
-        <div class="sh"><span class="dd"></span><span>Reception</span></div>
-        <div class="bk">
-          <div class="t">15:30 &middot; Next appointment</div>
-          <div class="s">Vaccines, weight and allergies, all current</div>
-          <div class="load"><span class="ld"></span>History loaded</div>
-        </div>
-      </div>
+    <div class="stage stage-photo">
+      <img src="assets/k-vetexam.jpg" alt="The vet leaning warmly over the golden retriever on the exam table, the X ray glowing behind them">
       <div class="glass"><span class="gd"></span>Bookings that arrive prepared</div>
     </div>
   </section>
@@ -229,15 +265,42 @@
 
 </main>
 
-<footer>
-  <nav class="flinks" aria-label="Footer">
-    <a href="/partners">For partners</a>
-    <a href="/apply">Apply for early access</a>
-    <a href="/pilot">Pilot program</a>
-    <a href="/demo">Request a demo</a>
-  </nav>
-  Fylos AG &middot; Zürich, Switzerland &middot; <a href="mailto:vets@fylos.me">vets@fylos.me</a><br>
-  Fylos for vets is coming soon. This is an application for early access, not a live service.
+<footer class="fy-footer">
+  <div class="fy-footer__inner">
+    <div class="fy-footer__brand">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <p class="fy-footer__tag">Your whole pet neighborhood, <em>in your pocket.</em></p>
+    </div>
+    <div class="fy-footer__cols">
+      <nav class="fy-footer__col" aria-label="Product">
+        <b>Product</b>
+        <a href="/product">Overview</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Features">
+        <b>Features</b>
+        <a href="/health-book">Health book</a>
+        <a href="/book-care">Book care</a>
+        <a href="/the-tag">The tag</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Partners">
+        <b>Partners</b>
+        <a href="/apply">For vets</a>
+        <a href="/join">For pros</a>
+        <a href="/partners">For partners</a>
+        <a href="/pilot">Pilot program</a>
+        <a href="/demo">Request a demo</a>
+      </nav>
+      <div class="fy-footer__col">
+        <b>Fylos</b>
+        <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
+        <a href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
+        <a href="mailto:vets@fylos.me">vets@fylos.me</a>
+      </div>
+    </div>
+  </div>
+  <div class="fy-footer__legal">© 2026 Fylos AG · Zürich, Switzerland · Fylos for vets is coming soon, this page is an early access application, not a live service. <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
 </footer>
 
 </body>

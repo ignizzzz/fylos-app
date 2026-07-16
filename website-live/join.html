@@ -81,13 +81,13 @@
   .vetline{text-align:center; font-size:12.5px; color:var(--ink-soft); margin-top:14px}
   .vetline a{color:var(--coral); text-decoration:none; font-weight:700}
   .otherpros{display:flex; align-items:center; gap:20px; max-width:620px; margin:30px auto 0; text-align:left}
-  .otherpros img{height:96px; flex:none; filter:drop-shadow(0 10px 14px rgba(60,35,20,.18))}
+  .otherpros img{height:96px; flex:none}
   .otherpros p{font-size:13px; line-height:1.6; color:var(--ink-soft)}
   .otherpros a{color:var(--coral); font-weight:700; text-decoration:none}
   @media (max-width:560px){ .otherpros{flex-direction:column; text-align:center} }
   /* figurine headers on the two path cards */
   .pcfig{height:150px; display:flex; align-items:flex-end; justify-content:center; margin-top:-46px}
-  .pcfig img{max-height:176px; filter:drop-shadow(0 16px 22px rgba(60,35,20,.22))}
+  .pcfig img{max-height:176px}
   .fast.pcchip{position:static; display:inline-flex; margin:12px 0 4px; box-shadow:none}
   .fast.pcchip.live{background:#E9F0E5; color:var(--sage)}
   .paths{margin-top:70px}
@@ -117,7 +117,7 @@
       <a href="/how-it-works">How it works</a>
       <a href="/apply">For vets</a>
       <a href="/join">For pros</a>
-      <a class="fy-nav__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+      <a class="fy-nav__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
     </nav>
     <button class="fy-burger" type="button" data-fy-burger
             aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
@@ -145,7 +145,7 @@
     <a class="fy-menu__link" href="/apply">For vets</a>
     <a class="fy-menu__link" href="/join">For pros</a>
     <a class="fy-menu__link" href="/partners">For partners</a>
-    <a class="fy-menu__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+    <a class="fy-menu__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
   </nav>
 </div>
 
@@ -196,13 +196,17 @@
         <label>What do you do<span class="rq">*</span></label>
         <select name="profession" id="prof" required>
           <option value="" disabled selected>Choose one</option>
-          <option>Groomer</option>
-          <option>Dog trainer</option>
-          <option>Boarding or daycare</option>
-          <option>Pet sitting business</option>
-          <option>Pet photographer</option>
-          <option>Pet taxi or transport</option>
-          <option value="other">Something else</option>
+          <optgroup label="Groomers · coming soon, first in line">
+            <option>Groomer</option>
+          </optgroup>
+          <optgroup label="Every other pro">
+            <option>Dog trainer</option>
+            <option>Boarding or daycare</option>
+            <option>Pet sitting business</option>
+            <option>Pet photographer</option>
+            <option>Pet taxi or transport</option>
+            <option value="other">Something else</option>
+          </optgroup>
         </select>
       </div>
       <div class="field" id="otherWrap">
@@ -269,12 +273,12 @@
       <div class="fy-footer__col">
         <b>Fylos</b>
         <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
-        <a href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+        <a href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
         <a href="mailto:hello@fylos.me">hello@fylos.me</a>
       </div>
     </div>
   </div>
-  <div class="fy-footer__legal">© 2026 Fylos AG · Zürich, Switzerland</div>
+  <div class="fy-footer__legal">© 2026 Fylos AG · Zürich, Switzerland <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
 </footer>
 
 <script>
