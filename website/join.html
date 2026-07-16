@@ -97,6 +97,17 @@
   .done p{margin-top:11px; color:var(--ink-soft); font-size:14.5px; line-height:1.6; max-width:440px; margin-left:auto; margin-right:auto}
   .done a.home{display:inline-flex; margin-top:22px; background:var(--peach); color:var(--coral); font-weight:800; font-size:13.5px; padding:13px 22px; border-radius:12px; text-decoration:none}
 
+  /* submitting + error states */
+  .submit:disabled{opacity:.75; cursor:progress; transform:none}
+  .submit .spin{width:17px; height:17px; border-radius:50%; border:2.5px solid rgba(255,255,255,.4); border-top-color:#fff; animation:fspin .7s linear infinite}
+  @keyframes fspin{to{transform:rotate(360deg)}}
+  @keyframes rise{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .errbox{display:none; gap:11px; align-items:flex-start; background:#FBEDE7; border:1.5px solid #EFC4AC; border-radius:14px; padding:14px 16px; margin-bottom:14px}
+  .errbox.on{display:flex; animation:rise .4s ease}
+  .errbox svg{width:18px; height:18px; flex:none; fill:none; stroke:var(--coral-deep); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; margin-top:1px}
+  .errbox p{font-size:12.5px; line-height:1.55; color:#8a5138}
+  .errbox b{color:var(--coral-deep)}
+
   @media(max-width:720px){ .paths{grid-template-columns:1fr} .grid2{grid-template-columns:1fr} }
 </style>
 </head>
@@ -175,6 +186,7 @@
 
       <label class="check"><input type="checkbox" name="consent" required><span>I would like to join Fylos as a pro, and Fylos can contact me about it. My details are used only to read and reply to this application.<span class="rq">*</span></span></label>
 
+      <div class="errbox" id="errBox"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg><p><b>That did not go through.</b> Nothing was lost, your answers are still here. Give it another try, and if it keeps happening, email us at <a href="mailto:pros@fylos.me">pros@fylos.me</a>.</p></div>
       <button type="submit" class="submit">Apply to join <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
       <div class="vetline">Run a veterinary clinic? There is a dedicated form. <a href="/apply">Apply here.</a></div>
     </div>
@@ -194,6 +206,8 @@
   Walkers and sitters apply in the app. Other pros, tell us here, and we will be in touch.
 </footer>
 
+<script src="assets/js/fylos-api.js"></script>
+<script src="assets/js/fylos-consent.js" defer></script>
 <script>
   var prof = document.getElementById('prof');
   var otherWrap = document.getElementById('otherWrap');
@@ -204,19 +218,12 @@
     profOther.required = on;
   });
 
-  var form = document.getElementById('joinForm');
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var missing = null;
-    form.querySelectorAll('[required]').forEach(function(el){
-      if (el.offsetParent === null) return; // skip hidden
-      var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
-      if (bad && !missing) missing = el;
-    });
-    if (missing){ missing.focus(); missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'}); return; }
-    form.style.display = 'none';
-    document.getElementById('donePanel').classList.add('on');
-    window.scrollTo({top:0, behavior:'smooth'});
+  FylosAPI.wireForm({
+    kind: 'joinPro',
+    form: document.getElementById('joinForm'),
+    done: document.getElementById('donePanel'),
+    errBox: document.getElementById('errBox'),
+    busyLabel: 'Sending your application'
   });
 </script>
 </body>

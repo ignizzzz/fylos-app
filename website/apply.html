@@ -108,6 +108,16 @@
   .done p{margin-top:11px; color:var(--ink-soft); font-size:14.5px; line-height:1.6; max-width:440px; margin-left:auto; margin-right:auto}
   .done a.home{display:inline-flex; margin-top:22px; background:var(--peach); color:var(--coral); font-weight:800; font-size:13.5px; padding:13px 22px; border-radius:12px; text-decoration:none}
 
+  /* submitting + error states */
+  .submit:disabled{opacity:.75; cursor:progress; transform:none}
+  .submit .spin{width:17px; height:17px; border-radius:50%; border:2.5px solid rgba(255,255,255,.4); border-top-color:#fff; animation:fspin .7s linear infinite}
+  @keyframes fspin{to{transform:rotate(360deg)}}
+  .errbox{display:none; gap:11px; align-items:flex-start; background:#FBEDE7; border:1.5px solid #EFC4AC; border-radius:14px; padding:14px 16px; margin-bottom:14px}
+  .errbox.on{display:flex; animation:rise .4s ease}
+  .errbox svg{width:18px; height:18px; flex:none; fill:none; stroke:var(--coral-deep); stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; margin-top:1px}
+  .errbox p{font-size:12.5px; line-height:1.55; color:#8a5138}
+  .errbox b{color:var(--coral-deep)}
+
   @media(max-width:760px){
     .hero{grid-template-columns:1fr; gap:22px; padding:34px 0 22px}
     .heroart{aspect-ratio:16/10; order:-1}
@@ -192,6 +202,7 @@
       <label class="check has"><input type="checkbox" name="application_consent" required><span>I understand Fylos for vets is not live yet, this is an application for early access, and Fylos can contact me about it. When it launches, a pet&rsquo;s record will only ever sync with the owner&rsquo;s consent, and going live will need a separate data agreement.<span class="rq">*</span></span></label>
       <label class="check has"><input type="checkbox" name="marketing_optin"><span>Send me Fylos launch news too, even if the timing is not right yet.</span></label>
 
+      <div class="errbox" id="errBox"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg><p><b>That did not go through.</b> Nothing was lost, your answers are still here. Give it another try, and if it keeps happening, email us at <a href="mailto:vets@fylos.me">vets@fylos.me</a>.</p></div>
       <button type="submit" class="submit">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
       <div class="next">We read every application ourselves and usually reply within a few days, often sooner.</div>
     </div>
@@ -212,26 +223,15 @@
   Fylos for vets is coming soon. This is an application for early access, not a live service.
 </footer>
 
+<script src="assets/js/fylos-api.js"></script>
+<script src="assets/js/fylos-consent.js" defer></script>
 <script>
-  var form = document.getElementById('applyForm');
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    // basic required-field check with a gentle scroll to the first empty one
-    var missing = null;
-    form.querySelectorAll('[required]').forEach(function(el){
-      var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
-      if (bad && !missing) missing = el;
-    });
-    if (missing){
-      missing.focus();
-      missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'});
-      return;
-    }
-    // no backend yet: show the confirmation state
-    form.style.display = 'none';
-    var done = document.getElementById('donePanel');
-    done.classList.add('on');
-    window.scrollTo({top:0, behavior:'smooth'});
+  FylosAPI.wireForm({
+    kind: 'applyClinic',
+    form: document.getElementById('applyForm'),
+    done: document.getElementById('donePanel'),
+    errBox: document.getElementById('errBox'),
+    busyLabel: 'Sending your application'
   });
 </script>
 </body>
