@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos · Join the waitlist</title>
+<meta name="description" content="The Fylos app is a few weeks away. Leave your email and be first through the door when the neighborhood opens.">
+<meta name="theme-color" content="#FBF7F2">
+<link rel="canonical" href="https://fylos-neighborhood.vercel.app/waitlist">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shell/shell.css">
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
+<script defer src="/shell/shell.js"></script>
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-deep:#CF4A1C; --sage:#7C9271; --sage-deep:#5C7150; --line:#ECE0D2;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; overflow-x:clip;
+    background-image:radial-gradient(1100px 520px at 82% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
+                     radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
+  .wrap{max-width:640px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 110px; text-align:center}
+  .figs{display:flex; justify-content:center; align-items:flex-end; gap:26px; margin-top:clamp(40px,7vh,70px)}
+  .figs img{height:clamp(110px,15vw,160px)}
+  .kicker{font:800 11px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral);
+    display:inline-flex; align-items:center; gap:9px; margin-top:26px}
+  .kicker::before, .kicker::after{content:''; width:22px; height:2px; background:var(--coral); border-radius:2px}
+  h1{font-family:var(--serif); font-weight:600; font-size:clamp(32px,5vw,50px); line-height:1.05; letter-spacing:-.02em; margin-top:12px}
+  h1 em{font-style:italic; color:var(--coral)}
+  .lead{margin:14px auto 0; font-size:15px; line-height:1.65; color:var(--ink-soft); max-width:480px}
+  form{display:flex; gap:10px; max-width:460px; margin:28px auto 0}
+  input[type=email]{flex:1; font:500 15px var(--sans); color:var(--ink); background:#fff;
+    border:1.5px solid #EADDCE; border-radius:99px; padding:15px 20px; outline:none; min-width:0;
+    transition:border-color .15s, box-shadow .15s}
+  input[type=email]:focus{border-color:var(--coral); box-shadow:0 0 0 4px rgba(232,93,42,.13)}
+  button{font:800 14px var(--sans); background:var(--coral); color:#fff; border:0; border-radius:99px;
+    padding:15px 26px; cursor:pointer; box-shadow:0 12px 28px rgba(232,93,42,.3); white-space:nowrap;
+    transition:background .18s, transform .18s}
+  button:hover{background:var(--coral-deep); transform:translateY(-1px)}
+  button[disabled]{opacity:.6; cursor:wait; transform:none}
+  .fine{margin:16px auto 0; font-size:12px; line-height:1.6; color:var(--ink-soft); max-width:440px}
+  .fine a{color:var(--coral-deep); font-weight:700; text-decoration:none}
+  .err{display:none; margin:14px auto 0; font-size:13px; font-weight:600; color:#A83A1A; max-width:440px}
+  .err.on{display:block}
+  .done{display:none; margin-top:34px}
+  .done.on{display:block; animation:rise .5s ease}
+  @keyframes rise{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .done .badge{width:64px; height:64px; border-radius:50%; background:#E9F0E5; display:grid; place-items:center; margin:0 auto 16px}
+  .done .badge svg{width:30px; height:30px; fill:none; stroke:var(--sage-deep); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round}
+  .done h2{font-family:var(--serif); font-weight:600; font-size:26px}
+  .done p{margin:10px auto 0; font-size:14px; line-height:1.6; color:var(--ink-soft); max-width:420px}
+  .meanwhile{margin-top:44px; padding-top:30px; border-top:1px solid var(--line)}
+  .meanwhile b{font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft)}
+  .qlinks{display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-top:14px}
+  .qlinks a{font:700 13px var(--sans); color:var(--coral-deep); text-decoration:none}
+  .qlinks a:hover{text-decoration:underline; text-underline-offset:3px}
+  @media (max-width:520px){ form{flex-direction:column} button{width:100%} }
+</style>
+</head>
+<body>
+
+<a class="fy-skip" href="#fy-main">Skip to content</a>
+
+<header class="fy-header" data-fy-header>
+  <div class="fy-header__inner">
+    <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+    <nav class="fy-nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/product">Product</a>
+      <a href="/features">Features</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a class="fy-nav__cta" href="/waitlist">Join the waitlist</a>
+    </nav>
+    <button class="fy-burger" type="button" data-fy-burger
+            aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
+      <span class="fy-burger__box"><span class="fy-burger__line"></span></span>
+    </button>
+  </div>
+</header>
+
+<div class="fy-menu" id="fy-menu" data-fy-menu>
+  <div class="fy-menu__backdrop" data-fy-menu-backdrop></div>
+  <nav class="fy-menu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="fy-menu__head">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <button class="fy-menu__close" type="button" data-fy-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="fy-menu__link" href="/">Home</a>
+    <a class="fy-menu__link" href="/product">Product</a>
+    <a class="fy-menu__link" href="/features">Features</a>
+    <a class="fy-menu__link" href="/how-it-works">How it works</a>
+    <a class="fy-menu__link" href="/health-book">Health book</a>
+    <a class="fy-menu__link" href="/book-care">Book care</a>
+    <a class="fy-menu__link" href="/the-tag">The tag</a>
+    <a class="fy-menu__link" href="/apply">For vets</a>
+    <a class="fy-menu__link" href="/join">For pros</a>
+    <a class="fy-menu__link" href="/partners">For partners</a>
+    <a class="fy-menu__cta" href="/waitlist">Join the waitlist</a>
+  </nav>
+</div>
+
+<main class="wrap" id="fy-main" tabindex="-1">
+
+  <div class="figs">
+    <img src="assets/roles/pet.png" alt="The golden retriever figurine, waiting patiently">
+  </div>
+  <div class="kicker">The waitlist</div>
+  <h1>Be first <em>through the door.</em></h1>
+  <p class="lead">The Fylos app is a few weeks away. Leave your email and we will write to you once, the day the neighborhood opens. No newsletter, no noise, just the door opening.</p>
+
+  <form id="wl" novalidate>
+    <input type="email" name="email" id="wlEmail" required placeholder="you@example.com" autocomplete="email" aria-label="Your email">
+    <button type="submit" id="wlBtn">Join the waitlist</button>
+  </form>
+  <p class="err" id="wlErr">That did not go through. Try once more, or write to <a href="mailto:hello@fylos.me" style="color:inherit">hello@fylos.me</a> and we will add you ourselves.</p>
+  <p class="fine">One email at launch, that is the deal. Your address is used for nothing else, and you can ask us to remove it any time at <a href="mailto:privacy@fylos.me">privacy@fylos.me</a>.</p>
+
+  <div class="done" id="wlDone">
+    <div class="badge"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
+    <h2>You are on the list.</h2>
+    <p>The day the app opens, your invitation lands first. Until then, the neighborhood keeps building.</p>
+  </div>
+
+  <div class="meanwhile">
+    <b>Meanwhile, look around</b>
+    <div class="qlinks">
+      <a href="/product">The product</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/the-tag">The tag</a>
+      <a href="/found">Try a live tag</a>
+    </div>
+  </div>
+
+</main>
+
+<footer class="fy-footer">
+  <div class="fy-footer__inner">
+    <div class="fy-footer__brand">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <p class="fy-footer__tag">Your whole pet neighborhood, <em>in your pocket.</em></p>
+    </div>
+    <div class="fy-footer__cols">
+      <nav class="fy-footer__col" aria-label="Product">
+        <b>Product</b>
+        <a href="/product">Overview</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Features">
+        <b>Features</b>
+        <a href="/health-book">Health book</a>
+        <a href="/book-care">Book care</a>
+        <a href="/the-tag">The tag</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Partners">
+        <b>Partners</b>
+        <a href="/apply">For vets</a>
+        <a href="/join">For pros</a>
+        <a href="/partners">For partners</a>
+        <a href="/pilot">Pilot program</a>
+        <a href="/demo">Request a demo</a>
+      </nav>
+      <div class="fy-footer__col">
+        <b>Fylos</b>
+        <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
+        <a href="/waitlist">Join the waitlist</a>
+        <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+      </div>
+    </div>
+  </div>
+  <div class="fy-footer__legal">© 2026 Fylos AG · Zürich, Switzerland <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
+</footer>
+
+<script>
+  // Real waitlist: the browser talks straight to the email platform's public
+  // client endpoint (built for exactly this), so there is no Fylos backend and
+  // no secret in the page. The address goes only to the subscriber list.
+  var WL_COMPANY = 'WMLwVg';
+  var WL_LIST = 'WLGCbr';
+  var form = document.getElementById('wl');
+  var input = document.getElementById('wlEmail');
+  var btn = document.getElementById('wlBtn');
+  var err = document.getElementById('wlErr');
+  var started = false;
+  form.addEventListener('input', function(){
+    if (started) return;
+    started = true;
+    if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'waitlist', formName: 'App waitlist' });
+  });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    err.classList.remove('on');
+    var email = (input.value || '').trim();
+    if (!email || email.indexOf('@') < 1 || email.indexOf('.') < 0){ input.focus(); return; }
+    btn.disabled = true; btn.textContent = 'One moment';
+    fetch('https://a.klaviyo.com/client/subscriptions/?company_id=' + WL_COMPANY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'revision': '2024-10-15' },
+      body: JSON.stringify({
+        data: {
+          type: 'subscription',
+          attributes: {
+            custom_source: 'fylos website waitlist',
+            profile: { data: { type: 'profile', attributes: { email: email } } }
+          },
+          relationships: { list: { data: { type: 'list', id: WL_LIST } } }
+        }
+      })
+    }).then(function(res){
+      if (!res.ok) throw new Error('status ' + res.status);
+      if (window.FylosAnalytics) FylosAnalytics.formSubmitted({ formId: 'waitlist', fields: ['email'], success: true });
+      form.style.display = 'none';
+      document.querySelector('.fine').style.display = 'none';
+      document.getElementById('wlDone').classList.add('on');
+    }).catch(function(){
+      if (window.FylosAnalytics) FylosAnalytics.formSubmitted({ formId: 'waitlist', fields: ['email'], success: false });
+      err.classList.add('on');
+      btn.disabled = false; btn.textContent = 'Join the waitlist';
+    });
+  });
+</script>
+</body>
+</html>

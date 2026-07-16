@@ -38,6 +38,7 @@ storytelling film** — see [LOCKED_STORYTELLING.md](LOCKED_STORYTELLING.md).
 | `/privacy` | `website-live/privacy.html` | Privacy, plain language summary (noindex) | Built |
 | `/terms` | `website-live/terms.html` | Terms, plain language summary (noindex) | Built |
 | `/impressum` | `website-live/impressum.html` | Impressum, company info (noindex) | Built |
+| `/waitlist` | `website-live/waitlist.html` | App launch waitlist (live Klaviyo signup, list WLGCbr) | Built |
 | `/partners` | `website-live/partners.html` | Partner / commercial overview. Funnels into `/apply` and `/join` | Live |
 | `/for-vets` | `website-live/for-vets.html` | Vet-clinic commercial page. Funnels into `/apply` | Live |
 | `/pilot` | `website-live/pilot.html` | Pilot-program page. Funnels into `/apply` and `/join` | Live |

@@ -42,16 +42,20 @@
   .strip{border-radius:26px; overflow:hidden; box-shadow:0 24px 56px rgba(90,60,40,.2); margin-top:clamp(34px,5vh,50px); aspect-ratio:21/8}
   .strip img{width:100%; height:100%; object-fit:cover; display:block}
 
-  .ledgers{display:grid; grid-template-columns:1fr 1fr; gap:clamp(34px,6vw,84px); margin-top:clamp(44px,7vh,70px); align-items:start}
-  .lhead{display:flex; align-items:center; gap:10px; padding-bottom:13px; border-bottom:2px solid var(--ink)}
+  /* F1: warm cards (founder pick) */
+  .ledgers{display:grid; grid-template-columns:1fr 1fr; gap:clamp(20px,3vw,32px); margin-top:clamp(44px,7vh,70px); align-items:start}
+  .ledger{background:#fff; border-radius:24px; padding:clamp(20px,2.8vw,28px) clamp(20px,2.8vw,28px) 18px; box-shadow:0 16px 40px rgba(90,60,40,.09)}
+  .ledger.soonside{background:linear-gradient(180deg,#FFF3EB,#fff)}
+  .lhead{display:flex; align-items:center; gap:10px}
   .lhead .d{width:9px; height:9px; border-radius:50%; flex:none}
   .ledger h2{font-family:var(--serif); font-weight:600; font-size:22px; letter-spacing:-.01em}
   .lhead.live .d{background:var(--sage-deep)}
   .lhead.soon .d{background:var(--coral)}
-  .ledger>p{margin-top:11px; font-size:12.5px; color:var(--ink-soft); line-height:1.5}
-  .items{margin-top:4px; display:flex; flex-direction:column}
-  .item{border-bottom:1px solid var(--line); padding:13px 2px; font-size:13.5px; font-weight:600; display:flex; align-items:baseline; gap:9px}
-  .item span{font-weight:500; font-size:12px; color:var(--ink-soft)}
+  .ledger>p{margin-top:6px; font-size:12.5px; color:var(--ink-soft); line-height:1.5}
+  .items{margin-top:14px; display:flex; flex-direction:column; gap:8px}
+  .item{background:var(--cream); border-radius:13px; padding:11px 14px; font-size:13px; font-weight:700; display:flex; align-items:baseline; gap:9px}
+  .ledger.soonside .item{background:#FBF1E9}
+  .item span{font-weight:500; font-size:11.5px; color:var(--ink-soft)}
   .item a{color:var(--coral-deep); font-weight:800; text-decoration:none; margin-left:auto; font-size:11.5px; white-space:nowrap}
   .item a:hover{text-decoration:underline; text-underline-offset:3px}
 
@@ -90,7 +94,7 @@
       <a href="/how-it-works">How it works</a>
       <a href="/apply">For vets</a>
       <a href="/join">For pros</a>
-      <a class="fy-nav__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
+      <a class="fy-nav__cta" href="/waitlist">Join the waitlist</a>
     </nav>
     <button class="fy-burger" type="button" data-fy-burger
             aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
@@ -118,7 +122,7 @@
     <a class="fy-menu__link" href="/apply">For vets</a>
     <a class="fy-menu__link" href="/join">For pros</a>
     <a class="fy-menu__link" href="/partners">For partners</a>
-    <a class="fy-menu__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
+    <a class="fy-menu__cta" href="/waitlist">Join the waitlist</a>
   </nav>
 </div>
 
@@ -167,7 +171,7 @@
     <h2>Start with what is <em>real today.</em></h2>
     <p>The book, the tag and the bookings already make life calmer. The rest arrives door by door.</p>
     <div class="ctarow">
-      <a class="cta" href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
+      <a class="cta" href="/waitlist">Join the waitlist</a>
       <a class="ghost" href="/how-it-works">See how it works</a>
     </div>
   </section>
@@ -204,7 +208,7 @@
       <div class="fy-footer__col">
         <b>Fylos</b>
         <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
-        <a href="https://app.fylos.me" target="_blank" rel="noopener">Get the app</a>
+        <a href="/waitlist">Join the waitlist</a>
         <a href="mailto:hello@fylos.me">hello@fylos.me</a>
       </div>
     </div>
