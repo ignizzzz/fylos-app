@@ -643,7 +643,12 @@
     background:#fff; border-radius:26px; padding:0 28px 30px;
     box-shadow:0 18px 50px rgba(90,60,40,.10);
     transition:transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s ease;
+    /* the CTA of every card docks to the bottom, whatever the text length */
+    display:flex; flex-direction:column;
   }
+  .role .awning{ align-self:stretch }
+  .role .rolecta{ margin-top:auto; align-self:center }
+  .role p{ margin-bottom:18px }
   .role:hover{ transform:translateY(-10px); box-shadow:0 30px 70px rgba(90,60,40,.16) }
   .role .awning{
     height:15px; margin:0 -28px; border-radius:26px 26px 0 0;
