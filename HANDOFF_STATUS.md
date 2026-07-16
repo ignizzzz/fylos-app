@@ -81,6 +81,27 @@ Source of all of these is in `website-live/`.
 
 ---
 
+## 4b. Product-education pages (new, built 2026-07-15)
+
+Six public pages that explain what Fylos does, in `website-live/`. They use the **shared website shell** (`shell/` header + accessible mobile menu + footer + active-route + loading state) and add their own page body and page-scoped CSS (tokens coral-deep `#CF4A1C`, sage `#7C9271`; Fraunces + Inter). Every page follows the same teaching shape: the problem, how Fylos handles it, a practical example, related features, and one clear next action (Get the app -> app.fylos.me). Each uses a **deliberately different premium layout** so no two are the same card grid.
+
+Shell retrofit (2026-07-15): built first with bespoke chrome, then folded onto the shared shell per founder decision. The shell nav is intentionally lean (Home / For vets / For pros / Open the app), so the education pages are **not** surfaced in the top nav; they are reached via in-page cross-links between each other and are registered in `docs/ROUTES.md`. The retrofit gives them the shared header, the accessible mobile burger menu (which the bespoke chrome lacked), and the shared footer.
+
+| Route | File | Layout | Anchor |
+|---|---|---|---|
+| `/product` | `product.html` | Editorial hero (SVG neighborhood map) + zig-zag bands + a live/coming honesty band | The whole neighborhood, in one app |
+| `/features` | `features.html` | Two honest status ledgers (Live now / Coming soon), no card grid | Everything, honestly |
+| `/how-it-works` | `how-it-works.html` | Numbered vertical step-spine, first minute to first walk | From the first minute to the first walk |
+| `/health-book` | `health-book.html` | Left-rail dossier with sticky section nav (About / Health / Journal / Documents / Sharing) | Milo's health book, always up to date |
+| `/book-care` | `book-care.html` | Phone-frame booking-receipt walkthrough + after-booking cards | Booked in two taps |
+| `/the-tag` | `the-tag.html` | Scan-to-home split, 3 status rows, finder-page flow (links `/found`) | One scan, and Milo walks home |
+
+**Honesty discipline (matches the site rules).** Only what genuinely exists is sold as LIVE (health book, digital ID/tag + the real `/found` page, booking, messaging-after-booking, reviews, journal, the sharing principle, free-to-start, Stripe). Everything else is badged COMING SOON (engraved metal tag, Fylos for vets record sync, lost-pet broadcast, live-map walk tracking, document vault, share-link generation, feeding tracker, neighbor hazard network, the shop). No AI, no vet hotline/telehealth, no medical advice, no invented customers/partners/statistics. Health-book carries an explicit "not a medical service, does not give advice" note and sources any weight target to the owner/vet.
+
+**Verified:** zero em/en dashes, zero emoji, curly apostrophes, all internal links resolve, balanced markup, HTML validates clean, renders premium desktop + mobile (shell burger menu opens, dossier rail collapses, no horizontal overflow), no console errors, sage status text meets WCAG AA (added `--sage-deep #5C7150`). Passes `node scripts/check-website-shell.mjs` (links, routes, anchors, a11y) and `npm run build` (green). Coral `#E85D2A` chrome is kept as-is to match the rest of the live site (an explicit site-wide founder decision, documented in `shell/README.md`, not changed on these pages in isolation).
+
+**Still to do:** deploy `website-live/` to Vercel so these routes go live. If the founder later wants the education section reachable from the primary nav, that is a coordinated edit to the shared `shell/header.html` + `footer.html` (affects all shell pages), not a per-page change.
+
 ## 5. What is PENDING / NOT done yet
 
 1. **BATCH WIRE INTO THE FILM (the biggest open item).** The new cards in section 4 currently live only as separate gallery pages and mockups. They are NOT yet integrated into the actual film `website-live/index.html` overlays. The live film still shows the OLD cards. Wiring is needed for `#ovl-tag` (Layout 6), `#ovl-vet` (its 3 stages s0/s1/s2), `#ovl-groomer` (needs to become a 3-stage swap like the vet), and `#ovl-glass` (the park P1). The film ALREADY has the anchor systems for the vet monitor (`#anc-screen`, pulse ring + leader line) and the park glass sketch-circle (`#anc-pin`, ellipse + "Reported" label), so those can be reused.

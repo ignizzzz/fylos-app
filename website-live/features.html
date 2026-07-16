@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos &middot; Features, honestly</title>
+<meta name="description" content="Exactly what Fylos does today, and what is coming next. The health book, the ID tag, booking care and messaging are live now. No hype, no fog.">
+<meta name="theme-color" content="#FBF7F2">
+<link rel="canonical" href="https://fylos-neighborhood.vercel.app/features">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Fylos &middot; Features, honestly">
+<meta property="og:description" content="What is live in the app today, and what is coming to the neighborhood. Two honest lists.">
+<meta property="og:url" content="https://fylos-neighborhood.vercel.app/features">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shell/shell.css">
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
+<script defer src="/shell/shell.js"></script>
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --peach-deep:#F5E0D0;
+    --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-2:#EE8A5E; --coral-deep:#CF4A1C;
+    --sage:#7C9271; --sage-deep:#5C7150; --sage-soft:#E9F0E5; --line:#ECE0D2; --ic-cream:#FFF3EA; --field:#EADDCE;
+    --ok:#34C759;
+    --serif:'Fraunces', Georgia, serif; --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --warm:0 14px 40px rgba(90,60,40,.07); --warm-lg:0 26px 60px rgba(90,60,40,.16);
+    --glow:0 12px 26px rgba(232,93,42,.28);
+    --spring:cubic-bezier(.34,1.56,.64,1); --eout:cubic-bezier(.22,1,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; line-height:1.5; overflow-x:clip;
+    background-image:radial-gradient(1100px 520px at 82% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
+                     radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
+  ::selection{background:var(--coral); color:#fff}
+  a{color:inherit}
+
+
+  .wrap{max-width:900px; margin:0 auto; padding:0 clamp(18px,5vw,44px)}
+  .eyebrow{font:800 11px var(--sans); letter-spacing:.2em; text-transform:uppercase; color:var(--coral)}
+  .serif{font-family:var(--serif); font-weight:600; letter-spacing:-.02em}
+  .serif em{font-style:italic; color:var(--coral)}
+  .badge{display:inline-flex; align-items:center; gap:6px; font:800 9.5px var(--sans); letter-spacing:.13em; text-transform:uppercase; padding:5px 10px; border-radius:99px}
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .badge.live{color:#fff; background:var(--coral)}
+  .badge.soon{color:var(--ink-soft); background:#F2EAE0; border:1px solid var(--line)}
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:15px 24px; border-radius:16px; font:800 15px var(--sans); text-decoration:none; cursor:pointer; border:none; transition:transform .12s var(--spring), background .2s}
+  .btn:active{transform:scale(.98)}
+  .btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .btn.solid{background:var(--coral); color:#fff; box-shadow:var(--glow)}
+  .btn.solid:hover{background:var(--coral-deep)}
+  .btn.ghost{background:#fff; color:var(--coral); border:1.5px solid #F0C9B4}
+  .btn.ghost:hover{background:#FFF7F2}
+
+  /* hero (centered) */
+  .hero{text-align:center; max-width:620px; margin:0 auto; padding:56px 0 30px}
+  .hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(34px,5vw,54px); line-height:1.03; letter-spacing:-.025em; margin:16px 0 0}
+  .hero h1 em{font-style:italic; color:var(--coral)}
+  .hero p{margin:16px auto 0; font-size:16px; line-height:1.6; color:var(--ink-soft); max-width:520px}
+
+  /* ledgers */
+  .ledger{background:#fff; border:1px solid var(--line); border-radius:28px; box-shadow:var(--warm); overflow:hidden; margin-top:20px}
+  .ledger .lh{display:flex; align-items:center; gap:12px; padding:22px clamp(20px,3vw,30px); border-bottom:1px solid var(--line)}
+  .ledger .lh .lt{font-family:var(--serif); font-weight:600; font-size:clamp(19px,2.2vw,24px); letter-spacing:-.01em}
+  .ledger .lh .ln{margin-left:auto; font-size:12.5px; color:var(--ink-soft); font-weight:600}
+  .ledger.now{border-color:#F1D9C8}
+  .ledger.now .lh{background:linear-gradient(180deg,#FFF6EF,#fff)}
+  .ledger .list{padding:6px clamp(10px,1.6vw,14px) 12px}
+  .frow{display:flex; align-items:center; gap:14px; padding:15px clamp(10px,1.6vw,16px); border-radius:16px; text-decoration:none; color:inherit; position:relative; transition:background .18s}
+  a.frow:hover{background:#FBF6F0}
+  .frow + .frow{border-top:1px solid #F3ECE2}
+  a.frow:hover + .frow, a.frow:hover{border-top-color:transparent}
+  .frow .fic{width:44px;height:44px;border-radius:13px;background:var(--peach);display:grid;place-items:center;flex:none}
+  .now .frow .fic{background:var(--peach)}
+  .next .frow .fic{background:#F3ECE2}
+  .frow .fic svg{width:21px;height:21px;fill:none;stroke:var(--coral);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .next .frow .fic svg{stroke:#A99A8B}
+  .frow .ft{min-width:0; flex:1}
+  .frow .ft b{display:block; font-size:15px; font-weight:700; letter-spacing:-.01em}
+  .frow .ft span{display:block; font-size:13px; color:var(--ink-soft); margin-top:2px; line-height:1.45}
+  .frow .mk{flex:none; display:inline-flex; align-items:center; gap:6px; font:800 9.5px var(--sans); letter-spacing:.12em; text-transform:uppercase}
+  .frow .mk.ok{color:var(--sage-deep)}
+  .frow .mk.co{color:var(--ink-soft)}
+  .frow .mk .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .frow .chev{flex:none; width:18px;height:18px;color:#C6B6A6; margin-left:2px}
+  .frow .chev svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .mk + .chev{margin-left:10px}
+
+  .note{margin:18px auto 0; max-width:620px; text-align:center; font-size:13.5px; color:var(--ink-soft); line-height:1.6}
+  .note b{color:var(--ink)}
+  .sectitle{display:flex; align-items:center; gap:12px; margin:52px 0 4px}
+  .sectitle .l{height:1px; background:var(--line); flex:1}
+
+  /* closing cta */
+  .close{margin:56px 0 10px; text-align:center; background:linear-gradient(165deg,#FFF3EB,#fff); border:1px solid #F6D9C6; border-radius:30px; box-shadow:var(--warm); padding:clamp(34px,5vw,54px) 24px}
+  .close h2{font-family:var(--serif); font-weight:600; font-size:clamp(26px,3.2vw,38px); letter-spacing:-.02em; line-height:1.06}
+  .close p{margin:14px auto 0; color:var(--ink-soft); font-size:15px; line-height:1.6; max-width:460px}
+  .close .cta{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:24px}
+
+
+  @media(max-width:560px){
+    .frow{gap:11px; padding:14px 10px}
+    .frow .ft span{display:none}
+    .frow .mk{font-size:9px}
+  }
+</style>
+</head>
+<body>
+
+<a class="fy-skip" href="#fy-main">Skip to content</a>
+<header class="fy-header" data-fy-header>
+  <div class="fy-header__inner">
+    <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+    <nav class="fy-nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a class="fy-nav__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+    </nav>
+    <button class="fy-burger" type="button" data-fy-burger aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
+      <span class="fy-burger__box"><span class="fy-burger__line"></span></span>
+    </button>
+  </div>
+</header>
+<div class="fy-menu" id="fy-menu" data-fy-menu>
+  <div class="fy-menu__backdrop" data-fy-menu-backdrop></div>
+  <nav class="fy-menu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="fy-menu__head">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <button class="fy-menu__close" type="button" data-fy-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="fy-menu__link" href="/">Home</a>
+    <a class="fy-menu__link" href="/apply">For vets</a>
+    <a class="fy-menu__link" href="/join">For pros</a>
+    <a class="fy-menu__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+  </nav>
+</div>
+
+<main id="fy-main" class="wrap" tabindex="-1">
+
+  <section class="hero">
+    <span class="eyebrow">Everything, honestly</span>
+    <h1>What Fylos does <em>today</em>, and what is on the way.</h1>
+    <p>Two lists, no fog. The first is live in the app right now. The second is coming to the neighborhood. We would rather tell you the truth than oversell a screenshot.</p>
+  </section>
+
+  <!-- LEDGER 1: LIVE -->
+  <div class="sectitle" style="margin-top:8px">
+    <span class="badge live"><span class="dot"></span>Live now</span>
+    <span class="l"></span>
+  </div>
+  <section class="ledger now" aria-label="In the app today">
+    <div class="lh">
+      <span class="lt">In the app today</span>
+      <span class="ln">Wired and working</span>
+    </div>
+    <div class="list">
+      <a class="frow" href="/how-it-works">
+        <span class="fic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-5 8-5s6.5 1 8 5"/><path d="M18 6h4m-2-2v4"/></svg></span>
+        <span class="ft"><b>Add a pet, a warm setup</b><span>A short guided flow that ends on a card with their name on it.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/health-book">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2V5Z"/><path d="M8 3v18M12 8h4"/></svg></span>
+        <span class="ft"><b>The pet health book</b><span>Name, breed, microchip to tap and copy, temperament, triggers and milestones.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/health-book">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6C19 16.5 12 21 12 21Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <span class="ft"><b>Health at a glance</b><span>Vaccine, medication, allergy and weight status, with mark as taken and a weight trend.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/book-care">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M4 10h16M7 3v3m10-3v3M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/></svg></span>
+        <span class="ft"><b>Book care nearby</b><span>Walks, sitting and grooming. Real slots, a clear total, a payment step and a calm request sent.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/book-care">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v10Z"/></svg></span>
+        <span class="ft"><b>Message your pro</b><span>Chat opens the moment a booking exists. Send the heads-up, get a reply.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/book-care">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5L12 3Z"/></svg></span>
+        <span class="ft"><b>Reviews you can trust</b><span>Read a pro before you book, and leave your own once the visit is done.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/health-book">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5V4Z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg></span>
+        <span class="ft"><b>The journal</b><span>The walks, meals, milestones and small good days, kept and searchable.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/the-tag">
+        <span class="fic"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><path d="M13 13h3v3m4 0v4m-4-1h4"/></svg></span>
+        <span class="ft"><b>The digital ID tag</b><span>A real QR your pet wears. One scan and they walk home. You choose what a finder sees.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <div class="frow">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9Z"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+        <span class="ft"><b>First aid, close at hand</b><span>Calm step-by-step guides for the scary moments, and the nearest 24/7 clinic.</span></span>
+        <span class="mk ok"><span class="dot"></span>Live now</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEDGER 2: SOON -->
+  <div class="sectitle">
+    <span class="badge soon"><span class="dot"></span>Coming soon</span>
+    <span class="l"></span>
+  </div>
+  <section class="ledger next" aria-label="Coming to the neighborhood">
+    <div class="lh">
+      <span class="lt">Coming to the neighborhood</span>
+      <span class="ln">On the way, city by city</span>
+    </div>
+    <div class="list">
+      <a class="frow" href="/health-book">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5V4Z"/><path d="M9 12h6M9 16h4"/></svg></span>
+        <span class="ft"><b>Every document in one place</b><span>The passport, the insurance, the rabies certificate, all kept together.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/health-book">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M9 12a3 3 0 1 0 6 0 3 3 0 0 0-6 0Z"/><path d="M3 12h6m6 0h6M12 3v6m0 6v6"/></svg></span>
+        <span class="ft"><b>Share the book by link</b><span>The choice of what travels is yours today. Generating the share link is on the way.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <div class="frow">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+        <span class="ft"><b>A neighborhood that watches out</b><span>Report a hazard once and warn the street. The neighbor network is being built.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span>
+      </div>
+      <div class="frow">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M4 7l6-3 4 3 6-3v13l-6 3-4-3-6 3V7Z"/><path d="M10 4v13m4-10v13"/></svg></span>
+        <span class="ft"><b>Follow a walk on the map</b><span>See where your dog is on a walk, live. Today you get photo updates and a recap.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span>
+      </div>
+      <div class="frow">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M6 3h12l-1 7a5 5 0 0 1-10 0L6 3Z"/><path d="M9 21h6M12 15v6"/></svg></span>
+        <span class="ft"><b>Feeding and water tracker</b><span>So everyone at home knows he has been fed, and how much.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span>
+      </div>
+      <a class="frow" href="/the-tag">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9c0 5 9 9 9 9s9-4 9-9a9 9 0 0 0-9-9Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
+        <span class="ft"><b>Lost pet alert</b><span>Rally the neighborhood and log sightings. The ID tag is live; the broadcast is coming.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/the-tag">
+        <span class="fic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <span class="ft"><b>An engraved metal tag</b><span>A tag that lasts the walks, for the collar. The digital ID is already live.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="frow" href="/apply">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M12 3l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4l2-4Z"/></svg></span>
+        <span class="ft"><b>Fylos for vets</b><span>Your book and your clinic in sync, both ways, only with your consent. Clinics can apply now.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span><span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <div class="frow">
+        <span class="fic"><svg viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span>
+        <span class="ft"><b>The little shop</b><span>Food, treats and the things they need, a stroll away.</span></span>
+        <span class="mk co"><span class="dot"></span>Soon</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="note">A row is in the first list only if its core is working in the app today. Everything in the second list is honest about being on the way. <b>You will never see a made-up number or a fake review on Fylos.</b></p>
+
+  <section class="close">
+    <span class="eyebrow">Start with what is live</span>
+    <h2>Everything Milo needs, in one app.</h2>
+    <p>The book, the ID and the bookings are ready for you now. Free to start.</p>
+    <div class="cta">
+      <a class="btn solid" href="https://app.fylos.me">Get the app<svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
+      <a class="btn ghost" href="/how-it-works">See how it works</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="fy-footer">
+  <div class="fy-footer__inner">
+    <div class="fy-footer__brand">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <p class="fy-footer__tag">Your whole pet neighborhood, <em>in your pocket.</em></p>
+    </div>
+    <div class="fy-footer__cols">
+      <nav class="fy-footer__col" aria-label="Explore">
+        <b>Explore</b>
+        <a href="/">Home</a>
+        <a href="/apply">For vets</a>
+        <a href="/join">For pros</a>
+      </nav>
+      <div class="fy-footer__col">
+        <b>Fylos</b>
+        <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
+        <a href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+        <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+      </div>
+    </div>
+  </div>
+  <div class="fy-footer__legal">© 2026 Fylos AG · Zürich, Switzerland</div>
+</footer>
+
+</body>
+</html>

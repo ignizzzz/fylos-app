@@ -97,6 +97,14 @@ import ServicesCategoriesVariants from './screens/SERVICES_CATEGORIES_VARIANTS_v
 import NextUpVariants from './screens/NEXT_UP_VARIANTS_v1'
 import ProviderCardVariants from './screens/PROVIDER_CARD_VARIANTS_v1'
 
+// Email & Newsletter frontend (public subscriber states + admin console).
+// Self-contained TypeScript module in src/email with its own scoped configs.
+import EmailApp from './email/EmailApp'
+
+// Private Growth Admin (CRM). Self-contained TypeScript module in src/admin
+// with its own scoped configs. Lazy-loaded so it never weighs on the app.
+const AdminApp = React.lazy(() => import('./admin/AdminApp'))
+
 // Legacy screens
 import HomeScreen from './screens/Explore-home-v1'
 import ProvidersScreen from './screens/Explore-providers-v1'
@@ -214,6 +222,20 @@ function App() {
 
       {/* Paw Card rewards mockup (v3 spec) — 4 views: widget/card/shelf/pro */}
       <Route path="/paw-card" element={<PawCardMockup />} />
+
+      {/* Email & Newsletter frontend (public states + admin console).
+          Own module: src/email. Start at /newsletter. */}
+      <Route path="/newsletter/*" element={<EmailApp />} />
+
+      {/* Private Growth Admin (CRM). Own module: src/admin. Start at /admin. */}
+      <Route
+        path="/admin/*"
+        element={(
+          <React.Suspense fallback={null}>
+            <AdminApp />
+          </React.Suspense>
+        )}
+      />
 
       {/* Marketing showcase (no iPhone frame, full-width landing-style preview) */}
       <Route path="/marketing-preview" element={<MarketingShowcase />} />

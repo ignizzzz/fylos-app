@@ -1,0 +1,314 @@
+/* ==========================================================================
+   FYLOS website shell  ·  shell.css
+   The quiet chrome around the marketing pages: header, mobile menu, footer,
+   page container, active-route states, global loading, and the 404 / error
+   page layout. Deliberately quieter than the storytelling film.
+
+   Everything here is namespaced `fy-` so it never collides with a page's own
+   classes (.top, .brand, .nav, .wrap, .hero ...). Do not restyle page content
+   from this file. Palette, type, radii and shadows follow FYLOS_DESIGN_TOKENS.
+   ========================================================================== */
+
+/* --- tokens (fallback copy so standalone pages like 404/error have them; the
+       values match the ones every page already declares, so nothing shifts) --- */
+:root{
+  --fy-cream:#FBF7F2; --fy-peach:#FFE9DC; --fy-ink:#2B2320; --fy-ink-soft:#6E625B;
+  --fy-coral:#E85D2A; --fy-coral-deep:#CF4A1C; --fy-coral-deeper:#B23F16; --fy-sage:#7C9271;
+  --fy-line:#ECE0D2;
+  --fy-serif:'Fraunces',serif; --fy-sans:'Inter',sans-serif;
+  --fy-header-h:60px;
+  --fy-radius:14px;
+  --fy-shadow-soft:0 8px 22px rgba(90,60,40,.10);
+  --fy-shadow-lift:0 16px 40px rgba(90,60,40,.14);
+}
+
+/* --- skip link (keyboard users land here first) --- */
+.fy-skip{
+  position:fixed; top:8px; left:8px; z-index:1000;
+  transform:translateY(-140%);
+  background:var(--fy-ink); color:#fff; font:700 13px var(--fy-sans);
+  padding:10px 16px; border-radius:10px; text-decoration:none;
+  transition:transform .16s ease;
+}
+.fy-skip:focus{ transform:none; outline:2px solid var(--fy-coral); outline-offset:2px }
+
+/* ==========================================================================
+   HEADER + DESKTOP NAV
+   ========================================================================== */
+.fy-header{
+  position:sticky; top:0; z-index:60;
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  background:color-mix(in srgb, var(--fy-cream) 80%, transparent);
+  border-bottom:1px solid rgba(236,224,210,.7);
+}
+/* graceful fallback where color-mix is unsupported */
+@supports not (background:color-mix(in srgb, red, red)){
+  .fy-header{ background:rgba(251,247,242,.9) }
+}
+.fy-header__inner{
+  max-width:1120px; margin:0 auto;
+  min-height:var(--fy-header-h);
+  display:flex; align-items:center; justify-content:space-between; gap:18px;
+  padding:10px clamp(18px,5vw,44px);
+}
+.fy-brand{
+  font:800 15px var(--fy-sans); letter-spacing:.22em; color:var(--fy-coral);
+  text-decoration:none; white-space:nowrap;
+}
+.fy-brand:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:4px; border-radius:4px }
+
+.fy-nav{ display:flex; align-items:center; gap:6px }
+.fy-nav a{
+  font:700 13.5px var(--fy-sans); color:var(--fy-ink); text-decoration:none;
+  padding:9px 13px; border-radius:10px; line-height:1;
+  opacity:.82; transition:opacity .15s ease, background .15s ease, color .15s ease;
+}
+.fy-nav a:hover{ opacity:1; background:rgba(255,233,220,.55) }
+.fy-nav a:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px; opacity:1 }
+/* active route: peach pill is the cue, ink text keeps AA contrast on peach */
+.fy-nav a[aria-current="page"]{
+  opacity:1; color:var(--fy-ink); background:var(--fy-peach);
+}
+/* the single call to action (coral-deep fill so white text clears WCAG AA) */
+.fy-nav .fy-nav__cta,
+.fy-menu__cta{
+  color:#fff; background:var(--fy-coral-deep); opacity:1;
+  box-shadow:0 8px 20px rgba(232,93,42,.24);
+}
+.fy-nav .fy-nav__cta:hover{ background:var(--fy-coral-deeper); opacity:1 }
+.fy-nav .fy-nav__cta[aria-current="page"]{ color:#fff; background:var(--fy-coral-deep) }
+
+/* --- hamburger (hidden on desktop) --- */
+.fy-burger{
+  display:none;
+  width:42px; height:42px; padding:0; margin:0;
+  border:1px solid var(--fy-line); border-radius:12px;
+  background:#fff; box-shadow:var(--fy-shadow-soft);
+  cursor:pointer; color:var(--fy-ink);
+  align-items:center; justify-content:center;
+}
+.fy-burger:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px }
+.fy-burger__box{ position:relative; width:18px; height:12px; display:block }
+.fy-burger__line,
+.fy-burger__line::before,
+.fy-burger__line::after{
+  position:absolute; left:0; width:18px; height:2px; border-radius:2px;
+  background:currentColor; transition:transform .2s ease, opacity .2s ease, top .2s ease;
+}
+.fy-burger__line{ top:5px }
+.fy-burger__line::before{ content:''; top:-5px }
+.fy-burger__line::after{ content:''; top:5px }
+
+/* ==========================================================================
+   MOBILE MENU (a dialog: keyboard, Escape, focus-trap, scroll-lock via JS)
+   ========================================================================== */
+.fy-menu{
+  position:fixed; inset:0; z-index:80;
+  visibility:hidden; opacity:0; pointer-events:none;
+  transition:opacity .22s ease, visibility 0s linear .22s;
+}
+.fy-menu.is-open{
+  visibility:visible; opacity:1; pointer-events:auto;
+  transition:opacity .22s ease;
+}
+.fy-menu__backdrop{
+  position:absolute; inset:0;
+  background:rgba(43,35,32,.34); backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px);
+}
+.fy-menu__panel{
+  position:absolute; top:0; right:0; height:100%;
+  width:min(84vw, 340px);
+  background:var(--fy-cream);
+  border-left:1px solid var(--fy-line);
+  box-shadow:-18px 0 50px rgba(90,60,40,.20);
+  padding:14px clamp(16px,5vw,22px) 26px;
+  display:flex; flex-direction:column; gap:6px;
+  transform:translateX(12px); transition:transform .22s ease;
+  overflow-y:auto;
+}
+.fy-menu.is-open .fy-menu__panel{ transform:none }
+.fy-menu__head{
+  display:flex; align-items:center; justify-content:space-between;
+  min-height:var(--fy-header-h); margin-bottom:8px;
+}
+.fy-menu__close{
+  width:42px; height:42px; padding:0; border:1px solid var(--fy-line);
+  border-radius:12px; background:#fff; box-shadow:var(--fy-shadow-soft);
+  cursor:pointer; color:var(--fy-ink);
+  display:flex; align-items:center; justify-content:center;
+}
+.fy-menu__close:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px }
+.fy-menu__close svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round }
+.fy-menu__link{
+  font:700 16px var(--fy-sans); color:var(--fy-ink); text-decoration:none;
+  padding:14px 14px; border-radius:12px; line-height:1;
+  transition:background .15s ease, color .15s ease;
+}
+.fy-menu__link:hover{ background:rgba(255,233,220,.6) }
+.fy-menu__link:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px }
+.fy-menu__link[aria-current="page"]{ color:var(--fy-ink); background:var(--fy-peach) }
+.fy-menu__cta{
+  margin-top:10px; text-align:center; border-radius:13px; padding:15px 14px;
+  font:800 15px var(--fy-sans); text-decoration:none;
+}
+.fy-menu__cta:hover{ background:var(--fy-coral-deeper) }
+.fy-menu__cta:focus-visible{ outline:2px solid var(--fy-ink); outline-offset:2px }
+
+/* scroll lock applied to <html> while the menu is open */
+.fy-scroll-lock{ overflow:hidden !important }
+
+/* ==========================================================================
+   RESPONSIVE SWITCH  ·  desktop nav  <->  burger
+   ========================================================================== */
+@media (max-width:720px){
+  .fy-nav{ display:none }
+  .fy-burger{ display:inline-flex }
+}
+/* No-JS fallback lives in a per-page <noscript><style> in the <head> (a <style>
+   is only valid there): it reveals .fy-nav inline and hides the burger on small
+   screens when scripting is off. See shell/README.md. */
+
+/* ==========================================================================
+   PAGE CONTAINER  (shared wrapper for the 404 / error / any shell page)
+   ========================================================================== */
+.fy-container{
+  max-width:1120px; margin:0 auto;
+  padding:0 clamp(18px,5vw,44px);
+}
+/* the skip link moves focus here (the target carries tabindex="-1"); suppress the
+   ring on the whole content region while real controls keep their focus styles */
+#fy-main:focus{ outline:none }
+
+/* ==========================================================================
+   FOOTER  (only links that actually resolve; no invented legal/social/store)
+   ========================================================================== */
+.fy-footer{
+  /* explicit resets so a host page's bare `footer{max-width;margin:0 auto;
+     text-align:center;padding}` selector cannot collapse the full-width band
+     when this partial is pasted into apply.html / join.html */
+  max-width:none;
+  margin:56px 0 0;
+  padding:0;
+  text-align:left;
+  border-top:1px solid var(--fy-line);
+  background:color-mix(in srgb, var(--fy-cream) 92%, #fff);
+}
+@supports not (background:color-mix(in srgb, red, red)){ .fy-footer{ background:#FCF9F5 } }
+.fy-footer__inner{
+  max-width:1120px; margin:0 auto;
+  padding:34px clamp(18px,5vw,44px) 40px;
+  display:flex; flex-wrap:wrap; gap:22px 40px; align-items:flex-start;
+  justify-content:space-between;
+}
+.fy-footer__brand{ display:flex; flex-direction:column; gap:8px; max-width:280px }
+.fy-footer__brand .fy-brand{ font-size:15px }
+.fy-footer__tag{ font:400 13px var(--fy-sans); color:var(--fy-ink-soft); line-height:1.55 }
+.fy-footer__tag em{ font-style:italic; color:var(--fy-ink) }
+.fy-footer__cols{ display:flex; flex-wrap:wrap; gap:22px 44px }
+.fy-footer__col{ display:flex; flex-direction:column; gap:9px; min-width:120px }
+.fy-footer__col b{ font:800 11px var(--fy-sans); letter-spacing:.12em; text-transform:uppercase; color:var(--fy-ink) }
+.fy-footer__col a{ font:600 13px var(--fy-sans); color:var(--fy-ink-soft); text-decoration:none; width:max-content }
+.fy-footer__col a:hover{ color:var(--fy-coral) }
+.fy-footer__col a:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px; border-radius:3px }
+.fy-footer__legal{
+  max-width:1120px; margin:0 auto;
+  padding:0 clamp(18px,5vw,44px) 34px;
+  font:500 11.5px var(--fy-sans); color:var(--fy-ink-soft); line-height:1.6;
+}
+/* "Cookie preferences" control injected into the legal line by shell.js when
+   the analytics + consent bundle is present. Reads as part of the legal text. */
+.fy-footer__cookie{
+  font:inherit; color:var(--fy-ink-soft); background:none; border:0; padding:0;
+  cursor:pointer; text-decoration:underline; text-underline-offset:2px;
+}
+.fy-footer__cookie:hover{ color:var(--fy-coral) }
+.fy-footer__cookie:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px; border-radius:3px }
+
+/* ==========================================================================
+   GLOBAL LOADING STATE
+   1) a thin top progress bar shown during page-to-page navigation
+   2) a reusable full-screen overlay (FylosShell.showLoading / hideLoading)
+   ========================================================================== */
+.fy-progress{
+  position:fixed; top:0; left:0; z-index:200;
+  height:2px; width:0;
+  background:linear-gradient(90deg, var(--fy-coral), #F3A87F);
+  box-shadow:0 0 8px rgba(232,93,42,.5);
+  opacity:0; pointer-events:none;
+  transition:width .18s ease, opacity .28s ease;
+}
+.fy-progress.is-active{ opacity:1 }
+
+.fy-loading{
+  position:fixed; inset:0; z-index:190;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+  background:color-mix(in srgb, var(--fy-cream) 82%, transparent);
+  backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+  visibility:hidden; opacity:0;
+  transition:opacity .2s ease, visibility 0s linear .2s;
+}
+@supports not (background:color-mix(in srgb, red, red)){ .fy-loading{ background:rgba(251,247,242,.9) } }
+.fy-loading.is-open{ visibility:visible; opacity:1; transition:opacity .2s ease }
+.fy-loading__spinner{
+  width:34px; height:34px; border-radius:50%;
+  border:3px solid rgba(232,93,42,.22); border-top-color:var(--fy-coral);
+  animation:fy-spin .8s linear infinite;
+}
+.fy-loading__label{ font:700 13px var(--fy-sans); color:var(--fy-ink-soft); letter-spacing:.02em }
+@keyframes fy-spin{ to{ transform:rotate(360deg) } }
+
+/* ==========================================================================
+   404 / ERROR PAGE LAYOUT  (quiet, on-brand, centered)
+   ========================================================================== */
+.fy-state{
+  min-height:calc(100vh - var(--fy-header-h) - 220px);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:72px 0 64px;
+}
+.fy-state__mark{
+  font:800 11px var(--fy-sans); letter-spacing:.16em; text-transform:uppercase;
+  color:var(--fy-ink); background:var(--fy-peach);
+  padding:8px 15px; border-radius:99px;
+}
+.fy-state__code{
+  font:600 clamp(58px,12vw,104px) var(--fy-serif); line-height:1;
+  letter-spacing:-.03em; color:var(--fy-ink); margin:22px 0 0;
+}
+.fy-state h1{
+  font:600 clamp(24px,4vw,34px) var(--fy-serif); letter-spacing:-.01em;
+  color:var(--fy-ink); margin:6px 0 0;
+}
+.fy-state h1 em{ font-style:italic; color:var(--fy-coral) }
+.fy-state p{
+  margin:14px auto 0; max-width:460px;
+  font:400 15px var(--fy-sans); line-height:1.6; color:var(--fy-ink-soft);
+}
+.fy-state__actions{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:26px }
+.fy-btn{
+  display:inline-flex; align-items:center; gap:9px;
+  font:800 14px var(--fy-sans); text-decoration:none;
+  padding:14px 22px; border-radius:13px; cursor:pointer; border:none;
+  transition:transform .16s ease, background .16s ease;
+}
+.fy-btn:focus-visible{ outline:2px solid var(--fy-ink); outline-offset:2px }
+.fy-btn--primary{ background:var(--fy-coral-deep); color:#fff; box-shadow:0 12px 26px rgba(232,93,42,.26) }
+.fy-btn--primary:hover{ background:var(--fy-coral-deeper); transform:translateY(-2px) }
+.fy-btn--ghost{ background:#fff; color:var(--fy-coral-deep); border:1.5px solid #F0C9B4 }
+.fy-btn--ghost:hover{ transform:translateY(-2px) }
+.fy-state__links{ display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:center; margin-top:22px }
+.fy-state__links a{ font:600 13px var(--fy-sans); color:var(--fy-ink-soft); text-decoration:none }
+.fy-state__links a:hover{ color:var(--fy-coral) }
+.fy-state__links a:focus-visible{ outline:2px solid var(--fy-coral); outline-offset:2px; border-radius:3px }
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto !important }
+  .fy-menu, .fy-menu__panel, .fy-progress, .fy-loading,
+  .fy-btn, .fy-nav a, .fy-burger__line,
+  .fy-burger__line::before, .fy-burger__line::after{
+    transition:none !important;
+  }
+  .fy-loading__spinner{ animation-duration:1.4s }
+}

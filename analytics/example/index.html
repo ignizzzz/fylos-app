@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fylos Analytics and Consent, demo harness</title>
+
+  <!-- 1) Configure BEFORE the library loads. No real provider: this demo
+       adapter just renders approved events into the panel below. -->
+  <script>
+    window.__events = [];
+    window.FylosAnalyticsConfig = {
+      debug: true,
+      adapter: {
+        name: 'demo-panel',
+        init: function (ctx) { console.info('[demo] adapter init', ctx); },
+        track: function (env) {
+          window.__events.unshift(env);
+          if (window.__render) window.__render();
+        },
+        setConsent: function (c) { console.info('[demo] consent ->', c); },
+      },
+    };
+  </script>
+
+  <!-- 2) One tag. Drops in with zero page-layout changes. -->
+  <script defer src="../dist/fylos-analytics.global.js"></script>
+
+  <style>
+    :root { color-scheme: light; }
+    body {
+      font-family: Inter, system-ui, sans-serif; color: #2B2320; background: #FBF7F2;
+      margin: 0; padding: 32px 20px 120px; line-height: 1.5;
+    }
+    .page { max-width: 760px; margin: 0 auto; }
+    h1 { font-size: 24px; letter-spacing: -.02em; margin: 0 0 4px; }
+    .sub { color: #6E625B; margin: 0 0 28px; font-size: 14px; }
+    section { background: #fff; border: 1px solid rgba(43,35,32,.08); border-radius: 18px; padding: 18px 20px; margin-bottom: 16px; }
+    h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #6E625B; margin: 0 0 12px; }
+    .btns { display: flex; flex-wrap: wrap; gap: 8px; }
+    button, .link {
+      font: inherit; font-weight: 700; font-size: 13px; cursor: pointer;
+      border: 0; border-radius: 12px; padding: 10px 14px; background: #FFE9DC; color: #2B2320;
+    }
+    button.primary { background: #E85D2A; color: #fff; }
+    .link { background: transparent; color: #E85D2A; text-decoration: underline; padding: 10px 4px; }
+    form { display: grid; gap: 10px; }
+    label { font-size: 13px; font-weight: 600; display: grid; gap: 4px; }
+    input, select, textarea { font: inherit; border: 1px solid rgba(43,35,32,.15); border-radius: 10px; padding: 9px 11px; }
+    .status { font-size: 13px; }
+    .pill { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .on { background: #E4F0DE; color: #4A6B3E; }
+    .off { background: #F3E4DC; color: #9B5B3C; }
+    pre { background: #2B2320; color: #F7EFE7; border-radius: 12px; padding: 14px; overflow: auto; font-size: 12px; max-height: 320px; }
+    .muted { color: #6E625B; font-size: 12px; }
+    footer { max-width: 760px; margin: 24px auto 0; color: #6E625B; font-size: 13px; }
+    footer a { color: #6E625B; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Fylos analytics + consent</h1>
+    <p class="sub">Verification harness. Nonessential events stay blocked until you accept analytics. No real provider is connected.</p>
+
+    <section>
+      <h2>Consent status</h2>
+      <p class="status" id="status">loading…</p>
+      <div class="btns" style="margin-top:10px">
+        <button id="reopen" type="button">Open preferences</button>
+        <button id="reset" type="button">Reset consent (re-prompt)</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Fire events</h2>
+      <div class="btns">
+        <button class="primary" data-fylos-event="cta_click" data-fylos-cta-id="hero_get_id" data-fylos-label="Get Rex ID" data-fylos-location="hero">CTA click (declarative)</button>
+        <button type="button" id="story-start">storytelling_started</button>
+        <button type="button" id="story-done">storytelling_completed</button>
+        <button type="button" id="feature">feature_viewed</button>
+        <button type="button" data-fylos-event="download_clicked" data-fylos-target="app" data-fylos-platform="ios">download_clicked</button>
+        <button type="button" id="article">article_viewed</button>
+      </div>
+      <p class="muted" style="margin-bottom:0">The coral button and the download button use <code>data-fylos-*</code> attributes (no inline JS).</p>
+    </section>
+
+    <section>
+      <h2>Form (PII must never leave)</h2>
+      <form id="join">
+        <label>Your name <input name="name" value="Jane Roe" /></label>
+        <label>Email <input name="email" type="email" value="jane@roe.com" /></label>
+        <label>Message <textarea name="message">My dog has a skin allergy</textarea></label>
+        <button class="primary" type="submit">Submit (fires form_submitted)</button>
+      </form>
+      <p class="muted">We only send the field <em>names</em> and success, never the values. Watch the log.</p>
+    </section>
+
+    <section>
+      <h2>First-touch attribution</h2>
+      <pre id="attr">…</pre>
+      <p class="muted">Try reloading with <code>?utm_source=newsletter&amp;utm_medium=email&amp;utm_campaign=spring</code>.</p>
+    </section>
+
+    <section>
+      <h2>Approved events (what the adapter received)</h2>
+      <pre id="log">No events yet. Accept analytics, then fire some.</pre>
+    </section>
+  </div>
+
+  <footer>
+    Fylos AG · <a href="#" data-fylos-consent-open>Cookie preferences</a>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var A = window.FylosAnalytics;
+      var statusEl = document.getElementById('status');
+      var logEl = document.getElementById('log');
+      var attrEl = document.getElementById('attr');
+
+      function renderStatus() {
+        var c = window.FylosConsent.get();
+        function pill(on) { return '<span class="pill ' + (on ? 'on' : 'off') + '">' + (on ? 'granted' : 'blocked') + '</span>'; }
+        statusEl.innerHTML =
+          'decision: <b>' + c.status + '</b> &nbsp; analytics ' + pill(c.analytics) + ' &nbsp; marketing ' + pill(c.marketing);
+      }
+      window.__render = function () {
+        logEl.textContent = JSON.stringify(window.__events, null, 2);
+      };
+      window.FylosAnalytics.onConsentChange(renderStatus);
+
+      renderStatus();
+      attrEl.textContent = JSON.stringify(A.getAttribution(), null, 2);
+
+      document.getElementById('reopen').addEventListener('click', function () { A.openPreferences(); });
+      document.getElementById('reset').addEventListener('click', function () { A.consent.reset(); });
+      document.getElementById('story-start').addEventListener('click', function () { A.storytellingStarted({ storyId: 'neighborhood_film', entryPoint: 'scroll' }); });
+      document.getElementById('story-done').addEventListener('click', function () { A.storytellingCompleted({ storyId: 'neighborhood_film', scenesViewed: 6, scenesTotal: 6, completed: true }); });
+      document.getElementById('feature').addEventListener('click', function () { A.featureViewed({ feature: 'vet', scene: 'health_book' }); });
+      document.getElementById('article').addEventListener('click', function () { A.articleViewed({ articleId: 'why', title: 'Why a neighborhood', locale: 'en' }); });
+
+      var form = document.getElementById('join');
+      var started = false;
+      form.addEventListener('input', function () {
+        if (!started) { started = true; A.formStarted({ formId: 'join', formName: 'Pro application' }); }
+      });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function (el) { return el.getAttribute('name'); });
+        A.formSubmitted({ formId: 'join', fields: names, success: true });
+      });
+    });
+  </script>
+</body>
+</html>

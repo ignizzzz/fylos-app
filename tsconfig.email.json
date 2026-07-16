@@ -1,0 +1,26 @@
+{
+  "//": "Scoped typecheck for the Email & Newsletter frontend only (src/email). Kept separate from tsconfig.json (owned by the src/forms session) and tsconfig.admin.json (owned by the src/admin Growth CRM session) so the areas never collide. Run: npx tsc --noEmit -p tsconfig.email.json",
+  "compilerOptions": {
+    "target": "ES2021",
+    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "useDefineForClassFields": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "types": ["node", "vitest/globals", "@testing-library/jest-dom"]
+  },
+  "include": ["src/email"],
+  "exclude": ["node_modules", "dist"]
+}

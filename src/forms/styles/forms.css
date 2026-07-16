@@ -1,0 +1,641 @@
+/* ============================================================================
+   Fylos form system  ·  "Warm editorial neighborhood stationery"
+   ----------------------------------------------------------------------------
+   A printed-paper aesthetic: cream stock with a whisper of grain, Fraunces
+   display with a hand-drawn coral flourish, tactile peach/coral controls,
+   brown-warm shadows (never gray), a wax-seal approval stamp on success, and a
+   staggered paper-reveal on load. On-brand: cream / peach / ink / coral / sage,
+   Fraunces + Inter, rounded stock, coral as the only saturated accent.
+   Everything is scoped under .fyl-* so it never touches the host app.
+   ========================================================================== */
+
+.fyl-form-wrap {
+  --fyl-cream: #fbf7f2;
+  --fyl-paper: #fffdfb;
+  --fyl-peach: #ffe9dc;
+  --fyl-peach-deep: #f5e0d0;
+  --fyl-peach-wash: rgba(255, 233, 220, 0.5);
+  --fyl-ink: #2b2320;
+  --fyl-ink-soft: #6e625b;
+  --fyl-ink-faint: #9a8c80;
+  --fyl-coral: #e85d2a;
+  --fyl-coral-deep: #cf4a1c;
+  --fyl-coral-glow: rgba(232, 93, 42, 0.16);
+  --fyl-sage: #7c9271;
+  --fyl-sage-deep: #5e7357;
+  --fyl-line: #ece0d2;
+  --fyl-line-soft: #f1e8dc;
+  --fyl-danger: #b23a26;
+  --fyl-danger-wash: #fbeeea;
+  --fyl-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --fyl-serif: 'Fraunces', 'Georgia', serif;
+  --fyl-mono: ui-monospace, 'SF Mono', 'Menlo', monospace;
+
+  /* Warm, brown-tinted shadows give the "paper on a table" feel. */
+  --fyl-shadow-card: 0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 2px 6px -2px rgba(74, 48, 30, 0.1), 0 26px 60px -30px rgba(74, 48, 30, 0.32);
+  --fyl-shadow-field: inset 0 1px 2px rgba(74, 48, 30, 0.06);
+
+  position: relative;
+  color: var(--fyl-ink);
+  font-family: var(--fyl-sans);
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(255, 233, 220, 0.55), transparent 60%),
+    radial-gradient(120% 90% at 0% 100%, rgba(124, 146, 113, 0.08), transparent 55%),
+    var(--fyl-cream);
+  border: 1px solid var(--fyl-line);
+  border-radius: 28px;
+  box-shadow: var(--fyl-shadow-card);
+  padding: clamp(22px, 4.5vw, 40px);
+  max-width: 580px;
+  margin: 0 auto;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Whisper of printed-paper grain over the whole card. */
+.fyl-form-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+}
+
+/* A hairline of coral "ink" bleeding along the top edge of the stock. */
+.fyl-form-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: clamp(22px, 4.5vw, 40px);
+  right: clamp(22px, 4.5vw, 40px);
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, transparent, var(--fyl-coral) 30%, var(--fyl-coral) 70%, transparent);
+  opacity: 0.55;
+}
+
+.fyl-form-wrap ::selection {
+  background: var(--fyl-peach-deep);
+  color: var(--fyl-ink);
+}
+
+.fyl-form {
+  position: relative;
+}
+
+/* ---- Header --------------------------------------------------------------- */
+.fyl-form-header {
+  margin-bottom: 26px;
+  animation: fyl-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.fyl-form-title {
+  font-family: var(--fyl-serif);
+  font-weight: 600;
+  font-optical-sizing: auto;
+  font-size: clamp(25px, 4.6vw, 34px);
+  line-height: 1.04;
+  letter-spacing: -0.021em;
+  color: var(--fyl-ink);
+  margin: 0;
+}
+/* Hand-drawn coral underline flourish, like a pen mark on the page. */
+.fyl-form-title::after {
+  content: '';
+  display: block;
+  width: 92px;
+  height: 10px;
+  margin-top: 13px;
+  background: no-repeat center / contain
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12'%3E%3Cpath d='M3 8.5C38 3 74 10.5 112 6 149 1.7 178 5 197 7.5' fill='none' stroke='%23E85D2A' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.fyl-form-intro {
+  color: var(--fyl-ink-soft);
+  font-size: 15px;
+  line-height: 1.55;
+  max-width: 46ch;
+  margin: 14px 0 0;
+}
+
+/* ---- Fields --------------------------------------------------------------- */
+.fyl-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+.fyl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  animation: fyl-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+/* Staggered "sheet unfolding" reveal on load. */
+.fyl-field:nth-child(1) { animation-delay: 0.05s; }
+.fyl-field:nth-child(2) { animation-delay: 0.1s; }
+.fyl-field:nth-child(3) { animation-delay: 0.15s; }
+.fyl-field:nth-child(4) { animation-delay: 0.2s; }
+.fyl-field:nth-child(5) { animation-delay: 0.25s; }
+.fyl-field:nth-child(6) { animation-delay: 0.3s; }
+.fyl-field:nth-child(7) { animation-delay: 0.35s; }
+.fyl-field:nth-child(n + 8) { animation-delay: 0.4s; }
+
+.fyl-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--fyl-ink);
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+.fyl-req {
+  color: var(--fyl-coral);
+  font-weight: 700;
+}
+.fyl-opt {
+  color: var(--fyl-ink-faint);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fyl-input,
+.fyl-textarea,
+.fyl-select {
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--fyl-ink);
+  background: var(--fyl-paper);
+  border: 1.5px solid var(--fyl-line);
+  border-radius: 13px;
+  padding: 12px 15px;
+  width: 100%;
+  box-shadow: var(--fyl-shadow-field);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+.fyl-textarea {
+  min-height: 104px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.fyl-input::placeholder,
+.fyl-textarea::placeholder {
+  /* Meets WCAG 1.4.3 (>= 4.5:1 on white) while staying visibly lighter than value text. */
+  color: #7a6f66;
+  opacity: 1;
+}
+.fyl-input:hover,
+.fyl-textarea:hover,
+.fyl-select:hover {
+  border-color: var(--fyl-peach-deep);
+}
+.fyl-input:focus,
+.fyl-textarea:focus,
+.fyl-select:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--fyl-coral);
+  box-shadow: var(--fyl-shadow-field), 0 0 0 4px var(--fyl-coral-glow);
+}
+.fyl-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 42px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23E85D2A' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+}
+
+.fyl-field.is-invalid .fyl-input,
+.fyl-field.is-invalid .fyl-textarea,
+.fyl-field.is-invalid .fyl-select {
+  border-color: var(--fyl-danger);
+  box-shadow: var(--fyl-shadow-field), 0 0 0 4px rgba(178, 58, 38, 0.1);
+}
+
+.fyl-help {
+  font-size: 12.5px;
+  color: var(--fyl-ink-soft);
+  line-height: 1.45;
+  margin: 0;
+}
+.fyl-error {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--fyl-danger);
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  animation: fyl-shake 0.4s ease;
+}
+.fyl-error::before {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fyl-danger);
+  transform: translateY(-1px);
+}
+
+/* ---- Checkbox / consent --------------------------------------------------- */
+.fyl-field-check {
+  gap: 7px;
+}
+.fyl-check {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: var(--fyl-paper);
+  border: 1.5px solid var(--fyl-line);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+.fyl-check:hover {
+  border-color: var(--fyl-peach-deep);
+  background: var(--fyl-peach-wash);
+}
+.fyl-check:has(input:checked) {
+  border-color: rgba(232, 93, 42, 0.4);
+  background: var(--fyl-peach-wash);
+}
+.fyl-check:has(input:focus-visible) {
+  box-shadow: 0 0 0 4px var(--fyl-coral-glow);
+}
+.fyl-check input {
+  width: 21px;
+  height: 21px;
+  margin: 0;
+  flex: none;
+  accent-color: var(--fyl-coral);
+  cursor: pointer;
+  transform: translateY(1px);
+}
+.fyl-check-text {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--fyl-ink-soft);
+}
+.fyl-field-check.is-invalid .fyl-check {
+  border-color: var(--fyl-danger);
+  background: var(--fyl-danger-wash);
+}
+
+/* ---- Submit --------------------------------------------------------------- */
+.fyl-submit {
+  margin-top: 26px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: linear-gradient(180deg, #ee6a38, var(--fyl-coral) 55%, #e0561f);
+  border: none;
+  border-radius: 17px;
+  padding: 16px 24px;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 16px 30px -12px rgba(232, 93, 42, 0.55), 0 4px 10px -4px rgba(232, 93, 42, 0.4);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+  animation: fyl-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: 0.42s;
+}
+.fyl-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 22px 38px -12px rgba(232, 93, 42, 0.6), 0 6px 14px -4px rgba(232, 93, 42, 0.45);
+}
+.fyl-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+.fyl-submit:focus-visible {
+  outline: 3px solid rgba(232, 93, 42, 0.45);
+  outline-offset: 3px;
+}
+.fyl-submit:disabled {
+  cursor: default;
+  filter: saturate(0.85);
+  opacity: 0.82;
+  box-shadow: 0 8px 18px -10px rgba(232, 93, 42, 0.4);
+}
+.fyl-submit-arrow {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.18s ease;
+}
+.fyl-submit:hover:not(:disabled) .fyl-submit-arrow {
+  transform: translateX(4px);
+}
+.fyl-spinner {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 2.4px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  animation: fyl-spin 0.7s linear infinite;
+}
+
+/* ---- Status banner -------------------------------------------------------- */
+.fyl-banner {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-radius: 17px;
+  padding: 15px 17px 15px 52px;
+  margin-bottom: 22px;
+  border: 1.5px solid;
+  overflow: hidden;
+  animation: fyl-rise 0.32s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.fyl-banner:focus-visible {
+  outline: 3px solid rgba(232, 93, 42, 0.4);
+  outline-offset: 2px;
+}
+/* Left accent rule + status glyph, drawn without extra markup. */
+.fyl-banner::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 16px;
+  width: 22px;
+  height: 22px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+.fyl-banner::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+.fyl-banner-title {
+  font-weight: 700;
+  font-size: 14.5px;
+  margin: 0 0 3px;
+  color: var(--fyl-ink);
+}
+.fyl-banner-message {
+  font-size: 13.5px;
+  line-height: 1.45;
+  margin: 0;
+  color: var(--fyl-ink-soft);
+}
+.fyl-banner-note {
+  font-size: 12px;
+  color: var(--fyl-ink-soft);
+  margin: 6px 0 0;
+}
+.fyl-banner-body {
+  flex: 1 1 220px;
+}
+.fyl-banner-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.fyl-banner-server,
+.fyl-banner-network {
+  background: var(--fyl-danger-wash);
+  border-color: #f0cabd;
+}
+.fyl-banner-server::after,
+.fyl-banner-network::after {
+  background: var(--fyl-danger);
+}
+.fyl-banner-server::before,
+.fyl-banner-network::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B23A26' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 8v5'/%3E%3Ccircle cx='12' cy='16.5' r='0.6' fill='%23B23A26' stroke='none'/%3E%3Cpath d='M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z'/%3E%3C/svg%3E");
+}
+.fyl-banner-validation {
+  background: linear-gradient(180deg, #fff6ef, #fff1e6);
+  border-color: var(--fyl-peach-deep);
+}
+.fyl-banner-validation::after {
+  background: var(--fyl-coral);
+}
+.fyl-banner-validation::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E85D2A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 8v4.5'/%3E%3Ccircle cx='12' cy='16' r='0.6' fill='%23E85D2A' stroke='none'/%3E%3C/svg%3E");
+}
+.fyl-banner-duplicate {
+  background: linear-gradient(180deg, #f3f6ef, #eef3e9);
+  border-color: #cadcc0;
+}
+.fyl-banner-duplicate::after {
+  background: var(--fyl-sage);
+}
+.fyl-banner-duplicate::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235E7357' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12.3l2.6 2.6L16 9.5'/%3E%3C/svg%3E");
+}
+
+.fyl-retry {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #fff;
+  background: var(--fyl-coral);
+  border: none;
+  border-radius: 12px;
+  padding: 10px 17px;
+  cursor: pointer;
+  box-shadow: 0 8px 16px -8px rgba(232, 93, 42, 0.6);
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+.fyl-retry:hover {
+  background: var(--fyl-coral-deep);
+  transform: translateY(-1px);
+}
+.fyl-ghost-btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--fyl-ink);
+  background: transparent;
+  border: 1.5px solid var(--fyl-line);
+  border-radius: 12px;
+  padding: 10px 17px;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+.fyl-ghost-btn:hover {
+  border-color: var(--fyl-ink-faint);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ---- Success: a wax-seal approval stamp ----------------------------------- */
+.fyl-success {
+  position: relative;
+  text-align: center;
+  padding: 14px 8px 8px;
+  animation: fyl-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.fyl-success-badge {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 4px auto 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #f2764c, var(--fyl-coral) 68%);
+  display: grid;
+  place-items: center;
+  transform: rotate(-5deg);
+  box-shadow: 0 12px 26px -10px rgba(232, 93, 42, 0.6);
+  animation: fyl-stamp 0.6s cubic-bezier(0.2, 1.5, 0.35, 1) both;
+  animation-delay: 0.08s;
+}
+/* Postmark ring around the seal. */
+.fyl-success-badge::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 2px dashed rgba(232, 93, 42, 0.38);
+}
+.fyl-success-badge svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: #fff5ef;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fyl-success-title {
+  font-family: var(--fyl-serif);
+  font-weight: 600;
+  font-size: clamp(23px, 4.4vw, 30px);
+  letter-spacing: -0.02em;
+  margin: 0;
+  outline: none;
+}
+.fyl-success-body {
+  color: var(--fyl-ink-soft);
+  font-size: 15px;
+  line-height: 1.58;
+  margin: 11px auto 0;
+  max-width: 40ch;
+}
+.fyl-success-ref {
+  display: inline-block;
+  font-family: var(--fyl-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--fyl-ink-soft);
+  background: var(--fyl-peach-wash);
+  border: 1px solid var(--fyl-peach-deep);
+  border-radius: 8px;
+  padding: 4px 10px;
+  margin: 16px 0 0;
+}
+.fyl-success-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.fyl-success-cta {
+  font-weight: 700;
+  font-size: 14.5px;
+  color: #fff;
+  background: var(--fyl-coral);
+  border-radius: 13px;
+  padding: 12px 21px;
+  text-decoration: none;
+  box-shadow: 0 12px 24px -12px rgba(232, 93, 42, 0.6);
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+.fyl-success-cta:hover {
+  background: var(--fyl-coral-deep);
+  transform: translateY(-1px);
+}
+
+/* ---- Utility + motion ----------------------------------------------------- */
+.fyl-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes fyl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fyl-stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-18deg) scale(1.7);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-5deg) scale(1);
+  }
+}
+@keyframes fyl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fyl-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fyl-form-header,
+  .fyl-field,
+  .fyl-submit,
+  .fyl-banner,
+  .fyl-success,
+  .fyl-success-badge,
+  .fyl-error {
+    animation: none;
+  }
+  .fyl-submit:hover:not(:disabled) {
+    transform: none;
+  }
+  .fyl-spinner {
+    animation-duration: 1.6s;
+  }
+  .fyl-success-badge {
+    transform: rotate(-5deg);
+  }
+}
