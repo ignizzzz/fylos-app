@@ -652,7 +652,9 @@
   .role.w2 .awning{ background:repeating-linear-gradient(90deg, #A9B49A 0 18px, #F4F1E6 18px 36px) }
   .role.w3 .awning{ background:repeating-linear-gradient(90deg, #C9B79C 0 18px, #F6EFE4 18px 36px) }
   .role.w4 .awning{ background:repeating-linear-gradient(90deg, #F0C9B4 0 18px, #FBF4EC 18px 36px) }
-  .role.w4 img{ max-height:150px; width:auto; margin:0 auto }
+  /* the groomer cutout is a tall crop, but the shared .role img square box
+     (aspect-ratio:1 + object-fit:contain) letterboxes it to the exact same
+     geometry as the other three figures, so no override is needed */
   .role img{
     width:min(230px, 60%); aspect-ratio:1; object-fit:contain; display:block; margin:-78px auto 4px;
     filter:drop-shadow(0 24px 26px rgba(90,60,40,.26));
