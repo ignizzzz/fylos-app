@@ -5,212 +5,221 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Fylos pilot program · Zurich and nearby</title>
 <meta name="description" content="Fylos is opening to a small first group of clinics and pros in Zurich and nearby. Honest, no obligation, nothing to set up today. See how the pilot works and apply.">
+<meta name="theme-color" content="#FBF7F2">
+<link rel="canonical" href="https://fylos-neighborhood.vercel.app/pilot">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Consent-gated, PII-safe analytics + consent banner. No real provider wired in. See docs/BACKEND_INTEGRATION_GUIDE.md. -->
-<script defer src="/analytics/fylos-analytics.global.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shell/shell.css">
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
+<script defer src="/shell/shell.js"></script>
 <style>
   :root{
-    --cream:#FBF7F2; --peach:#FFE9DC; --peach-deep:#F5E0D0; --ink:#2B2320; --ink-soft:#6E625B;
-    --coral:#E85D2A; --coral-2:#EE8A5E; --coral-deep:#CF4A1C; --sage:#7C9271; --line:#ECE0D2; --ic-cream:#FFF3EA;
+    --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-deep:#CF4A1C; --sage:#7C9271; --sage-deep:#5C7150; --line:#ECE0D2;
     --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  a:focus-visible,button:focus-visible{outline:2.5px solid var(--coral-deep); outline-offset:3px; border-radius:6px}
-  @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important} html{scroll-behavior:auto !important}}
   html{scroll-behavior:smooth}
-  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased;
-    background-image:radial-gradient(1100px 520px at 80% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; overflow-x:clip;
+    background-image:radial-gradient(1100px 520px at 82% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
                      radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
-  a{color:inherit}
+  .wrap{max-width:1020px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 96px}
+  .hero{position:relative; border-radius:28px; overflow:hidden; margin-top:26px;
+    min-height:clamp(400px,56vh,560px); display:flex; align-items:flex-end;
+    box-shadow:0 30px 70px rgba(90,60,40,.24)}
+  .hero>img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  .glass{position:relative; z-index:2; margin:clamp(16px,3vw,34px); max-width:540px;
+    background:color-mix(in srgb, var(--cream) 86%, transparent);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-radius:24px; padding:clamp(20px,3vw,30px); box-shadow:0 18px 50px rgba(90,60,40,.2)}
+  .kicker{font:800 11px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral);
+    display:inline-flex; align-items:center; gap:9px}
+  .kicker::before{content:''; width:22px; height:2px; background:var(--coral); border-radius:2px}
+  .glass h1{font-family:var(--serif); font-weight:600; font-size:clamp(28px,4vw,40px); line-height:1.06; letter-spacing:-.02em; margin-top:10px}
+  .glass h1 em{font-style:italic; color:var(--coral)}
+  .glass p{margin-top:10px; font-size:14.5px; line-height:1.6; color:var(--ink-soft)}
+  .ctarow{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px}
+  .cta{display:inline-flex; align-items:center; gap:8px; background:var(--coral); color:#fff;
+    font:800 13.5px var(--sans); padding:13px 22px; border-radius:99px; text-decoration:none;
+    box-shadow:0 12px 28px rgba(232,93,42,.3)}
+  .cta:hover{background:var(--coral-deep)}
+  .ghost{display:inline-flex; align-items:center; gap:7px; color:var(--coral-deep); background:#fff;
+    border:1.5px solid #F0C9B4; font:800 13px var(--sans); padding:12px 20px; border-radius:99px; text-decoration:none}
 
-  .top{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
-    padding:16px clamp(18px,5vw,44px); backdrop-filter:blur(12px);
-    background:color-mix(in srgb,var(--cream) 78%,transparent); border-bottom:1px solid rgba(236,224,210,.7)}
-  .brand{font-weight:800; letter-spacing:.22em; color:var(--coral); font-size:15px; text-decoration:none}
-  .back{display:inline-flex; align-items:center; gap:7px; font-weight:700; font-size:13.5px; color:var(--ink); text-decoration:none; opacity:.8}
-  .back:hover{opacity:1}
-  .back svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .how{display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(14px,2.5vw,24px); margin-top:clamp(56px,9vh,90px)}
+  .hcard{background:#fff; border-radius:24px; padding:clamp(20px,2.6vw,28px); box-shadow:0 16px 40px rgba(90,60,40,.09)}
+  .hcard .n{width:34px; height:34px; border-radius:50%; background:var(--peach); color:var(--coral);
+    font:800 14px var(--sans); display:grid; place-items:center}
+  .hcard h2{font-family:var(--serif); font-weight:600; font-size:19px; margin-top:12px}
+  .hcard p{margin-top:7px; font-size:12.5px; line-height:1.55; color:var(--ink-soft)}
 
-  .wrap{max-width:900px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 90px}
+  .whojoins{display:grid; grid-template-columns:1fr 1fr; gap:clamp(18px,3vw,28px); margin-top:clamp(56px,9vh,90px)}
+  .jcard{position:relative; background:#fff; border-radius:26px; padding:0 26px 26px; text-align:center; box-shadow:0 18px 44px rgba(90,60,40,.1)}
+  .jcard .fig{height:130px; display:flex; align-items:flex-end; justify-content:center; margin-top:-52px}
+  .jcard .fig img{max-height:150px; filter:drop-shadow(0 16px 22px rgba(60,35,20,.22))}
+  .jcard h3{font-family:var(--serif); font-weight:600; font-size:20px; margin-top:12px}
+  .jcard .chip{display:inline-flex; align-items:center; gap:6px; font:800 9.5px var(--sans); letter-spacing:.11em;
+    text-transform:uppercase; color:var(--coral); background:var(--peach); padding:6px 12px; border-radius:99px; margin-top:9px}
+  .jcard p{font-size:13px; color:var(--ink-soft); line-height:1.55; margin-top:10px}
+  .jcard .cta{margin-top:14px}
 
-  .hero{text-align:center; padding:52px 0 30px; max-width:660px; margin:0 auto}
-  .chip{display:inline-flex; align-items:center; gap:9px; font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral); background:var(--peach); padding:8px 15px; border-radius:99px}
-  .chip .d{width:7px;height:7px;border-radius:50%;background:var(--coral); position:relative}
-  .chip .d::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--coral);opacity:.5;animation:pl 1.9s ease-out infinite}
-  @keyframes pl{0%{transform:scale(.6);opacity:.6}100%{transform:scale(1.55);opacity:0}}
-  .hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(34px,5vw,52px); line-height:1.03; letter-spacing:-.02em; margin:16px 0 0}
-  .hero h1 em{font-style:italic; color:var(--coral)}
-  .hero .lead{margin:15px auto 0; font-size:15.5px; line-height:1.62; color:var(--ink-soft); max-width:560px}
-  .herocta{display:flex; flex-wrap:wrap; gap:11px; justify-content:center; margin-top:22px}
+  .honest{margin-top:clamp(56px,9vh,90px); background:var(--peach); border-radius:28px; padding:clamp(24px,4vw,40px); text-align:center}
+  .honest h2{font-family:var(--serif); font-weight:600; font-size:clamp(22px,2.8vw,30px)}
+  .honest h2 em{font-style:italic; color:var(--coral)}
+  .honest p{margin:10px auto 0; font-size:13.5px; line-height:1.65; color:#7c5a42; max-width:560px}
+  .honest .ctarow{justify-content:center; margin-top:18px}
 
-  .cta{display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:14px 20px; border-radius:14px; font:800 14.5px var(--sans); text-decoration:none; cursor:pointer; border:none; transition:transform .18s, background .18s}
-  .cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-  .cta.solid{background:var(--coral); color:#fff; box-shadow:0 14px 30px rgba(232,93,42,.28)}
-  .cta.solid:hover{transform:translateY(-2px); background:var(--coral-deep)}
-  .cta.ghost{background:#fff; color:var(--coral); border:1.5px solid #F0C9B4}
-  .cta.ghost:hover{transform:translateY(-2px)}
-  .cta.block{width:100%}
-
-  /* what it is / is not */
-  .two{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px}
-  .col{background:#fff; border:1px solid var(--line); border-radius:24px; padding:24px 24px 22px; box-shadow:0 14px 40px rgba(90,60,40,.06)}
-  .col h3{font-family:var(--serif); font-weight:600; font-size:19px; letter-spacing:-.01em; display:flex; align-items:center; gap:10px}
-  .col h3 .m{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;flex:none}
-  .col h3 .m svg{width:15px;height:15px;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-  .col.is h3 .m{background:#E9F0E5} .col.is h3 .m svg{stroke:var(--sage)}
-  .col.isnt h3 .m{background:var(--peach)} .col.isnt h3 .m svg{stroke:var(--coral)}
-  .col ul{list-style:none; margin:16px 0 0; display:flex; flex-direction:column; gap:12px}
-  .col li{display:flex; gap:10px; font-size:13.5px; line-height:1.5; color:var(--ink-soft)}
-  .col li svg{width:16px;height:16px;flex:none;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;margin-top:2px}
-  .col.is li svg{stroke:var(--sage)} .col.isnt li svg{stroke:var(--coral)}
-  .col li b{color:var(--ink); font-weight:700}
-
-  .sechead{max-width:640px; margin:44px auto 22px; text-align:center}
-  .sechead .kick{font:800 11px var(--sans); letter-spacing:.16em; text-transform:uppercase; color:var(--coral)}
-  .sechead h2{font-family:var(--serif); font-weight:600; font-size:clamp(24px,3.4vw,30px); letter-spacing:-.01em; margin-top:9px}
-  .sechead p{font-size:14px; line-height:1.6; color:var(--ink-soft); margin-top:10px}
-
-  /* steps */
-  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
-  .stp{background:#fff; border:1px solid var(--line); border-radius:18px; padding:20px 18px; box-shadow:0 10px 28px rgba(90,60,40,.05)}
-  .stp .n{width:28px;height:28px;border-radius:50%;background:var(--coral);color:#fff;font:800 12px var(--sans);display:grid;place-items:center;margin-bottom:12px}
-  .stp h3{font:700 14px var(--sans); color:var(--ink)}
-  .stp p{font-size:12.5px; line-height:1.5; color:var(--ink-soft); margin-top:6px}
-
-  .info{display:flex; gap:11px; background:var(--peach); border-radius:16px; padding:15px 17px; margin-top:22px}
-  .info svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--coral);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
-  .info p{font-size:13px; line-height:1.55; color:#7c5a42}
-  .info b{color:var(--ink)}
-
-  /* two apply paths */
-  .paths{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px}
-  .pc{display:flex; flex-direction:column; border-radius:24px; padding:26px 26px 24px; border:1px solid var(--line); background:#fff; box-shadow:0 14px 40px rgba(90,60,40,.07)}
-  .pc.a{background:linear-gradient(180deg,#FFF3EB,#fff); border-color:#F6D9C6}
-  .pc .emblem{width:48px;height:48px;border-radius:13px;background:var(--peach);display:grid;place-items:center;margin-bottom:14px}
-  .pc .emblem svg{width:24px;height:24px;fill:none;stroke:var(--coral);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-  .pc h3{font-family:var(--serif); font-weight:600; font-size:21px; letter-spacing:-.01em}
-  .pc p{font-size:13.5px; line-height:1.55; color:var(--ink-soft); margin-top:8px; flex:1}
-  .pc .cta{margin-top:18px}
-
-  .band{margin-top:44px; background:#fff; border:1px solid var(--line); border-radius:26px; padding:clamp(26px,4vw,40px); text-align:center; box-shadow:0 16px 44px rgba(90,60,40,.08)}
-  .band h2{font-family:var(--serif); font-weight:600; font-size:clamp(23px,3.2vw,28px); letter-spacing:-.01em}
-  .band p{font-size:14.5px; line-height:1.6; color:var(--ink-soft); margin:11px auto 0; max-width:520px}
-  .band .row{display:flex; flex-wrap:wrap; gap:11px; justify-content:center; margin-top:22px}
-
-  footer{max-width:900px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 50px; color:var(--ink-soft); font-size:12px; text-align:center; line-height:1.6}
-  footer a{color:var(--ink-soft)}
-  footer .flinks{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:10px}
-  footer .flinks a{color:var(--coral); text-decoration:none; font-weight:700; font-size:12.5px}
-
-  @media(max-width:760px){
-    .two{grid-template-columns:1fr}
-    .steps{grid-template-columns:1fr 1fr}
-    .paths{grid-template-columns:1fr}
+  @media (max-width:820px){
+    .how{grid-template-columns:1fr}
+    .whojoins{grid-template-columns:1fr; gap:64px}
+    .hero{min-height:62vh}
   }
 </style>
 </head>
 <body>
 
-<header class="top">
-  <a class="brand" href="/">FYLOS</a>
-  <a class="back" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>Back to Fylos</a>
+<a class="fy-skip" href="#fy-main">Skip to content</a>
+
+<header class="fy-header" data-fy-header>
+  <div class="fy-header__inner">
+    <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+    <nav class="fy-nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/product">Product</a>
+      <a href="/features">Features</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a class="fy-nav__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+    </nav>
+    <button class="fy-burger" type="button" data-fy-burger
+            aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
+      <span class="fy-burger__box"><span class="fy-burger__line"></span></span>
+    </button>
+  </div>
 </header>
 
-<main class="wrap">
+<div class="fy-menu" id="fy-menu" data-fy-menu>
+  <div class="fy-menu__backdrop" data-fy-menu-backdrop></div>
+  <nav class="fy-menu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="fy-menu__head">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <button class="fy-menu__close" type="button" data-fy-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="fy-menu__link" href="/">Home</a>
+    <a class="fy-menu__link" href="/product">Product</a>
+    <a class="fy-menu__link" href="/features">Features</a>
+    <a class="fy-menu__link" href="/how-it-works">How it works</a>
+    <a class="fy-menu__link" href="/health-book">Health book</a>
+    <a class="fy-menu__link" href="/book-care">Book care</a>
+    <a class="fy-menu__link" href="/the-tag">The tag</a>
+    <a class="fy-menu__link" href="/apply">For vets</a>
+    <a class="fy-menu__link" href="/join">For pros</a>
+    <a class="fy-menu__link" href="/partners">For partners</a>
+    <a class="fy-menu__cta" href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+  </nav>
+</div>
+
+<main class="wrap" id="fy-main" tabindex="-1">
 
   <section class="hero">
-    <span class="chip"><span class="d"></span>The pilot &middot; Zurich and nearby</span>
-    <h1>The first neighborhood <em>opens first.</em></h1>
-    <p class="lead">Fylos is opening to a small first group of clinics and pros in Zurich and nearby before anyone else. It is honest and hands on: we get you set up carefully, we listen closely, and what you tell us shapes what comes next. There is nothing to set up today, and no commitment.</p>
-    <div class="herocta">
-      <a class="cta solid" href="/apply?type=pilot&amp;from=pilot">Apply as a clinic <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
-      <a class="cta ghost" href="/join?type=pilot&amp;from=pilot">Apply as a pro</a>
+    <img src="assets/k-lines.jpg" alt="The miniature Fylos town at night, its streets glowing with coral routes">
+    <div class="glass">
+      <span class="kicker">The pilot program</span>
+      <h1>One neighborhood lights up <em>first.</em></h1>
+      <p>Fylos opens in Zurich and nearby with a small first group of clinics and pros. Fewer partners, more attention, and a real say in what we build next.</p>
+      <div class="ctarow">
+        <a class="cta" href="/apply?type=pilot&amp;from=pilot">Apply as a clinic</a>
+        <a class="ghost" href="/join?type=pilot&amp;from=pilot">Apply as a pro</a>
+      </div>
     </div>
   </section>
 
-  <h2 class="sr-only">What the pilot is, and what it is not</h2>
-
-  <div class="two">
-    <div class="col is">
-      <h3><span class="m"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></span>What the pilot is</h3>
-      <ul>
-        <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg><span><b>A careful first group.</b> A handful of clinics and pros in Zurich and nearby, set up one by one with real help from us.</span></li>
-        <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg><span><b>A conversation both ways.</b> You get early access, we get honest feedback, and it genuinely changes what we build next.</span></li>
-        <li><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg><span><b>Low friction to start.</b> For clinics we confirm your registration ourselves through Switzerland's public registers, so there is nothing to upload now.</span></li>
-      </ul>
+  <div class="how">
+    <div class="hcard">
+      <div class="n">1</div>
+      <h2>You apply</h2>
+      <p>A short form, nothing to upload. We read every application ourselves and reply personally, usually within days.</p>
     </div>
-    <div class="col isnt">
-      <h3><span class="m"><svg viewBox="0 0 24 24"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg></span>What it is not</h3>
-      <ul>
-        <li><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg><span><b>Not a contract or a bill.</b> Joining the pilot costs nothing and commits you to nothing. You can step out any time.</span></li>
-        <li><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg><span><b>Not a finished product.</b> Fylos for vets and the pro tools are still coming. You are helping shape them, not buying them.</span></li>
-        <li><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg><span><b>Not a data grab.</b> A pet's record only ever moves with the owner's consent, and going live for a clinic needs a separate data agreement.</span></li>
-      </ul>
+    <div class="hcard">
+      <div class="n">2</div>
+      <h2>We meet</h2>
+      <p>A quiet walkthrough of how Fylos works from your side of the leash, your questions answered honestly, no obligation.</p>
+    </div>
+    <div class="hcard">
+      <div class="n">3</div>
+      <h2>You go first</h2>
+      <p>Pilot partners get their neighborhood to themselves at launch, direct access to us, and a real vote on the roadmap.</p>
     </div>
   </div>
 
-  <div class="sechead">
-    <div class="kick">How it goes</div>
-    <h2>Four unhurried steps</h2>
-    <p>No slides and no pressure. We move at a pace that fits your week.</p>
-  </div>
-
-  <div class="steps">
-    <div class="stp"><div class="n">1</div><h3>You apply</h3><p>A short form tells us who you are and how you work today. A real person reads it.</p></div>
-    <div class="stp"><div class="n">2</div><h3>We talk</h3><p>A relaxed walkthrough. We answer everything and see if the fit is right, both ways.</p></div>
-    <div class="stp"><div class="n">3</div><h3>We set you up</h3><p>When it is ready for you, we get you going carefully, at your pace, with real help.</p></div>
-    <div class="stp"><div class="n">4</div><h3>You shape it</h3><p>You tell us what works and what does not, and it changes what we build next.</p></div>
-  </div>
-
-  <div class="info">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
-    <p><b>Where we are starting.</b> Fylos is Zurich born and begins in Zurich and nearby, because pet care is local and trust is built street by street. Somewhere else? We would still love to hear from you, and we will let you know when your area is next.</p>
-  </div>
-
-  <div class="sechead">
-    <div class="kick">Join the pilot</div>
-    <h2>Pick your path</h2>
-    <p>Both go to a short application. We reply personally, usually within a few days.</p>
-  </div>
-
-  <div class="paths">
-    <div class="pc a">
-      <div class="emblem"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg></div>
+  <div class="whojoins">
+    <article class="jcard">
+      <div class="fig"><img src="assets/roles/vet.png" alt="The vet figurine"></div>
       <h3>Veterinary clinics</h3>
-      <p>The dedicated clinic application. We ask about your practice and the software you use, confirm your registration ourselves, and follow up personally.</p>
-      <a class="cta solid block" href="/apply?type=pilot&amp;from=pilot">Apply as a clinic <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
-    </div>
-    <div class="pc">
-      <div class="emblem"><svg viewBox="0 0 24 24"><path d="M4 20v-2a5 5 0 0 1 5-5h1"/><circle cx="9.5" cy="8" r="3.2"/><path d="M15 21l2-3 2 3"/><circle cx="17" cy="13.5" r="2"/></svg></div>
-      <h3>Groomers, walkers and other pros</h3>
-      <p>Walkers and sitters have a fast lane inside the app. Groomers, trainers and every other pro tell us in a short form, even a profession we have not added yet.</p>
-      <a class="cta ghost block" href="/join?type=pilot&amp;from=pilot">Apply as a pro <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
-    </div>
+      <span class="chip">First priority</span>
+      <p>Fylos for vets is built with the pilot clinics: bookings that arrive prepared and records that sync with the owner's consent.</p>
+      <a class="cta" href="/apply?type=pilot&amp;from=pilot">Apply for the pilot</a>
+    </article>
+    <article class="jcard">
+      <div class="fig"><img src="assets/roles/groomer.png" alt="The groomer figurine"></div>
+      <h3>Groomers</h3>
+      <span class="chip">Next in line</span>
+      <p>Grooming goes live right after the vets. Pilot shops shape how booking works and open with their neighborhood to themselves.</p>
+      <a class="cta" href="/join?type=pilot&amp;from=pilot">Apply for the pilot</a>
+    </article>
   </div>
 
-  <div class="band">
-    <h2>Want to see it first?</h2>
-    <p>Ask for a walkthrough before you apply. We will show you where Fylos is today and answer anything, honestly.</p>
-    <div class="row">
-      <a class="cta solid" href="/demo?type=pilot&amp;from=pilot">Request a demo <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
-      <a class="cta ghost" href="/partners">Fylos for partners</a>
+  <section class="honest">
+    <h2>An honest <em>note.</em></h2>
+    <p>The pilot is not a finished product tour. It is early access: some things are live today, some we will build together. That is the deal, and it is a good one for the people who like going first. Walkers and sitters do not need the pilot, they can <a href="/join" style="color:var(--coral-deep); font-weight:700; text-decoration:none">start in the app today</a>.</p>
+    <div class="ctarow">
+      <a class="ghost" href="/demo?type=pilot&amp;from=pilot">Request a demo first</a>
+      <a class="ghost" href="/partners">Fylos for partners</a>
     </div>
-  </div>
+  </section>
 
 </main>
 
-<footer>
-  <nav class="flinks" aria-label="Footer">
-    <a href="/partners">For partners</a>
-    <a href="/for-vets">For vets</a>
-    <a href="/join">For pros</a>
-    <a href="/demo">Request a demo</a>
-  </nav>
-  Fylos AG &middot; Zürich, Switzerland &middot; <a href="mailto:hello@fylos.me">hello@fylos.me</a><br>
-  The pilot is early access in Zurich and nearby. It is free, and it commits you to nothing.
+<footer class="fy-footer">
+  <div class="fy-footer__inner">
+    <div class="fy-footer__brand">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <p class="fy-footer__tag">Your whole pet neighborhood, <em>in your pocket.</em></p>
+    </div>
+    <div class="fy-footer__cols">
+      <nav class="fy-footer__col" aria-label="Product">
+        <b>Product</b>
+        <a href="/product">Overview</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Features">
+        <b>Features</b>
+        <a href="/health-book">Health book</a>
+        <a href="/book-care">Book care</a>
+        <a href="/the-tag">The tag</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Partners">
+        <b>Partners</b>
+        <a href="/apply">For vets</a>
+        <a href="/join">For pros</a>
+        <a href="/partners">For partners</a>
+        <a href="/pilot">Pilot program</a>
+        <a href="/demo">Request a demo</a>
+      </nav>
+      <div class="fy-footer__col">
+        <b>Fylos</b>
+        <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
+        <a href="https://app.fylos.me" target="_blank" rel="noopener">Open the app</a>
+        <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+      </div>
+    </div>
+  </div>
+  <div class="fy-footer__legal">© 2026 Fylos AG · Zürich, Switzerland</div>
 </footer>
 
 </body>
