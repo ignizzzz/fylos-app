@@ -99,11 +99,20 @@
   .done p{margin-top:11px; color:var(--ink-soft); font-size:14.5px; line-height:1.6; max-width:440px; margin-left:auto; margin-right:auto}
   .done a.home{display:inline-flex; margin-top:22px; background:var(--peach); color:var(--coral); font-weight:800; font-size:13.5px; padding:13px 22px; border-radius:12px; text-decoration:none}
 
+  /* a visible, polite error state (email format, missing fields) */
+  .field.bad input, .field.bad select{border-color:#C94A1E; box-shadow:0 0 0 4px rgba(201,74,30,.10)}
+  .fielderr{display:none; font:600 12px var(--sans); color:#A83A1A; margin-top:6px}
+  .field.bad .fielderr{display:block}
+
   @media(max-width:760px){
     .hero{grid-template-columns:1fr; gap:22px; padding:34px 0 22px}
     .heroart{aspect-ratio:16/10; order:-1}
     .reassure{grid-template-columns:1fr; gap:10px; margin-bottom:26px}
     .grid2{grid-template-columns:1fr}
+  }
+  @media(max-width:600px){
+    /* 16px fields so iOS Safari does not zoom into the form */
+    input,select,textarea{font-size:16px}
   }
 </style>
 </head>
@@ -215,7 +224,7 @@
         <div class="field"><label>Your name<span class="rq">*</span></label><input name="contact_name" required></div>
         <div class="field"><label>Your role at the clinic<span class="rq">*</span></label><select name="contact_role" required><option value="" disabled selected>Choose one</option><option>Owner</option><option>Practice manager</option><option>Lead vet</option><option>Vet</option><option>Admin</option><option>Other</option></select></div>
       </div>
-      <div class="field"><label>Work email<span class="rq">*</span></label><input type="email" name="contact_email" required placeholder="you@yourclinic.ch"><div class="help">This is where your invitation will go. A clinic address helps us confirm it is really you, and we send a quick link to check the address works.</div></div>
+      <div class="field"><label>Work email<span class="rq">*</span></label><input type="email" name="contact_email" required autocomplete="email" placeholder="you@yourclinic.ch"><div class="fielderr" role="alert">That email does not look complete. A quick check and you are done.</div><div class="help">This is where your invitation will go. A clinic address helps us confirm it is really you, and we send a quick link to check the address works.</div></div>
 
       <div class="fineprint">Fylos AG is responsible for the details you send here. We use them only to assess and reply to your application, it is voluntary, and if your clinic is not a fit we delete your application within twelve months. To run this form and reach you we rely on a few trusted providers, some based outside Switzerland, always under proper safeguards, and we never sell your data. You can ask to see, correct, or delete your details any time at <a href="mailto:privacy@fylos.me">privacy@fylos.me</a>, and our privacy policy has the rest.</div>
 
@@ -290,6 +299,11 @@
     if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'veterinary', formName: 'Vet clinic application' });
   });
 
+  function okEmail(v){
+    v = (v || '').trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  }
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
     // basic required-field check with a gentle scroll to the first empty one
@@ -303,16 +317,26 @@
       missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'});
       return;
     }
+    // the email must at least look like an email; say so in place if not
+    var email = form.querySelector('input[type="email"]');
+    var ef = email.closest('.field');
+    ef.classList.remove('bad');
+    if (!okEmail(email.value)){
+      ef.classList.add('bad');
+      email.focus();
+      ef.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
     // Analytics: form_submitted (field names + success only, no values).
     if (window.FylosAnalytics) {
       var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
       FylosAnalytics.formSubmitted({ formId: 'veterinary', fields: names, success: true });
     }
-    // no backend yet: show the confirmation state
+    // no backend yet: show the confirmation state, and bring it into view
     form.style.display = 'none';
     var done = document.getElementById('donePanel');
     done.classList.add('on');
-    window.scrollTo({top:0, behavior:'smooth'});
+    done.scrollIntoView({behavior:'smooth', block:'center'});
   });
 </script>
 </body>

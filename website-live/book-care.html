@@ -25,7 +25,7 @@
     --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
   body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; overflow-x:clip;
     background-image:radial-gradient(1100px 520px at 82% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
                      radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
@@ -89,8 +89,18 @@
   @media (max-width:880px){
     .sec{grid-template-columns:1fr; gap:20px}
     .sec.flip .ph{order:0}
-    .hero{min-height:64vh}
+    .hero{min-height:64vh; min-height:64svh}
     .soonpanel{margin-top:40px}
+    .cta{padding-top:14px; padding-bottom:14px}
+    .ghost{padding-top:14px; padding-bottom:14px}
+    .more{padding:12px 0; margin-top:8px; text-decoration:underline; text-underline-offset:3px}
+    .soonpanel img, .figs img{pointer-events:none}
+  }
+  @media (max-width:430px){
+    .row{align-items:flex-start}
+    .row .dot{margin-top:6px}
+    .row .end{margin-top:3px; font-size:11px}
+    .soonchip{font-size:11px}
   }
 </style>
 </head>
@@ -143,7 +153,7 @@
 <main class="wrap" id="fy-main" tabindex="-1">
 
   <section class="hero">
-    <img src="assets/k-walker.jpg" alt="A neighbor walking a golden retriever through the Fylos square">
+    <img src="assets/k-walker.jpg" fetchpriority="high" alt="A neighbor walking a golden retriever through the Fylos square">
     <div class="glass">
       <span class="kicker">Book care</span>
       <h1>Booked in <em>two taps.</em></h1>
@@ -156,7 +166,7 @@
   </section>
 
   <section class="sec">
-    <div class="ph"><img src="assets/square-hi.jpg" alt="The Fylos neighborhood square with a pet parent and a golden retriever"></div>
+    <div class="ph"><img src="assets/square-hi.jpg" loading="lazy" decoding="async" alt="The Fylos neighborhood square with a pet parent and a golden retriever"></div>
     <div>
       <span class="kicker">Walkers &amp; sitters</span>
       <h2>Real neighbors, <em>real reviews.</em></h2>
@@ -173,7 +183,7 @@
 
   <section class="sec flip">
     <div class="soonpanel">
-      <img src="assets/roles/groomer.png" alt="The groomer figurine with her apron and brush">
+      <img src="assets/roles/groomer.png" loading="lazy" decoding="async" alt="The groomer figurine with her apron and brush">
       <div class="soonchip"><i></i>Coming soon</div>
       <b>Groomers on Fylos</b>
       <p>The shop two doors down, booked the same calm way. The first shops get their neighborhood to themselves.</p>
@@ -192,8 +202,8 @@
 
   <section class="close">
     <div class="figs">
-      <img src="assets/roles/walker.png" alt="The walker figurine">
-      <img src="assets/roles/pet.png" alt="The golden retriever figurine">
+      <img src="assets/roles/walker.png" loading="lazy" decoding="async" alt="The walker figurine">
+      <img src="assets/roles/pet.png" loading="lazy" decoding="async" alt="The golden retriever figurine">
     </div>
     <h2>The next walk is <em>two taps away.</em></h2>
     <p>Free to start. Your pet's routine and allergies travel with the booking, so the walker already knows what matters.</p>

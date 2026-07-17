@@ -73,8 +73,12 @@
   .close .ctarow{justify-content:center; margin-top:20px}
 
   @media (max-width:880px){
-    .tracks{grid-template-columns:1fr; gap:70px}
-    .hero{min-height:64vh}
+    .tracks{grid-template-columns:1fr; gap:86px}
+    .hero{min-height:64vh; min-height:64svh}
+    .trackhead{scroll-margin-top:84px}
+    .track .fig img{pointer-events:none}
+    .cta,.ghost{min-height:44px}
+    .track .chip{font-size:11px}
   }
 </style>
 </head>
@@ -146,21 +150,21 @@
 
   <div class="tracks">
     <article class="track">
-      <div class="fig"><img src="assets/roles/vet.png" alt="The vet figurine"></div>
+      <div class="fig"><img src="assets/roles/vet.png" alt="The vet figurine" loading="lazy" decoding="async"></div>
       <h3>Veterinary clinics</h3>
       <span class="chip soon">Coming soon · first priority</span>
       <p>One book, both sides of the leash: bookings that arrive prepared, records that sync with the owner's consent. The first clinics get their neighborhood to themselves.</p>
       <a class="cta" href="/apply?type=early-access&amp;from=partners">Apply for early access</a>
     </article>
     <article class="track">
-      <div class="fig"><img src="assets/roles/groomer.png" alt="The groomer figurine"></div>
+      <div class="fig"><img src="assets/roles/groomer.png" alt="The groomer figurine" loading="lazy" decoding="async"></div>
       <h3>Groomers</h3>
       <span class="chip soon">Coming soon · next in line</span>
       <p>The shop two doors down, booked in two taps. Grooming goes live right after the vets, and the shops that apply now go first.</p>
       <a class="cta" href="/join?type=groomer&amp;from=partners#groomerform">Apply for early access</a>
     </article>
     <article class="track">
-      <div class="fig"><img src="assets/roles/walker.png" alt="The walker figurine"></div>
+      <div class="fig"><img src="assets/roles/walker.png" alt="The walker figurine" loading="lazy" decoding="async"></div>
       <h3>Walkers &amp; sitters</h3>
       <span class="chip live">Live now · fastest</span>
       <p>Your next clients live next door. Apply right in the app, it takes about five minutes: your details, your area, a quick check, and you are live.</p>

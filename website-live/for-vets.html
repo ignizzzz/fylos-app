@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fylos for veterinary professionals · Coming soon</title>
 <meta name="description" content="Fylos for vets is coming soon. A pet's health book that arrives with the booking, notes that flow back, and a link to the practice software you already use. Apply for early access.">
+<meta name="theme-color" content="#FBF7F2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shell/shell.css">
-<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}  .stage-photo{position:relative; border-radius:24px; overflow:hidden; box-shadow:0 26px 60px rgba(90,60,40,.22); aspect-ratio:4/3.1}
-  .stage-photo img{width:100%; height:100%; object-fit:cover; display:block}
-  .stage-photo .glass{position:absolute; left:12px; bottom:12px; right:12px}
-</style></noscript>
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
 <script defer src="/shell/shell.js"></script>
 <style>
   :root{
@@ -64,6 +62,9 @@
   .screen .load .ld{width:6px;height:6px;border-radius:50%;background:var(--coral)}
   .stage .glass{position:absolute; left:12px; bottom:12px; right:12px; background:color-mix(in srgb,var(--cream) 90%,transparent); backdrop-filter:blur(8px); border-radius:14px; padding:10px 13px; font:700 11.5px var(--sans); color:var(--ink); display:flex; align-items:center; gap:8px}
   .stage .glass .gd{width:7px;height:7px;border-radius:50%;background:var(--sage)}
+  .stage-photo{position:relative; border-radius:24px; overflow:hidden; box-shadow:0 26px 60px rgba(90,60,40,.22); aspect-ratio:4/3.1}
+  .stage-photo img{width:100%; height:100%; object-fit:cover; display:block}
+  .stage-photo .glass{position:absolute; left:12px; bottom:12px; right:12px}
 
   .cta{display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:14px 20px; border-radius:14px; font:800 14.5px var(--sans); text-decoration:none; cursor:pointer; border:none; transition:transform .18s, background .18s}
   .cta svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -125,6 +126,8 @@
     .stage{aspect-ratio:16/11; order:-1}
     .reassure{grid-template-columns:1fr}
     .feat{grid-template-columns:1fr; gap:12px}
+    body{overflow-x:clip}
+    .chip{font-size:11px}
   }
 </style>
 </head>

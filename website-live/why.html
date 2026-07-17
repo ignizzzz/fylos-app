@@ -14,11 +14,11 @@
     --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
   body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased;
     background-image:radial-gradient(1200px 560px at 82% -6%, #FFE4D2 0%, rgba(255,228,210,0) 60%);}
   .top{position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
-    padding:15px clamp(18px,5vw,54px); backdrop-filter:blur(12px);
+    padding:15px clamp(18px,5vw,54px); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
     background:color-mix(in srgb,var(--cream) 80%,transparent); border-bottom:1px solid rgba(236,224,210,.7)}
   .brand{font-weight:800; letter-spacing:.22em; color:var(--coral); font-size:15px}
   .topr{font-weight:700; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft)}
@@ -87,6 +87,13 @@
     .split{grid-template-columns:1fr}
     .heroimg{aspect-ratio:16/10}
   }
+  @media (max-width:600px){
+    .kchip{font-size:11px}
+    .hero h1{font-size:clamp(32px,6.4vw,68px)}
+  }
+  @media (max-width:480px){
+    .topr{text-align:right; max-width:52%; line-height:1.35}
+  }
 </style>
 </head>
 <body>
@@ -118,12 +125,12 @@
     <h2>Κάθε λειτουργία είναι <em>ένα μέρος στη γειτονιά.</em></h2>
     <div class="body">Αντί για ένα φουσκωμένο εργαλείο με δέκα κουμπιά, το Fylos είναι ένας κόσμος όπου κάθε feature έχει τη θέση του. Έτσι ένα ολόκληρο οικοσύστημα δείχνει συνεκτικό και ζεστό, και εύκολα κατανοητό.</div>
     <div class="places">
-      <div class="place"><div class="im"><img src="assets/kvet-hi.jpg" alt="Ο κτηνίατρος"></div><div class="cap"><b>Ο κτηνίατρος</b><span>Το health book: όλο το ιστορικό, αυτόματα, με τη συναίνεσή σου.</span></div></div>
-      <div class="place"><div class="im"><img src="assets/kgroom-hi.jpg" alt="Ο groomer"></div><div class="cap"><b>Ο groomer</b><span>Booking σε δύο taps, και οι walkers/sitters δίπλα σου.</span></div></div>
-      <div class="place"><div class="im"><img src="assets/kpark-hi.jpg" alt="Το πάρκο"></div><div class="cap"><b>Το πάρκο</b><span>Ασφάλεια: το λες μία φορά, το ξέρει όλη η γειτονιά.</span></div></div>
-      <div class="place"><div class="im"><img src="assets/ktagqr-hi.jpg" alt="Το tag"></div><div class="cap"><b>Το tag</b><span>Ταυτότητα και χαμένο κατοικίδιο: ένα σκαν, και γυρίζει σπίτι.</span></div></div>
-      <div class="place"><div class="im"><img src="assets/k-walker.jpg" alt="Οι γείτονες"></div><div class="cap"><b>Οι γείτονες</b><span>Walkers &amp; sitters που ήδη εμπιστεύεσαι, με reviews.</span></div></div>
-      <div class="place"><div class="im"><img src="assets/square-hi.jpg" alt="Η πλατεία"></div><div class="cap"><b>Η πλατεία</b><span>Η κοινότητα: ο δρόμος σου, ζωντανός.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/kvet-hi.jpg" alt="Ο κτηνίατρος" loading="lazy" decoding="async"></div><div class="cap"><b>Ο κτηνίατρος</b><span>Το health book: όλο το ιστορικό, αυτόματα, με τη συναίνεσή σου.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/kgroom-hi.jpg" alt="Ο groomer" loading="lazy" decoding="async"></div><div class="cap"><b>Ο groomer</b><span>Booking σε δύο taps, και οι walkers/sitters δίπλα σου.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/kpark-hi.jpg" alt="Το πάρκο" loading="lazy" decoding="async"></div><div class="cap"><b>Το πάρκο</b><span>Ασφάλεια: το λες μία φορά, το ξέρει όλη η γειτονιά.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/ktagqr-hi.jpg" alt="Το tag" loading="lazy" decoding="async"></div><div class="cap"><b>Το tag</b><span>Ταυτότητα και χαμένο κατοικίδιο: ένα σκαν, και γυρίζει σπίτι.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/k-walker.jpg" alt="Οι γείτονες" loading="lazy" decoding="async"></div><div class="cap"><b>Οι γείτονες</b><span>Walkers &amp; sitters που ήδη εμπιστεύεσαι, με reviews.</span></div></div>
+      <div class="place"><div class="im"><img src="assets/square-hi.jpg" alt="Η πλατεία" loading="lazy" decoding="async"></div><div class="cap"><b>Η πλατεία</b><span>Η κοινότητα: ο δρόμος σου, ζωντανός.</span></div></div>
     </div>
   </section>
 
@@ -134,7 +141,7 @@
         <h2>Το συναίσθημα <em>δεν αντιγράφεται.</em></h2>
         <div class="body">Η κατηγορία είναι γεμάτη κλινικές, γενικές εφαρμογές. Η αισθητική της μινιατούρας, η ζεστή παλέτα, το «όλη σου η γειτονιά, μια βόλτα μακριά» χτίζουν ένα <strong>premium, συναισθηματικό, αξέχαστο brand</strong>. Το συναίσθημα φέρνει word-of-mouth και retention, και ένας utilitarian competitor δεν το αντιγράφει εύκολα.</div>
       </div>
-      <div class="im"><img src="assets/k-walker.jpg" alt="Ο κόσμος του Fylos"></div>
+      <div class="im"><img src="assets/k-walker.jpg" alt="Ο κόσμος του Fylos" loading="lazy" decoding="async"></div>
     </div>
   </section>
 

@@ -87,10 +87,15 @@
   @media (max-width:560px){ .otherpros{flex-direction:column; text-align:center} }
   /* figurine headers on the two path cards */
   .pcfig{height:150px; display:flex; align-items:flex-end; justify-content:center; margin-top:-46px}
-  .pcfig img{max-height:176px}
+  .pcfig img{max-height:176px; pointer-events:none} /* decorative: never steals a tap */
   .fast.pcchip{position:static; display:inline-flex; margin:12px 0 4px; box-shadow:none}
   .fast.pcchip.live{background:#E9F0E5; color:var(--sage)}
   .paths{margin-top:70px}
+
+  /* a visible, polite error state (email format) */
+  .field.bad input, .field.bad select{border-color:#C94A1E; box-shadow:0 0 0 4px rgba(201,74,30,.10)}
+  .fielderr{display:none; font:600 12px var(--sans); color:#A83A1A; margin-top:6px}
+  .field.bad .fielderr{display:block}
 
   .done{display:none; text-align:center; background:#fff; border:1px solid var(--line); border-radius:26px; padding:48px 34px; box-shadow:0 18px 48px rgba(90,60,40,.09)}
   .done.on{display:block}
@@ -100,7 +105,16 @@
   .done p{margin-top:11px; color:var(--ink-soft); font-size:14.5px; line-height:1.6; max-width:440px; margin-left:auto; margin-right:auto}
   .done a.home{display:inline-flex; margin-top:22px; background:var(--peach); color:var(--coral); font-weight:800; font-size:13.5px; padding:13px 22px; border-radius:12px; text-decoration:none}
 
-  @media(max-width:720px){ .paths{grid-template-columns:1fr} .grid2{grid-template-columns:1fr} }
+  @media(max-width:720px){
+    /* stacked path cards breathe so the pop-out figurine never sits on the
+       card above (the film's roles row uses the same generous rhythm) */
+    .paths{grid-template-columns:1fr; gap:72px}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(max-width:600px){
+    /* 16px fields so iOS Safari does not zoom into the form */
+    input,select,textarea{font-size:16px}
+  }
 </style>
 </head>
 <body>
@@ -201,7 +215,7 @@
         <div class="field"><label>Website or Instagram<span class="opt">optional</span></label><input name="website" placeholder="yourshop.ch or @yourshop"></div>
       </div>
       <div class="field"><label>What you offer<span class="opt">optional</span></label><textarea name="offer" placeholder="Grooming, baths, nails, one or two lines is plenty"></textarea></div>
-      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required placeholder="you@yourshop.ch"><div class="help">Where your early access invitation will go. We reply personally.</div></div>
+      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required autocomplete="email" placeholder="you@yourshop.ch"><div class="fielderr" role="alert">That email does not look complete. A quick check and you are done.</div><div class="help">Where your early access invitation will go. We reply personally.</div></div>
       <label class="check"><input type="checkbox" name="consent" required><span>I understand groomer booking is not live yet, this is an application for early access, and Fylos can contact me about it.<span class="rq">*</span></span></label>
       <button type="submit" class="submit">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
     </div>
@@ -241,7 +255,7 @@
         <div class="field"><label>Website or Instagram<span class="opt">optional</span></label><input name="website" placeholder="yourshop.ch or @yourshop"></div>
       </div>
       <div class="field"><label>What you offer<span class="opt">optional</span></label><textarea name="offer" placeholder="One or two lines is plenty"></textarea></div>
-      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required placeholder="you@example.com"><div class="help">Where your invitation will go. We reply personally.</div></div>
+      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required autocomplete="email" placeholder="you@example.com"><div class="fielderr" role="alert">That email does not look complete. A quick check and you are done.</div><div class="help">Where your invitation will go. We reply personally.</div></div>
 
       <label class="check"><input type="checkbox" name="consent" required><span>I would like to join Fylos as a pro, and Fylos can contact me about it. My details are used only to read and reply to this application.<span class="rq">*</span></span></label>
 
@@ -315,6 +329,26 @@
     gstarted = true;
     if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'join-groomer', formName: 'Groomer early access' });
   });
+  function okEmail(v){
+    v = (v || '').trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  }
+  function badEmailIn(f){
+    var email = f.querySelector('input[type="email"]');
+    var ef = email.closest('.field');
+    ef.classList.remove('bad');
+    if (okEmail(email.value)) return false;
+    ef.classList.add('bad');
+    email.focus();
+    ef.scrollIntoView({behavior:'smooth', block:'center'});
+    return true;
+  }
+  function showDone(){
+    var done = document.getElementById('donePanel');
+    done.classList.add('on');
+    done.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
   gform.addEventListener('submit', function(e){
     e.preventDefault();
     var missing = null;
@@ -323,14 +357,14 @@
       if (bad && !missing) missing = el;
     });
     if (missing){ missing.focus(); missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+    if (badEmailIn(gform)) return;
     if (window.FylosAnalytics) {
       var names = Array.prototype.map.call(gform.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
       FylosAnalytics.formSubmitted({ formId: 'join-groomer', fields: names, success: true });
     }
     gform.style.display = 'none';
     var orG = gform.previousElementSibling; if (orG && orG.classList.contains('or')) orG.style.display = 'none';
-    document.getElementById('donePanel').classList.add('on');
-    window.scrollTo({top:0, behavior:'smooth'});
+    showDone();
   });
 
   var form = document.getElementById('joinForm');
@@ -353,14 +387,14 @@
       if (bad && !missing) missing = el;
     });
     if (missing){ missing.focus(); missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+    if (badEmailIn(form)) return;
     // Analytics: form_submitted (field names + success only, no values).
     if (window.FylosAnalytics) {
       var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
       FylosAnalytics.formSubmitted({ formId: 'join', fields: names, success: true });
     }
     form.style.display = 'none';
-    document.getElementById('donePanel').classList.add('on');
-    window.scrollTo({top:0, behavior:'smooth'});
+    showDone();
   });
 </script>
 </body>

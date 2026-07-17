@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Something went wrong · Fylos</title>
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#FBF7F2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,9 +15,15 @@
   body{background:#FBF7F2; color:#2B2320; font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;
     background-image:radial-gradient(1100px 520px at 80% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
                      radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
+  /* Phones only: sideways-overflow guard (parity with the legal pages) and
+     no smooth scrolling where the burger menu's scroll-restore would animate */
+  @media (max-width:720px){
+    body{overflow-x:clip}
+    html{scroll-behavior:auto}
+  }
 </style>
 <link rel="stylesheet" href="/shell/shell.css">
-<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}@media (max-width:380px){.fy-nav a{padding:7px 9px;font-size:12.5px}.fy-header{position:static}}</style></noscript>
 <script defer src="/shell/shell.js"></script>
 </head>
 <body>

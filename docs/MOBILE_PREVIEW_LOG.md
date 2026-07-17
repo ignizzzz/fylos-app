@@ -49,3 +49,37 @@ linked to project `fylos-preview`.
 - **Remaining issues:** frame preload strategy (Round 5); inner pages
   (Rounds 3-4); the desktop-only scrollhint/gatewait graze at short desktop
   windows is pre-existing approved behavior, left untouched.
+
+## Round 3 · Homepage globals · 2026-07-17
+
+- **Commit:** `d3762d6` on `fylos-dev`
+- **Deployment target:** `fylos-preview` · **URL:** https://fylos-preview.vercel.app (verified live)
+- **Routes changed:** `/` only (landscape card safeguard, tablet reception panel)
+- **Widths checked:** full film scroll-through at 390x844 (all dwells, dock,
+  film-to-roles handoff), roles/endbar/footer at 320x568, tablet 768x1024
+
+## Round 4 · Inner pages and forms · 2026-07-17
+
+- **Commit:** (this round's commit on `fylos-dev`)
+- **Deployment target:** `fylos-preview` · **URL:** https://fylos-preview.vercel.app
+- **Routes changed:** every shell page. Highlights:
+  - Shell mobile menu is now a **glass canopy** under the header pill (the
+    founder's N4 language; the rejected right-side drawer is gone). Same
+    dialog mechanics (Escape, focus trap, scroll lock), CSS-only on the 18
+    header copies, one visibility-aware focus line in shell.js. The menu now
+    stacks above the consent banner.
+  - `/apply` + `/join`: email format validation with a visible in-place error,
+    confirmation panel scrolls into view on submit, 16px inputs at <=600px
+    (no iOS zoom), autocomplete on email fields, figurines no longer block
+    taps, stacked path cards breathe (gap 72px).
+  - All content pages: hero photo band restored above the glass card on small
+    phones (product/health-book), status rows wrap instead of crushing
+    (features/health-book/book-care), touch targets >=44px, micro-labels >=11px,
+    svh fallbacks on vh heros, lazy loading on below-fold imagery, figurine
+    pop-outs never overlap a sibling CTA (pilot/demo/join), legal pages get
+    tap-friendly mailto rows.
+- **Widths checked:** 390x844 (canopy, product, features, pilot, join, apply
+  form error + success flow), 320 spot checks, desktop 1280 regression pass
+  on /product (approved layout intact)
+- **Remaining issues:** Round 5 (performance, reduced-motion, contrast sweep)
+  and Round 6 final QA.

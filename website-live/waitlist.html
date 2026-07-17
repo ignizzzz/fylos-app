@@ -48,6 +48,7 @@
   .err.on{display:block}
   .done{display:none; margin-top:34px}
   .done.on{display:block; animation:rise .5s ease}
+  .done:focus{outline:none}
   @keyframes rise{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
   .done .badge{width:64px; height:64px; border-radius:50%; background:#E9F0E5; display:grid; place-items:center; margin:0 auto 16px}
   .done .badge svg{width:30px; height:30px; fill:none; stroke:var(--sage-deep); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round}
@@ -59,6 +60,11 @@
   .qlinks a{font:700 13px var(--sans); color:var(--coral-deep); text-decoration:none}
   .qlinks a:hover{text-decoration:underline; text-underline-offset:3px}
   @media (max-width:520px){ form{flex-direction:column} button{width:100%} }
+  @media (max-width:600px){
+    input[type=email]{font-size:16px}
+    .qlinks a{display:inline-flex; align-items:center; min-height:44px; padding:0 4px}
+    .meanwhile b{font-size:11px}
+  }
 </style>
 </head>
 <body>
@@ -123,7 +129,7 @@
   <p class="err" id="wlErr">That did not go through. Try once more, or write to <a href="mailto:hello@fylos.me" style="color:inherit">hello@fylos.me</a> and we will add you ourselves.</p>
   <p class="fine">One email at launch, that is the deal. Your address is used for nothing else, and you can ask us to remove it any time at <a href="mailto:privacy@fylos.me">privacy@fylos.me</a>.</p>
 
-  <div class="done" id="wlDone">
+  <div class="done" id="wlDone" tabindex="-1">
     <div class="badge"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
     <h2>You are on the list.</h2>
     <p>The day the app opens, your invitation lands first. Until then, the neighborhood keeps building.</p>
@@ -219,7 +225,9 @@
       if (window.FylosAnalytics) FylosAnalytics.formSubmitted({ formId: 'waitlist', fields: ['email'], success: true });
       form.style.display = 'none';
       document.querySelector('.fine').style.display = 'none';
-      document.getElementById('wlDone').classList.add('on');
+      var done = document.getElementById('wlDone');
+      done.classList.add('on');
+      done.focus();
     }).catch(function(){
       if (window.FylosAnalytics) FylosAnalytics.formSubmitted({ formId: 'waitlist', fields: ['email'], success: false });
       err.classList.add('on');

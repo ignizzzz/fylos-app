@@ -62,8 +62,14 @@
   .quietlinks a:hover{color:var(--coral-deep)}
 
   @media (max-width:820px){
-    .paths{grid-template-columns:1fr; gap:64px}
-    .hero{min-height:58vh}
+    .paths{grid-template-columns:1fr; gap:80px; margin-top:max(80px,9vh)}
+    .hero{min-height:58vh; min-height:min(58svh,500px)}
+    .pcard .fig img{pointer-events:none}
+    .cta{padding-top:14px; padding-bottom:14px}
+    .alt a,.quietlinks a{display:inline-block; padding:15px 6px; margin:-11px -6px}
+  }
+  @media (max-width:400px){
+    .glass{margin:10px; padding:18px 16px}
   }
 </style>
 </head>
@@ -116,7 +122,7 @@
 <main class="wrap" id="fy-main" tabindex="-1">
 
   <section class="hero">
-    <img src="assets/kvet-hi.jpg" alt="The miniature clinic reception with the retro computer glowing on the desk">
+    <img src="assets/kvet-hi.jpg" fetchpriority="high" alt="The miniature clinic reception with the retro computer glowing on the desk">
     <div class="glass">
       <span class="kicker">Request a demo</span>
       <h1>Twenty quiet minutes, <em>your questions answered.</em></h1>
@@ -126,14 +132,14 @@
 
   <div class="paths">
     <article class="pcard">
-      <div class="fig"><img src="assets/roles/vet.png" alt="The vet figurine"></div>
+      <div class="fig"><img src="assets/roles/vet.png" loading="lazy" decoding="async" alt="The vet figurine"></div>
       <h2>For clinics</h2>
       <p>How bookings arrive prepared, how the health book syncs with the owner's consent, and what the pilot looks like for your practice.</p>
       <a class="cta" href="/apply?type=demo&amp;from=demo">Request a clinic demo</a>
       <span class="alt">or email <a href="mailto:vets@fylos.me">vets@fylos.me</a></span>
     </article>
     <article class="pcard">
-      <div class="fig"><img src="assets/roles/groomer.png" alt="The groomer figurine"></div>
+      <div class="fig"><img src="assets/roles/groomer.png" loading="lazy" decoding="async" alt="The groomer figurine"></div>
       <h2>For pros &amp; shops</h2>
       <p>How booking works for groomers and every other pro, what early access means, and where your craft fits in the neighborhood.</p>
       <a class="cta" href="/join?type=demo&amp;from=demo">Request a pro demo</a>

@@ -104,7 +104,9 @@
     if (burger) burger.setAttribute('aria-expanded', 'true');
     lockScroll();
     menuOpen = true;
-    var target = panel.querySelector('[data-fy-close]') || focusables(panel)[0];
+    // the canopy hides its close button; focusables() filters hidden elements
+    var closeBtn = panel.querySelector('[data-fy-close]');
+    var target = (closeBtn && closeBtn.offsetParent) ? closeBtn : focusables(panel)[0];
     if (target) target.focus();
     doc.addEventListener('keydown', onKeydown, true);
   }

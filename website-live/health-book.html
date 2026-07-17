@@ -90,8 +90,23 @@
   @media (max-width:880px){
     .sec{grid-template-columns:1fr; gap:20px}
     .sec.flip .ph{order:0}
-    .hero{min-height:64vh}
+    .hero{min-height:64vh; min-height:64svh}
     .who{grid-template-columns:1fr}
+  }
+
+  /* phone polish only, desktop rules above stay frozen */
+  @media (max-width:880px){
+    .cta{padding-top:15px; padding-bottom:15px}
+    .ghost{padding-top:14px; padding-bottom:14px}
+    .more{padding:12px 0; margin-top:8px}
+    .fineprint{font-size:11px; color:#7c5a42}
+  }
+  @media (max-width:480px){
+    .hero{min-height:0}
+    .glass{margin-top:min(52vw,220px)}
+    .row{flex-wrap:wrap}
+    .row .end{flex-basis:100%; text-align:left; padding-left:17px; margin-top:2px; font-size:11px}
+    .whopanel .foot{font-size:11px; letter-spacing:.06em; line-height:1.6}
   }
 </style>
 </head>
@@ -157,7 +172,7 @@
   </section>
 
   <section class="sec">
-    <div class="ph"><img src="assets/kvet-hi.jpg" alt="The miniature clinic room with the X ray lightbox and the reception desk"></div>
+    <div class="ph"><img src="assets/kvet-hi.jpg" alt="The miniature clinic room with the X ray lightbox and the reception desk" loading="lazy" decoding="async"></div>
     <div>
       <span class="kicker">What lives inside</span>
       <h2>Every visit, vaccine and note, <em>in one place.</em></h2>
@@ -174,9 +189,9 @@
   <section class="sec flip">
     <div class="whopanel">
       <div class="who">
-        <div class="w"><img src="assets/roles/vet.png" alt="The vet figurine"><b>Your vet</b><span>Full history, vaccines, meds</span></div>
-        <div class="w"><img src="assets/roles/walker.png" alt="The walker figurine"><b>Walker</b><span>Allergies, routine, how to handle him</span></div>
-        <div class="w"><img src="assets/roles/sitter.png" alt="The sitter figurine"><b>Sitter</b><span>Feeding, meds, your vet's contact</span></div>
+        <div class="w"><img src="assets/roles/vet.png" alt="The vet figurine" width="482" height="1067" loading="lazy" decoding="async"><b>Your vet</b><span>Full history, vaccines, meds</span></div>
+        <div class="w"><img src="assets/roles/walker.png" alt="The walker figurine" loading="lazy" decoding="async"><b>Walker</b><span>Allergies, routine, how to handle him</span></div>
+        <div class="w"><img src="assets/roles/sitter.png" alt="The sitter figurine" width="318" height="900" loading="lazy" decoding="async"><b>Sitter</b><span>Feeding, meds, your vet's contact</span></div>
       </div>
       <div class="foot">Private by default · you can change your mind any time</div>
     </div>
@@ -195,8 +210,8 @@
 
   <section class="close">
     <div class="figs">
-      <img src="assets/roles/vet.png" alt="The vet figurine">
-      <img src="assets/roles/pet.png" alt="The golden retriever figurine">
+      <img src="assets/roles/vet.png" alt="The vet figurine" width="482" height="1067" loading="lazy" decoding="async">
+      <img src="assets/roles/pet.png" alt="The golden retriever figurine" loading="lazy" decoding="async">
     </div>
     <h2>Start the book <em>tonight.</em></h2>
     <p>It takes a few minutes: your pet, the basics, the first vaccine. From then on, the book keeps itself.</p>

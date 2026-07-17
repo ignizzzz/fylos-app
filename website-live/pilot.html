@@ -72,8 +72,16 @@
 
   @media (max-width:820px){
     .how{grid-template-columns:1fr}
-    .whojoins{grid-template-columns:1fr; gap:64px}
-    .hero{min-height:62vh}
+    .whojoins{grid-template-columns:1fr; gap:80px; margin-top:max(80px,9vh)}
+    .hero{min-height:62vh; min-height:min(62svh,520px)}
+    .jcard .fig img{pointer-events:none}
+    .jcard .chip{font-size:11px}
+    .cta{padding-top:14px; padding-bottom:14px}
+    .ghost{padding-top:14px; padding-bottom:14px}
+    .honest p a{display:inline-block; padding:10px 2px; margin:-10px -2px}
+  }
+  @media (max-width:400px){
+    .glass{margin:10px; padding:18px 16px}
   }
 </style>
 </head>
@@ -126,7 +134,7 @@
 <main class="wrap" id="fy-main" tabindex="-1">
 
   <section class="hero">
-    <img src="assets/k-lines.jpg" alt="The miniature Fylos town at night, its streets glowing with coral routes">
+    <img src="assets/k-lines.jpg" fetchpriority="high" alt="The miniature Fylos town at night, its streets glowing with coral routes">
     <div class="glass">
       <span class="kicker">The pilot program</span>
       <h1>One neighborhood lights up <em>first.</em></h1>
@@ -158,14 +166,14 @@
 
   <div class="whojoins">
     <article class="jcard">
-      <div class="fig"><img src="assets/roles/vet.png" alt="The vet figurine"></div>
+      <div class="fig"><img src="assets/roles/vet.png" loading="lazy" decoding="async" alt="The vet figurine"></div>
       <h3>Veterinary clinics</h3>
       <span class="chip">First priority</span>
       <p>Fylos for vets is built with the pilot clinics: bookings that arrive prepared and records that sync with the owner's consent.</p>
       <a class="cta" href="/apply?type=pilot&amp;from=pilot">Apply for the pilot</a>
     </article>
     <article class="jcard">
-      <div class="fig"><img src="assets/roles/groomer.png" alt="The groomer figurine"></div>
+      <div class="fig"><img src="assets/roles/groomer.png" loading="lazy" decoding="async" alt="The groomer figurine"></div>
       <h3>Groomers</h3>
       <span class="chip">Next in line</span>
       <p>Grooming goes live right after the vets. Pilot shops shape how booking works and open with their neighborhood to themselves.</p>

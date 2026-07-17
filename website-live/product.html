@@ -88,7 +88,19 @@
   @media (max-width:880px){
     .sec{grid-template-columns:1fr; gap:20px}
     .sec.flip .ph{order:0}
-    .hero{min-height:64vh}
+    .hero{min-height:64vh; min-height:64svh}
+  }
+
+  /* phone-only polish; desktop untouched */
+  @media (max-width:600px){
+    .hero{min-height:auto}
+    .glass{margin-top:clamp(170px,50vw,240px)}
+    .row .end{font-size:11px}
+    .more{padding:14px 0; margin:2px 0 -14px}
+    .quietlinks a{padding:15px 6px; margin:-15px -6px}
+    .cta{padding:15px 24px}
+    .ghost{padding:14px 22px}
+    .figs img{pointer-events:none}
   }
 </style>
 </head>
@@ -141,7 +153,7 @@
 <main class="wrap" id="fy-main" tabindex="-1">
 
   <section class="hero">
-    <img src="assets/square-hi.jpg" alt="The Fylos neighborhood square, a pet parent and a golden retriever by the fountain">
+    <img src="assets/square-hi.jpg" fetchpriority="high" alt="The Fylos neighborhood square, a pet parent and a golden retriever by the fountain">
     <div class="glass">
       <span class="kicker">The product</span>
       <h1>The whole pet neighborhood, <em>in one app.</em></h1>
@@ -154,7 +166,7 @@
   </section>
 
   <section class="sec">
-    <div class="ph"><img src="assets/k-book.jpg" alt="A small clay health book with a paw emblem and a coral bookmark on the clinic desk"></div>
+    <div class="ph"><img src="assets/k-book.jpg" loading="lazy" decoding="async" alt="A small clay health book with a paw emblem and a coral bookmark on the clinic desk"></div>
     <div>
       <span class="kicker">01 · The health book</span>
       <h2>One book, <em>always up to date.</em></h2>
@@ -169,7 +181,7 @@
   </section>
 
   <section class="sec flip">
-    <div class="ph"><img src="assets/kgroom-hi.jpg" alt="The Paws and Whiskers groomer shop, a golden retriever waiting by the window"></div>
+    <div class="ph"><img src="assets/kgroom-hi.jpg" loading="lazy" decoding="async" alt="The Paws and Whiskers groomer shop, a golden retriever waiting by the window"></div>
     <div>
       <span class="kicker">02 · Book care</span>
       <h2>Booked in <em>two taps.</em></h2>
@@ -184,7 +196,7 @@
   </section>
 
   <section class="sec">
-    <div class="ph"><img src="assets/ktagqr-hi.jpg" alt="The engraved Fylos tag with a scannable code on a golden retriever's collar"></div>
+    <div class="ph"><img src="assets/ktagqr-hi.jpg" loading="lazy" decoding="async" alt="The engraved Fylos tag with a scannable code on a golden retriever's collar"></div>
     <div>
       <span class="kicker">03 · The tag</span>
       <h2>One scan, and <em>home.</em></h2>
@@ -199,7 +211,7 @@
   </section>
 
   <section class="sec flip">
-    <div class="ph"><img src="assets/k-walker.jpg" alt="A neighbor walking a golden retriever through the Fylos square"></div>
+    <div class="ph"><img src="assets/k-walker.jpg" loading="lazy" decoding="async" alt="A neighbor walking a golden retriever through the Fylos square"></div>
     <div>
       <span class="kicker">04 · The neighbors</span>
       <h2>People your street <em>already trusts.</em></h2>
@@ -214,8 +226,8 @@
 
   <section class="close">
     <div class="figs">
-      <img src="assets/roles/walker.png" alt="The walker figurine">
-      <img src="assets/roles/pet.png" alt="The golden retriever figurine">
+      <img src="assets/roles/walker.png" loading="lazy" decoding="async" alt="The walker figurine">
+      <img src="assets/roles/pet.png" loading="lazy" decoding="async" alt="The golden retriever figurine">
     </div>
     <h2>Free to start. Nothing to set up <em>but your pet.</em></h2>
     <p>The health book, the bookings, the tag and the neighbors, in one place. The rest of the neighborhood is on its way.</p>

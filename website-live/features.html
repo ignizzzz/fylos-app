@@ -78,6 +78,19 @@
     .ledgers{grid-template-columns:1fr}
     .strip{aspect-ratio:16/9}
   }
+
+  /* phone-only polish; desktop untouched */
+  @media (max-width:600px){
+    .item{flex-wrap:wrap}
+    .item span{flex-basis:100%; order:3; margin-top:2px}
+    .item a{padding:15px 0 15px 12px; margin:-15px 0 -15px auto}
+    .ledger h2{font-size:clamp(19px,6vw,22px)}
+    .lhead{align-items:flex-start}
+    .lhead .d{margin-top:8px}
+    .cta{padding:15px 24px}
+    .ghost{padding:14px 22px}
+    .figs img{pointer-events:none}
+  }
 </style>
 </head>
 <body>
@@ -134,7 +147,7 @@
     <p>Two lists, no fog: what the app does for you today, and what is on its way to the neighborhood. If it is not here, we have not built it.</p>
   </section>
 
-  <div class="strip"><img src="assets/k-lines.jpg" alt="The miniature Fylos town at night with glowing coral routes through the streets"></div>
+  <div class="strip"><img src="assets/k-lines.jpg" loading="lazy" decoding="async" alt="The miniature Fylos town at night with glowing coral routes through the streets"></div>
 
   <div class="ledgers">
     <section class="ledger">
@@ -165,8 +178,8 @@
 
   <section class="close">
     <div class="figs">
-      <img src="assets/roles/trainer.png" alt="The trainer figurine waving">
-      <img src="assets/roles/pet.png" alt="The golden retriever figurine">
+      <img src="assets/roles/trainer.png" loading="lazy" decoding="async" width="412" height="900" alt="The trainer figurine waving">
+      <img src="assets/roles/pet.png" loading="lazy" decoding="async" alt="The golden retriever figurine">
     </div>
     <h2>Start with what is <em>real today.</em></h2>
     <p>The book, the tag and the bookings already make life calmer. The rest arrives door by door.</p>
