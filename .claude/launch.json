@@ -6,11 +6,13 @@
     { "name": "website-combined", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "/Users/iakovosignatiadis/fylos-website-combined", "run", "dev", "--", "--port", "3111", "--strictPort"], "port": 3111, "autoPort": false },
     { "name": "website-lab", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4610", "--directory", "website-lab"], "port": 4610 },
     { "name": "website-live", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4640", "--directory", "website-live"], "port": 4640 },
+    { "name": "website-mobile", "runtimeExecutable": "node", "runtimeArgs": ["/private/tmp/claude-501/-Users-iakovosignatiadis-fylos-mobile-ui-viewer/0d76a636-4f30-4eb7-bef9-7a821c1634d3/scratchpad/serve.mjs"], "port": 4670 },
     { "name": "postfilm-preview", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4660", "--directory", "/private/tmp/claude-501/-Users-iakovosignatiadis-fylos-mobile-ui-viewer/c1e52720-580a-40de-b705-93bff46fda5a/scratchpad"], "port": 4660 },
     { "name": "analytics-demo", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4650", "--directory", "analytics"], "port": 4650 },
     { "name": "resources-site", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "/Users/iakovosignatiadis/fylos-mobile-ui-viewer/resources-site", "run", "dev"], "port": 4655, "autoPort": false },
     { "name": "cover-lab", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4620", "--directory", "/private/tmp/claude-501/-Users-iakovosignatiadis-fylos-mobile-ui-viewer/7c195318-3044-4098-9d23-04807892e007/scratchpad/cover-lab"], "port": 4620 },
     { "name": "city-demo", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4630", "--directory", "/private/tmp/claude-501/-Users-iakovosignatiadis-fylos-mobile-ui-viewer/f9c587aa-73cb-409c-9907-72827e51a5fa/scratchpad/city-demo"], "port": 4630 },
-    { "name": "fylos-admin", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "3140", "--strictPort"], "port": 3140, "autoPort": false }
+    { "name": "fylos-admin", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev", "--", "--port", "3140", "--strictPort"], "port": 3140, "autoPort": false },
+    { "name": "mvp-audit", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "/Users/iakovosignatiadis/fylos-mobile-ui-viewer/.claude/worktrees/codex-app-mvp-gap-audit", "run", "dev", "--", "--port", "3460", "--strictPort"], "port": 3460, "autoPort": false }
   ]
 }
