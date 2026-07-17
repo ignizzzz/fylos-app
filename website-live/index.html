@@ -1024,6 +1024,24 @@
     .recpanel{width:220px; transform:translateX(-58%) translateY(8px)}
     #ovl-vet[data-stage="2"] .recpanel{transform:translateX(-58%) translateY(0)}
   }
+  /* reduced motion: the story stays (scroll-driven, user-paced), the
+     self-playing embellishments and entrance slides go quiet */
+  @media (prefers-reduced-motion: reduce){
+    .ring .sweep, .ring .pulse, .clinicpin, .sosdot, .pinripple,
+    .scrollhint::after, .chip .d::after{animation:none !important}
+    .rev{opacity:1 !important; transform:none !important; transition:none !important}
+    .ovl, .ovl .card, .ovl .row, .pin, .titleblock, .gate, .hero,
+    .gatebar, .gatewait, .canopy, .wlm-card{transition-duration:.01s !important}
+  }
+  /* keyboard focus is visible everywhere on the film */
+  .nav a:focus-visible, .canopy a:focus-visible, .navburger:focus-visible,
+  .gatebar .go:focus-visible, .gatebar .skip:focus-visible, .gatebar input:focus-visible,
+  .gatewait button:focus-visible, .gatewait input:focus-visible,
+  .ovl .cta:focus-visible, .rolecta:focus-visible, .badge:focus-visible,
+  .endlinks .col a:focus-visible, #finPill:focus-visible,
+  .wlm-x:focus-visible, .wlm-form button:focus-visible{
+    outline:2px solid var(--coral); outline-offset:2px; border-radius:8px;
+  }
 </style>
 </head>
 <body class="aud-pet">
@@ -1427,12 +1445,51 @@
       };
     }
   }
+  /* mobile adaptation (2026-07-17): phones and data-saver connections load the
+     film progressively (current segment + two ahead) instead of all 703 frames
+     up front. Desktop and the review hashes keep the original eager load.
+     drawFrame() already tolerates missing frames (nearest-frame fallback), so
+     a fast skip ahead degrades gracefully while the segment streams in. */
+  const segLoaded = SEGS.map((s, i) => i === 0);
+  function ensureSeg(i){
+    if (i < 1 || i >= SEGS.length || segLoaded[i]) return;
+    segLoaded[i] = true;
+    loadSeg(i);
+  }
+  function currentSegAt(px){
+    let acc = HOLD0;
+    for (let i = 0; i < SEGS.length; i++){
+      acc += SEGS[i].n * SEGS[i].ppf + (SEGS[i].dwell || 0);
+      if (px < acc) return i;
+    }
+    return SEGS.length - 1;
+  }
+  function scheduleSegLoads(){
+    const conn = navigator.connection || {};
+    const review = /[#&](f|ovl|dock|hero)=/.test(location.hash);
+    const lite = !review && (window.innerWidth <= 820 || conn.saveData === true ||
+                 /(^|-)2g/.test(conn.effectiveType || ''));
+    if (!lite){
+      for (let i = 1; i < SEGS.length; i++) ensureSeg(i);
+      return;
+    }
+    ensureSeg(1); ensureSeg(2);
+    const feed = () => {
+      const rect = film.getBoundingClientRect();
+      const px = Math.max(0, Math.min(TRACK, -rect.top));
+      const cur = currentSegAt(px);
+      ensureSeg(cur); ensureSeg(cur + 1); ensureSeg(cur + 2);
+      if (segLoaded.every(Boolean)) window.removeEventListener('scroll', feed);
+    };
+    window.addEventListener('scroll', feed, {passive:true});
+    feed();
+  }
   loadSeg(0, () => {
     loadedDive++;
     loadbar.style.width = (loadedDive / SEGS[0].n * 100) + '%';
     if (loadedDive === SEGS[0].n){
       loader.classList.add('done');
-      for (let i = 1; i < SEGS.length; i++) loadSeg(i);
+      scheduleSegLoads();
     }
   });
 

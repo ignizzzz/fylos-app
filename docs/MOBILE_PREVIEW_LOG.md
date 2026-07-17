@@ -83,3 +83,18 @@ linked to project `fylos-preview`.
   on /product (approved layout intact)
 - **Remaining issues:** Round 5 (performance, reduced-motion, contrast sweep)
   and Round 6 final QA.
+
+## Round 5 · Performance and accessibility · 2026-07-17
+
+- **Commit:** (this round's commit on `fylos-dev`)
+- **Deployment target:** `fylos-preview` · **URL:** https://fylos-preview.vercel.app
+- **Routes changed:** `/` (progressive frame loading on phones, reduced-motion,
+  focus-visible); page media attributes shipped in Round 4
+- **What changed:** phones/Save-Data stream the film (intro + 2 segments
+  ahead, ~69MB instead of ~161MB up front, later scenes only if reached);
+  desktop + review hashes keep the eager load. Reduced-motion quiets the
+  self-playing ornaments; every film control has a visible keyboard focus.
+  Full numbers in [MOBILE_PERFORMANCE_REPORT.md](MOBILE_PERFORMANCE_REPORT.md).
+- **Verified:** network waterfall at 390px (only 3 segments up front; groomer
+  scroll pulls t4/s4/t5; t7b stays cold) and at 1280px (everything eager).
+- **Remaining issues:** Round 6 final QA.

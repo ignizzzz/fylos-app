@@ -97,3 +97,22 @@ mobile mandate; the engine block is untouched:
 
 Frame preloading is deliberately NOT touched in this round (engine); the
 mobile preload strategy is Round 5's scope.
+
+## Round 5 addendum (2026-07-17)
+
+Two more founder-mandate changes to the protected file, both documented in
+[MOBILE_PERFORMANCE_REPORT.md](MOBILE_PERFORMANCE_REPORT.md):
+
+6. **Progressive frame loading on phones** — the eager "load all 703 frames
+   after the intro" loop is now wrapped by `scheduleSegLoads()`: on ≤820px
+   viewports, `Save-Data`, or 2G it loads the current segment + two ahead and
+   feeds the rest as the visitor scrolls (a self-removing passive listener).
+   Desktop and the review hashes take the ORIGINAL eager path (the very same
+   `loadSeg` loop). `loadSeg`, `drawFrame` and the rest of the engine are
+   untouched; the nearest-frame fallback that ships in `drawFrame` is what
+   makes streaming safe.
+7. **Reduced motion + visible focus (CSS only)** — a
+   `prefers-reduced-motion: reduce` block stops the self-playing ornaments
+   (ring sweep/pulse, pin ripple, SOS dot, hint drip) and collapses entrance
+   transitions; a `:focus-visible` block gives every interactive film element
+   the coral keyboard ring. Appended to the mobile CSS block.
