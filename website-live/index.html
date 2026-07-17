@@ -910,6 +910,109 @@
   .rolesmore a{color:var(--coral); font-weight:700; text-decoration:none}
   /* minimal note row inside the groomer join stage */
   .ovl .morepros{margin-top:10px; font-size:11px; line-height:1.5; color:var(--ink-soft); text-align:center}
+
+  /* ══ MOBILE ADAPTATION (founder-directed, 2026-07-17) ══
+     Everything below is phone-scoped. The engine (SEGS, resolve, drawFrame,
+     tick) is untouched; these rules restyle the founder-editable overlay layer
+     for portrait screens. See docs/MOBILE_STORYTELLING_DECISIONS.md. */
+
+  /* the sticky stage follows the REAL visible viewport on mobile browsers */
+  #film .sticky{height:100vh; height:100dvh}
+
+  @media (max-width:999px){
+    /* portrait finale: the phone shrinks so the copy block never touches it
+       (21.8vh = 46vh of height * 9/19 aspect); pairs with the same clamp in
+       setFinale). Safe-area keeps the CTA above the home indicator. */
+    #finPhone{width:min(300px, 74vw, 21.8vh)}
+    #finCopy{bottom:calc(16px + env(safe-area-inset-bottom, 0px))}
+    #finCopy .finrow{gap:10px; margin-top:14px}
+  }
+
+  @media (max-width:600px){
+    /* ── dwell cards: fluid width, one message per screen ── */
+    .ovl .card{
+      max-width:min(430px, calc(100vw - 20px)) !important;
+      padding:18px 20px; border-radius:22px;
+    }
+    .ovl h3{font-size:23px}
+    .ovl p{font-size:13px}
+    .ovl .rows{margin-top:10px; gap:6px}
+    .ovl .row{padding:8px 11px}
+    .ovl .row .rt i{font-size:10px}
+    .ovl .cta{margin-top:11px; padding:13px 16px}
+    /* vet stage 1: the two consent columns stack; the toggle list becomes a
+       compact two-column grid so the card stays under ~62vh */
+    #ovl-vet[data-stage="1"] #vetcard{max-width:calc(100vw - 20px) !important}
+    .consent{grid-template-columns:1fr; gap:8px}
+    .consent ul{display:grid; grid-template-columns:1fr 1fr; gap:7px 12px}
+    .consent li{font-size:11.5px}
+    /* bigger thumb targets for the toggles */
+    .consent .tgl{width:34px; height:20px}
+    .consent .tgl::after{top:2.5px; left:3px; width:15px; height:15px}
+    .consent .tgl.on::after{left:16px}
+    /* vet stage 2: full-width card; the desk monitor is outside the portrait
+       crop, so the reception panel (pinned to it) hides on phones */
+    #ovl-vet[data-stage="2"] #vetcard{width:calc(100vw - 20px) !important}
+    #ovl-vet .recpanel{display:none}
+    /* the two sides of the leash stack, the thread turns vertical */
+    .shared{grid-template-columns:1fr; gap:4px; justify-items:center}
+    .shared .side{width:100%}
+    .shared .thread svg{transform:rotate(90deg); height:34px; width:34px}
+    /* groomer slots: comfortable touch targets */
+    .slot{padding:10px 14px}
+    .bookbtn{padding:13px}
+
+    /* ── intro: title, gate, waitlist line, hint stack bottom-up ── */
+    .titleblock .kicker{font-size:10px; letter-spacing:.14em; padding:0 16px}
+    .titleblock h1{font-size:clamp(34px, 10.5vw, 44px); padding:0 12px}
+    .gate-q{font-size:clamp(30px, 9.6vw, 40px); padding:0 14px}
+    .titleblock .sub{font-size:16px; padding:0 26px; margin-top:14px}
+    .firstline{font-size:11px; letter-spacing:.12em; padding:10px 18px; margin-top:16px}
+    .gatebar{
+      bottom:calc(96px + env(safe-area-inset-bottom, 0px));
+      width:calc(100vw - 28px); padding:10px; gap:2px 8px;
+    }
+    .gatebar .paw{display:none}
+    .gatebar input{font-size:16px; padding:11px}
+    .gatebar .skip{flex:1; padding:0 8px}
+    .gatebar .go{flex:1; padding:14px 10px}
+    .gatewait{
+      bottom:calc(48px + env(safe-area-inset-bottom, 0px));
+      width:calc(100vw - 40px); padding:4px 4px 4px 16px;
+    }
+    .gatewait input{font-size:16px}
+    .gatewait button{padding:11px 15px}
+    .scrollhint{bottom:calc(10px + env(safe-area-inset-bottom, 0px)); font-size:10px}
+    .scrollhint::after{display:none}
+    #ballbar{bottom:calc(12px + env(safe-area-inset-bottom, 0px)); width:52vw}
+
+    /* ── nav pill: mark + CTA + burger only; canopy denser glass ── */
+    .nav{max-width:calc(100vw - 16px); padding:6px 7px 6px 14px}
+    .nav a[href="#partners"]{display:none}
+    .nav a.cta{padding:8px 12px; white-space:nowrap}
+    .canopy{
+      width:min(560px, calc(100vw - 20px)); padding:12px 18px 16px; gap:2px 18px;
+      background:color-mix(in srgb, var(--cream) 94%, transparent);
+    }
+    .canopy a{padding:9px 0}
+
+    /* ── waitlist modal: no iOS zoom, tighter card ── */
+    .wlm-card{padding:28px 22px 22px}
+    .wlm-form input{font-size:16px}
+    .wlm-form button{padding:13px 20px}
+
+    /* the finale badges compress so pill + badges breathe at 320-390 */
+    #finTag{font-size:18px}
+    #finBadges .badge{padding:9px 16px}
+    #finBadges .badge b{font-size:14px}
+  }
+  @media (max-width:360px){
+    .nav .mark{font-size:12px; letter-spacing:.1em; margin-right:2px}
+    .nav a.cta{font-size:11px; padding:7px 10px}
+    .canopy{grid-template-columns:1fr; gap:0}
+    .canopy b{margin-top:10px}
+    .scrollhint{font-size:9px; letter-spacing:.13em; white-space:nowrap}
+  }
 </style>
 </head>
 <body class="aud-pet">
@@ -1403,7 +1506,10 @@
       const gc = document.querySelector('#ovl-glass .card').getBoundingClientRect();
       const st2 = stickyEl.getBoundingClientRect();
       const x1 = gc.right - st2.left, y1 = gc.top - st2.top + gc.height * 0.55;
-      const cx = (x1 + x2) / 2, cy = Math.max(y1, y2) + 84;
+      /* mobile adaptation: deeper sag on phones so the arc passes under the
+         glass shards in the tighter portrait crop */
+      const sag = stickyEl.clientWidth <= 600 ? 128 : 84;
+      const cx = (x1 + x2) / 2, cy = Math.max(y1, y2) + sag;
       lp.querySelector('path').setAttribute('d', 'M' + x1 + ' ' + y1 + ' Q' + cx + ' ' + cy + ' ' + x2 + ' ' + y2);
       lp.style.left = '0'; lp.style.top = '0';
       lp.setAttribute('width', stickyEl.clientWidth); lp.setAttribute('height', stickyEl.clientHeight);
@@ -1495,7 +1601,11 @@
     const side = Math.min(W, H);
     const scale0 = Math.max(W, H) / side * 1.02;
     const wide = W >= 1000;
-    const phoneW = Math.min(300, W * .74), phoneH = phoneW * 19 / 9;
+    /* mobile adaptation: on portrait the phone also bows to the height
+       (21.8vh = 46vh * 9/19) so the copy block below never touches it;
+       mirrors the #finPhone width clamp in the mobile CSS */
+    const phoneW = wide ? Math.min(300, W * .74) : Math.min(300, W * .74, H * .218);
+    const phoneH = phoneW * 19 / 9;
     /* A4 (founder pick): the town lands full-bleed on the phone screen,
        wherever the phone sits (right side on wide screens, tilted 4deg) */
     const iconSize = phoneH - 20, iconScale = iconSize / side;
@@ -1639,7 +1749,9 @@
   gateForm.addEventListener('submit', e => { e.preventDefault(); finishGate(gateName.value); });
   gateSkip.addEventListener('click', () => finishGate(''));
   try{ const saved = localStorage.getItem('fylos_pet_name'); if (saved) gateName.value = saved; }catch(e){}
-  window.addEventListener('scroll', () => { if (!gateDone && window.scrollY > HOLD0 * .5) finishGate(gateName.value); }, {passive:true});
+  /* mobile adaptation: the iOS keyboard can scroll the page while typing in
+     the gate; never auto-finish the gate while the name field has focus */
+  window.addEventListener('scroll', () => { if (!gateDone && window.scrollY > HOLD0 * .5 && document.activeElement !== gateName) finishGate(gateName.value); }, {passive:true});
   const mh = location.hash.match(/hero=([\w%.-]+)/);
   if (mh){ finishGate(decodeURIComponent(mh[1])); }
 
@@ -1789,6 +1901,11 @@
   /* the optional line under the name gate: email + the pet's name, together */
   var gw = document.getElementById('gateWait');
   if (gw){
+    /* mobile adaptation: the long placeholder clips inside the narrow pill */
+    if (window.matchMedia && matchMedia('(max-width:600px)').matches){
+      var gwi = document.getElementById('gwEmail');
+      if (gwi) gwi.placeholder = 'you@example.com';
+    }
     gw.addEventListener('submit', function(e){
       e.preventDefault();
       var input = document.getElementById('gwEmail');
