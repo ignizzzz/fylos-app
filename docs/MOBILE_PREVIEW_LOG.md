@@ -98,3 +98,16 @@ linked to project `fylos-preview`.
 - **Verified:** network waterfall at 390px (only 3 segments up front; groomer
   scroll pulls t4/s4/t5; t7b stays cold) and at 1280px (everything eager).
 - **Remaining issues:** Round 6 final QA.
+
+## Round 6 · Final launch review · 2026-07-17
+
+- **Commit:** the final commit on `fylos-dev` (see git log)
+- **Deployment target:** `fylos-preview` · **URL:** https://fylos-preview.vercel.app
+- **Routes reviewed:** all 24 (see MOBILE_FINAL_REPORT.md)
+- **Widths:** overflow sweep at 320 + 430 across all 20 shell/content routes
+  (zero overflow), 390 visual passes, desktop 1280/1440 regression states
+- **Caught in QA:** round-4 `width/height` attributes distorted figurines and
+  overflowed `/health-book`; removed, sweep re-run clean
+- **Checks:** shell check ✓, dash grep ✓ (only the pre-existing allowed one),
+  main `npm run build` ✓ (known advisories only)
+- **Full wrap-up:** [MOBILE_FINAL_REPORT.md](MOBILE_FINAL_REPORT.md)
