@@ -32,3 +32,20 @@ linked to project `fylos-preview`.
   + visual verification of the film blockers), breakpoint system in
   [MOBILE_BREAKPOINTS.md](MOBILE_BREAKPOINTS.md)
 - **Remaining issues:** everything in the audit; fixes begin Round 2 (film).
+
+## Round 2 · The film on phones · 2026-07-17
+
+- **Commit:** `3f77e73` on `fylos-dev`
+- **Deployment target:** `fylos-preview`
+- **Preview URL:** https://fylos-preview.vercel.app (verified live: the mobile
+  CSS block and `100dvh` are in the served homepage)
+- **Deployed:** 2026-07-17
+- **Routes changed:** `/` (the film) only
+- **Widths checked:** 390x844 (intro, tag:50, vet:20/55/90, groomer:20/55/90,
+  glass:30, night:50, dock:95, nav + canopy, waitlist modal), 320x568 (intro,
+  vet:55, nav), desktop regression at 1440x900 (intro, vet:90, dock:95 —
+  pixel-identical)
+- **What changed:** see [MOBILE_STORYTELLING_DECISIONS.md](MOBILE_STORYTELLING_DECISIONS.md)
+- **Remaining issues:** frame preload strategy (Round 5); inner pages
+  (Rounds 3-4); the desktop-only scrollhint/gatewait graze at short desktop
+  windows is pre-existing approved behavior, left untouched.
