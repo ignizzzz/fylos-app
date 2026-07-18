@@ -4,10 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fylos · Privacy</title>
-<meta name="description" content="How this website and the early access forms handle your data. Plain language, Swiss data protection, nothing nonessential without consent.">
+<meta name="description" content="What FYLOS collects, why we collect it, and how we protect it. Simple, honest, and straightforward.">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#FBF7F2">
-<link rel="canonical" href="https://fylos-neighborhood.vercel.app/privacy">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://fylos.me/privacy">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
@@ -29,8 +30,15 @@
   h2{font-family:var(--serif); font-weight:600; font-size:20px; margin-top:34px}
   p{margin-top:10px; font-size:14px; line-height:1.7; color:var(--ink-soft)}
   p b{color:var(--ink)}
+  ul{margin-top:10px; padding-left:20px}
+  li{font-size:14px; line-height:1.7; color:var(--ink-soft); margin-top:6px}
+  li b{color:var(--ink)}
   a{color:var(--coral-deep); font-weight:700; text-decoration:none}
   a:hover{text-decoration:underline; text-underline-offset:3px}
+  table{width:100%; border-collapse:collapse; margin-top:14px; font-size:13px}
+  th{text-align:left; font-weight:700; color:var(--ink); padding:8px 10px; border-bottom:2px solid var(--line)}
+  td{padding:8px 10px; border-bottom:1px solid var(--line); color:var(--ink-soft); line-height:1.5}
+  td code{font-family:ui-monospace,monospace; font-size:12px; color:var(--ink)}
   .note{margin-top:34px; background:var(--peach); border-radius:18px; padding:16px 20px; font-size:12.5px; line-height:1.6; color:#7c5a42}
 </style>
 </head>
@@ -83,23 +91,61 @@
 <main class="wrap" id="fy-main" tabindex="-1">
 
   <span class="kicker">The fine print</span>
-  <h1>Privacy, <em>plainly.</em></h1>
-  <p class="updated">Last updated July 16, 2026</p>
+  <h1>Privacy &amp; <em>Cookies</em></h1>
+  <p class="updated">Last updated: December 22, 2025</p>
 
-  <h2>Who we are</h2>
-  <p><b>Fylos AG</b>, Zürich, Switzerland, runs this website and the Fylos app. For anything about your data, write to <a href="mailto:privacy@fylos.me">privacy@fylos.me</a> and a person will reply.</p>
+  <p>At FYLOS, we believe in radical transparency. This page explains exactly what data we collect, why we collect it, and how we protect it. Simple, honest, and straightforward.</p>
 
-  <h2>What this website collects</h2>
-  <p><b>Nothing nonessential without your consent.</b> Analytics and marketing cookies stay off until you accept them in the cookie banner, and you can change your mind any time from the Cookie preferences link in the footer. The site works fully if you decline.</p>
-  <p>Our analytics are built so that no name, email, message, or pet health detail is ever sent with an event, even after consent.</p>
+  <h2>What we collect</h2>
+  <p><b>Your email address.</b> We collect your email address when you join our waitlist. Partner application forms may also collect the business and contact details you submit.</p>
 
-  <h2>What the application forms collect</h2>
-  <p>If you apply for early access, we receive what you type: your name, contact details, and what you tell us about your clinic or work. We use it only to assess and reply to your application, we never sell it, and if we are not a fit we delete applications within twelve months.</p>
+  <h2>Why we collect it</h2>
+  <ul>
+    <li><b>To notify you when we launch.</b> We'll send you one email when FYLOS is ready. That's the entire purpose of the waitlist.</li>
+    <li><b>To review partner requests.</b> If you apply as a FYLOS Pro partner, we use the submitted business details to review and follow up on your application.</li>
+    <li><b>To protect against spam.</b> We use Google reCAPTCHA to help ensure real people submit our public forms, not bots.</li>
+  </ul>
+
+  <h2>What we don't do</h2>
+  <ul>
+    <li><b>No selling.</b> We will never sell your personal information.</li>
+    <li><b>No marketing sharing.</b> We don't share your email with third parties for marketing.</li>
+    <li><b>No spam.</b> You'll only hear from us when there is a relevant FYLOS update or partner follow-up.</li>
+  </ul>
+
+  <h2>How we protect your data</h2>
+  <ul>
+    <li><b>Encrypted storage.</b> Your data is stored in secure systems with industry-standard security practices.</li>
+    <li><b>Access control.</b> Only authorized team members can access submitted data.</li>
+    <li><b>HTTPS.</b> Data transmission is encrypted using HTTPS/TLS protocols.</li>
+  </ul>
+
+  <h2>Cookies we use</h2>
+  <table>
+    <thead><tr><th>Cookie</th><th>Purpose</th><th>Required?</th></tr></thead>
+    <tbody>
+      <tr><td><code>_GRECAPTCHA</code></td><td>Google reCAPTCHA for spam protection</td><td>Optional</td></tr>
+      <tr><td><code>ai_user</code> / <code>ai_session</code></td><td>Microsoft Application Insights diagnostics and page view telemetry</td><td>Optional</td></tr>
+      <tr><td><code>fylos-cookie-consent</code></td><td>Stores your cookie preference in localStorage</td><td>Required</td></tr>
+    </tbody>
+  </table>
+  <p>Note: this page is for the public FYLOS website only. The full FYLOS app may use additional cookies for authentication and functionality.</p>
+
+  <h2>Third-party services</h2>
+  <p><b>Google reCAPTCHA.</b> We use Google reCAPTCHA v3 to protect our waitlist and public forms from spam and abuse. When reCAPTCHA runs, technical interaction data may be processed by Google on our behalf to help determine whether a request is likely to be from a real person. reCAPTCHA is used only for abuse prevention and form security.</p>
+  <p><b>Microsoft Application Insights.</b> We use Microsoft Application Insights to understand whether the website and app are working correctly, measure page views, diagnose errors, and improve reliability. This may process technical data such as browser type, approximate region, request timing, page URL, and error details. We use this telemetry for diagnostics and service reliability, not for advertising.</p>
 
   <h2>Your rights</h2>
-  <p>Under Swiss data protection law you can ask to see, correct, or delete your details at any time at <a href="mailto:privacy@fylos.me">privacy@fylos.me</a>.</p>
+  <p>You have the right to:</p>
+  <ul>
+    <li><b>Access</b> your data.</li>
+    <li><b>Delete</b> your data.</li>
+    <li><b>Object</b> to optional telemetry processing by choosing necessary-only cookies.</li>
+  </ul>
+  <p>To exercise any of these rights, email us at <a href="mailto:privacy@fylos.me">privacy@fylos.me</a>.</p>
 
-  <div class="note">This page is the plain language summary for the website and the early access period. The full privacy policy for the Fylos app ships with the app's public launch.</div>
+  <h2>Questions?</h2>
+  <p>If you have any questions about this Privacy Policy or how we handle your data, we're here to help. Write to <a href="mailto:privacy@fylos.me">privacy@fylos.me</a> and a person will reply. Our <a href="/terms">Terms of Service</a> explain the rules for using FYLOS.</p>
 
 </main>
 
@@ -130,7 +176,7 @@
       </div>
     </div>
   </div>
-  <div class="fy-footer__legal">© 2026 Fylos AG · Zürich, Switzerland <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
+  <div class="fy-footer__legal">© 2026 Fylos <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
 </footer>
 
 </body>
