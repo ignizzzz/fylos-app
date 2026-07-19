@@ -103,7 +103,7 @@
   .gatebar{
     position:absolute; bottom:14.5vh; left:50%; transform:translateX(-50%);
     z-index:6; display:flex; align-items:center;
-    width:min(760px, 90vw);
+    width:min(830px, 92vw);
     background:color-mix(in srgb, #fff 90%, transparent);
     backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
     border-radius:999px; padding:8px 8px 8px 24px;
@@ -117,12 +117,31 @@
   }
   .gatebar input::placeholder{color:var(--ink-soft); opacity:.75}
   .gatebar .divider{width:1px; height:30px; background:#E4D8CB; flex:none; margin:0 4px}
-  .gatebar .skip{
-    background:none; border:none; cursor:pointer; white-space:nowrap; padding:0 20px;
-    font:600 14px var(--sans); color:var(--ink-soft);
+  /* the quiet exit under the pill (G1: the skip moved out of the bar) */
+  .skipline{
+    position:absolute; bottom:calc(14.5vh - 48px); left:50%; transform:translateX(-50%);
+    z-index:6; transition:opacity .5s ease;
+  }
+  .skipline button{
+    background:color-mix(in srgb, #fff 55%, transparent);
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    border:none; cursor:pointer; border-radius:99px; padding:7px 14px;
+    font:600 13px var(--sans); color:var(--ink);
     text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:1px;
   }
-  .gatebar .skip:hover{color:var(--ink)}
+  .skipline button:hover{color:var(--coral-deep)}
+  .skipline.gone{opacity:0; pointer-events:none}
+  /* the on-the-list confirmation, floats in after the door opens */
+  #gateToast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(8px);
+    z-index:40; font:800 12px var(--sans); color:#5C7150;
+    background:color-mix(in srgb, #fff 92%, transparent);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-radius:99px; padding:11px 18px; box-shadow:0 14px 40px rgba(90,60,40,.16);
+    opacity:0; pointer-events:none; transition:opacity .45s ease, transform .45s ease;
+  }
+  #gateToast.on{opacity:1; transform:translateX(-50%)}
+  #gateToast.err{color:#A04A2A}
   .gatebar .go{
     font:700 15px var(--sans); color:#fff; background:var(--coral); flex:none;
     border:none; border-radius:999px; padding:16px 30px; cursor:pointer; white-space:nowrap;
@@ -131,10 +150,11 @@
   .gatebar .go:hover{transform:translateY(-1px); background:var(--coral-deep)}
   .gatebar.gone{opacity:0; transform:translate(-50%, 16px); pointer-events:none}
   @media (max-width:600px){
-    .gatebar{flex-wrap:wrap; border-radius:28px; padding:10px 12px}
+    .gatebar{flex-wrap:wrap; border-radius:28px; padding:10px 12px; gap:2px}
     .gatebar input{flex:1 1 100%; text-align:center; padding:12px}
+    .gatebar input:last-of-type{border-top:1px solid #F0E6DA}
     .gatebar .divider{display:none}
-    .gatebar .skip{flex:1; text-align:center}
+    .gatebar .go{flex:1 1 100%; padding:14px 10px}
   }
   .hero{opacity:0; transform:translateY(18px) scale(.985); pointer-events:none;
         transition:opacity .7s .15s ease, transform .7s .15s cubic-bezier(.2,.7,.2,1);
@@ -149,6 +169,7 @@
     display:flex; flex-direction:column; align-items:center; gap:9px;
     transition:opacity .5s ease;
   }
+  .scrollhint.held{opacity:0 !important; pointer-events:none}
   .scrollhint::after{
     content:''; width:1.5px; height:28px; border-radius:2px;
     background:linear-gradient(to bottom, var(--coral), transparent);
@@ -872,27 +893,7 @@
   .wlm-done.on{display:block}
   @media (max-width:480px){ .wlm-form{flex-direction:column} .wlm-form button{width:100%} }
   /* the optional waitlist line under the name gate */
-  .gatewait{
-    position:absolute; bottom:calc(14.5vh - 62px); left:50%; transform:translateX(-50%);
-    z-index:6; display:flex; align-items:center; gap:6px;
-    width:min(470px, 86vw);
-    background:color-mix(in srgb, #fff 82%, transparent);
-    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-    border-radius:999px; padding:5px 5px 5px 18px;
-    box-shadow:0 14px 40px rgba(90,60,40,.16);
-    transition:opacity .5s ease, transform .5s ease;
-  }
-  .gatewait.hide{opacity:0; pointer-events:none; transform:translateX(-50%) translateY(8px)}
-  .gatewait input{flex:1; min-width:0; border:0; outline:none; background:transparent;
-    font:500 13px var(--sans); color:var(--ink)}
-  .gatewait input::placeholder{color:#B7A899}
-  .gatewait button{font:800 11.5px var(--sans); color:var(--coral-deep); background:var(--peach);
-    border:0; border-radius:99px; padding:9px 15px; cursor:pointer; white-space:nowrap}
-  .gatewait button:hover{background:#FBDCC8}
-  .gatewait .gwok{display:none; font:800 11.5px var(--sans); color:#5C7150; padding:9px 13px; white-space:nowrap}
-  .gatewait.ok input, .gatewait.ok button{display:none}
-  .gatewait.ok .gwok{display:block}
-  .gatewait.ok{width:auto; padding:5px 10px 5px 18px}
+  /* (G1) the email lives inside the gate pill now; the old second pill is gone */
   /* vet: the dotted leader line is retired (founder call); the monitor ring and
      reception panel carry the stage 2 story on their own */
   #ovl-vet .leader{display:none}
@@ -975,14 +976,9 @@
     }
     .gatebar .paw{display:none}
     .gatebar input{font-size:16px; padding:11px}
-    .gatebar .skip{flex:1; padding:0 8px}
-    .gatebar .go{flex:1; padding:14px 10px}
-    .gatewait{
-      bottom:calc(48px + env(safe-area-inset-bottom, 0px));
-      width:calc(100vw - 40px); padding:4px 4px 4px 16px;
-    }
-    .gatewait input{font-size:16px}
-    .gatewait button{padding:11px 15px}
+    .gatebar .go{flex:1 1 100%; padding:14px 10px}
+    .skipline{bottom:calc(52px + env(safe-area-inset-bottom, 0px))}
+    .skipline button{font-size:12px}
     .scrollhint{bottom:calc(10px + env(safe-area-inset-bottom, 0px)); font-size:10px}
     .scrollhint::after{display:none}
     #ballbar{bottom:calc(12px + env(safe-area-inset-bottom, 0px)); width:52vw}
@@ -1032,12 +1028,11 @@
     .scrollhint::after, .chip .d::after{animation:none !important}
     .rev{opacity:1 !important; transform:none !important; transition:none !important}
     .ovl, .ovl .card, .ovl .row, .pin, .titleblock, .gate, .hero,
-    .gatebar, .gatewait, .canopy, .wlm-card{transition-duration:.01s !important}
+    .gatebar, .skipline, .canopy, .wlm-card{transition-duration:.01s !important}
   }
   /* keyboard focus is visible everywhere on the film */
   .nav a:focus-visible, .canopy a:focus-visible, .navburger:focus-visible,
-  .gatebar .go:focus-visible, .gatebar .skip:focus-visible, .gatebar input:focus-visible,
-  .gatewait button:focus-visible, .gatewait input:focus-visible,
+  .gatebar .go:focus-visible, .skipline button:focus-visible, .gatebar input:focus-visible,
   .ovl .cta:focus-visible, .rolecta:focus-visible, .badge:focus-visible,
   .endlinks .col a:focus-visible, #finPill:focus-visible,
   .wlm-x:focus-visible, .wlm-form button:focus-visible{
@@ -1123,15 +1118,12 @@
       <svg class="paw" viewBox="0 0 24 24" fill="currentColor"><path d="M7.5 11a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM16.5 11a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM12 7.6a2.1 2.1 0 1 0 0-4.2 2.1 2.1 0 0 0 0 4.2ZM12 20.4c-2.8 0-5-1.5-5-3.3 0-1.5 1.5-2.4 2.6-3.3.9-.8 1.4-1.7 2.4-1.7s1.5.9 2.4 1.7c1.1.9 2.6 1.8 2.6 3.3 0 1.8-2.2 3.3-5 3.3Z"/></svg>
       <input id="gateName" type="text" maxlength="18" placeholder="Your pet's name" autocomplete="off">
       <span class="divider"></span>
-      <button class="skip" id="gateSkip" type="button">Just looking around</button>
+      <input id="gateEmail" type="email" placeholder="Your email" autocomplete="email" aria-label="Your email">
       <button class="go" type="submit">Let's stroll</button>
     </form>
-    <form class="gatewait" id="gateWait" novalidate>
-      <input type="email" id="gwEmail" placeholder="Your email, and the door opens for you first" aria-label="Your email">
-      <button type="submit">Join the waitlist</button>
-      <span class="gwok">On the list, see you at the door</span>
-    </form>
-    <div class="scrollhint" id="scrollHint">Scroll to come closer</div>
+    <div class="skipline" id="skipLine"><button id="gateSkip" type="button">Just looking around</button></div>
+    <div id="gateToast" role="status">On the list, see you at the door</div>
+    <div class="scrollhint held" id="scrollHint">Scroll to come closer</div>
 
     <div id="ballbar"><div class="rail"></div><div class="ball" id="ballEl"></div></div>
 
@@ -1799,6 +1791,7 @@
 
   /* ═══ name gate ═══ */
   const gateForm = $('gateForm'), gateName = $('gateName'), gateSkip = $('gateSkip');
+  const gateEmail = $('gateEmail'), skipLine = $('skipLine');
   let gateDone = false;
   const esc = t => t.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function personalize(name){
@@ -1814,13 +1807,21 @@
     if (name) personalize(name);
     introTitle.classList.add('done');
     gateForm.classList.add('gone');
+    if (skipLine) skipLine.classList.add('gone');
+    scrollHint.classList.remove('held');
   }
-  gateForm.addEventListener('submit', e => { e.preventDefault(); finishGate(gateName.value); });
+  /* the email half of the pill is handled by the waitlist script below;
+     if that script ever fails, the gate still opens on the name alone */
+  gateForm.addEventListener('submit', e => {
+    e.preventDefault();
+    if (window.__gateSubmit) window.__gateSubmit(); else finishGate(gateName.value);
+  });
+  window.__finishGate = finishGate;
   gateSkip.addEventListener('click', () => finishGate(''));
   try{ const saved = localStorage.getItem('fylos_pet_name'); if (saved) gateName.value = saved; }catch(e){}
   /* mobile adaptation: the iOS keyboard can scroll the page while typing in
      the gate; never auto-finish the gate while the name field has focus */
-  window.addEventListener('scroll', () => { if (!gateDone && window.scrollY > HOLD0 * .5 && document.activeElement !== gateName) finishGate(gateName.value); }, {passive:true});
+  window.addEventListener('scroll', () => { if (!gateDone && window.scrollY > HOLD0 * .5 && document.activeElement !== gateName && document.activeElement !== gateEmail) finishGate(gateName.value); }, {passive:true});
   const mh = location.hash.match(/hero=([\w%.-]+)/);
   if (mh){ finishGate(decodeURIComponent(mh[1])); }
 
@@ -1967,37 +1968,31 @@
     });
   });
 
-  /* the optional line under the name gate: email + the pet's name, together */
-  var gw = document.getElementById('gateWait');
-  if (gw){
-    /* mobile adaptation: the long placeholder clips inside the narrow pill */
-    if (window.matchMedia && matchMedia('(max-width:600px)').matches){
-      var gwi = document.getElementById('gwEmail');
-      if (gwi) gwi.placeholder = 'you@example.com';
-    }
-    gw.addEventListener('submit', function(e){
-      e.preventDefault();
-      var input = document.getElementById('gwEmail');
-      if (!okEmail(input.value)){ input.focus(); return; }
-      var btn = gw.querySelector('button');
-      btn.disabled = true;
-      var nm = document.getElementById('gateName');
-      var props = nm && nm.value.trim() ? { pet_name: nm.value.trim() } : null;
-      wlSubscribe(input.value.trim(), props).then(function(){
-        gw.classList.add('ok');
-      }).catch(function(){
-        btn.disabled = false; input.focus();
-      });
-    });
-    /* fades away with the intro, like the gate itself */
-    var hideGw = function(){
-      if (window.scrollY > 380) { gw.classList.add('hide'); window.removeEventListener('scroll', hideGw); }
-    };
-    window.addEventListener('scroll', hideGw, { passive: true });
-    var gf = document.getElementById('gateForm'), gs = document.getElementById('gateSkip');
-    if (gf) gf.addEventListener('submit', function(){ gw.classList.add('hide'); });
-    if (gs) gs.addEventListener('click', function(){ gw.classList.add('hide'); });
+  /* the gate pill: the name personalizes the film, the email joins the waitlist.
+     An invalid email holds the door; an empty one just strolls. */
+  var gateToastEl = document.getElementById('gateToast');
+  function gateToast(msg, isErr){
+    if (!gateToastEl) return;
+    gateToastEl.textContent = msg;
+    gateToastEl.classList.toggle('err', !!isErr);
+    gateToastEl.classList.add('on');
+    setTimeout(function(){ gateToastEl.classList.remove('on'); }, 4200);
   }
+  window.__gateSubmit = function(){
+    var nameEl = document.getElementById('gateName');
+    var emailEl = document.getElementById('gateEmail');
+    var em = emailEl ? emailEl.value.trim() : '';
+    if (em && !okEmail(em)){ emailEl.focus(); return; }
+    if (em){
+      var nm = nameEl ? nameEl.value.trim() : '';
+      wlSubscribe(em, nm ? { pet_name: nm } : null).then(function(){
+        gateToast('On the list, see you at the door', false);
+      }).catch(function(){
+        gateToast('That did not send, try the waitlist page', true);
+      });
+    }
+    if (window.__finishGate) window.__finishGate(nameEl ? nameEl.value : '');
+  };
 })();
 </script>
 </body>
