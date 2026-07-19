@@ -8,9 +8,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/shell/shell.css">
+<link rel="stylesheet" href="/shell/shell.css?v=2">
 <noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
-<script defer src="/shell/shell.js"></script>
+<script>window.API_BASE_URL = 'https://app.fylos.me'; window.RECAPTCHA_SITE_KEY = '6LeQ3jIsAAAAAKexf43tim8Y8SSTxBEuj9-4PBgU';</script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LeQ3jIsAAAAAKexf43tim8Y8SSTxBEuj9-4PBgU"></script>
+<script defer src="/shell/shell.js?v=2"></script>
 <style>
   :root{
     --cream:#FBF7F2; --peach:#FFE9DC; --peach-deep:#F5E0D0; --ink:#2B2320; --ink-soft:#6E625B;
@@ -232,8 +234,11 @@
       <label class="check has"><input type="checkbox" name="attestation" required><span>I am authorised to apply for this clinic, and the details here are accurate.<span class="rq">*</span></span></label>
       <label class="check has"><input type="checkbox" name="application_consent" required><span>I understand Fylos for vets is not live yet, this is an application for early access, and Fylos can contact me about it. When it launches, a pet&rsquo;s record will only ever sync with the owner&rsquo;s consent, and going live will need a separate data agreement.<span class="rq">*</span></span></label>
       <label class="check has"><input type="checkbox" name="marketing_optin"><span>Send me Fylos launch news too, even if the timing is not right yet.</span></label>
+      <!-- honeypot: leave empty -->
+      <input type="text" name="company_url" id="applyHoney" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0">
 
-      <button type="submit" class="submit">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
+      <button type="submit" class="submit" id="applyBtn">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
+      <p class="fielderr" id="applyErr" role="alert" style="display:none;margin-top:12px;color:#A83A1A;font-weight:600;font-size:13px">That did not go through. Try once more, or write to hello@fylos.me.</p>
       <div class="next">We read every application ourselves and usually reply within a few days, often sooner.</div>
     </div>
 
@@ -287,12 +292,12 @@
   <div class="fy-footer__legal">© 2026 Fylos <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
 </footer>
 
+<script src="/shell/partner-api.js"></script>
 <script>
   var form = document.getElementById('applyForm');
+  var btn = document.getElementById('applyBtn');
+  var errEl = document.getElementById('applyErr');
 
-  // Analytics: fire form_started once, on first interaction. Guarded so the page
-  // works with or without the analytics bundle. Only field NAMES are ever sent,
-  // never values (the bundle also redacts PII as a second line of defence).
   var started = false;
   form.addEventListener('input', function(){
     if (started) return;
@@ -300,14 +305,18 @@
     if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'veterinary', formName: 'Vet clinic application' });
   });
 
-  function okEmail(v){
-    v = (v || '').trim();
-    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  function val(name){
+    var el = form.querySelector('[name="' + name + '"]');
+    return el ? (el.value || '').trim() : '';
+  }
+  function checked(name){
+    var el = form.querySelector('[name="' + name + '"]');
+    return !!(el && el.checked);
   }
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    // basic required-field check with a gentle scroll to the first empty one
+    errEl.style.display = 'none';
     var missing = null;
     form.querySelectorAll('[required]').forEach(function(el){
       var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
@@ -318,26 +327,68 @@
       missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'});
       return;
     }
-    // the email must at least look like an email; say so in place if not
     var email = form.querySelector('input[type="email"]');
     var ef = email.closest('.field');
     ef.classList.remove('bad');
-    if (!okEmail(email.value)){
+    if (!FylosPartner.okEmail(email.value)){
       ef.classList.add('bad');
       email.focus();
       ef.scrollIntoView({behavior:'smooth', block:'center'});
       return;
     }
-    // Analytics: form_submitted (field names + success only, no values).
-    if (window.FylosAnalytics) {
-      var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
-      FylosAnalytics.formSubmitted({ formId: 'veterinary', fields: names, success: true });
+    // honeypot filled → fake success (bots)
+    if ((document.getElementById('applyHoney').value || '').trim()){
+      form.style.display = 'none';
+      document.getElementById('donePanel').classList.add('on');
+      return;
     }
-    // no backend yet: show the confirmation state, and bring it into view
-    form.style.display = 'none';
-    var done = document.getElementById('donePanel');
-    done.classList.add('on');
-    done.scrollIntoView({behavior:'smooth', block:'center'});
+
+    var extras = [
+      val('city') ? 'city: ' + val('city') : '',
+      val('canton') ? 'canton: ' + val('canton') : '',
+      val('vet_count') ? 'vets: ' + val('vet_count') : '',
+      val('responsible_vet_name') ? 'responsible: ' + val('responsible_vet_name') : '',
+      checked('cantonal_authorization') ? 'cantonal auth: yes' : '',
+      val('contact_role') ? 'role: ' + val('contact_role') : '',
+      val('practice_software') ? 'PMS: ' + val('practice_software') : '',
+      val('practice_software_other') ? 'PMS other: ' + val('practice_software_other') : '',
+      val('practice_volume') ? 'volume: ' + val('practice_volume') : '',
+      val('goals') ? 'goals: ' + val('goals') : '',
+      checked('marketing_optin') ? 'marketing: yes' : ''
+    ];
+    var notes = extras.filter(Boolean);
+
+    btn.disabled = true;
+    var prev = btn.innerHTML;
+    btn.textContent = 'One moment…';
+
+    FylosPartner.submit({
+      contactName: val('contact_name'),
+      businessName: val('clinic_name'),
+      businessEmail: email.value.trim(),
+      businessType: 'Veterinary Clinic',
+      country: val('country'),
+      websiteOrSocialMedia: FylosPartner.packWebsite(val('website'), extras),
+      registrationOrLicenseId: checked('cantonal_authorization') ? 'Cantonal authorisation claimed' : null,
+      fileNames: notes.length ? notes.map(function(n){ return FylosPartner.clip(n, 120); }) : null
+    }).then(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'veterinary', fields: names, success: true });
+      }
+      form.style.display = 'none';
+      var done = document.getElementById('donePanel');
+      done.classList.add('on');
+      done.scrollIntoView({behavior:'smooth', block:'center'});
+    }).catch(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'veterinary', fields: names, success: false });
+      }
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = prev;
+    });
   });
 </script>
 </body>
