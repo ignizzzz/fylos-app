@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://fylos.me/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://fylos.me/product</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://fylos.me/features</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://fylos.me/how-it-works</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://fylos.me/health-book</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fylos.me/book-care</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fylos.me/the-tag</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://fylos.me/partners</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://fylos.me/for-vets</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://fylos.me/pilot</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://fylos.me/demo</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://fylos.me/apply</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://fylos.me/join</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://fylos.me/waitlist</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+</urlset>

@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos for Vets · Apply for early access</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shell/shell.css?v=2">
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
+<script>window.API_BASE_URL = 'https://app.fylos.me'; window.RECAPTCHA_SITE_KEY = '6LeQ3jIsAAAAAKexf43tim8Y8SSTxBEuj9-4PBgU';</script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LeQ3jIsAAAAAKexf43tim8Y8SSTxBEuj9-4PBgU"></script>
+<script defer src="/shell/shell.js?v=2"></script>
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --peach-deep:#F5E0D0; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-2:#EE8A5E; --coral-deep:#CF4A1C; --sage:#7C9271; --line:#ECE0D2; --ic-cream:#FFF3EA;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1100px 520px at 80% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
+                     radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
+
+  .wrap{max-width:820px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 90px}
+
+  /* hero */
+  .hero{display:grid; grid-template-columns:1.35fr .95fr; gap:34px; align-items:center; padding:52px 0 30px}
+  .chip{display:inline-flex; align-items:center; gap:9px; font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral); background:var(--peach); padding:8px 15px; border-radius:99px}
+  .chip .d{width:7px;height:7px;border-radius:50%;background:var(--coral); position:relative}
+  .chip .d::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--coral);opacity:.5;animation:pl 1.9s ease-out infinite}
+  @keyframes pl{0%{transform:scale(.6);opacity:.6}100%{transform:scale(1.55);opacity:0}}
+  .hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(34px,5vw,50px); line-height:1.03; letter-spacing:-.02em; margin:16px 0 0}
+  .hero h1 em{font-style:italic; color:var(--coral)}
+  .hero p{margin-top:15px; font-size:15.5px; line-height:1.62; color:var(--ink-soft); max-width:520px}
+  .heroart{position:relative; border-radius:24px; overflow:hidden; box-shadow:0 26px 60px rgba(90,60,40,.22); aspect-ratio:4/3.2}
+  .heroart img{width:100%; height:100%; object-fit:cover; display:block}
+  .heroart .glass{position:absolute; left:12px; bottom:12px; right:12px; background:color-mix(in srgb,var(--cream) 88%,transparent); backdrop-filter:blur(8px); border-radius:14px; padding:10px 13px; font:700 11.5px var(--sans); color:var(--ink); display:flex; align-items:center; gap:8px}
+  .heroart .glass .gd{width:7px;height:7px;border-radius:50%;background:var(--sage)}
+
+  /* reassurance */
+  .reassure{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:8px 0 34px}
+  .rc{background:#fff; border:1px solid var(--line); border-radius:16px; padding:15px 16px; box-shadow:0 8px 22px rgba(90,60,40,.06)}
+  .rc .ico{width:30px;height:30px;border-radius:9px;background:var(--peach);display:grid;place-items:center;margin-bottom:9px}
+  .rc .ico svg{width:16px;height:16px;fill:none;stroke:var(--coral);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .rc p{font-size:12.5px; line-height:1.5; color:var(--ink-soft)}
+  .rc b{color:var(--ink); font-weight:700}
+
+  /* form sections */
+  form{display:flex; flex-direction:column; gap:20px}
+  .sec{background:#fff; border:1px solid var(--line); border-radius:24px; padding:clamp(20px,3.4vw,30px); box-shadow:0 14px 40px rgba(90,60,40,.07)}
+  .sec-h{display:flex; align-items:baseline; gap:12px; margin-bottom:4px}
+  .sec-n{font:800 12px var(--sans); color:#fff; background:var(--coral); width:26px; height:26px; border-radius:50%; display:grid; place-items:center; flex:none; align-self:center}
+  .sec h2{font-family:var(--serif); font-weight:600; font-size:22px; letter-spacing:-.01em}
+  .sec .note{font-size:13px; color:var(--ink-soft); line-height:1.55; margin:8px 0 18px}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .field{display:flex; flex-direction:column; margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .field label{font:700 13px var(--sans); color:var(--ink); margin-bottom:7px}
+  .field label .rq{color:var(--coral); margin-left:2px}
+  .field label .opt{color:var(--ink-soft); font-weight:500; font-size:11.5px; margin-left:6px}
+  input,select,textarea{width:100%; font:500 15px var(--sans); color:var(--ink); background:#FFFDFB;
+    border:1.5px solid #EADDCE; border-radius:12px; padding:13px 15px; transition:border-color .15s, box-shadow .15s; outline:none}
+  input::placeholder,textarea::placeholder{color:#B7A899}
+  select{appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236E625B' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; cursor:pointer}
+  textarea{resize:vertical; min-height:74px; line-height:1.5}
+  input:focus,select:focus,textarea:focus{border-color:var(--coral); box-shadow:0 0 0 4px rgba(232,93,42,.13)}
+  .help{font-size:12px; color:var(--ink-soft); line-height:1.45; margin-top:6px}
+
+  .info{display:flex; gap:10px; background:var(--peach); border-radius:14px; padding:12px 14px; margin:2px 0 18px}
+  .info svg{width:17px;height:17px;flex:none;fill:none;stroke:var(--coral);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
+  .info p{font-size:12.5px; line-height:1.5; color:#7c5a42}
+
+  /* checkboxes */
+  .check{display:flex; gap:12px; align-items:flex-start; padding:13px 15px; border:1.5px solid #EEE2D4; border-radius:14px; margin-bottom:11px; cursor:pointer; transition:border-color .15s, background .15s}
+  .check:hover{border-color:#E3CFBB}
+  .check input{width:20px; height:20px; margin:0; flex:none; accent-color:var(--coral); cursor:pointer; margin-top:1px}
+  .check span{font-size:13px; line-height:1.5; color:var(--ink)}
+  .check.has input:checked ~ span{color:var(--ink)}
+
+  .fineprint{font-size:11.5px; line-height:1.6; color:var(--ink-soft); background:#F7F1E9; border-radius:14px; padding:14px 16px; margin-bottom:16px}
+  .fineprint a{color:var(--coral); text-decoration:none}
+
+  .submit{display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:var(--coral); color:#fff; font:800 16px var(--sans); border:none; border-radius:15px; padding:18px 24px;
+    cursor:pointer; box-shadow:0 16px 34px rgba(232,93,42,.30); transition:transform .18s, background .18s}
+  .submit:hover{transform:translateY(-2px); background:var(--coral-deep)}
+  .submit svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .next{text-align:center; font-size:12.5px; color:var(--ink-soft); margin-top:13px}
+
+  /* success state */
+  .done{display:none; text-align:center; background:#fff; border:1px solid var(--line); border-radius:26px; padding:48px 34px; box-shadow:0 18px 48px rgba(90,60,40,.09)}
+  .done.on{display:block; animation:rise .5s ease}
+  @keyframes rise{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .done .badge{width:64px;height:64px;border-radius:50%;background:#E9F0E5;display:grid;place-items:center;margin:0 auto 18px}
+  .done .badge svg{width:30px;height:30px;fill:none;stroke:var(--sage);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+  .done h2{font-family:var(--serif); font-weight:600; font-size:28px; letter-spacing:-.01em}
+  .done p{margin-top:11px; color:var(--ink-soft); font-size:14.5px; line-height:1.6; max-width:440px; margin-left:auto; margin-right:auto}
+  .done a.home{display:inline-flex; margin-top:22px; background:var(--peach); color:var(--coral); font-weight:800; font-size:13.5px; padding:13px 22px; border-radius:12px; text-decoration:none}
+
+  /* a visible, polite error state (email format, missing fields) */
+  .field.bad input, .field.bad select{border-color:#C94A1E; box-shadow:0 0 0 4px rgba(201,74,30,.10)}
+  .fielderr{display:none; font:600 12px var(--sans); color:#A83A1A; margin-top:6px}
+  .field.bad .fielderr{display:block}
+
+  @media(max-width:760px){
+    .hero{grid-template-columns:1fr; gap:22px; padding:34px 0 22px}
+    .heroart{aspect-ratio:16/10; order:-1}
+    .reassure{grid-template-columns:1fr; gap:10px; margin-bottom:26px}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(max-width:600px){
+    /* 16px fields so iOS Safari does not zoom into the form */
+    input,select,textarea{font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+<a class="fy-skip" href="#fy-main">Skip to content</a>
+
+<header class="fy-header" data-fy-header>
+  <div class="fy-header__inner">
+    <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+    <nav class="fy-nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/product">Product</a>
+      <a href="/features">Features</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a class="fy-nav__cta" href="/waitlist">Join the waitlist</a>
+    </nav>
+    <button class="fy-burger" type="button" data-fy-burger
+            aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
+      <span class="fy-burger__box"><span class="fy-burger__line"></span></span>
+    </button>
+  </div>
+</header>
+
+<div class="fy-menu" id="fy-menu" data-fy-menu>
+  <div class="fy-menu__backdrop" data-fy-menu-backdrop></div>
+  <nav class="fy-menu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="fy-menu__head">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <button class="fy-menu__close" type="button" data-fy-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="fy-menu__link" href="/">Home</a>
+    <a class="fy-menu__link" href="/product">Product</a>
+    <a class="fy-menu__link" href="/features">Features</a>
+    <a class="fy-menu__link" href="/how-it-works">How it works</a>
+    <a class="fy-menu__link" href="/health-book">Health book</a>
+    <a class="fy-menu__link" href="/book-care">Book care</a>
+    <a class="fy-menu__link" href="/the-tag">The tag</a>
+    <a class="fy-menu__link" href="/apply">For vets</a>
+    <a class="fy-menu__link" href="/join">For pros</a>
+    <a class="fy-menu__link" href="/partners">For partners</a>
+    <a class="fy-menu__cta" href="/waitlist">Join the waitlist</a>
+  </nav>
+</div>
+
+<main class="wrap" id="fy-main" tabindex="-1">
+
+  <section class="hero">
+    <div>
+      <span class="chip"><span class="d"></span>Fylos for vets &middot; Coming soon</span>
+      <h1>Be one of the first <em>clinics on Fylos.</em></h1>
+      <p>We are opening Fylos to a small group of veterinary clinics before anyone else. Tell us a little about your practice and we will be in touch personally. There is nothing to set up today, and no commitment.</p>
+      <p style="margin-top:10px; font-size:13.5px">Run a grooming shop? <a href="/join" style="color:var(--coral); font-weight:700; text-decoration:none">Your early access lives on the pros page.</a></p>
+    </div>
+    <div class="heroart">
+      <img src="assets/kvet-hi.jpg" alt="A Fylos clinic reception">
+      <div class="glass"><span class="gd"></span>Bookings that arrive prepared</div>
+    </div>
+  </section>
+
+  <div class="reassure">
+    <div class="rc"><div class="ico"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><p><b>You choose what syncs.</b> A pet&rsquo;s record only ever moves with the owner&rsquo;s consent, and they can stop it any time.</p></div>
+    <div class="rc"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/></svg></div><p><b>Your details stay yours.</b> We use them only to read and reply to your application. We never sell them.</p></div>
+    <div class="rc"><div class="ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></div><p><b>An application, not a signup.</b> A real person at Fylos reads every one and replies personally.</p></div>
+  </div>
+
+  <form id="applyForm" novalidate>
+
+    <div class="sec">
+      <div class="sec-h"><span class="sec-n">1</span><h2>About your clinic</h2></div>
+      <div class="note">The basics, so we know who we are talking to.</div>
+      <div class="field"><label>Clinic name<span class="rq">*</span></label><input name="clinic_name" required placeholder="Your practice as people know it"></div>
+      <div class="grid2">
+        <div class="field"><label>City or town<span class="rq">*</span></label><input name="city" required><div class="help">We are starting in Zurich and nearby, and we would still love to hear from you wherever you are.</div></div>
+        <div class="field"><label>Country<span class="rq">*</span></label><select name="country" required><option value="" disabled selected>Choose one</option><option>Switzerland</option><option>Germany</option><option>Austria</option><option>Other</option></select><div class="help">This simply tells us which register to look you up in.</div></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Canton<span class="opt">optional</span></label><select name="canton"><option value="" disabled selected>Choose one</option><option>Zürich</option><option>Aargau</option><option>Bern</option><option>Luzern</option><option>St. Gallen</option><option>Zug</option><option>Schwyz</option><option>Thurgau</option><option>Schaffhausen</option><option>Another canton</option><option>Not in Switzerland</option></select><div class="help">Tells us who issued your authorisation and which language you prefer.</div></div>
+        <div class="field"><label>Number of vets<span class="opt">optional</span></label><select name="vet_count"><option value="" disabled selected>Choose one</option><option>Solo</option><option>2 to 4</option><option>5 or more</option></select><div class="help">A rough idea is perfect.</div></div>
+      </div>
+      <div class="field"><label>Website or Instagram<span class="opt">optional</span></label><input name="website" placeholder="yourclinic.ch or @yourclinic"><div class="help">Whatever makes it easiest for us to find you.</div></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="sec-n">2</span><h2>Your responsible vet</h2></div>
+      <div class="note">So we can confirm your clinic is led by a registered vet. We check this ourselves, so there is nothing for you to upload now.</div>
+      <div class="field"><label>Responsible vet&rsquo;s name<span class="rq">*</span></label><input name="responsible_vet_name" required><div class="help">The vet who carries clinical responsibility for the practice. Their name is all we need to confirm their registration.</div></div>
+      <label class="check has"><input type="checkbox" name="cantonal_authorization"><span>This practice holds a cantonal veterinary authorisation (Berufsausübungsbewilligung). Tick if it applies, it helps us confirm faster. Licence numbers and documents only come later, and only if your clinic joins the pilot.</span></label>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="sec-n">3</span><h2>How your clinic works today</h2></div>
+      <div class="note">This helps us make the connection effortless when you join. Skip anything you are unsure about.</div>
+      <div class="info"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg><p>When Fylos for vets goes live, it links to the practice software you already use so a pet&rsquo;s record can sync both ways. On paper today? A simple Fylos web view works from day one.</p></div>
+      <div class="field"><label>Practice management software you use<span class="opt">optional</span></label><select name="practice_software"><option value="" disabled selected>Choose one</option><option>Vetera</option><option>easyVET (VetZ)</option><option>Provet Cloud</option><option>IDEXX Animana</option><option>IDEXX Cornerstone or Neo</option><option>ezyVet</option><option>Digitail</option><option>Covetrus</option><option>Debevet</option><option>Other</option><option>Paper or none</option></select><div class="help">The system you keep records and bookings in, if any. This most shapes how the sync will work, so it is worth a moment.</div></div>
+      <div class="field"><label>If other, which one<span class="opt">optional</span></label><input name="practice_software_other"><div class="help">Only if your system is not in the list above.</div></div>
+      <div class="field"><label>How busy your practice is<span class="opt">optional</span></label><select name="practice_volume"><option value="" disabled selected>Choose one</option><option>A few a day</option><option>Steady</option><option>Busy practice</option></select><div class="help">A ballpark is fine, nothing exact.</div></div>
+      <div class="field"><label>What would make Fylos for vets worth it for you<span class="opt">optional</span></label><textarea name="goals" placeholder="One line is plenty"></textarea><div class="help">It genuinely shapes what we build first. Think vaccinations, visit notes, prescriptions, next visit reminders, or the full history.</div></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><span class="sec-n">4</span><h2>About you</h2></div>
+      <div class="note">Almost done.</div>
+      <div class="grid2">
+        <div class="field"><label>Your name<span class="rq">*</span></label><input name="contact_name" required></div>
+        <div class="field"><label>Your role at the clinic<span class="rq">*</span></label><select name="contact_role" required><option value="" disabled selected>Choose one</option><option>Owner</option><option>Practice manager</option><option>Lead vet</option><option>Vet</option><option>Admin</option><option>Other</option></select></div>
+      </div>
+      <div class="field"><label>Work email<span class="rq">*</span></label><input type="email" name="contact_email" required autocomplete="email" placeholder="you@yourclinic.ch"><div class="fielderr" role="alert">That email does not look complete. A quick check and you are done.</div><div class="help">This is where your invitation will go. A clinic address helps us confirm it is really you, and we send a quick link to check the address works.</div></div>
+
+      <div class="fineprint">Fylos is responsible for the details you send here. We use them only to assess and reply to your application, it is voluntary, and if your clinic is not a fit we delete your application within twelve months. To run this form and reach you we rely on a few trusted providers, some based in other countries, always under proper safeguards, and we never sell your data. You can ask to see, correct, or delete your details any time at <a href="mailto:privacy@fylos.me">privacy@fylos.me</a>, and our privacy policy has the rest.</div>
+
+      <label class="check has"><input type="checkbox" name="attestation" required><span>I am authorised to apply for this clinic, and the details here are accurate.<span class="rq">*</span></span></label>
+      <label class="check has"><input type="checkbox" name="application_consent" required><span>I understand Fylos for vets is not live yet, this is an application for early access, and Fylos can contact me about it. When it launches, a pet&rsquo;s record will only ever sync with the owner&rsquo;s consent, and going live will need a separate data agreement.<span class="rq">*</span></span></label>
+      <label class="check has"><input type="checkbox" name="marketing_optin"><span>Send me Fylos launch news too, even if the timing is not right yet.</span></label>
+      <!-- honeypot: leave empty -->
+      <input type="text" name="company_url" id="applyHoney" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0">
+
+      <button type="submit" class="submit" id="applyBtn">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
+      <p class="fielderr" id="applyErr" role="alert" style="display:none;margin-top:12px;color:#A83A1A;font-weight:600;font-size:13px">That did not go through. Try once more, or write to hello@fylos.me.</p>
+      <div class="next">We read every application ourselves and usually reply within a few days, often sooner.</div>
+    </div>
+
+  </form>
+
+  <div class="done" id="donePanel">
+    <div class="badge"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
+    <h2>Application received.</h2>
+    <p>Thank you. We read every application ourselves and usually reply within a few days, often sooner. Keep an eye on your inbox for a note from the Fylos team.</p>
+    <a class="home" href="/">Back to Fylos</a>
+  </div>
+
+</main>
+
+<footer class="fy-footer">
+  <div class="fy-footer__inner">
+    <div class="fy-footer__brand">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <p class="fy-footer__tag">Your whole pet neighborhood, <em>in your pocket.</em></p>
+    </div>
+    <div class="fy-footer__cols">
+      <nav class="fy-footer__col" aria-label="Product">
+        <b>Product</b>
+        <a href="/product">Overview</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Features">
+        <b>Features</b>
+        <a href="/health-book">Health book</a>
+        <a href="/book-care">Book care</a>
+        <a href="/the-tag">The tag</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Partners">
+        <b>Partners</b>
+        <a href="/apply">Apply for early access</a>
+        <a href="/join">Join as a pro</a>
+        <a href="/partners">For partners</a>
+        <a href="/for-vets">Fylos for vets</a>
+        <a href="/pilot">Pilot program</a>
+        <a href="/demo">Request a demo</a>
+      </nav>
+      <div class="fy-footer__col">
+        <b>Fylos</b>
+        <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
+        <a href="/waitlist">Join the waitlist</a>
+        <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+      </div>
+    </div>
+  </div>
+  <div class="fy-footer__legal">© 2026 Fylos <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
+</footer>
+
+<script src="/shell/partner-api.js"></script>
+<script>
+  var form = document.getElementById('applyForm');
+  var btn = document.getElementById('applyBtn');
+  var errEl = document.getElementById('applyErr');
+
+  var started = false;
+  form.addEventListener('input', function(){
+    if (started) return;
+    started = true;
+    if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'veterinary', formName: 'Vet clinic application' });
+  });
+
+  function val(name){
+    var el = form.querySelector('[name="' + name + '"]');
+    return el ? (el.value || '').trim() : '';
+  }
+  function checked(name){
+    var el = form.querySelector('[name="' + name + '"]');
+    return !!(el && el.checked);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    errEl.style.display = 'none';
+    var missing = null;
+    form.querySelectorAll('[required]').forEach(function(el){
+      var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
+      if (bad && !missing) missing = el;
+    });
+    if (missing){
+      missing.focus();
+      missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    var email = form.querySelector('input[type="email"]');
+    var ef = email.closest('.field');
+    ef.classList.remove('bad');
+    if (!FylosPartner.okEmail(email.value)){
+      ef.classList.add('bad');
+      email.focus();
+      ef.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+    // honeypot filled → fake success (bots)
+    if ((document.getElementById('applyHoney').value || '').trim()){
+      form.style.display = 'none';
+      document.getElementById('donePanel').classList.add('on');
+      return;
+    }
+
+    var extras = [
+      val('city') ? 'city: ' + val('city') : '',
+      val('canton') ? 'canton: ' + val('canton') : '',
+      val('vet_count') ? 'vets: ' + val('vet_count') : '',
+      val('responsible_vet_name') ? 'responsible: ' + val('responsible_vet_name') : '',
+      checked('cantonal_authorization') ? 'cantonal auth: yes' : '',
+      val('contact_role') ? 'role: ' + val('contact_role') : '',
+      val('practice_software') ? 'PMS: ' + val('practice_software') : '',
+      val('practice_software_other') ? 'PMS other: ' + val('practice_software_other') : '',
+      val('practice_volume') ? 'volume: ' + val('practice_volume') : '',
+      val('goals') ? 'goals: ' + val('goals') : '',
+      checked('marketing_optin') ? 'marketing: yes' : ''
+    ];
+    var notes = extras.filter(Boolean);
+
+    btn.disabled = true;
+    var prev = btn.innerHTML;
+    btn.textContent = 'One moment…';
+
+    FylosPartner.submit({
+      contactName: val('contact_name'),
+      businessName: val('clinic_name'),
+      businessEmail: email.value.trim(),
+      businessType: 'Veterinary Clinic',
+      country: val('country'),
+      websiteOrSocialMedia: FylosPartner.packWebsite(val('website'), extras),
+      registrationOrLicenseId: checked('cantonal_authorization') ? 'Cantonal authorisation claimed' : null,
+      fileNames: notes.length ? notes.map(function(n){ return FylosPartner.clip(n, 120); }) : null
+    }).then(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'veterinary', fields: names, success: true });
+      }
+      form.style.display = 'none';
+      var done = document.getElementById('donePanel');
+      done.classList.add('on');
+      done.scrollIntoView({behavior:'smooth', block:'center'});
+    }).catch(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'veterinary', fields: names, success: false });
+      }
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = prev;
+    });
+  });
+</script>
+</body>
+</html>

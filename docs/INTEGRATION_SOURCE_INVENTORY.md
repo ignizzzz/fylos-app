@@ -87,6 +87,29 @@ GitHub PRs, stashes, dangling objects, and the live deployment:
 If those Codex sessions saved work anywhere, it was never pushed to this repository
 and is not recoverable from this environment. Nothing was invented in their place.
 
+### CORRECTION — post-inventory discovery (fylos.me deployment)
+
+After the preview shipped, a Google-results screenshot from the founder led to a
+crawl of **https://fylos.me** (the production domain, behind Cloudflare) — a
+deployment that exists in NO git branch. It turned out to host a large part of
+the "missing" Codex-session work:
+
+- A hand-authored `sitemap.xml` with 14 routes, and per-page titles, meta
+  descriptions and OG tags on most pages (this, plus Google's automatic AI
+  Overview, is what the founder's screenshot shows).
+- 13 subpages never pushed to git: `/product`, `/features`, `/how-it-works`,
+  `/health-book`, `/book-care`, `/the-tag`, `/partners`, `/for-vets`, `/pilot`,
+  `/demo`, `/waitlist`, plus its own `/apply` and `/join` variants.
+- A homepage that is the scroll film PLUS a full navigation and footer linking
+  those pages (a different, unversioned build lineage: still has the old dead
+  store badges and no meta description on `/`, `/apply`, `/join`; no JSON-LD
+  anywhere).
+
+Everything was recovered verbatim into **`recovered-fylos.me/`** on the
+integration branch (read-only snapshot; `website/` untouched). Still not found
+anywhere: Growth Admin, a newsletter/email-preference UI beyond `/waitlist`,
+and blog/SEO article pages.
+
 ## Safety measures taken
 
 - Tag `backup/pre-integration-main` pins the pre-integration state of `main`.

@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join Fylos · For pros and helpers</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shell/shell.css?v=2">
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
+<script>window.API_BASE_URL = 'https://app.fylos.me'; window.RECAPTCHA_SITE_KEY = '6LeQ3jIsAAAAAKexf43tim8Y8SSTxBEuj9-4PBgU';</script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LeQ3jIsAAAAAKexf43tim8Y8SSTxBEuj9-4PBgU"></script>
+<script defer src="/shell/shell.js?v=2"></script>
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-2:#EE8A5E; --coral-deep:#CF4A1C; --sage:#7C9271; --line:#ECE0D2; --ic-cream:#FFF3EA;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1100px 520px at 82% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
+                     radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
+
+  .wrap{max-width:900px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 90px}
+
+  .hero{text-align:center; padding:52px 0 26px; max-width:640px; margin:0 auto}
+  .chip{display:inline-flex; align-items:center; gap:9px; font:800 10.5px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral); background:var(--peach); padding:8px 15px; border-radius:99px}
+  .chip .d{width:7px;height:7px;border-radius:50%;background:var(--coral)}
+  .hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(34px,5vw,52px); line-height:1.03; letter-spacing:-.02em; margin:16px 0 0}
+  .hero h1 em{font-style:italic; color:var(--coral)}
+  .hero p{margin:15px auto 0; font-size:15.5px; line-height:1.62; color:var(--ink-soft); max-width:540px}
+
+  /* two path cards */
+  .paths{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px}
+  .pc{border-radius:24px; padding:26px 26px 24px; border:1px solid var(--line); background:#fff; box-shadow:0 14px 40px rgba(90,60,40,.07); display:flex; flex-direction:column}
+  .pc.a{background:linear-gradient(180deg,#FFF3EB, #fff); border-color:#F6D9C6}
+  .pc .pcimg{position:relative; border-radius:16px; overflow:hidden; aspect-ratio:16/9; margin-bottom:16px; box-shadow:0 10px 24px rgba(90,60,40,.16)}
+  .pc .pcimg img{width:100%; height:100%; object-fit:cover; display:block}
+  .pc .fast{position:absolute; top:11px; left:11px; z-index:2; display:inline-flex; align-items:center; font:800 9px var(--sans); letter-spacing:.1em; text-transform:uppercase; color:#fff; background:var(--coral); padding:6px 11px; border-radius:99px; box-shadow:0 5px 14px rgba(120,50,20,.28)}
+  .pc h2{font-family:var(--serif); font-weight:600; font-size:23px; letter-spacing:-.01em}
+  .pc p{font-size:13.5px; line-height:1.55; color:var(--ink-soft); margin-top:8px; flex:1}
+  .steps{list-style:none; margin:14px 0 0; display:flex; flex-direction:column; gap:8px}
+  .steps li{display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:600; color:var(--ink)}
+  .steps .n{width:20px;height:20px;border-radius:50%;background:var(--peach);color:var(--coral);font:800 10px var(--sans);display:grid;place-items:center;flex:none}
+  .pbtn{display:inline-flex; align-items:center; justify-content:center; gap:9px; margin-top:18px; padding:14px 20px; border-radius:13px; font:800 14px var(--sans); text-decoration:none; cursor:pointer; border:none; width:100%}
+  .pbtn.solid{background:var(--coral); color:#fff; box-shadow:0 12px 26px rgba(232,93,42,.28)}
+  .pbtn.ghost{background:#fff; color:var(--coral); border:1.5px solid #F0C9B4}
+  .pbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+  .or{text-align:center; margin:30px 0 6px; color:var(--ink-soft); font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase}
+
+  /* form */
+  form{display:flex; flex-direction:column; gap:20px}
+  .sec{background:#fff; border:1px solid var(--line); border-radius:24px; padding:clamp(20px,3.4vw,30px); box-shadow:0 14px 40px rgba(90,60,40,.07)}
+  .sec-h{display:flex; align-items:center; gap:12px; margin-bottom:4px}
+  .sec-n{font-family:var(--serif); font-weight:600; font-size:22px; letter-spacing:-.01em}
+  .sec .note{font-size:13px; color:var(--ink-soft); line-height:1.55; margin:8px 0 18px}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .field{display:flex; flex-direction:column; margin-bottom:16px}
+  .field:last-child{margin-bottom:0}
+  .field label{font:700 13px var(--sans); color:var(--ink); margin-bottom:7px}
+  .field label .rq{color:var(--coral); margin-left:2px}
+  .field label .opt{color:var(--ink-soft); font-weight:500; font-size:11.5px; margin-left:6px}
+  input,select,textarea{width:100%; font:500 15px var(--sans); color:var(--ink); background:#FFFDFB;
+    border:1.5px solid #EADDCE; border-radius:12px; padding:13px 15px; transition:border-color .15s, box-shadow .15s; outline:none}
+  input::placeholder,textarea::placeholder{color:#B7A899}
+  select{appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236E625B' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 14px center; padding-right:40px; cursor:pointer}
+  textarea{resize:vertical; min-height:70px; line-height:1.5}
+  input:focus,select:focus,textarea:focus{border-color:var(--coral); box-shadow:0 0 0 4px rgba(232,93,42,.13)}
+  .help{font-size:12px; color:var(--ink-soft); line-height:1.45; margin-top:6px}
+  #otherWrap{display:none}
+  .check{display:flex; gap:12px; align-items:flex-start; padding:13px 15px; border:1.5px solid #EEE2D4; border-radius:14px; margin-bottom:12px; cursor:pointer}
+  .check input{width:20px; height:20px; margin:0; flex:none; accent-color:var(--coral); margin-top:1px}
+  .check span{font-size:13px; line-height:1.5; color:var(--ink)}
+  .submit{display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%;
+    background:var(--coral); color:#fff; font:800 16px var(--sans); border:none; border-radius:15px; padding:18px 24px;
+    cursor:pointer; box-shadow:0 16px 34px rgba(232,93,42,.30)}
+  .submit:hover{background:var(--coral-deep)}
+  .submit svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .vetline{text-align:center; font-size:12.5px; color:var(--ink-soft); margin-top:14px}
+  .vetline a{color:var(--coral); text-decoration:none; font-weight:700}
+  .otherpros{display:flex; align-items:center; gap:20px; max-width:620px; margin:30px auto 0; text-align:left}
+  .otherpros img{height:96px; flex:none}
+  .otherpros p{font-size:13px; line-height:1.6; color:var(--ink-soft)}
+  .otherpros a{color:var(--coral); font-weight:700; text-decoration:none}
+  @media (max-width:560px){ .otherpros{flex-direction:column; text-align:center} }
+  /* figurine headers on the two path cards */
+  .pcfig{height:150px; display:flex; align-items:flex-end; justify-content:center; margin-top:-46px}
+  .pcfig img{max-height:176px; pointer-events:none} /* decorative: never steals a tap */
+  .fast.pcchip{position:static; display:inline-flex; margin:12px 0 4px; box-shadow:none}
+  .fast.pcchip.live{background:#E9F0E5; color:var(--sage)}
+  .paths{margin-top:70px}
+
+  /* a visible, polite error state (email format) */
+  .field.bad input, .field.bad select{border-color:#C94A1E; box-shadow:0 0 0 4px rgba(201,74,30,.10)}
+  .fielderr{display:none; font:600 12px var(--sans); color:#A83A1A; margin-top:6px}
+  .field.bad .fielderr{display:block}
+
+  .done{display:none; text-align:center; background:#fff; border:1px solid var(--line); border-radius:26px; padding:48px 34px; box-shadow:0 18px 48px rgba(90,60,40,.09)}
+  .done.on{display:block}
+  .done .badge{width:64px;height:64px;border-radius:50%;background:#E9F0E5;display:grid;place-items:center;margin:0 auto 18px}
+  .done .badge svg{width:30px;height:30px;fill:none;stroke:var(--sage);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+  .done h2{font-family:var(--serif); font-weight:600; font-size:28px}
+  .done p{margin-top:11px; color:var(--ink-soft); font-size:14.5px; line-height:1.6; max-width:440px; margin-left:auto; margin-right:auto}
+  .done a.home{display:inline-flex; margin-top:22px; background:var(--peach); color:var(--coral); font-weight:800; font-size:13.5px; padding:13px 22px; border-radius:12px; text-decoration:none}
+
+  @media(max-width:720px){
+    /* stacked path cards breathe so the pop-out figurine never sits on the
+       card above (the film's roles row uses the same generous rhythm) */
+    .paths{grid-template-columns:1fr; gap:72px}
+    .grid2{grid-template-columns:1fr}
+  }
+  @media(max-width:600px){
+    /* 16px fields so iOS Safari does not zoom into the form */
+    input,select,textarea{font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+<a class="fy-skip" href="#fy-main">Skip to content</a>
+
+<header class="fy-header" data-fy-header>
+  <div class="fy-header__inner">
+    <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+    <nav class="fy-nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/product">Product</a>
+      <a href="/features">Features</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a class="fy-nav__cta" href="/waitlist">Join the waitlist</a>
+    </nav>
+    <button class="fy-burger" type="button" data-fy-burger
+            aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
+      <span class="fy-burger__box"><span class="fy-burger__line"></span></span>
+    </button>
+  </div>
+</header>
+
+<div class="fy-menu" id="fy-menu" data-fy-menu>
+  <div class="fy-menu__backdrop" data-fy-menu-backdrop></div>
+  <nav class="fy-menu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="fy-menu__head">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <button class="fy-menu__close" type="button" data-fy-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="fy-menu__link" href="/">Home</a>
+    <a class="fy-menu__link" href="/product">Product</a>
+    <a class="fy-menu__link" href="/features">Features</a>
+    <a class="fy-menu__link" href="/how-it-works">How it works</a>
+    <a class="fy-menu__link" href="/health-book">Health book</a>
+    <a class="fy-menu__link" href="/book-care">Book care</a>
+    <a class="fy-menu__link" href="/the-tag">The tag</a>
+    <a class="fy-menu__link" href="/apply">For vets</a>
+    <a class="fy-menu__link" href="/join">For pros</a>
+    <a class="fy-menu__link" href="/partners">For partners</a>
+    <a class="fy-menu__cta" href="/waitlist">Join the waitlist</a>
+  </nav>
+</div>
+
+<main class="wrap" id="fy-main" tabindex="-1">
+
+  <section class="hero">
+    <span class="chip"><span class="d"></span>Join Fylos</span>
+    <h1>Put yourself on <em>the neighborhood.</em></h1>
+    <p>Fylos is the local pros and helpers people already trust. Pick how you help, and we will get you set up. Walkers and sitters have a fast lane, groomers are coming next, and every other pro gets a spot on the list.</p>
+  </section>
+
+  <div class="paths">
+    <div class="pc a">
+      <div class="pcfig"><img src="assets/roles/walker.png" alt="The walker figurine with the coiled coral leash"></div>
+      <span class="fast pcchip live">Live now &middot; fastest</span>
+      <h2>Walkers &amp; sitters</h2>
+      <p>The quickest way in. Apply right inside the Fylos app, it takes about five minutes.</p>
+      <ul class="steps">
+        <li><span class="n">1</span>Open the Fylos app</li>
+        <li><span class="n">2</span>Add your details and area</li>
+        <li><span class="n">3</span>Pass a quick check, go live</li>
+      </ul>
+      <a class="pbtn solid" href="/waitlist">Join the waitlist <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
+    </div>
+
+    <div class="pc">
+      <div class="pcfig"><img src="assets/roles/groomer.png" alt="The groomer figurine with her sage apron and brush"></div>
+      <span class="fast pcchip">Coming soon &middot; first in line</span>
+      <h2>Groomers</h2>
+      <p>Fylos for groomers is coming, right after the vets. The first shops get their neighborhood to themselves, so apply for early access now.</p>
+      <a class="pbtn ghost" href="#groomerform">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></a>
+    </div>
+  </div>
+
+  <div class="otherpros">
+    <img src="assets/roles/trainer.png" alt="Dog trainer figurine waving">
+    <p>Every other pro, from trainers to boarding to crafts we have not met yet: vets and groomers come first, but we read every application. <a href="#proform">Tell us what you do</a> and you will be the first to hear when your door opens.</p>
+  </div>
+
+  <div class="or">The groomer application · early access</div>
+
+  <form id="groomerForm" novalidate>
+    <div class="sec" id="groomerform">
+      <div class="sec-h"><span class="sec-n">Groomers, first in line</span></div>
+      <div class="note">Only for grooming shops and independent groomers. Fylos for groomers is coming right after the vets, and the shops that apply now go first.</div>
+      <input type="hidden" name="profession" value="Groomer">
+      <div class="grid2">
+        <div class="field"><label>Shop or business name<span class="rq">*</span></label><input name="business" required placeholder="Your shop as people know it"></div>
+        <div class="field"><label>Your name<span class="rq">*</span></label><input name="name" required></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>City or area<span class="rq">*</span></label><input name="city" required></div>
+        <div class="field"><label>Website or Instagram<span class="opt">optional</span></label><input name="website" placeholder="yourshop.ch or @yourshop"></div>
+      </div>
+      <div class="field"><label>What you offer<span class="opt">optional</span></label><textarea name="offer" placeholder="Grooming, baths, nails, one or two lines is plenty"></textarea></div>
+      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required autocomplete="email" placeholder="you@yourshop.ch"><div class="fielderr" role="alert">That email does not look complete. A quick check and you are done.</div><div class="help">Where your early access invitation will go. We reply personally.</div></div>
+      <label class="check"><input type="checkbox" name="consent" required><span>I understand groomer booking is not live yet, this is an application for early access, and Fylos can contact me about it.<span class="rq">*</span></span></label>
+      <input type="text" name="company_url" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" class="honey">
+      <button type="submit" class="submit" id="groomerBtn">Apply for early access <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
+      <p class="fielderr" id="groomerErr" role="alert" style="display:none;margin-top:12px;color:#A83A1A;font-weight:600;font-size:13px">That did not go through. Try once more, or write to hello@fylos.me.</p>
+    </div>
+  </form>
+
+  <div class="or">Every other pro · tell us what you do</div>
+
+  <form id="joinForm" novalidate>
+    <div class="sec" id="proform">
+      <div class="sec-h"><span class="sec-n">Every other pro</span></div>
+      <div class="note">For trainers, boarding, daycare and every other pet professional. Vets and groomers come first, but this list is how we learn where to open the next door. A few quick details, that is all for now.</div>
+
+      <div class="field">
+        <label>What do you do<span class="rq">*</span></label>
+        <select name="profession" id="prof" required>
+          <option value="" disabled selected>Choose one</option>
+          <option>Dog trainer</option>
+          <option>Boarding or daycare</option>
+          <option>Pet sitting business</option>
+          <option>Pet photographer</option>
+          <option>Pet taxi or transport</option>
+          <option value="other">Something else</option>
+        </select>
+      </div>
+      <div class="field" id="otherWrap">
+        <label>Your profession<span class="rq">*</span></label>
+        <input name="profession_other" id="profOther" placeholder="Tell us in a few words">
+        <div class="help">Something we have not listed? Name it, this is exactly how we discover pros we had not thought of.</div>
+      </div>
+
+      <div class="grid2">
+        <div class="field"><label>Your name<span class="rq">*</span></label><input name="name" required></div>
+        <div class="field"><label>Business or brand name<span class="opt">optional</span></label><input name="business" placeholder="If you have one"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>City or area<span class="rq">*</span></label><input name="city" required></div>
+        <div class="field"><label>Website or Instagram<span class="opt">optional</span></label><input name="website" placeholder="yourshop.ch or @yourshop"></div>
+      </div>
+      <div class="field"><label>What you offer<span class="opt">optional</span></label><textarea name="offer" placeholder="One or two lines is plenty"></textarea></div>
+      <div class="field"><label>Email<span class="rq">*</span></label><input type="email" name="email" required autocomplete="email" placeholder="you@example.com"><div class="fielderr" role="alert">That email does not look complete. A quick check and you are done.</div><div class="help">Where your invitation will go. We reply personally.</div></div>
+
+      <label class="check"><input type="checkbox" name="consent" required><span>I would like to join Fylos as a pro, and Fylos can contact me about it. My details are used only to read and reply to this application.<span class="rq">*</span></span></label>
+      <input type="text" name="company_url" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" class="honey">
+
+      <button type="submit" class="submit" id="joinBtn">Apply to join <svg viewBox="0 0 24 24"><path d="M5 12h14m0 0-6-6m6 6-6 6"/></svg></button>
+      <p class="fielderr" id="joinErr" role="alert" style="display:none;margin-top:12px;color:#A83A1A;font-weight:600;font-size:13px">That did not go through. Try once more, or write to hello@fylos.me.</p>
+      <div class="vetline">Run a veterinary clinic? There is a dedicated form. <a href="/apply">Apply here.</a></div>
+    </div>
+  </form>
+
+  <div class="done" id="donePanel">
+    <div class="badge"><svg viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></svg></div>
+    <h2>Thank you, we have it.</h2>
+    <p>A real person at Fylos reads every application and usually replies within a few days. Keep an eye on your inbox.</p>
+    <a class="home" href="/">Back to Fylos</a>
+  </div>
+
+</main>
+
+<footer class="fy-footer">
+  <div class="fy-footer__inner">
+    <div class="fy-footer__brand">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <p class="fy-footer__tag">Your whole pet neighborhood, <em>in your pocket.</em></p>
+    </div>
+    <div class="fy-footer__cols">
+      <nav class="fy-footer__col" aria-label="Product">
+        <b>Product</b>
+        <a href="/product">Overview</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Features">
+        <b>Features</b>
+        <a href="/health-book">Health book</a>
+        <a href="/book-care">Book care</a>
+        <a href="/the-tag">The tag</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Partners">
+        <b>Partners</b>
+        <a href="/apply">Apply for early access</a>
+        <a href="/join">Join as a pro</a>
+        <a href="/partners">For partners</a>
+        <a href="/for-vets">Fylos for vets</a>
+        <a href="/pilot">Pilot program</a>
+        <a href="/demo">Request a demo</a>
+      </nav>
+      <div class="fy-footer__col">
+        <b>Fylos</b>
+        <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
+        <a href="/waitlist">Join the waitlist</a>
+        <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+      </div>
+    </div>
+  </div>
+  <div class="fy-footer__legal">© 2026 Fylos <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
+</footer>
+
+<script src="/shell/partner-api.js"></script>
+<script>
+  var prof = document.getElementById('prof');
+  var otherWrap = document.getElementById('otherWrap');
+  var profOther = document.getElementById('profOther');
+  prof.addEventListener('change', function(){
+    var on = prof.value === 'other';
+    otherWrap.style.display = on ? 'flex' : 'none';
+    profOther.required = on;
+  });
+
+  var gform = document.getElementById('groomerForm');
+  var gstarted = false;
+  gform.addEventListener('input', function(){
+    if (gstarted) return;
+    gstarted = true;
+    if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'join-groomer', formName: 'Groomer early access' });
+  });
+  function badEmailIn(f){
+    var email = f.querySelector('input[type="email"]');
+    var ef = email.closest('.field');
+    ef.classList.remove('bad');
+    if (FylosPartner.okEmail(email.value)) return false;
+    ef.classList.add('bad');
+    email.focus();
+    ef.scrollIntoView({behavior:'smooth', block:'center'});
+    return true;
+  }
+  function showDone(){
+    var done = document.getElementById('donePanel');
+    done.classList.add('on');
+    done.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  function fval(f, name){
+    var el = f.querySelector('[name="' + name + '"]');
+    return el ? (el.value || '').trim() : '';
+  }
+  function honeyFilled(f){
+    var h = f.querySelector('.honey');
+    return !!(h && (h.value || '').trim());
+  }
+  function mapProfession(label){
+    var t = (label || '').toLowerCase();
+    if (t.indexOf('groom') >= 0) return 'Grooming Salon';
+    if (t.indexOf('board') >= 0 || t.indexOf('daycare') >= 0) return 'Pet Hotel / Boarding';
+    if (t.indexOf('train') >= 0) return 'Training Center';
+    if (t.indexOf('shelter') >= 0) return 'Shelter / NGO';
+    return label || 'Other';
+  }
+
+  gform.addEventListener('submit', function(e){
+    e.preventDefault();
+    var errEl = document.getElementById('groomerErr');
+    var btn = document.getElementById('groomerBtn');
+    errEl.style.display = 'none';
+    var missing = null;
+    gform.querySelectorAll('[required]').forEach(function(el){
+      var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
+      if (bad && !missing) missing = el;
+    });
+    if (missing){ missing.focus(); missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+    if (badEmailIn(gform)) return;
+    if (honeyFilled(gform)){
+      gform.style.display = 'none';
+      showDone();
+      return;
+    }
+    var extras = [
+      fval(gform, 'city') ? 'city: ' + fval(gform, 'city') : '',
+      fval(gform, 'offer') ? 'offer: ' + fval(gform, 'offer') : ''
+    ].filter(Boolean);
+    var prev = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'One moment…';
+    FylosPartner.submit({
+      contactName: fval(gform, 'name'),
+      businessName: fval(gform, 'business'),
+      businessEmail: fval(gform, 'email'),
+      businessType: 'Grooming Salon',
+      country: 'Switzerland',
+      websiteOrSocialMedia: FylosPartner.packWebsite(fval(gform, 'website'), extras),
+      fileNames: extras.map(function(n){ return FylosPartner.clip(n, 120); })
+    }).then(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(gform.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'join-groomer', fields: names, success: true });
+      }
+      gform.style.display = 'none';
+      var orG = gform.previousElementSibling; if (orG && orG.classList.contains('or')) orG.style.display = 'none';
+      document.getElementById('joinForm').style.display = 'none';
+      var orJ = document.getElementById('joinForm').previousElementSibling;
+      if (orJ && orJ.classList.contains('or')) orJ.style.display = 'none';
+      showDone();
+    }).catch(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(gform.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'join-groomer', fields: names, success: false });
+      }
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = prev;
+    });
+  });
+
+  var form = document.getElementById('joinForm');
+  var started = false;
+  form.addEventListener('input', function(){
+    if (started) return;
+    started = true;
+    if (window.FylosAnalytics) FylosAnalytics.formStarted({ formId: 'join', formName: 'Pro application' });
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var errEl = document.getElementById('joinErr');
+    var btn = document.getElementById('joinBtn');
+    errEl.style.display = 'none';
+    var missing = null;
+    form.querySelectorAll('[required]').forEach(function(el){
+      if (el.offsetParent === null) return;
+      var bad = (el.type === 'checkbox') ? !el.checked : !el.value.trim();
+      if (bad && !missing) missing = el;
+    });
+    if (missing){ missing.focus(); missing.closest('.field, .check').scrollIntoView({behavior:'smooth', block:'center'}); return; }
+    if (badEmailIn(form)) return;
+    if (honeyFilled(form)){
+      form.style.display = 'none';
+      showDone();
+      return;
+    }
+    var profession = fval(form, 'profession');
+    if (profession === 'other') profession = fval(form, 'profession_other') || 'Something else';
+    var extras = [
+      fval(form, 'city') ? 'city: ' + fval(form, 'city') : '',
+      fval(form, 'offer') ? 'offer: ' + fval(form, 'offer') : '',
+      'profession: ' + profession
+    ].filter(Boolean);
+    var prev = btn.innerHTML;
+    btn.disabled = true;
+    btn.textContent = 'One moment…';
+    FylosPartner.submit({
+      contactName: fval(form, 'name'),
+      businessName: fval(form, 'business') || profession,
+      businessEmail: fval(form, 'email'),
+      businessType: mapProfession(profession),
+      country: 'Switzerland',
+      websiteOrSocialMedia: FylosPartner.packWebsite(fval(form, 'website'), extras),
+      fileNames: extras.map(function(n){ return FylosPartner.clip(n, 120); })
+    }).then(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'join', fields: names, success: true });
+      }
+      form.style.display = 'none';
+      gform.style.display = 'none';
+      showDone();
+    }).catch(function(){
+      if (window.FylosAnalytics) {
+        var names = Array.prototype.map.call(form.querySelectorAll('[name]'), function(el){ return el.getAttribute('name'); });
+        FylosAnalytics.formSubmitted({ formId: 'join', fields: names, success: false });
+      }
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = prev;
+    });
+  });
+</script>
+</body>
+</html>

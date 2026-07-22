@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fylos for partners · Clinics, groomers, walkers and more</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="description" content="Fylos is the local pet neighborhood people already trust. If you run a clinic, a shop or a service, here is how you join, and how to reach us for a walkthrough.">
+<meta name="theme-color" content="#FBF7F2">
+<link rel="canonical" href="https://fylos.me/partners">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,600&amp;family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shell/shell.css?v=2">
+<noscript><style>@media (max-width:720px){.fy-burger{display:none!important}.fy-nav{display:flex!important;flex-wrap:wrap;width:100%;padding-bottom:8px}.fy-header__inner{flex-wrap:wrap}}</style></noscript>
+<script defer src="/shell/shell.js?v=2"></script>
+<style>
+  :root{
+    --cream:#FBF7F2; --peach:#FFE9DC; --ink:#2B2320; --ink-soft:#6E625B;
+    --coral:#E85D2A; --coral-deep:#CF4A1C; --sage:#7C9271; --sage-deep:#5C7150; --line:#ECE0D2;
+    --serif:'Fraunces',serif; --sans:'Inter',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans); color:var(--ink); background:var(--cream); -webkit-font-smoothing:antialiased; overflow-x:clip;
+    background-image:radial-gradient(1100px 520px at 82% -8%, #FFE4D2 0%, rgba(255,228,210,0) 60%),
+                     radial-gradient(900px 480px at 0% 4%, #F1EEE6 0%, rgba(241,238,230,0) 55%);}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 clamp(18px,5vw,44px) 96px}
+  .hero{position:relative; border-radius:28px; overflow:hidden; margin-top:26px;
+    min-height:clamp(400px,58vh,580px); display:flex; align-items:flex-end;
+    box-shadow:0 30px 70px rgba(90,60,40,.24)}
+  .hero>img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  .glass{position:relative; z-index:2; margin:clamp(16px,3vw,34px); max-width:540px;
+    background:color-mix(in srgb, var(--cream) 86%, transparent);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-radius:24px; padding:clamp(20px,3vw,30px); box-shadow:0 18px 50px rgba(90,60,40,.2)}
+  .kicker{font:800 11px var(--sans); letter-spacing:.14em; text-transform:uppercase; color:var(--coral);
+    display:inline-flex; align-items:center; gap:9px}
+  .kicker::before{content:''; width:22px; height:2px; background:var(--coral); border-radius:2px}
+  .glass h1{font-family:var(--serif); font-weight:600; font-size:clamp(28px,4vw,42px); line-height:1.06; letter-spacing:-.02em; margin-top:10px}
+  .glass h1 em, h2 em{font-style:italic; color:var(--coral)}
+  .glass p{margin-top:10px; font-size:14.5px; line-height:1.6; color:var(--ink-soft)}
+  .ctarow{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:16px}
+  .cta{display:inline-flex; align-items:center; gap:8px; background:var(--coral); color:#fff;
+    font:800 13.5px var(--sans); padding:13px 22px; border-radius:99px; text-decoration:none;
+    box-shadow:0 12px 28px rgba(232,93,42,.3)}
+  .cta:hover{background:var(--coral-deep)}
+  .ghost{display:inline-flex; align-items:center; gap:7px; color:var(--coral-deep); background:#fff;
+    border:1.5px solid #F0C9B4; font:800 13px var(--sans); padding:12px 20px; border-radius:99px; text-decoration:none}
+
+  /* the three ways in, figurine cards like the film's role row */
+  .trackhead{text-align:center; margin-top:clamp(70px,11vh,120px)}
+  .trackhead h2{font-family:var(--serif); font-weight:600; font-size:clamp(26px,3.2vw,36px); letter-spacing:-.015em; margin-top:10px}
+  .tracks{display:grid; grid-template-columns:repeat(3,1fr); gap:26px; margin-top:86px}
+  .track{position:relative; background:#fff; border-radius:26px; padding:0 24px 26px; text-align:center;
+    box-shadow:0 18px 44px rgba(90,60,40,.1); display:flex; flex-direction:column}
+  .track .fig{height:150px; display:flex; align-items:flex-end; justify-content:center; margin-top:-64px}
+  .track .fig img{max-height:170px}
+  .track h3{font-family:var(--serif); font-weight:600; font-size:21px; margin-top:14px}
+  .track .chip{display:inline-flex; align-items:center; gap:6px; font:800 9.5px var(--sans); letter-spacing:.11em;
+    text-transform:uppercase; padding:6px 12px; border-radius:99px; margin:9px auto 0; width:max-content}
+  .track .chip.live{color:var(--sage-deep); background:#E9F0E5}
+  .track .chip.soon{color:var(--coral); background:var(--peach)}
+  .track p{font-size:13px; color:var(--ink-soft); line-height:1.55; margin-top:11px; flex:1}
+  .track .cta, .track .ghost{margin:16px auto 0; width:max-content}
+
+  .quiet{margin-top:30px; text-align:center; font-size:13px; line-height:1.6; color:var(--ink-soft); }
+  .quiet a{color:var(--coral-deep); font-weight:700; text-decoration:none}
+
+  .close{position:relative; margin-top:clamp(80px,12vh,130px); background:var(--peach); border-radius:32px;
+    padding:44px clamp(20px,4vw,52px); text-align:center}
+  .close h2{font-family:var(--serif); font-weight:600; font-size:clamp(26px,3.2vw,36px); letter-spacing:-.015em}
+  .close p{margin:10px auto 0; font-size:14px; line-height:1.6; color:#7c5a42; max-width:460px}
+  .close .ctarow{justify-content:center; margin-top:20px}
+
+  @media (max-width:880px){
+    .tracks{grid-template-columns:1fr; gap:86px}
+    .hero{min-height:64vh; min-height:64svh}
+    .trackhead{scroll-margin-top:84px}
+    .track .fig img{pointer-events:none}
+    .cta,.ghost{min-height:44px}
+    .track .chip{font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<a class="fy-skip" href="#fy-main">Skip to content</a>
+
+<header class="fy-header" data-fy-header>
+  <div class="fy-header__inner">
+    <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+    <nav class="fy-nav" aria-label="Primary">
+      <a href="/">Home</a>
+      <a href="/product">Product</a>
+      <a href="/features">Features</a>
+      <a href="/how-it-works">How it works</a>
+      <a href="/apply">For vets</a>
+      <a href="/join">For pros</a>
+      <a class="fy-nav__cta" href="/waitlist">Join the waitlist</a>
+    </nav>
+    <button class="fy-burger" type="button" data-fy-burger
+            aria-label="Open menu" aria-expanded="false" aria-controls="fy-menu">
+      <span class="fy-burger__box"><span class="fy-burger__line"></span></span>
+    </button>
+  </div>
+</header>
+
+<div class="fy-menu" id="fy-menu" data-fy-menu>
+  <div class="fy-menu__backdrop" data-fy-menu-backdrop></div>
+  <nav class="fy-menu__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="fy-menu__head">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <button class="fy-menu__close" type="button" data-fy-close aria-label="Close menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <a class="fy-menu__link" href="/">Home</a>
+    <a class="fy-menu__link" href="/product">Product</a>
+    <a class="fy-menu__link" href="/features">Features</a>
+    <a class="fy-menu__link" href="/how-it-works">How it works</a>
+    <a class="fy-menu__link" href="/health-book">Health book</a>
+    <a class="fy-menu__link" href="/book-care">Book care</a>
+    <a class="fy-menu__link" href="/the-tag">The tag</a>
+    <a class="fy-menu__link" href="/apply">For vets</a>
+    <a class="fy-menu__link" href="/join">For pros</a>
+    <a class="fy-menu__link" href="/partners">For partners</a>
+    <a class="fy-menu__cta" href="/waitlist">Join the waitlist</a>
+  </nav>
+</div>
+
+<main class="wrap" id="fy-main" tabindex="-1">
+
+  <section class="hero">
+    <img src="assets/k-partners.jpg" alt="The clinic reception in the miniature Fylos world: a vet behind the counter, a pet parent and a golden retriever in front of it">
+    <div class="glass">
+      <span class="kicker">Fylos for partners</span>
+      <h1>One neighborhood, <em>both sides of the leash.</em></h1>
+      <p>Fylos puts a whole pet neighborhood in one app: the health book, the bookings, the local pros people already trust. If you run a clinic, a shop or a service, this is where you join.</p>
+      <div class="ctarow">
+        <a class="cta" href="/demo?type=partner&amp;from=partners">Request a demo</a>
+        <a class="ghost" href="#tracks">See the ways to join</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="trackhead" id="tracks">
+    <span class="kicker">Ways to join</span>
+    <h2>Pick your door <em>into the neighborhood.</em></h2>
+  </div>
+
+  <div class="tracks">
+    <article class="track">
+      <div class="fig"><img src="assets/roles/vet.png" alt="The vet figurine" loading="lazy" decoding="async"></div>
+      <h3>Veterinary clinics</h3>
+      <span class="chip soon">Coming soon · first priority</span>
+      <p>One book, both sides of the leash: bookings that arrive prepared, records that sync with the owner's consent. The first clinics get their neighborhood to themselves.</p>
+      <a class="cta" href="/apply?type=early-access&amp;from=partners">Apply for early access</a>
+    </article>
+    <article class="track">
+      <div class="fig"><img src="assets/roles/groomer.png" alt="The groomer figurine" loading="lazy" decoding="async"></div>
+      <h3>Groomers</h3>
+      <span class="chip soon">Coming soon · next in line</span>
+      <p>The shop two doors down, booked in two taps. Grooming goes live right after the vets, and the shops that apply now go first.</p>
+      <a class="cta" href="/join?type=groomer&amp;from=partners#groomerform">Apply for early access</a>
+    </article>
+    <article class="track">
+      <div class="fig"><img src="assets/roles/walker.png" alt="The walker figurine" loading="lazy" decoding="async"></div>
+      <h3>Walkers &amp; sitters</h3>
+      <span class="chip live">Live now · fastest</span>
+      <p>Your next clients live next door. Apply right in the app, it takes about five minutes: your details, your area, a quick check, and you are live.</p>
+      <a class="ghost" href="/join?type=walker&amp;from=partners">See the fast lane</a>
+    </article>
+  </div>
+
+  <p class="quiet">Another craft, from trainers to boarding to things we have not met yet? Vets and groomers come first, but we read every application. <a href="/join?type=pro&amp;from=partners">Tell us what you do.</a></p>
+
+  <section class="close">
+    <h2>Want a proper <em>walkthrough?</em></h2>
+    <p>Twenty quiet minutes, your questions answered, no obligation. We will show you exactly how Fylos looks from your side of the leash.</p>
+    <div class="ctarow">
+      <a class="cta" href="/demo?type=partner&amp;from=partners">Request a demo</a>
+      <a class="ghost" href="/pilot">About the pilot program</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="fy-footer">
+  <div class="fy-footer__inner">
+    <div class="fy-footer__brand">
+      <a class="fy-brand" href="/" aria-label="Fylos, home">FYLOS</a>
+      <p class="fy-footer__tag">Your whole pet neighborhood, <em>in your pocket.</em></p>
+    </div>
+    <div class="fy-footer__cols">
+      <nav class="fy-footer__col" aria-label="Product">
+        <b>Product</b>
+        <a href="/product">Overview</a>
+        <a href="/features">Features</a>
+        <a href="/how-it-works">How it works</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Features">
+        <b>Features</b>
+        <a href="/health-book">Health book</a>
+        <a href="/book-care">Book care</a>
+        <a href="/the-tag">The tag</a>
+      </nav>
+      <nav class="fy-footer__col" aria-label="Partners">
+        <b>Partners</b>
+        <a href="/apply">For vets</a>
+        <a href="/join">For pros</a>
+        <a href="/for-vets">Fylos for vets</a>
+        <a href="/pilot">Pilot program</a>
+        <a href="/demo">Request a demo</a>
+      </nav>
+      <div class="fy-footer__col">
+        <b>Fylos</b>
+        <a href="https://fylos.me" target="_blank" rel="noopener">fylos.me</a>
+        <a href="/waitlist">Join the waitlist</a>
+        <a href="mailto:hello@fylos.me">hello@fylos.me</a>
+      </div>
+    </div>
+  </div>
+  <div class="fy-footer__legal">© 2026 Fylos <span class="fy-footer__leglinks"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/impressum">Impressum</a></span></div>
+</footer>
+
+</body>
+</html>
